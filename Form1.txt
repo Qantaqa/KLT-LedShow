@@ -1,0 +1,229 @@
+﻿Imports System.Net
+Imports System.Net.Http
+Imports System.Text
+Imports System.Threading
+Imports System.Threading.Tasks
+Imports Newtonsoft.Json
+Imports Newtonsoft.Json.Linq
+Imports System.IO
+Imports System.Xml
+Imports System.Diagnostics  ' Toegevoegd voor Process.Start
+Imports System.Windows.Forms ' Toegevoegd voor toegang tot UI-elementen
+
+Public Class FrmMain
+
+    Private Sub FrmMain_Load_1(sender As Object, e As EventArgs) Handles MyBase.Load
+        Try
+            ' Configureer de DataGridView voor de Devices tab
+            DG_Devices.Dock = DockStyle.Fill
+            DG_Devices.AutoGenerateColumns = False
+            DG_Devices.AllowUserToAddRows = False
+            DG_Devices.AllowUserToDeleteRows = False
+            DG_Devices.ReadOnly = True
+
+            ' Definieer de kolommen voor de DataGridView
+            Dim ipColumn As New DataGridViewTextBoxColumn
+            ipColumn.Name = "colIPAddress"
+            ipColumn.HeaderText = "IP Address"
+            ipColumn.DataPropertyName = "IPAddress"
+
+            Dim nameColumn As New DataGridViewTextBoxColumn
+            nameColumn.Name = "colInstance"
+            nameColumn.HeaderText = "WLED Name"
+            nameColumn.DataPropertyName = "WLEDName"
+
+            'DG_Devices.Columns.AddRange(ipColumn, nameColumn) ' Voeg de kolommen toe aan de DataGridView
+
+            ' Configureer de DataGridView voor de Effecten tab
+            DG_Effecten.AllowUserToAddRows = False
+            DG_Effecten.AllowUserToDeleteRows = False
+            DG_Effecten.ReadOnly = True
+
+            ' Configureer de DataGridView voor de Paletten tab
+            DG_Paletten.AllowUserToAddRows = False
+            DG_Paletten.AllowUserToDeleteRows = False
+            DG_Paletten.ReadOnly = True
+
+
+        Catch ex As Exception
+            MessageBox.Show($"Fout tijdens laden van form: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            ' Log de fout eventueel naar een bestand of de Event Viewer
+        End Try
+    End Sub
+
+    Private Sub btnScanNetwork_Click(sender As Object, e As EventArgs) Handles btnScanNetwork.Click
+        ' Code is verplaatst naar de module DetectDevices
+        DetectDevices.doScanNetwork_Click(Me.DG_Devices, Me.DG_Effecten)
+    End Sub
+
+    Private Sub DG_Devices_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Devices.CellContentClick
+        ' Controleer of er op een geldige cel is geklikt (niet de header)
+        If e.RowIndex >= 0 AndAlso e.ColumnIndex >= 0 Then
+            ' Haal de IP-adres op van de geselecteerde rij
+            Dim ipAddress As String = TryCast(DG_Devices.Rows(e.RowIndex).Cells("colIPAddress").Value, String)
+            If Not String.IsNullOrEmpty(ipAddress) Then
+                Try
+                    ' Open de browser met het IP-adres
+                    Process.Start(New ProcessStartInfo($"http://{ipAddress}") With {.UseShellExecute = True})
+                Catch ex As Exception
+                    MessageBox.Show($"Fout bij het openen van de browser: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End Try
+            End If
+        End If
+    End Sub
+
+    Private Async Function ApplyEffect(ip As String, effectId As Integer) As Task
+        Using client As New HttpClient()
+            Try
+                ' Bouw de JSON-payload voor het POST-verzoek
+                Dim payload As String = "{""seg"":[{""fx"":" & effectId & "}]}"
+
+                Dim content As New StringContent(payload, Encoding.UTF8, "application/json")
+
+                ' Stuur het POST-verzoek naar de WLED API
+                Dim postResponse As HttpResponseMessage = Await client.PostAsync("http://" + ip + "/json/state", content)
+
+                ' Lees de volledige responsinhoud
+                Dim responseContent As String = Await postResponse.Content.ReadAsStringAsync()
+
+                ' Plaats de respons in het tekstveld
+                txt_APIResult.Text = responseContent
+
+                ' Controleer de statuscode van het antwoord
+                If postResponse.IsSuccessStatusCode Then
+                    txt_APIResult.Text = $"Effect met ID '{effectId}' toegepast op '{ip}'."
+                Else
+                    MessageBox.Show($"Fout bij het toepassen van effect (HTTP {postResponse.StatusCode}): {responseContent}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End If
+            Catch ex As HttpRequestException
+                txt_APIResult.Text = $"Fout bij het toepassen van effect: {ex.Message}"
+                MessageBox.Show($"Fout bij het toepassen van effect: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End Using
+    End Function
+
+    Private Async Sub DG_Effecten_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Effecten.CellContentClick
+        If e.RowIndex < 0 Then Exit Sub ' Make sure it is not header click
+        If e.ColumnIndex <= 1 Then Exit Sub ' Make sure it is not the first columns
+
+        Dim currentRow = DG_Effecten.Rows(e.RowIndex)
+        Dim effectNaam As String = TryCast(currentRow.Cells("Effect").Value, String)
+        Dim wledNaam As String = TryCast(DG_Effecten.Columns(e.ColumnIndex).Name, String)
+
+        If effectNaam Is Nothing OrElse wledNaam Is Nothing Then
+            MessageBox.Show("Ongeldige selectie in de effectenlijst.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return
+        End If
+
+        Dim wledIp = ""
+
+        Debug.WriteLine($"DG_Effecten_CellContentClick: effectNaam = {effectNaam}, wledNaam = {wledNaam}")
+
+        ' Haal het IP-adres op uit DG_Devices
+        For Each row As DataGridViewRow In Me.DG_Devices.Rows
+            If TryCast(row.Cells("colInstance").Value, String) = wledNaam Then
+                wledIp = TryCast(row.Cells("colIPAddress").Value, String)
+                Debug.WriteLine($"DG_Effecten_CellContentClick: Found WLED IP = {wledIp}")
+                Exit For
+            End If
+        Next
+
+        If wledIp <> "" Then
+            Dim effectId = -1
+            Dim wledData = wledDevices(wledIp)
+            Dim effecten = TryCast(wledData.Item2("effects"), JArray) ' Haal effecten op uit de JObject
+            If effecten IsNot Nothing Then
+                For i = 0 To effecten.Count - 1
+                    If effecten(i).ToString() = effectNaam Then
+                        effectId = i
+                        Debug.WriteLine($"DG_Effecten_CellContentClick: Found effectId = {effectId}")
+                        Exit For
+                    End If
+                Next
+            End If
+
+            If effectId <> -1 Then
+                Await ApplyEffect(wledIp, effectId)
+            Else
+                MessageBox.Show("Effect niet beschikbaar.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End If
+        Else
+            MessageBox.Show("WLED IP niet gevonden.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End If
+    End Sub
+
+    Private Sub btnSaveShow_Click(sender As Object, e As EventArgs) Handles btnSaveShow.Click
+        Dim Folder As String = My.Settings.DatabaseFolder
+
+        SaveDataGridViewToXml(DG_Devices, Folder + "\Devices.xml")
+        SaveWLEDDevicesToJson(wledDevices, Folder + "\Devices.json")
+        SaveDataGridViewToXml(DG_Effecten, Folder + "\Effects.xml")
+        SaveDataGridViewToXml(DG_Paletten, Folder + "\Paletten.xml")
+        SaveDataGridViewToXml(DG_Show, Folder + "\Show.xml")
+
+        MessageBox.Show("All data has been saved.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information)
+    End Sub
+
+    Private Sub btnLoad_Click(sender As Object, e As EventArgs) Handles btnLoad.Click
+        Dim Folder As String = My.Settings.DatabaseFolder
+
+        LoadJSonToWLEDDevices(wledDevices, Folder + "\Devices.json")
+        LoadXmlToDataGridView(DG_Devices, Folder + "\Devices.xml")
+        LoadXmlToDataGridView(DG_Effecten, Folder + "\Effects.xml")
+        LoadXmlToDataGridView(DG_Paletten, Folder + "\Paletten.xml")
+
+        LoadXmlToDataGridView(DG_Show, Folder + "\Show.xml")
+
+    End Sub
+
+    Private Async Sub DG_Paletten_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Paletten.CellContentClick
+        If e.RowIndex < 0 Then Exit Sub ' Make sure it is not header click
+        If e.ColumnIndex <= 1 Then Exit Sub ' Make sure it is not the first columns
+
+        Dim grid As DataGridView = DirectCast(sender, DataGridView)
+        Dim currentRow = grid.Rows(e.RowIndex)
+        Dim paletteNaam As String = TryCast(currentRow.Cells("Palette").Value, String)
+        Dim wledNaam As String = grid.Columns(e.ColumnIndex).Name ' Dit is de WLED naam
+
+        If paletteNaam Is Nothing OrElse wledNaam Is Nothing Then
+            MessageBox.Show("Ongeldige selectie in de palettenlijst.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return
+        End If
+
+        Dim wledIp = ""
+        Debug.WriteLine($"DG_Paletten_CellContentClick: paletteNaam = {paletteNaam}, wledNaam = {wledNaam}")
+
+        ' Haal het IP-adres op van DG_Devices
+        For Each row As DataGridViewRow In Me.DG_Devices.Rows
+            If TryCast(row.Cells("colInstance").Value, String) = wledNaam Then
+                wledIp = TryCast(row.Cells("colIPAddress").Value, String)
+                Debug.WriteLine($"DG_Paletten_CellContentClick: Found WLED IP = {wledIp}")
+                Exit For
+            End If
+        Next
+
+        If wledIp <> "" Then
+            Dim paletteId = -1
+            Dim wledData = wledDevices(wledIp)
+            Dim paletten = TryCast(wledData.Item2("palettes"), JArray)  ' Haal paletten op uit de JObject
+
+            If Not (paletten Is Nothing) Then
+                For i = 0 To paletten.Count - 1
+                    If paletten(i).ToString() = paletteNaam Then
+                        paletteId = i
+                        Debug.WriteLine($"DG_Paletten_CellContentClick: Found paletteId = {paletteId}")
+                        Exit For
+                    End If
+                Next
+            End If
+
+            If paletteId <> -1 Then
+                Await SendPaletteRequest(wledIp, paletteId)
+            Else
+                MessageBox.Show("Palet niet beschikbaar.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End If
+        Else
+            MessageBox.Show("WLED IP niet gevonden.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End If
+    End Sub
+End Class

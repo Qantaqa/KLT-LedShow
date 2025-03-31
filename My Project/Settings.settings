@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="My" GeneratedClassName="MySettings" UseMySettingsClassName="true">
+  <Profiles />
+  <Settings>
+    <Setting Name="IPRange" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.86.0/24</Value>
+    </Setting>
+    <Setting Name="DatabaseFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">E:\KLT\LedShow\KKLT Led Show v2\KLT LedShow\Database</Value>
+    </Setting>
+    <Setting Name="MonitorControl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Screen 1</Value>
+    </Setting>
+    <Setting Name="MonitorPrimary" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Screen 2</Value>
+    </Setting>
+    <Setting Name="MonitorSecond" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Screen 3</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

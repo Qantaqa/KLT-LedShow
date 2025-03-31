@@ -5,9 +5,12 @@ Imports System.Threading
 Imports System.Threading.Tasks
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
+Imports System.IO
+Imports System.Xml
+Imports System.Diagnostics  ' Toegevoegd voor Process.Start
+Imports System.Windows.Forms ' Toegevoegd voor toegang tot UI-elementen
 
 Public Class FrmMain
-
 
     Private Sub FrmMain_Load_1(sender As Object, e As EventArgs) Handles MyBase.Load
         Try
@@ -20,21 +23,35 @@ Public Class FrmMain
 
             ' Definieer de kolommen voor de DataGridView
             Dim ipColumn As New DataGridViewTextBoxColumn
-            ipColumn.Name = "colIPAddress" ' Gewijzigd in colIPAddress
+            ipColumn.Name = "colIPAddress"
             ipColumn.HeaderText = "IP Address"
             ipColumn.DataPropertyName = "IPAddress"
 
             Dim nameColumn As New DataGridViewTextBoxColumn
-            nameColumn.Name = "colInstance" ' Gewijzigd in colInstance
+            nameColumn.Name = "colInstance"
             nameColumn.HeaderText = "WLED Name"
             nameColumn.DataPropertyName = "WLEDName"
 
-            'DG_Devices.Columns.AddRange(ipColumn, nameColumn)
+            'DG_Devices.Columns.AddRange(ipColumn, nameColumn) ' Voeg de kolommen toe aan de DataGridView
 
             ' Configureer de DataGridView voor de Effecten tab
             DG_Effecten.AllowUserToAddRows = False
             DG_Effecten.AllowUserToDeleteRows = False
             DG_Effecten.ReadOnly = True
+
+            ' Configureer de DataGridView voor de Paletten tab
+            DG_Paletten.AllowUserToAddRows = False
+            DG_Paletten.AllowUserToDeleteRows = False
+            DG_Paletten.ReadOnly = True
+
+            'ShowHandler.ConfigureDG_Show(Me.DG_Show)
+            txtIPRange.Text = My.Settings.IPRange
+            cbMonitorControl.Text = My.Settings.MonitorControl
+            cbMonitorPrime.Text = My.Settings.MonitorPrimary
+            cbMonitorSecond.Text = My.Settings.MonitorSecond
+
+            UpdateMonitorStatusIndicators(cbMonitorControl, cbMonitorPrime, cbMonitorSecond)
+
 
         Catch ex As Exception
             MessageBox.Show($"Fout tijdens laden van form: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -43,145 +60,194 @@ Public Class FrmMain
     End Sub
 
     Private Sub btnScanNetwork_Click(sender As Object, e As EventArgs) Handles btnScanNetwork.Click
-        doScanNetwork_Click(Me.DG_Devices, Me.DG_Effecten)
+        ' Code is verplaatst naar de module DetectDevices
+        DetectDevices.doScanNetwork_Click(Me.DG_Devices, Me.DG_Effecten)
     End Sub
 
     Private Sub DG_Devices_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Devices.CellContentClick
-        do_Devices_CellContentClick(Me.DG_Devices, Me.txt_APIResult, e)
-    End Sub
-
-    Private Async Function ApplyEffect(ip As String, effectId As Integer) As Task
-        Using client As New HttpClient()
-            Try
-                ' Bouw de JSON-payload voor het POST-verzoek
-                Dim payload As String = "{""seg"":[{""fx"":" & effectId & "}]}"
-                Dim content As New StringContent(payload, Encoding.UTF8, "application/json")
-
-                ' Stuur het POST-verzoek naar de WLED API
-                Dim postResponse As HttpResponseMessage = Await client.PostAsync("http://" + ip + "/json/state", content)
-
-                ' Lees de volledige responsinhoud
-                Dim responseContent As String = Await postResponse.Content.ReadAsStringAsync()
-
-                ' Plaats de respons in het tekstveld
-                txt_APIResult.Text = responseContent
-
-                ' Controleer de statuscode van het antwoord
-                If postResponse.IsSuccessStatusCode Then
-                    txt_APIResult.Text = $"Effect met ID '{effectId}' toegepast op '{ip}'."
-                Else
-                    MessageBox.Show($"Fout bij het toepassen van effect (HTTP {postResponse.StatusCode}): {responseContent}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                End If
-
-            Catch ex As HttpRequestException
-                txt_APIResult.Text = $"Fout bij het toepassen van effect: {ex.Message}"
-                MessageBox.Show($"Fout bij het toepassen van effect: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            End Try
-        End Using
-    End Function
-
-
-    Private Async Sub btnApplyEffect_Click(sender As Object, e As EventArgs)
-        If DG_Effecten.SelectedRows.Count > 0 Then
-            Dim selectedEffectName As String = TryCast(DG_Effecten.SelectedRows(0).Cells("Effect").Value, String)
-            Dim selectedWledNaam As String = TryCast(DG_Effecten.SelectedCells(0).OwningColumn.Name, String)
-            If selectedEffectName Is Nothing OrElse selectedWledNaam Is Nothing Then
-                MessageBox.Show("Ongeldige selectie in de effectenlijst.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Return
+        ' Controleer of er op een geldige cel is geklikt (niet de header)
+        If e.RowIndex >= 0 AndAlso e.ColumnIndex >= 0 Then
+            ' Haal de IP-adres op van de geselecteerde rij
+            Dim ipAddress As String = TryCast(DG_Devices.Rows(e.RowIndex).Cells("colIPAddress").Value, String)
+            If Not String.IsNullOrEmpty(ipAddress) Then
+                Try
+                    ' Open de browser met het IP-adres
+                    Process.Start(New ProcessStartInfo($"http://{ipAddress}") With {.UseShellExecute = True})
+                Catch ex As Exception
+                    MessageBox.Show($"Fout bij het openen van de browser: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End Try
             End If
-
-            Dim selectedWledIp = ""
-            Debug.WriteLine($"btnApplyEffect_Click: selectedEffectName = {selectedEffectName}, selectedWledNaam = {selectedWledNaam}")
-
-            For Each keyValuePair In wledDevices
-                If keyValuePair.Value.Item1 = selectedWledNaam Then
-                    selectedWledIp = keyValuePair.Key
-                    Debug.WriteLine($"btnApplyEffect_Click: Found WLED IP = {selectedWledIp}")
-                    Exit For
-                End If
-            Next
-
-            If selectedWledIp <> "" Then
-                Dim effectId = -1
-                Dim wledData = wledDevices(selectedWledIp)
-                Dim effecten = TryCast(wledData.Item2("effects"), JArray) ' Haal effecten op uit de JObject
-                For i = 0 To effecten.Count - 1
-                    If effecten(i).ToString() = selectedEffectName Then
-                        effectId = i
-                        Debug.WriteLine($"btnApplyEffect_Click: Found effectId = {effectId}")
-                        Exit For
-                    End If
-                Next
-                If effectId <> -1 Then
-                    Await ApplyEffect(selectedWledIp, effectId)
-                Else
-                    MessageBox.Show("Effect niet gevonden.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                End If
-            Else
-                MessageBox.Show("WLED IP niet gevonden.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            End If
-        Else
-            MessageBox.Show("Selecteer een effect in de lijst.", "Geen effect geselecteerd", MessageBoxButtons.OK, MessageBoxIcon.Warning)
         End If
     End Sub
 
 
-    Private Async Sub DG_Effecten_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Effecten.CellContentClick
-        If e.RowIndex < 0 Then Exit Sub ' Make sure it is not header click
-        If e.ColumnIndex <= 1 Then Exit Sub ' Make sure it is not the first columns
 
-        Dim currentRow = DG_Effecten.Rows(e.RowIndex)
-        Dim effectNaam As String = TryCast(currentRow.Cells("Effect").Value, String)
-        Dim wledNaam As String = TryCast(DG_Effecten.Columns(e.ColumnIndex).Name, String)
-
-        If effectNaam Is Nothing OrElse wledNaam Is Nothing Then
-            MessageBox.Show("Ongeldige selectie in de effectenlijst.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Return
-        End If
-
-        Dim wledIp = ""
-
-        Debug.WriteLine($"DG_Effecten_CellContentClick: effectNaam = {effectNaam}, wledNaam = {wledNaam}")
-
-        ' Haal het IP-adres op uit DG_Devices
-        For Each row As DataGridViewRow In Me.DG_Devices.Rows
-            If TryCast(row.Cells("colInstance").Value, String) = wledNaam Then
-                wledIp = TryCast(row.Cells("colIPAddress").Value, String)
-                Debug.WriteLine($"DG_Effecten_CellContentClick: Found WLED IP = {wledIp}")
-                Exit For
-            End If
-        Next
-
-        If wledIp <> "" Then
-            Dim effectId = -1
-            Dim wledData = wledDevices(wledIp)
-            Dim effecten = TryCast(wledData.Item2("effects"), JArray) ' Haal effecten op uit de JObject
-            For i = 0 To effecten.Count - 1
-                If effecten(i).ToString() = effectNaam Then
-                    effectId = i
-                    Debug.WriteLine($"DG_Effecten_CellContentClick: Found effectId = {effectId}")
-                    Exit For
-                End If
-            Next
-
-            If effectId <> -1 Then
-                Await ApplyEffect(wledIp, effectId)
-            Else
-                MessageBox.Show("Effect niet beschikbaar.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            End If
-        Else
-            MessageBox.Show("WLED IP niet gevonden.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        End If
+    Private Sub DG_Effecten_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Effecten.CellContentClick
+        ShowHandler.DG_Effecten_CellContentClick(sender, e, Me.DG_Effecten, Me.DG_Devices)
     End Sub
-
 
     Private Sub btnSaveShow_Click(sender As Object, e As EventArgs) Handles btnSaveShow.Click
-        SaveDataGridViewToXml(DG_Show, "Show.xml")
+        Dim Folder As String = My.Settings.DatabaseFolder
+
+        SaveDataGridViewToXml(DG_Devices, Folder + "\Devices.xml")
+        SaveWLEDDevicesToJson(wledDevices, Folder + "\Devices.json")
+        SaveDataGridViewToXml(DG_Effecten, Folder + "\Effects.xml")
+        SaveDataGridViewToXml(DG_Paletten, Folder + "\Paletten.xml")
+        SaveDataGridViewToXml(DG_Show, Folder + "\Show.xml")
 
         MessageBox.Show("All data has been saved.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
 
     Private Sub btnLoad_Click(sender As Object, e As EventArgs) Handles btnLoad.Click
-        LoadXmlToDataGridView(DG_Show, "Show.xml")
+        Dim Folder As String = My.Settings.DatabaseFolder
+
+
+        LoadJSonToWLEDDevices(wledDevices, Folder + "\Devices.json")
+        LoadXmlToDataGridView(DG_Devices, Folder + "\Devices.xml", False)
+        LoadXmlToDataGridView(DG_Effecten, Folder + "\Effects.xml", True)
+        LoadXmlToDataGridView(DG_Paletten, Folder + "\Paletten.xml", True)
+
+        LoadXmlToDataGridView(DG_Show, Folder + "\Show.xml", False)
+
+
+
+        For Each row As DataGridViewRow In DG_Show.Rows
+            ShowHandler.DG_Show_UpdatePulldownField_For_CurrentFixture(DG_Show, New DataGridViewCellEventArgs(0, row.Index))
+            ShowHandler.DG_Show_UpdatePulldownField_For_CurrentEffect(DG_Show, row.Index)
+            ShowHandler.DG_Show_UpdatePulldownField_For_CurrentPalette(DG_Show, row.Index)
+        Next
+
+
+        ShowHandler.UpdateEffectAndPaletteDropdowns(DG_Show, 1)
+    End Sub
+
+    Private Sub DG_Paletten_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Paletten.CellContentClick
+        ShowHandler.DG_Paletten_CellContentClick(sender, e, Me.DG_Paletten, Me.DG_Devices)
+    End Sub
+
+    ' ON ENTER of Cell
+    Private Sub DG_Show_CellEnter(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Show.CellEnter
+        If DG_Show.Rows.Count > 0 AndAlso e.RowIndex >= 0 Then
+            If e.ColumnIndex = DG_Show.Columns("colFixture").Index Then
+                ShowHandler.DG_Show_UpdatePulldownField_For_CurrentFixture(DG_Show, e)
+            End If
+
+            If ((e.ColumnIndex = DG_Show.Columns("colEffect").Index) Or
+                (e.ColumnIndex = DG_Show.Columns("colPalette").Index)) Then
+                ShowHandler.UpdateEffectAndPaletteDropdowns(DG_Show, e.RowIndex)
+            End If
+        End If
+    End Sub
+
+    ' ON CHANGE of Cell
+    Private Sub DG_Show_CellValueChanged(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Show.CellValueChanged
+        If DG_Show.Rows.Count > 0 AndAlso e.RowIndex >= 0 Then
+            If e.ColumnIndex = DG_Show.Columns("colFixture").Index Then
+                ' When fixture is updated, update the other fields
+                ShowHandler.DG_Show_UpdateOtherFieldsWithDefaultValues(DG_Show, e.RowIndex)
+                ShowHandler.DG_Show_UpdatePulldownField_For_CurrentEffect(DG_Show, e.RowIndex)
+                ShowHandler.DG_Show_UpdatePulldownField_For_CurrentPalette(DG_Show, e.RowIndex)
+                ShowHandler.DG_Show_UpdateEffectAndPaletteName(DG_Show, DG_Effecten, DG_Paletten)
+            ElseIf e.ColumnIndex = DG_Show.Columns("colEffect").Index Then
+                'ShowHandler.DG_Show_UpdateWLEDEffect(DG_Show, e.RowIndex, DG_Devices)
+            ElseIf e.ColumnIndex = DG_Show.Columns("colPalette").Index Then
+            ElseIf e.ColumnIndex = DG_Show.Columns("colAct").Index Then
+                ' When act is updated, update the other fields like scene or event number
+                ShowHandler.DG_Show_UpdateActOrSceneNumber(DG_Show, e)
+            End If
+        End If
+    End Sub
+
+    ' ON VALIDATING of Cell
+    Private Sub DG_Show_CellValidating(sender As Object, e As DataGridViewCellValidatingEventArgs) Handles DG_Show.CellValidating
+        ShowHandler.DG_Show_CellValidating(Me.DG_Show, e)
+    End Sub
+
+
+
+    Private Sub DG_Show_RowsAdded(sender As Object, e As DataGridViewRowsAddedEventArgs) Handles DG_Show.RowsAdded
+        ShowHandler.DG_Show_RowsAdded(Me.DG_Show, e)
+    End Sub
+
+    Private Sub ToolStripComboBox1_Click(sender As Object, e As EventArgs) Handles filterAct.Click
+        FilterDG_Show(DG_Show, filterAct)
+    End Sub
+
+    Private Sub btn_DGGrid_AddNewRowBefore_Click(sender As Object, e As EventArgs) Handles btn_DGGrid_AddNewRowBefore.Click
+        DGGrid_AddNewRowBefore_Click(DG_Show)
+    End Sub
+
+    Private Sub btn_DGGrid_AddNewRowAfter_Click(sender As Object, e As EventArgs) Handles btn_DGGrid_AddNewRowAfter.Click
+        DGGrid_AddNewRowAfter_Click(DG_Show)
+    End Sub
+
+    Private Sub btn_DGGrid_RemoveCurrentRow_Click(sender As Object, e As EventArgs) Handles btn_DGGrid_RemoveCurrentRow.Click
+        DGGrid_RemoveCurrentRow_Click(DG_Show)
+    End Sub
+
+    Private Sub DG_Show_DataError(sender As Object, e As DataGridViewDataErrorEventArgs) Handles DG_Show.DataError
+        On Error Resume Next
+        'MessageBox.Show("DG_Show_DataError: " & e.Exception.Message, "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+    End Sub
+
+    Private Sub cbMonitorControl_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbMonitorControl.SelectedIndexChanged
+        My.Settings.MonitorControl = cbMonitorControl.Text
+        My.Settings.Save()
+        MoveAndMaximizeForm(cbMonitorControl.Text)
+    End Sub
+
+    Private Sub cbMonitorPrime_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbMonitorPrime.SelectedIndexChanged
+        My.Settings.MonitorPrimary = cbMonitorPrime.Text
+        My.Settings.Save()
+    End Sub
+
+    Private Sub cbMonitorSecond_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbMonitorSecond.SelectedIndexChanged
+        My.Settings.MonitorSecond = cbMonitorSecond.Text
+        My.Settings.Save()
+    End Sub
+
+    Public Sub MoveAndMaximizeForm(outputValue As String)
+        Dim screenToUse As Screen = Nothing
+
+        Select Case outputValue.ToLower()
+            Case "output 1"
+                screenToUse = Screen.AllScreens(0) 'First screen
+            Case "output 2"
+                If Screen.AllScreens.Length > 1 Then
+                    screenToUse = Screen.AllScreens(1) 'Second screen, if available
+                Else
+                    screenToUse = Screen.AllScreens(0) 'Default to first screen if second not found
+                End If
+            Case "output 3"
+                If Screen.AllScreens.Length > 2 Then
+                    screenToUse = Screen.AllScreens(2) 'Third screen, if available
+                ElseIf Screen.AllScreens.Length > 1 Then
+                    screenToUse = Screen.AllScreens(1) 'Default to second screen if third not found
+                Else
+                    screenToUse = Screen.AllScreens(0) 'Default to first screen if second and third not found
+                End If
+            Case Else
+                'Handle invalid input (e.g., default to the primary screen)
+                screenToUse = Screen.PrimaryScreen
+        End Select
+
+        If screenToUse IsNot Nothing Then
+            StartPosition = FormStartPosition.Manual
+            Location = screenToUse.WorkingArea.Location 'Top-left of the screen's working area
+            WindowState = FormWindowState.Maximized 'Maximize the window
+            Show() 'Ensure the form is shown.
+        Else
+            MessageBox.Show("Could not determine the correct screen.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End If
+
+    End Sub
+
+    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles TimerEverySecond.Tick
+        UpdateMonitorStatusIndicators(cbMonitorControl, cbMonitorPrime, cbMonitorSecond)
+    End Sub
+
+
+    Private Sub DG_Show_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles DG_Show.MouseDoubleClick
+        MsgBox("Mouse Double click")
     End Sub
 End Class

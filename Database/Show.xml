@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DataGridData>
+    <Structure>
+        <Column Name="colAct" Type="System.Windows.Forms.DataGridViewComboBoxColumn" AutoSizeMode="NotSet" />
+        <Column Name="colSceneId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colEventId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colCue" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="Fill" />
+        <Column Name="colFixture" Type="System.Windows.Forms.DataGridViewComboBoxColumn" AutoSizeMode="NotSet" />
+        <Column Name="colStateOnOff" Type="System.Windows.Forms.DataGridViewComboBoxColumn" AutoSizeMode="NotSet" />
+        <Column Name="colEffectId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colEffect" Type="System.Windows.Forms.DataGridViewComboBoxColumn" AutoSizeMode="NotSet" />
+        <Column Name="colPaletteId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colPalette" Type="System.Windows.Forms.DataGridViewComboBoxColumn" AutoSizeMode="NotSet" />
+        <Column Name="colColor1" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colColor2" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colColor3" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colBrightness" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colSpeed" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colIntensity" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colTransition" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colMicrophone" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
+        <Column Name="colFilename" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+    </Structure>
+    <Data>
+        <Row>
+            <colAct>Pre-Show</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>1</colEventId>
+            <colCue>Inloop</colCue>
+            <colFixture>WLED Demo/0</colFixture>
+            <colStateOnOff>True</colStateOnOff>
+            <colEffectId>0</colEffectId>
+            <colEffect>Breathe</colEffect>
+            <colPaletteId>50</colPaletteId>
+            <colPalette>Aurora</colPalette>
+            <colColor1>41215</colColor1>
+            <colColor2>0</colColor2>
+            <colColor3>0</colColor3>
+            <colBrightness>255</colBrightness>
+            <colSpeed>128</colSpeed>
+            <colIntensity>128</colIntensity>
+            <colTransition>0</colTransition>
+            <colMicrophone>False</colMicrophone>
+            <colFilename></colFilename>
+        </Row>
+        <Row>
+            <colAct>Pre-Show</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>1</colEventId>
+            <colCue></colCue>
+            <colFixture>WLED Bureau/0</colFixture>
+            <colStateOnOff>True</colStateOnOff>
+            <colEffectId>0</colEffectId>
+            <colEffect>Solid</colEffect>
+            <colPaletteId>55</colPaletteId>
+            <colPalette>Aurora 2</colPalette>
+            <colColor1>41215</colColor1>
+            <colColor2>0</colColor2>
+            <colColor3>0</colColor3>
+            <colBrightness>255</colBrightness>
+            <colSpeed>128</colSpeed>
+            <colIntensity>128</colIntensity>
+            <colTransition>0</colTransition>
+            <colMicrophone>False</colMicrophone>
+            <colFilename></colFilename>
+        </Row>
+        <Row>
+            <colAct>Pre-Show</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>1</colEventId>
+            <colCue></colCue>
+            <colFixture>** Video **/2</colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect>Unknown Effect</colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette>Unknown Palette</colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colMicrophone>False</colMicrophone>
+            <colFilename></colFilename>
+        </Row>
+        <Row>
+            <colAct>Pre-Show</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>2</colEventId>
+            <colCue>Opening screen</colCue>
+            <colFixture>** Video **/2</colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect>Unknown Effect</colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette>Unknown Palette</colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colMicrophone>False</colMicrophone>
+            <colFilename></colFilename>
+        </Row>
+    </Data>
+</DataGridData>

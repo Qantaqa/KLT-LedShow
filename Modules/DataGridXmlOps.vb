@@ -3,6 +3,8 @@ Imports System.Xml
 Imports System.Windows.Forms
 Imports Newtonsoft.Json.Linq
 Imports System.Net.Http
+Imports Newtonsoft.Json
+Imports KLT_LedShow.My
 
 Module DataGridXmlOps
 
@@ -39,7 +41,7 @@ Module DataGridXmlOps
                 For Each cell As DataGridViewCell In row.Cells
                     writer.WriteStartElement(dataGridView.Columns(cell.ColumnIndex).Name.Replace(" ", "_")) ' Vervang spaties door underscores
                     If cell.Value IsNot Nothing Then
-                        writer.WriteString(StringToHexString(cell.Value.ToString()))
+                        writer.WriteString(cell.Value.ToString())
                     Else
                         writer.WriteString("")
                     End If
@@ -55,16 +57,9 @@ Module DataGridXmlOps
     End Sub
 
 
-    Private Function StringToHexString(input As String) As String
-        Dim hexBuilder As New System.Text.StringBuilder()
-        For Each c As Char In input
-            hexBuilder.Append(String.Format("{0:X2}", AscW(c)))
-        Next
-        Return hexBuilder.ToString()
-    End Function
 
 
-    Public Sub LoadXmlToDataGridView(dataGridView As DataGridView, filePath As String)
+    Public Sub LoadXmlToDataGridView(dataGridView As DataGridView, filePath As String, inclusiveLayout As Boolean)
         If Not File.Exists(filePath) Then
             MessageBox.Show($"Bestand '{filePath}' niet gevonden.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
@@ -76,58 +71,45 @@ Module DataGridXmlOps
 
             ' Clear existing data
             dataGridView.Rows.Clear()
-            dataGridView.Columns.Clear()
 
-            ' Load the structure of the DataGridView
-            Dim structureNode As XmlNode = doc.SelectSingleNode("DataGridData/Structure")
-            If structureNode IsNot Nothing Then
-                For Each columnNode As XmlNode In structureNode.ChildNodes
-                    Dim columnName As String = columnNode.Attributes("Name").Value.Replace("_", " ") ' Replace underscores with spaces
-                    Dim columnType As String = columnNode.Attributes("Type").Value
 
-                    ' Create the column based on the type
-                    Dim newColumn As DataGridViewColumn = Nothing
-                    If columnType = GetType(DataGridViewCheckBoxColumn).ToString() Then
-                        Dim checkBoxColumn As New DataGridViewCheckBoxColumn()
-                        checkBoxColumn.Name = columnName
-                        checkBoxColumn.HeaderText = columnName
-                        If columnNode.Attributes("AutoSizeMode") IsNot Nothing Then
-                            checkBoxColumn.AutoSizeMode = DirectCast(System.Enum.Parse(GetType(DataGridViewAutoSizeColumnMode), columnNode.Attributes("AutoSizeMode").Value), DataGridViewAutoSizeColumnMode)
+            If (inclusiveLayout) Then
+                dataGridView.Columns.Clear()
+                ' Load the structure of the DataGridView
+                Dim structureNode As XmlNode = doc.SelectSingleNode("DataGridData/Structure")
+                If structureNode IsNot Nothing Then
+                    For Each columnNode As XmlNode In structureNode.ChildNodes
+                        Dim columnName As String = columnNode.Attributes("Name").Value.Replace("_", " ") ' Replace underscores with spaces
+                        Dim columnType As String = columnNode.Attributes("Type").Value
+
+                        ' Create the column based on the type
+                        Dim newColumn As DataGridViewColumn = Nothing
+                        If columnType = GetType(DataGridViewCheckBoxColumn).ToString() Then
+                            Dim checkBoxColumn As New DataGridViewCheckBoxColumn()
+                            checkBoxColumn.Name = columnName
+                            checkBoxColumn.HeaderText = columnName
+                            If columnNode.Attributes("AutoSizeMode") IsNot Nothing Then
+                                checkBoxColumn.AutoSizeMode = DirectCast(System.Enum.Parse(GetType(DataGridViewAutoSizeColumnMode), columnNode.Attributes("AutoSizeMode").Value), DataGridViewAutoSizeColumnMode)
+                            End If
+                            newColumn = checkBoxColumn
+                        Else
+                            Dim textColumn As New DataGridViewTextBoxColumn()
+                            textColumn.Name = columnName
+                            textColumn.HeaderText = columnName
+                            ' Load MaxLength if available
+                            If columnNode.Attributes("MaxLength") IsNot Nothing Then
+                                textColumn.MaxInputLength = Integer.Parse(columnNode.Attributes("MaxLength").Value)
+                            End If
+                            If columnNode.Attributes("AutoSizeMode") IsNot Nothing Then
+                                textColumn.AutoSizeMode = DirectCast(System.Enum.Parse(GetType(DataGridViewAutoSizeColumnMode), columnNode.Attributes("AutoSizeMode").Value), DataGridViewAutoSizeColumnMode)
+                            End If
+                            newColumn = textColumn
                         End If
-                        newColumn = checkBoxColumn
-                    Else
-                        Dim textColumn As New DataGridViewTextBoxColumn()
-                        textColumn.Name = columnName
-                        textColumn.HeaderText = columnName
-                        ' Load MaxLength if available
-                        If columnNode.Attributes("MaxLength") IsNot Nothing Then
-                            textColumn.MaxInputLength = Integer.Parse(columnNode.Attributes("MaxLength").Value)
+                        If newColumn IsNot Nothing Then
+                            dataGridView.Columns.Add(newColumn)
                         End If
-                        If columnNode.Attributes("AutoSizeMode") IsNot Nothing Then
-                            textColumn.AutoSizeMode = DirectCast(System.Enum.Parse(GetType(DataGridViewAutoSizeColumnMode), columnNode.Attributes("AutoSizeMode").Value), DataGridViewAutoSizeColumnMode)
-                        End If
-                        newColumn = textColumn
-                    End If
-                    If newColumn IsNot Nothing Then
-                        dataGridView.Columns.Add(newColumn)
-                    End If
-                Next
-            End If
-
-            ' Populate wledDevices dictionary from loaded device data
-            If dataGridView Is dataGridView Then
-                wledDevices.Clear() ' Clear the dictionary before loading
-                For Each row As DataGridViewRow In dataGridView.Rows
-                    Dim ipAddress As String = TryCast(row.Cells("colIPAddress").Value, String)
-                    Dim wledName As String = TryCast(row.Cells("colInstance").Value, String)
-
-                    ' Load all data for the device.
-                    Dim wledData As JObject = LoadWLEDData(ipAddress)
-
-                    If Not String.IsNullOrEmpty(ipAddress) AndAlso Not String.IsNullOrEmpty(wledName) Then
-                        wledDevices.Add(ipAddress, New Tuple(Of String, JObject)(wledName, wledData))
-                    End If
-                Next
+                    Next
+                End If
             End If
 
             ' Load the data of the DataGridView
@@ -137,11 +119,16 @@ Module DataGridXmlOps
                     Dim rowValues As New List(Of Object)()
                     For Each cellNode As XmlNode In rowNode.ChildNodes
                         Dim columnName As String = cellNode.Name.Replace("_", " ") ' Replace underscores with spaces
-                        Dim cellValue As String = HexStringToString(cellNode.InnerText) ' Translate hex value back to string
+                        Dim cellValue As String = cellNode.InnerText ' Translate hex value back to string
 
                         If dataGridView.Columns.Contains(columnName) Then
-                            If TypeOf dataGridView.Columns(columnName) Is DataGridViewCheckBoxColumn Then
-                                Dim boolValue As Boolean = Boolean.Parse(cellValue)
+                            If (TypeOf dataGridView.Columns(columnName) Is DataGridViewCheckBoxColumn) Or (cellValue = "True") Or (cellValue = "False") Then
+                                Dim boolValue As Boolean
+                                If cellValue Is Nothing Or cellValue = "" Then
+                                    boolValue = False
+                                Else
+                                    boolValue = Boolean.Parse(cellValue)
+                                End If
                                 rowValues.Add(boolValue)
                             Else
                                 rowValues.Add(cellValue)
@@ -159,35 +146,60 @@ Module DataGridXmlOps
 
 
 
-    Private Function HexStringToString(hexString As String) As String
-        Dim result As New System.Text.StringBuilder()
-        For i As Integer = 0 To hexString.Length - 1 Step 2
-            Dim byteValue As Byte = Byte.Parse(hexString.Substring(i, 2), System.Globalization.NumberStyles.HexNumber)
-            result.Append(ChrW(byteValue))
-        Next
-        Return result.ToString()
-    End Function
 
 
-    Private Function LoadWLEDData(ipAddress As String) As JObject
-        Dim wledData As New JObject
+
+    Public Sub LoadJSonToWLEDDevices(wledDevices As Dictionary(Of String, Tuple(Of String, JObject)), filename As String)
+        If File.Exists(filename) Then
+            Try
+                Dim jsonString As String = File.ReadAllText(filename)
+                Dim savedDevices As Dictionary(Of String, Dictionary(Of String, Object)) = JsonConvert.DeserializeObject(Of Dictionary(Of String, Dictionary(Of String, Object)))(jsonString)
+
+                wledDevices.Clear() ' Clear de huidige lijst
+
+                ' Converteer de geladen data naar het Tuple-formaat
+                For Each kvp In savedDevices
+                    Dim ipAddress As String = kvp.Key
+                    Dim deviceData As Dictionary(Of String, Object) = kvp.Value
+
+                    ' Haal de naam op, default naar "Unknown" als niet gevonden
+                    Dim name As String = If(deviceData.ContainsKey("name"), deviceData("name").ToString(), "Unknown")
+
+                    ' Zet de rest van de data om naar een JObject
+                    Dim jObjectData As JObject = JObject.FromObject(deviceData)
+
+                    wledDevices.Add(ipAddress, New Tuple(Of String, JObject)(name, jObjectData))
+                Next
+            Catch ex As Exception
+                MessageBox.Show($"Fout bij het laden van opgeslagen WLED-apparaten: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                wledDevices.Clear()
+            End Try
+        End If
+    End Sub
+
+    ''' <summary>
+    ''' Slaat de WLED-apparaten op in een JSON-bestand.
+    ''' </summary>
+    Public Sub SaveWLEDDevicesToJson(wledDevices As Dictionary(Of String, Tuple(Of String, JObject)), filename As String)
         Try
-            ' Maak een HTTP-client object.
-            Using client = New HttpClient()
-                ' Haal de JSON op van de WLED-instantie.  Zorg ervoor dat het een geldige URL is.
-                Dim response = client.GetAsync($"http://{ipAddress}/json").Result
-                response.EnsureSuccessStatusCode() ' Gooi een exception als de request niet succesvol is.
-                Dim jsonString = response.Content.ReadAsStringAsync().Result
-                ' Parse de JSON.
-                wledData = JObject.Parse(jsonString)
-            End Using
+            ' Converteer de data naar een serialiseerbaar formaat (Dictionary van Dictionary)
+            Dim serializableDevices As New Dictionary(Of String, Dictionary(Of String, Object))()
+            For Each kvp In wledDevices
+                Dim ipAddress As String = kvp.Key
+                Dim deviceTuple As Tuple(Of String, JObject) = kvp.Value
+                Dim deviceData As New Dictionary(Of String, Object)()
+                deviceData.Add("name", deviceTuple.Item1) ' Sla de naam op
+                ' Zet de JObject om naar een Dictionary
+                For Each prop In deviceTuple.Item2.Properties
+                    deviceData.Add(prop.Name, prop.Value)
+                Next
+                serializableDevices.Add(ipAddress, deviceData)
+            Next
+
+            Dim jsonString As String = JsonConvert.SerializeObject(serializableDevices, Newtonsoft.Json.Formatting.Indented)
+            File.WriteAllText(filename, jsonString)
         Catch ex As Exception
-            ' Log de exception.  Dit is belangrijk voor debugging.
-            Debug.WriteLine($"Exception in LoadWLEDData: {ex.Message}")
-            ' Retourneer een lege JObject.  Dit voorkomt een NullReferenceException.
+            MessageBox.Show($"Fout bij het opslaan van WLED-apparaten: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
-        Return wledData
-    End Function
-
-
+    End Sub
 End Module
