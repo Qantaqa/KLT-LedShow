@@ -118,46 +118,67 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="iconBlackBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconBlackBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="iconBlueBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconBlueBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="iconGreyBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconGreyBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="iconRedBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconRedBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="iconPurpleBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconPurpleBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="iconOrangeBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconOrangeBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="iconGreenBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconGreenBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="iconBlackBullet1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconBlackBullet1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="iconBlueBullet1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconBlueBullet1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="iconGreenBullet1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconGreenBullet1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="iconGreyBullet1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconGreyBullet1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="iconOrangeBullet1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconOrangeBullet1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="iconPurpleBullet1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconPurpleBullet1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="iconOrangeBullet1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconOrangeBullet1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="logo_kklt_inverted1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\logo_kklt_inverted1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconRedBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconRedBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconScanNetwork_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconScanNetwork_2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconOrangeBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconOrangeBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconGreyBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconGreyBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconScanNetwork_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconScanNetwork_3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconScanNetwork" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconScanNetwork.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconPurpleBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconPurpleBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconBlackBullet1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconBlackBullet1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="iconRedBullet1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconRedBullet1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconBlueBullet1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconBlueBullet1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconGreyBullet1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconGreyBullet1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconGreenBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconGreenBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconBlueBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconBlueBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconBlackBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconBlackBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="logo_kklt_inverted" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\logo_kklt_inverted.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconLocked" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconLocked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconUnlocked_Green" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconUnlocked_Green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

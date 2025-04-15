@@ -1,12 +1,9 @@
 ﻿Imports System.IO
 Imports System.Xml
-Imports System.Windows.Forms
-Imports Newtonsoft.Json.Linq
-Imports System.Net.Http
 Imports Newtonsoft.Json
-Imports KLT_LedShow.My
+Imports Newtonsoft.Json.Linq
 
-Module DataGridXmlOps
+Module SaveLoad
 
     Public Sub SaveDataGridViewToXml(dataGridView As DataGridView, filePath As String)
         Dim settings As New XmlWriterSettings()
@@ -201,5 +198,42 @@ Module DataGridXmlOps
         Catch ex As Exception
             MessageBox.Show($"Fout bij het opslaan van WLED-apparaten: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
+    End Sub
+
+    Public Sub SaveAll()
+        Dim Folder As String = My.Settings.DatabaseFolder
+
+        SaveDataGridViewToXml(FrmMain.DG_Devices, Folder + "\Devices.xml")
+        SaveWLEDDevicesToJson(wledDevices, Folder + "\Devices.json")
+        SaveDataGridViewToXml(FrmMain.DG_Effecten, Folder + "\Effects.xml")
+        SaveDataGridViewToXml(FrmMain.DG_Paletten, Folder + "\Paletten.xml")
+        SaveDataGridViewToXml(FrmMain.DG_Show, Folder + "\Show.xml")
+
+        MessageBox.Show("All data has been saved.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+    End Sub
+
+    Public Sub LoadAll()
+        Dim Folder As String = My.Settings.DatabaseFolder
+
+
+        LoadJSonToWLEDDevices(wledDevices, Folder + "\Devices.json")
+        LoadXmlToDataGridView(FrmMain.DG_Devices, Folder + "\Devices.xml", False)
+        LoadXmlToDataGridView(FrmMain.DG_Effecten, Folder + "\Effects.xml", True)
+        LoadXmlToDataGridView(FrmMain.DG_Paletten, Folder + "\Paletten.xml", True)
+
+        LoadXmlToDataGridView(FrmMain.DG_Show, Folder + "\Show.xml", False)
+
+
+
+        For Each row As DataGridViewRow In FrmMain.DG_Show.Rows
+            UpdateFixuresPulldown(FrmMain.DG_Show)
+            UpdateEffectenPulldown_ForEachWLED()
+            UpdatePalettenPulldown_ForEachWLED()
+
+        Next
+
+
+
     End Sub
 End Module

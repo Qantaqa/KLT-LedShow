@@ -4,22 +4,26 @@
         <Column Name="colIPAddress" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
         <Column Name="colInstance" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="Fill" />
         <Column Name="colNumberOfSegments" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colPreview" Type="System.Windows.Forms.DataGridViewImageColumn" AutoSizeMode="NotSet" />
     </Structure>
     <Data>
         <Row>
-            <colIPAddress>192.168.86.69</colIPAddress>
-            <colInstance>WLED Demo</colInstance>
-            <colNumberOfSegments>1</colNumberOfSegments>
+            <colIPAddress>192.168.86.44</colIPAddress>
+            <colInstance>WLED Demo 2 Long</colInstance>
+            <colNumberOfSegments>2</colNumberOfSegments>
+            <colPreview></colPreview>
         </Row>
         <Row>
-            <colIPAddress>192.168.86.62</colIPAddress>
-            <colInstance>WLED Monitor</colInstance>
+            <colIPAddress>192.168.86.58</colIPAddress>
+            <colInstance>WLED Demo 1</colInstance>
             <colNumberOfSegments>1</colNumberOfSegments>
+            <colPreview></colPreview>
         </Row>
         <Row>
-            <colIPAddress>192.168.86.63</colIPAddress>
-            <colInstance>WLED Bureau</colInstance>
+            <colIPAddress>192.168.86.59</colIPAddress>
+            <colInstance>WLED Demo 3 Short</colInstance>
             <colNumberOfSegments>1</colNumberOfSegments>
+            <colPreview></colPreview>
         </Row>
     </Data>
 </DataGridData>

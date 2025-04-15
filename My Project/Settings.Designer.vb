@@ -113,6 +113,30 @@ Namespace My
                 Me("MonitorSecond") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("Titanic")>  _
+        Public Property ProjectName() As String
+            Get
+                Return CType(Me("ProjectName"),String)
+            End Get
+            Set
+                Me("ProjectName") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property Locked() As Boolean
+            Get
+                Return CType(Me("Locked"),Boolean)
+            End Get
+            Set
+                Me("Locked") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

@@ -17,5 +17,11 @@
     <Setting Name="MonitorSecond" Type="System.String" Scope="User">
       <Value Profile="(Default)">Screen 3</Value>
     </Setting>
+    <Setting Name="ProjectName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Titanic</Value>
+    </Setting>
+    <Setting Name="Locked" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
