@@ -23,5 +23,11 @@
     <Setting Name="Locked" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="PaletteImagesPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">E:\KLT\LedShow\KKLT Led Show v2\ColorMaps</Value>
+    </Setting>
+    <Setting Name="EffectsImagePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">E:\KLT\LedShow\KKLT Led Show v2\Effects</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

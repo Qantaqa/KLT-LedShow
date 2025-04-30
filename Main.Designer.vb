@@ -27,13 +27,32 @@ Partial Class FrmMain
         Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         DG_Devices = New DataGridView()
-        colIPAddress = New DataGridViewTextBoxColumn()
-        colInstance = New DataGridViewTextBoxColumn()
-        colNumberOfSegments = New DataGridViewTextBoxColumn()
-        colPreview = New DataGridViewImageColumn()
         DG_Effecten = New DataGridView()
-        TabControl1 = New TabControl()
+        TabControl = New TabControl()
         TabShow = New TabPage()
+        gb_Controls = New GroupBox()
+        lblControl_TimeLeft = New Label()
+        btnControl_NextScene = New Button()
+        btnControl_NextEvent = New Button()
+        btnControl_Start = New Button()
+        gb_DetailWLed = New GroupBox()
+        Label13 = New Label()
+        Label12 = New Label()
+        detailWLed_Effect = New PictureBox()
+        detailWLed__EffectName = New Label()
+        GroupBox11 = New GroupBox()
+        detailWLed_Color3 = New PictureBox()
+        GroupBox10 = New GroupBox()
+        detailWLed_Color2 = New PictureBox()
+        GroupBox9 = New GroupBox()
+        detailWLed_Color1 = New PictureBox()
+        Label9 = New Label()
+        detailWLed_Speed = New TrackBar()
+        Label8 = New Label()
+        detailWLed_Intensity = New TrackBar()
+        Label7 = New Label()
+        detailWLed_Brightness = New TrackBar()
+        detailWLed_Palette = New PictureBox()
         GroupBox3 = New GroupBox()
         WMP_Preview_B2 = New AxWMPLib.AxWindowsMediaPlayer()
         gbMonitor1 = New GroupBox()
@@ -47,9 +66,11 @@ Partial Class FrmMain
         ToolStripSeparator2 = New ToolStripSeparator()
         btnLockUnlocked = New ToolStripButton()
         DG_Show = New DataGridView()
+        btnApply = New DataGridViewButtonColumn()
         colAct = New DataGridViewComboBoxColumn()
         colSceneId = New DataGridViewTextBoxColumn()
         colEventId = New DataGridViewTextBoxColumn()
+        colTimer = New DataGridViewTextBoxColumn()
         colCue = New DataGridViewTextBoxColumn()
         colFixture = New DataGridViewComboBoxColumn()
         colStateOnOff = New DataGridViewComboBoxColumn()
@@ -68,15 +89,58 @@ Partial Class FrmMain
         colRepeat = New DataGridViewCheckBoxColumn()
         colMicrophone = New DataGridViewCheckBoxColumn()
         colFilename = New DataGridViewTextBoxColumn()
+        TabDMX = New TabPage()
+        TrackBar4 = New TrackBar()
+        TrackBar5 = New TrackBar()
+        TrackBar6 = New TrackBar()
+        TrackBar1 = New TrackBar()
+        TrackBar2 = New TrackBar()
+        TrackBar3 = New TrackBar()
+        DMX_1_B = New TrackBar()
+        DMX_1_G = New TrackBar()
+        DMX_1_R = New TrackBar()
+        DMX_Master = New TrackBar()
         TabDevices = New TabPage()
+        RichTextBox1 = New RichTextBox()
         ToolStrip_Devices = New ToolStrip()
         LblDeviceStatus = New ToolStripLabel()
         btnScanNetworkForWLed = New ToolStripButton()
+        btnPingDevice = New ToolStripButton()
+        btnDeleteDevice = New ToolStripButton()
+        btnAddDevice = New ToolStripButton()
+        btnGenerateStage = New ToolStripButton()
+        btnStartDMXSync = New ToolStripButton()
+        TabGroups = New TabPage()
+        RichTextBox4 = New RichTextBox()
+        ToolStrip1 = New ToolStrip()
+        btnGroupDeleteRow = New ToolStripButton()
+        btnGroupAddRowBefore = New ToolStripButton()
+        btnGroupAddRowAfter = New ToolStripButton()
+        DG_Groups = New DataGridView()
+        colGroupName = New DataGridViewTextBoxColumn()
+        colGroupFixture = New DataGridViewComboBoxColumn()
+        colGroupStartLedNr = New DataGridViewTextBoxColumn()
+        colGroupStopLedNr = New DataGridViewTextBoxColumn()
+        colGroupOrder = New DataGridViewTextBoxColumn()
+        TabSegments = New TabPage()
+        pb_Stage = New PictureBox()
+        ToolStripSegments = New ToolStrip()
+        btnUpdateStage = New ToolStripButton()
         TabEffects = New TabPage()
+        ToolStrip_Effecten = New ToolStrip()
+        btnTestExistanceEffects = New ToolStripButton()
+        RichTextBox2 = New RichTextBox()
         TabPaletten = New TabPage()
+        RichTextBox3 = New RichTextBox()
+        ToolStrip_Paletten = New ToolStrip()
+        ToolStripButton1 = New ToolStripButton()
         DG_Paletten = New DataGridView()
         TabSettings = New TabPage()
         GroupBox8 = New GroupBox()
+        settings_EffectsPath = New TextBox()
+        Label11 = New Label()
+        settings_PalettesPath = New TextBox()
+        Label10 = New Label()
         settings_ProjectName = New TextBox()
         Label6 = New Label()
         btnProjectFolder = New Button()
@@ -115,27 +179,77 @@ Partial Class FrmMain
         lblIPRange = New Label()
         ToolStrip_Form = New ToolStrip()
         btnSaveShow = New ToolStripButton()
-        btnLoad = New ToolStripButton()
         ToolStripLabel1 = New ToolStripLabel()
+        btnLoad = New ToolStripDropDownButton()
+        SegmentsStageToolStripMenuItem = New ToolStripMenuItem()
+        btnLoadEffectPalettes = New ToolStripMenuItem()
+        btnLoadShow = New ToolStripMenuItem()
+        btnLoadAll = New ToolStripMenuItem()
         TimerEverySecond = New Timer(components)
         PictureBox1 = New PictureBox()
         OpenFileDialog1 = New OpenFileDialog()
         lblTitleProject = New Label()
         lblCurrentTime = New Label()
+        TimerNextEvent = New Timer(components)
+        TimerPingDevices = New Timer(components)
+        colIPAddress = New DataGridViewTextBoxColumn()
+        colInstance = New DataGridViewTextBoxColumn()
+        colNumberOfSegments = New DataGridViewTextBoxColumn()
+        colStartUniverse = New DataGridViewTextBoxColumn()
+        colEndUniverse = New DataGridViewTextBoxColumn()
+        colStartDMXChannel = New DataGridViewTextBoxColumn()
+        colProtocol = New DataGridViewComboBoxColumn()
+        colLayout = New DataGridViewTextBoxColumn()
+        colLedCount = New DataGridViewTextBoxColumn()
+        colPriority = New DataGridViewTextBoxColumn()
+        colEnabled = New DataGridViewCheckBoxColumn()
+        colOnline = New DataGridViewImageColumn()
         CType(DG_Devices, ComponentModel.ISupportInitialize).BeginInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).BeginInit()
-        TabControl1.SuspendLayout()
+        TabControl.SuspendLayout()
         TabShow.SuspendLayout()
+        gb_Controls.SuspendLayout()
+        gb_DetailWLed.SuspendLayout()
+        CType(detailWLed_Effect, ComponentModel.ISupportInitialize).BeginInit()
+        GroupBox11.SuspendLayout()
+        CType(detailWLed_Color3, ComponentModel.ISupportInitialize).BeginInit()
+        GroupBox10.SuspendLayout()
+        CType(detailWLed_Color2, ComponentModel.ISupportInitialize).BeginInit()
+        GroupBox9.SuspendLayout()
+        CType(detailWLed_Color1, ComponentModel.ISupportInitialize).BeginInit()
+        CType(detailWLed_Speed, ComponentModel.ISupportInitialize).BeginInit()
+        CType(detailWLed_Intensity, ComponentModel.ISupportInitialize).BeginInit()
+        CType(detailWLed_Brightness, ComponentModel.ISupportInitialize).BeginInit()
+        CType(detailWLed_Palette, ComponentModel.ISupportInitialize).BeginInit()
         GroupBox3.SuspendLayout()
         CType(WMP_Preview_B2, ComponentModel.ISupportInitialize).BeginInit()
         gbMonitor1.SuspendLayout()
         CType(WMP_Preview_B1, ComponentModel.ISupportInitialize).BeginInit()
         ToolStip_Show.SuspendLayout()
         CType(DG_Show, ComponentModel.ISupportInitialize).BeginInit()
+        TabDMX.SuspendLayout()
+        CType(TrackBar4, ComponentModel.ISupportInitialize).BeginInit()
+        CType(TrackBar5, ComponentModel.ISupportInitialize).BeginInit()
+        CType(TrackBar6, ComponentModel.ISupportInitialize).BeginInit()
+        CType(TrackBar1, ComponentModel.ISupportInitialize).BeginInit()
+        CType(TrackBar2, ComponentModel.ISupportInitialize).BeginInit()
+        CType(TrackBar3, ComponentModel.ISupportInitialize).BeginInit()
+        CType(DMX_1_B, ComponentModel.ISupportInitialize).BeginInit()
+        CType(DMX_1_G, ComponentModel.ISupportInitialize).BeginInit()
+        CType(DMX_1_R, ComponentModel.ISupportInitialize).BeginInit()
+        CType(DMX_Master, ComponentModel.ISupportInitialize).BeginInit()
         TabDevices.SuspendLayout()
         ToolStrip_Devices.SuspendLayout()
+        TabGroups.SuspendLayout()
+        ToolStrip1.SuspendLayout()
+        CType(DG_Groups, ComponentModel.ISupportInitialize).BeginInit()
+        TabSegments.SuspendLayout()
+        CType(pb_Stage, ComponentModel.ISupportInitialize).BeginInit()
+        ToolStripSegments.SuspendLayout()
         TabEffects.SuspendLayout()
+        ToolStrip_Effecten.SuspendLayout()
         TabPaletten.SuspendLayout()
+        ToolStrip_Paletten.SuspendLayout()
         CType(DG_Paletten, ComponentModel.ISupportInitialize).BeginInit()
         TabSettings.SuspendLayout()
         GroupBox8.SuspendLayout()
@@ -163,80 +277,314 @@ Partial Class FrmMain
         ' DG_Devices
         ' 
         DG_Devices.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        DG_Devices.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader
         DG_Devices.BackgroundColor = Color.DimGray
-        DG_Devices.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DG_Devices.Columns.AddRange(New DataGridViewColumn() {colIPAddress, colInstance, colNumberOfSegments, colPreview})
-        DG_Devices.Location = New Point(3, 31)
+        DG_Devices.Columns.AddRange(New DataGridViewColumn() {colIPAddress, colInstance, colNumberOfSegments, colStartUniverse, colEndUniverse, colStartDMXChannel, colProtocol, colLayout, colLedCount, colPriority, colEnabled, colOnline})
+        DG_Devices.Location = New Point(0, 69)
         DG_Devices.Name = "DG_Devices"
-        DG_Devices.Size = New Size(1429, 601)
+        DG_Devices.RowHeadersWidth = 10
+        DG_Devices.Size = New Size(1836, 780)
         DG_Devices.TabIndex = 1
-        ' 
-        ' colIPAddress
-        ' 
-        colIPAddress.HeaderText = "IP Address"
-        colIPAddress.Name = "colIPAddress"
-        ' 
-        ' colInstance
-        ' 
-        colInstance.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-        colInstance.HeaderText = "Omschrijving"
-        colInstance.Name = "colInstance"
-        ' 
-        ' colNumberOfSegments
-        ' 
-        colNumberOfSegments.HeaderText = "Segments"
-        colNumberOfSegments.Name = "colNumberOfSegments"
-        ' 
-        ' colPreview
-        ' 
-        colPreview.HeaderText = "Peek"
-        colPreview.Name = "colPreview"
-        colPreview.ReadOnly = True
-        colPreview.Width = 1000
         ' 
         ' DG_Effecten
         ' 
+        DG_Effecten.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         DG_Effecten.BackgroundColor = Color.DimGray
         DG_Effecten.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DG_Effecten.Dock = DockStyle.Fill
-        DG_Effecten.Location = New Point(3, 3)
+        DG_Effecten.Location = New Point(3, 71)
         DG_Effecten.Name = "DG_Effecten"
-        DG_Effecten.Size = New Size(1429, 650)
+        DG_Effecten.RowHeadersWidth = 10
+        DG_Effecten.Size = New Size(1830, 775)
         DG_Effecten.TabIndex = 2
         ' 
-        ' TabControl1
+        ' TabControl
         ' 
-        TabControl1.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        TabControl1.Controls.Add(TabShow)
-        TabControl1.Controls.Add(TabDevices)
-        TabControl1.Controls.Add(TabEffects)
-        TabControl1.Controls.Add(TabPaletten)
-        TabControl1.Controls.Add(TabSettings)
-        TabControl1.Location = New Point(0, 77)
-        TabControl1.Name = "TabControl1"
-        TabControl1.SelectedIndex = 0
-        TabControl1.Size = New Size(1443, 684)
-        TabControl1.TabIndex = 3
+        TabControl.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        TabControl.Controls.Add(TabShow)
+        TabControl.Controls.Add(TabDMX)
+        TabControl.Controls.Add(TabDevices)
+        TabControl.Controls.Add(TabGroups)
+        TabControl.Controls.Add(TabSegments)
+        TabControl.Controls.Add(TabEffects)
+        TabControl.Controls.Add(TabPaletten)
+        TabControl.Controls.Add(TabSettings)
+        TabControl.Location = New Point(0, 77)
+        TabControl.Name = "TabControl"
+        TabControl.SelectedIndex = 0
+        TabControl.Size = New Size(1844, 877)
+        TabControl.TabIndex = 3
         ' 
         ' TabShow
         ' 
         TabShow.BackColor = Color.DimGray
+        TabShow.Controls.Add(gb_Controls)
+        TabShow.Controls.Add(gb_DetailWLed)
         TabShow.Controls.Add(GroupBox3)
         TabShow.Controls.Add(gbMonitor1)
         TabShow.Controls.Add(ToolStip_Show)
         TabShow.Controls.Add(DG_Show)
         TabShow.Location = New Point(4, 24)
         TabShow.Name = "TabShow"
-        TabShow.Size = New Size(1435, 656)
+        TabShow.Size = New Size(1836, 849)
         TabShow.TabIndex = 2
         TabShow.Text = "Show"
+        ' 
+        ' gb_Controls
+        ' 
+        gb_Controls.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        gb_Controls.AutoSize = True
+        gb_Controls.Controls.Add(lblControl_TimeLeft)
+        gb_Controls.Controls.Add(btnControl_NextScene)
+        gb_Controls.Controls.Add(btnControl_NextEvent)
+        gb_Controls.Controls.Add(btnControl_Start)
+        gb_Controls.ForeColor = Color.Gold
+        gb_Controls.Location = New Point(798, 661)
+        gb_Controls.Name = "gb_Controls"
+        gb_Controls.Size = New Size(835, 186)
+        gb_Controls.TabIndex = 7
+        gb_Controls.TabStop = False
+        gb_Controls.Text = "Show controls"
+        ' 
+        ' lblControl_TimeLeft
+        ' 
+        lblControl_TimeLeft.BackColor = Color.Black
+        lblControl_TimeLeft.BorderStyle = BorderStyle.Fixed3D
+        lblControl_TimeLeft.FlatStyle = FlatStyle.Flat
+        lblControl_TimeLeft.ForeColor = Color.White
+        lblControl_TimeLeft.Image = My.Resources.Resources.iconTime
+        lblControl_TimeLeft.ImageAlign = ContentAlignment.MiddleLeft
+        lblControl_TimeLeft.Location = New Point(419, 23)
+        lblControl_TimeLeft.Name = "lblControl_TimeLeft"
+        lblControl_TimeLeft.Size = New Size(129, 40)
+        lblControl_TimeLeft.TabIndex = 3
+        lblControl_TimeLeft.Text = "00:00"
+        lblControl_TimeLeft.TextAlign = ContentAlignment.MiddleRight
+        ' 
+        ' btnControl_NextScene
+        ' 
+        btnControl_NextScene.BackColor = Color.Black
+        btnControl_NextScene.ForeColor = Color.White
+        btnControl_NextScene.Image = My.Resources.Resources.iconFastForward
+        btnControl_NextScene.ImageAlign = ContentAlignment.MiddleRight
+        btnControl_NextScene.Location = New Point(111, 70)
+        btnControl_NextScene.Name = "btnControl_NextScene"
+        btnControl_NextScene.Size = New Size(302, 41)
+        btnControl_NextScene.TabIndex = 2
+        btnControl_NextScene.Text = "Volgende scene"
+        btnControl_NextScene.UseVisualStyleBackColor = False
+        ' 
+        ' btnControl_NextEvent
+        ' 
+        btnControl_NextEvent.BackColor = Color.Black
+        btnControl_NextEvent.ForeColor = Color.White
+        btnControl_NextEvent.Image = My.Resources.Resources.iconPlay
+        btnControl_NextEvent.ImageAlign = ContentAlignment.MiddleRight
+        btnControl_NextEvent.Location = New Point(111, 23)
+        btnControl_NextEvent.Name = "btnControl_NextEvent"
+        btnControl_NextEvent.Size = New Size(302, 41)
+        btnControl_NextEvent.TabIndex = 1
+        btnControl_NextEvent.Text = "Volgende event"
+        btnControl_NextEvent.UseVisualStyleBackColor = False
+        ' 
+        ' btnControl_Start
+        ' 
+        btnControl_Start.BackColor = Color.Black
+        btnControl_Start.ForeColor = Color.White
+        btnControl_Start.Image = My.Resources.Resources.iconChecked
+        btnControl_Start.ImageAlign = ContentAlignment.MiddleLeft
+        btnControl_Start.Location = New Point(6, 22)
+        btnControl_Start.Name = "btnControl_Start"
+        btnControl_Start.Size = New Size(99, 41)
+        btnControl_Start.TabIndex = 0
+        btnControl_Start.Text = "Start"
+        btnControl_Start.UseVisualStyleBackColor = False
+        ' 
+        ' gb_DetailWLed
+        ' 
+        gb_DetailWLed.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
+        gb_DetailWLed.Controls.Add(Label13)
+        gb_DetailWLed.Controls.Add(Label12)
+        gb_DetailWLed.Controls.Add(detailWLed_Effect)
+        gb_DetailWLed.Controls.Add(detailWLed__EffectName)
+        gb_DetailWLed.Controls.Add(GroupBox11)
+        gb_DetailWLed.Controls.Add(GroupBox10)
+        gb_DetailWLed.Controls.Add(GroupBox9)
+        gb_DetailWLed.Controls.Add(Label9)
+        gb_DetailWLed.Controls.Add(detailWLed_Speed)
+        gb_DetailWLed.Controls.Add(Label8)
+        gb_DetailWLed.Controls.Add(detailWLed_Intensity)
+        gb_DetailWLed.Controls.Add(Label7)
+        gb_DetailWLed.Controls.Add(detailWLed_Brightness)
+        gb_DetailWLed.Controls.Add(detailWLed_Palette)
+        gb_DetailWLed.ForeColor = Color.MidnightBlue
+        gb_DetailWLed.Location = New Point(282, 661)
+        gb_DetailWLed.Name = "gb_DetailWLed"
+        gb_DetailWLed.Size = New Size(499, 188)
+        gb_DetailWLed.TabIndex = 6
+        gb_DetailWLed.TabStop = False
+        gb_DetailWLed.Text = "Details selected WLED"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Location = New Point(6, 44)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(87, 15)
+        Label13.TabIndex = 12
+        Label13.Text = "Palette preview"
+        ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Location = New Point(6, 24)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(81, 15)
+        Label12.TabIndex = 11
+        Label12.Text = "Effect preview"
+        ' 
+        ' detailWLed_Effect
+        ' 
+        detailWLed_Effect.Location = New Point(102, 15)
+        detailWLed_Effect.Name = "detailWLed_Effect"
+        detailWLed_Effect.Size = New Size(121, 25)
+        detailWLed_Effect.TabIndex = 10
+        detailWLed_Effect.TabStop = False
+        ' 
+        ' detailWLed__EffectName
+        ' 
+        detailWLed__EffectName.AutoSize = True
+        detailWLed__EffectName.Font = New Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        detailWLed__EffectName.ForeColor = Color.Gold
+        detailWLed__EffectName.Location = New Point(99, 23)
+        detailWLed__EffectName.Name = "detailWLed__EffectName"
+        detailWLed__EffectName.Size = New Size(0, 15)
+        detailWLed__EffectName.TabIndex = 9
+        ' 
+        ' GroupBox11
+        ' 
+        GroupBox11.Controls.Add(detailWLed_Color3)
+        GroupBox11.Location = New Point(237, 139)
+        GroupBox11.Name = "GroupBox11"
+        GroupBox11.Size = New Size(64, 38)
+        GroupBox11.TabIndex = 8
+        GroupBox11.TabStop = False
+        GroupBox11.Text = "Color 3"
+        ' 
+        ' detailWLed_Color3
+        ' 
+        detailWLed_Color3.Dock = DockStyle.Fill
+        detailWLed_Color3.Location = New Point(3, 19)
+        detailWLed_Color3.Name = "detailWLed_Color3"
+        detailWLed_Color3.Size = New Size(58, 16)
+        detailWLed_Color3.TabIndex = 0
+        detailWLed_Color3.TabStop = False
+        ' 
+        ' GroupBox10
+        ' 
+        GroupBox10.Controls.Add(detailWLed_Color2)
+        GroupBox10.Location = New Point(167, 139)
+        GroupBox10.Name = "GroupBox10"
+        GroupBox10.Size = New Size(64, 38)
+        GroupBox10.TabIndex = 8
+        GroupBox10.TabStop = False
+        GroupBox10.Text = "Color 2"
+        ' 
+        ' detailWLed_Color2
+        ' 
+        detailWLed_Color2.Dock = DockStyle.Fill
+        detailWLed_Color2.Location = New Point(3, 19)
+        detailWLed_Color2.Name = "detailWLed_Color2"
+        detailWLed_Color2.Size = New Size(58, 16)
+        detailWLed_Color2.TabIndex = 0
+        detailWLed_Color2.TabStop = False
+        ' 
+        ' GroupBox9
+        ' 
+        GroupBox9.Controls.Add(detailWLed_Color1)
+        GroupBox9.Location = New Point(97, 139)
+        GroupBox9.Name = "GroupBox9"
+        GroupBox9.Size = New Size(64, 38)
+        GroupBox9.TabIndex = 7
+        GroupBox9.TabStop = False
+        GroupBox9.Text = "Color 1"
+        ' 
+        ' detailWLed_Color1
+        ' 
+        detailWLed_Color1.Dock = DockStyle.Fill
+        detailWLed_Color1.Location = New Point(3, 19)
+        detailWLed_Color1.Name = "detailWLed_Color1"
+        detailWLed_Color1.Size = New Size(58, 16)
+        detailWLed_Color1.TabIndex = 0
+        detailWLed_Color1.TabStop = False
+        ' 
+        ' Label9
+        ' 
+        Label9.AutoSize = True
+        Label9.Location = New Point(6, 109)
+        Label9.Name = "Label9"
+        Label9.Size = New Size(39, 15)
+        Label9.TabIndex = 6
+        Label9.Text = "Speed"
+        ' 
+        ' detailWLed_Speed
+        ' 
+        detailWLed_Speed.LargeChange = 100
+        detailWLed_Speed.Location = New Point(97, 109)
+        detailWLed_Speed.Maximum = 255
+        detailWLed_Speed.Name = "detailWLed_Speed"
+        detailWLed_Speed.Size = New Size(396, 45)
+        detailWLed_Speed.SmallChange = 25
+        detailWLed_Speed.TabIndex = 5
+        detailWLed_Speed.TickFrequency = 25
+        ' 
+        ' Label8
+        ' 
+        Label8.AutoSize = True
+        Label8.Location = New Point(6, 88)
+        Label8.Name = "Label8"
+        Label8.Size = New Size(52, 15)
+        Label8.TabIndex = 4
+        Label8.Text = "Intensity"
+        ' 
+        ' detailWLed_Intensity
+        ' 
+        detailWLed_Intensity.Location = New Point(97, 88)
+        detailWLed_Intensity.Maximum = 255
+        detailWLed_Intensity.Name = "detailWLed_Intensity"
+        detailWLed_Intensity.Size = New Size(396, 45)
+        detailWLed_Intensity.TabIndex = 3
+        ' 
+        ' Label7
+        ' 
+        Label7.AutoSize = True
+        Label7.Location = New Point(6, 67)
+        Label7.Name = "Label7"
+        Label7.Size = New Size(62, 15)
+        Label7.TabIndex = 2
+        Label7.Text = "Brightness"
+        ' 
+        ' detailWLed_Brightness
+        ' 
+        detailWLed_Brightness.Location = New Point(97, 67)
+        detailWLed_Brightness.Maximum = 255
+        detailWLed_Brightness.Name = "detailWLed_Brightness"
+        detailWLed_Brightness.Size = New Size(396, 45)
+        detailWLed_Brightness.TabIndex = 1
+        ' 
+        ' detailWLed_Palette
+        ' 
+        detailWLed_Palette.Location = New Point(102, 46)
+        detailWLed_Palette.Name = "detailWLed_Palette"
+        detailWLed_Palette.Size = New Size(393, 11)
+        detailWLed_Palette.TabIndex = 0
+        detailWLed_Palette.TabStop = False
         ' 
         ' GroupBox3
         ' 
         GroupBox3.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
         GroupBox3.Controls.Add(WMP_Preview_B2)
         GroupBox3.ForeColor = Color.MidnightBlue
-        GroupBox3.Location = New Point(1159, 440)
+        GroupBox3.Location = New Point(1643, 661)
         GroupBox3.Name = "GroupBox3"
         GroupBox3.Size = New Size(268, 188)
         GroupBox3.TabIndex = 5
@@ -259,7 +607,7 @@ Partial Class FrmMain
         gbMonitor1.BackColor = Color.DimGray
         gbMonitor1.Controls.Add(WMP_Preview_B1)
         gbMonitor1.ForeColor = Color.MidnightBlue
-        gbMonitor1.Location = New Point(8, 440)
+        gbMonitor1.Location = New Point(8, 661)
         gbMonitor1.Name = "gbMonitor1"
         gbMonitor1.Size = New Size(268, 188)
         gbMonitor1.TabIndex = 4
@@ -283,15 +631,16 @@ Partial Class FrmMain
         ToolStip_Show.Items.AddRange(New ToolStripItem() {lblFilter, filterAct, btn_DGGrid_RemoveCurrentRow, btn_DGGrid_AddNewRowAfter, btn_DGGrid_AddNewRowBefore, ToolStripSeparator2, btnLockUnlocked})
         ToolStip_Show.Location = New Point(0, 0)
         ToolStip_Show.Name = "ToolStip_Show"
-        ToolStip_Show.Size = New Size(1435, 25)
+        ToolStip_Show.Size = New Size(1836, 25)
         ToolStip_Show.TabIndex = 3
         ToolStip_Show.Text = "ToolStrip_Show"
         ' 
         ' lblFilter
         ' 
         lblFilter.ForeColor = SystemColors.ControlLightLight
+        lblFilter.Image = My.Resources.Resources.iconFilter2
         lblFilter.Name = "lblFilter"
-        lblFilter.Size = New Size(72, 22)
+        lblFilter.Size = New Size(88, 22)
         lblFilter.Text = "Filter op act:"
         ' 
         ' filterAct
@@ -357,12 +706,21 @@ Partial Class FrmMain
         DG_Show.AllowUserToResizeRows = False
         DG_Show.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         DG_Show.BackgroundColor = Color.FromArgb(CByte(64), CByte(64), CByte(64))
-        DG_Show.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DG_Show.Columns.AddRange(New DataGridViewColumn() {colAct, colSceneId, colEventId, colCue, colFixture, colStateOnOff, colEffectId, colEffect, colPaletteId, colPalette, colColor1, colColor2, colColor3, colBrightness, colSpeed, colIntensity, colTransition, colBlend, colRepeat, colMicrophone, colFilename})
+        DG_Show.ColumnHeadersHeight = 28
+        DG_Show.Columns.AddRange(New DataGridViewColumn() {btnApply, colAct, colSceneId, colEventId, colTimer, colCue, colFixture, colStateOnOff, colEffectId, colEffect, colPaletteId, colPalette, colColor1, colColor2, colColor3, colBrightness, colSpeed, colIntensity, colTransition, colBlend, colRepeat, colMicrophone, colFilename})
         DG_Show.Location = New Point(0, 26)
         DG_Show.Name = "DG_Show"
-        DG_Show.Size = New Size(1432, 408)
+        DG_Show.RowHeadersWidth = 10
+        DG_Show.Size = New Size(1833, 629)
         DG_Show.TabIndex = 0
+        ' 
+        ' btnApply
+        ' 
+        btnApply.HeaderText = "Apply"
+        btnApply.Name = "btnApply"
+        btnApply.Resizable = DataGridViewTriState.False
+        btnApply.Text = ">>>"
+        btnApply.Width = 25
         ' 
         ' colAct
         ' 
@@ -372,7 +730,7 @@ Partial Class FrmMain
         colAct.Resizable = DataGridViewTriState.True
         colAct.SortMode = DataGridViewColumnSortMode.Automatic
         colAct.ToolTipText = "De hoofdindeling van de show. "
-        colAct.Width = 50
+        colAct.Width = 150
         ' 
         ' colSceneId
         ' 
@@ -393,6 +751,12 @@ Partial Class FrmMain
         colEventId.Name = "colEventId"
         colEventId.ToolTipText = "Het event nummer binnen een scene."
         colEventId.Width = 50
+        ' 
+        ' colTimer
+        ' 
+        colTimer.HeaderText = "Timer"
+        colTimer.Name = "colTimer"
+        colTimer.ToolTipText = "Aantal msec voordat we naar volgende event gaan."
         ' 
         ' colCue
         ' 
@@ -430,6 +794,7 @@ Partial Class FrmMain
         colEffect.Name = "colEffect"
         colEffect.Resizable = DataGridViewTriState.True
         colEffect.SortMode = DataGridViewColumnSortMode.Automatic
+        colEffect.Width = 200
         ' 
         ' colPaletteId
         ' 
@@ -445,29 +810,34 @@ Partial Class FrmMain
         colPalette.Name = "colPalette"
         colPalette.Resizable = DataGridViewTriState.True
         colPalette.SortMode = DataGridViewColumnSortMode.Automatic
+        colPalette.Width = 200
         ' 
         ' colColor1
         ' 
         colColor1.HeaderText = "Kleur 1"
         colColor1.Name = "colColor1"
+        colColor1.Visible = False
         colColor1.Width = 50
         ' 
         ' colColor2
         ' 
         colColor2.HeaderText = "Kleur 2"
         colColor2.Name = "colColor2"
+        colColor2.Visible = False
         colColor2.Width = 50
         ' 
         ' colColor3
         ' 
         colColor3.HeaderText = "Kleur 3"
         colColor3.Name = "colColor3"
+        colColor3.Visible = False
         colColor3.Width = 50
         ' 
         ' colBrightness
         ' 
         colBrightness.HeaderText = "Brightness"
         colBrightness.Name = "colBrightness"
+        colBrightness.Visible = False
         colBrightness.Width = 50
         ' 
         ' colSpeed
@@ -523,27 +893,170 @@ Partial Class FrmMain
         colFilename.Visible = False
         colFilename.Width = 200
         ' 
+        ' TabDMX
+        ' 
+        TabDMX.BackColor = Color.Black
+        TabDMX.Controls.Add(TrackBar4)
+        TabDMX.Controls.Add(TrackBar5)
+        TabDMX.Controls.Add(TrackBar6)
+        TabDMX.Controls.Add(TrackBar1)
+        TabDMX.Controls.Add(TrackBar2)
+        TabDMX.Controls.Add(TrackBar3)
+        TabDMX.Controls.Add(DMX_1_B)
+        TabDMX.Controls.Add(DMX_1_G)
+        TabDMX.Controls.Add(DMX_1_R)
+        TabDMX.Controls.Add(DMX_Master)
+        TabDMX.Location = New Point(4, 24)
+        TabDMX.Name = "TabDMX"
+        TabDMX.Padding = New Padding(3)
+        TabDMX.Size = New Size(1836, 849)
+        TabDMX.TabIndex = 7
+        TabDMX.Text = "DMX Panel"
+        ' 
+        ' TrackBar4
+        ' 
+        TrackBar4.Location = New Point(233, 133)
+        TrackBar4.Maximum = 255
+        TrackBar4.Name = "TrackBar4"
+        TrackBar4.Orientation = Orientation.Vertical
+        TrackBar4.Size = New Size(45, 104)
+        TrackBar4.TabIndex = 8
+        TrackBar4.TickStyle = TickStyle.None
+        TrackBar4.UseWaitCursor = True
+        ' 
+        ' TrackBar5
+        ' 
+        TrackBar5.Location = New Point(213, 133)
+        TrackBar5.Maximum = 255
+        TrackBar5.Name = "TrackBar5"
+        TrackBar5.Orientation = Orientation.Vertical
+        TrackBar5.Size = New Size(45, 104)
+        TrackBar5.TabIndex = 9
+        TrackBar5.TickStyle = TickStyle.None
+        TrackBar5.UseWaitCursor = True
+        ' 
+        ' TrackBar6
+        ' 
+        TrackBar6.Location = New Point(193, 133)
+        TrackBar6.Maximum = 255
+        TrackBar6.Name = "TrackBar6"
+        TrackBar6.Orientation = Orientation.Vertical
+        TrackBar6.Size = New Size(45, 104)
+        TrackBar6.TabIndex = 7
+        TrackBar6.TickStyle = TickStyle.None
+        TrackBar6.UseWaitCursor = True
+        ' 
+        ' TrackBar1
+        ' 
+        TrackBar1.Location = New Point(150, 133)
+        TrackBar1.Maximum = 255
+        TrackBar1.Name = "TrackBar1"
+        TrackBar1.Orientation = Orientation.Vertical
+        TrackBar1.Size = New Size(45, 104)
+        TrackBar1.TabIndex = 5
+        TrackBar1.TickStyle = TickStyle.None
+        TrackBar1.UseWaitCursor = True
+        ' 
+        ' TrackBar2
+        ' 
+        TrackBar2.Location = New Point(130, 133)
+        TrackBar2.Maximum = 255
+        TrackBar2.Name = "TrackBar2"
+        TrackBar2.Orientation = Orientation.Vertical
+        TrackBar2.Size = New Size(45, 104)
+        TrackBar2.TabIndex = 6
+        TrackBar2.TickStyle = TickStyle.None
+        TrackBar2.UseWaitCursor = True
+        ' 
+        ' TrackBar3
+        ' 
+        TrackBar3.Location = New Point(110, 133)
+        TrackBar3.Maximum = 255
+        TrackBar3.Name = "TrackBar3"
+        TrackBar3.Orientation = Orientation.Vertical
+        TrackBar3.Size = New Size(45, 104)
+        TrackBar3.TabIndex = 4
+        TrackBar3.TickStyle = TickStyle.None
+        TrackBar3.UseWaitCursor = True
+        ' 
+        ' DMX_1_B
+        ' 
+        DMX_1_B.Location = New Point(60, 133)
+        DMX_1_B.Maximum = 255
+        DMX_1_B.Name = "DMX_1_B"
+        DMX_1_B.Orientation = Orientation.Vertical
+        DMX_1_B.Size = New Size(45, 104)
+        DMX_1_B.TabIndex = 2
+        DMX_1_B.TickStyle = TickStyle.None
+        DMX_1_B.UseWaitCursor = True
+        ' 
+        ' DMX_1_G
+        ' 
+        DMX_1_G.Location = New Point(40, 133)
+        DMX_1_G.Maximum = 255
+        DMX_1_G.Name = "DMX_1_G"
+        DMX_1_G.Orientation = Orientation.Vertical
+        DMX_1_G.Size = New Size(45, 104)
+        DMX_1_G.TabIndex = 3
+        DMX_1_G.TickStyle = TickStyle.None
+        DMX_1_G.UseWaitCursor = True
+        ' 
+        ' DMX_1_R
+        ' 
+        DMX_1_R.Location = New Point(20, 133)
+        DMX_1_R.Maximum = 255
+        DMX_1_R.Name = "DMX_1_R"
+        DMX_1_R.Orientation = Orientation.Vertical
+        DMX_1_R.Size = New Size(45, 104)
+        DMX_1_R.TabIndex = 1
+        DMX_1_R.TickStyle = TickStyle.None
+        DMX_1_R.UseWaitCursor = True
+        ' 
+        ' DMX_Master
+        ' 
+        DMX_Master.Location = New Point(8, 6)
+        DMX_Master.Maximum = 255
+        DMX_Master.Name = "DMX_Master"
+        DMX_Master.Orientation = Orientation.Vertical
+        DMX_Master.Size = New Size(45, 104)
+        DMX_Master.TabIndex = 0
+        DMX_Master.TickStyle = TickStyle.None
+        DMX_Master.UseWaitCursor = True
+        ' 
         ' TabDevices
         ' 
         TabDevices.BackColor = Color.DimGray
+        TabDevices.Controls.Add(RichTextBox1)
         TabDevices.Controls.Add(ToolStrip_Devices)
         TabDevices.Controls.Add(DG_Devices)
         TabDevices.Location = New Point(4, 24)
         TabDevices.Name = "TabDevices"
         TabDevices.Padding = New Padding(3)
-        TabDevices.Size = New Size(1435, 656)
+        TabDevices.Size = New Size(1836, 849)
         TabDevices.TabIndex = 0
         TabDevices.Text = "Devices"
+        ' 
+        ' RichTextBox1
+        ' 
+        RichTextBox1.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        RichTextBox1.BackColor = Color.DimGray
+        RichTextBox1.BorderStyle = BorderStyle.None
+        RichTextBox1.Location = New Point(3, 31)
+        RichTextBox1.Name = "RichTextBox1"
+        RichTextBox1.ReadOnly = True
+        RichTextBox1.Size = New Size(1463, 32)
+        RichTextBox1.TabIndex = 3
+        RichTextBox1.Text = "Hier vindt u de gevonden WLED devices. Door op het veld IP-adrdess te klikken opent u de directe interface van dat apparaat. " & vbLf & "Een WLED device kan meerdere segmenten hebben."
         ' 
         ' ToolStrip_Devices
         ' 
         ToolStrip_Devices.BackColor = Color.MidnightBlue
         ToolStrip_Devices.Font = New Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         ToolStrip_Devices.GripStyle = ToolStripGripStyle.Hidden
-        ToolStrip_Devices.Items.AddRange(New ToolStripItem() {LblDeviceStatus, btnScanNetworkForWLed})
+        ToolStrip_Devices.Items.AddRange(New ToolStripItem() {LblDeviceStatus, btnScanNetworkForWLed, btnPingDevice, btnDeleteDevice, btnAddDevice, btnGenerateStage, btnStartDMXSync})
         ToolStrip_Devices.Location = New Point(3, 3)
         ToolStrip_Devices.Name = "ToolStrip_Devices"
-        ToolStrip_Devices.Size = New Size(1429, 25)
+        ToolStrip_Devices.Size = New Size(1830, 25)
         ToolStrip_Devices.TabIndex = 2
         ToolStrip_Devices.Text = "ToolStrip_Devices"
         ' 
@@ -557,42 +1070,309 @@ Partial Class FrmMain
         ' 
         btnScanNetworkForWLed.BackColor = Color.Transparent
         btnScanNetworkForWLed.ForeColor = Color.White
-        btnScanNetworkForWLed.Image = My.Resources.Resources.iconScanNetwork_3
+        btnScanNetworkForWLed.Image = My.Resources.Resources.iconScanNetwork_21
         btnScanNetworkForWLed.ImageTransparentColor = Color.Magenta
         btnScanNetworkForWLed.Name = "btnScanNetworkForWLed"
         btnScanNetworkForWLed.Size = New Size(192, 22)
         btnScanNetworkForWLed.Text = "Scan network for WLED devices"
         ' 
+        ' btnPingDevice
+        ' 
+        btnPingDevice.ForeColor = SystemColors.ControlLightLight
+        btnPingDevice.Image = My.Resources.Resources.iconPing
+        btnPingDevice.ImageTransparentColor = Color.Magenta
+        btnPingDevice.Name = "btnPingDevice"
+        btnPingDevice.Size = New Size(51, 22)
+        btnPingDevice.Text = "Ping"
+        ' 
+        ' btnDeleteDevice
+        ' 
+        btnDeleteDevice.Alignment = ToolStripItemAlignment.Right
+        btnDeleteDevice.DisplayStyle = ToolStripItemDisplayStyle.Image
+        btnDeleteDevice.Image = CType(resources.GetObject("btnDeleteDevice.Image"), Image)
+        btnDeleteDevice.ImageTransparentColor = Color.Magenta
+        btnDeleteDevice.Name = "btnDeleteDevice"
+        btnDeleteDevice.Size = New Size(23, 22)
+        btnDeleteDevice.Text = "Delete device"
+        ' 
+        ' btnAddDevice
+        ' 
+        btnAddDevice.Alignment = ToolStripItemAlignment.Right
+        btnAddDevice.DisplayStyle = ToolStripItemDisplayStyle.Image
+        btnAddDevice.Image = CType(resources.GetObject("btnAddDevice.Image"), Image)
+        btnAddDevice.ImageTransparentColor = Color.Magenta
+        btnAddDevice.Name = "btnAddDevice"
+        btnAddDevice.Size = New Size(23, 22)
+        btnAddDevice.Text = "Insert device"
+        ' 
+        ' btnGenerateStage
+        ' 
+        btnGenerateStage.DisplayStyle = ToolStripItemDisplayStyle.Text
+        btnGenerateStage.ForeColor = SystemColors.ButtonFace
+        btnGenerateStage.Image = CType(resources.GetObject("btnGenerateStage.Image"), Image)
+        btnGenerateStage.ImageTransparentColor = Color.Magenta
+        btnGenerateStage.Name = "btnGenerateStage"
+        btnGenerateStage.Size = New Size(89, 22)
+        btnGenerateStage.Text = "Generate stage"
+        ' 
+        ' btnStartDMXSync
+        ' 
+        btnStartDMXSync.ForeColor = SystemColors.ButtonFace
+        btnStartDMXSync.Image = My.Resources.Resources.iconPlay
+        btnStartDMXSync.ImageTransparentColor = Color.Magenta
+        btnStartDMXSync.Name = "btnStartDMXSync"
+        btnStartDMXSync.Size = New Size(92, 22)
+        btnStartDMXSync.Text = "Take control"
+        ' 
+        ' TabGroups
+        ' 
+        TabGroups.Controls.Add(RichTextBox4)
+        TabGroups.Controls.Add(ToolStrip1)
+        TabGroups.Controls.Add(DG_Groups)
+        TabGroups.Location = New Point(4, 24)
+        TabGroups.Name = "TabGroups"
+        TabGroups.Padding = New Padding(3)
+        TabGroups.Size = New Size(1836, 849)
+        TabGroups.TabIndex = 8
+        TabGroups.Text = "Groups"
+        TabGroups.UseVisualStyleBackColor = True
+        ' 
+        ' RichTextBox4
+        ' 
+        RichTextBox4.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        RichTextBox4.BackColor = Color.DimGray
+        RichTextBox4.BorderStyle = BorderStyle.None
+        RichTextBox4.Location = New Point(3, 31)
+        RichTextBox4.Name = "RichTextBox4"
+        RichTextBox4.ReadOnly = True
+        RichTextBox4.Size = New Size(1830, 32)
+        RichTextBox4.TabIndex = 4
+        RichTextBox4.Text = "U kunt hier groepen aanmaken. Elke groep kan 1 of meerdere leds bevatten van 1 of meerdere devices."
+        ' 
+        ' ToolStrip1
+        ' 
+        ToolStrip1.BackColor = Color.MidnightBlue
+        ToolStrip1.GripStyle = ToolStripGripStyle.Hidden
+        ToolStrip1.Items.AddRange(New ToolStripItem() {btnGroupDeleteRow, btnGroupAddRowBefore, btnGroupAddRowAfter})
+        ToolStrip1.Location = New Point(3, 3)
+        ToolStrip1.Name = "ToolStrip1"
+        ToolStrip1.Size = New Size(1830, 25)
+        ToolStrip1.TabIndex = 1
+        ToolStrip1.Text = "ToolStrip1"
+        ' 
+        ' btnGroupDeleteRow
+        ' 
+        btnGroupDeleteRow.Alignment = ToolStripItemAlignment.Right
+        btnGroupDeleteRow.DisplayStyle = ToolStripItemDisplayStyle.Image
+        btnGroupDeleteRow.Image = My.Resources.Resources.iconRowDelete
+        btnGroupDeleteRow.ImageTransparentColor = Color.Magenta
+        btnGroupDeleteRow.Name = "btnGroupDeleteRow"
+        btnGroupDeleteRow.Size = New Size(23, 22)
+        btnGroupDeleteRow.Text = "Remove row"
+        ' 
+        ' btnGroupAddRowBefore
+        ' 
+        btnGroupAddRowBefore.Alignment = ToolStripItemAlignment.Right
+        btnGroupAddRowBefore.DisplayStyle = ToolStripItemDisplayStyle.Image
+        btnGroupAddRowBefore.Image = My.Resources.Resources.iconRowAddBefore
+        btnGroupAddRowBefore.ImageTransparentColor = Color.Magenta
+        btnGroupAddRowBefore.Name = "btnGroupAddRowBefore"
+        btnGroupAddRowBefore.Size = New Size(23, 22)
+        btnGroupAddRowBefore.Text = "Add row before"
+        ' 
+        ' btnGroupAddRowAfter
+        ' 
+        btnGroupAddRowAfter.Alignment = ToolStripItemAlignment.Right
+        btnGroupAddRowAfter.DisplayStyle = ToolStripItemDisplayStyle.Image
+        btnGroupAddRowAfter.Image = My.Resources.Resources.iconRowAddAfter
+        btnGroupAddRowAfter.ImageTransparentColor = Color.Magenta
+        btnGroupAddRowAfter.Name = "btnGroupAddRowAfter"
+        btnGroupAddRowAfter.Size = New Size(23, 22)
+        btnGroupAddRowAfter.Text = "Add row after"
+        ' 
+        ' DG_Groups
+        ' 
+        DG_Groups.AllowUserToAddRows = False
+        DG_Groups.AllowUserToDeleteRows = False
+        DG_Groups.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        DG_Groups.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DG_Groups.Columns.AddRange(New DataGridViewColumn() {colGroupName, colGroupFixture, colGroupStartLedNr, colGroupStopLedNr, colGroupOrder})
+        DG_Groups.Location = New Point(3, 69)
+        DG_Groups.Name = "DG_Groups"
+        DG_Groups.RowHeadersWidth = 11
+        DG_Groups.Size = New Size(1830, 774)
+        DG_Groups.TabIndex = 0
+        ' 
+        ' colGroupName
+        ' 
+        colGroupName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colGroupName.HeaderText = "Groupname"
+        colGroupName.Name = "colGroupName"
+        ' 
+        ' colGroupFixture
+        ' 
+        colGroupFixture.HeaderText = "Fixture"
+        colGroupFixture.Name = "colGroupFixture"
+        colGroupFixture.Width = 300
+        ' 
+        ' colGroupStartLedNr
+        ' 
+        colGroupStartLedNr.HeaderText = "Start Led"
+        colGroupStartLedNr.Name = "colGroupStartLedNr"
+        ' 
+        ' colGroupStopLedNr
+        ' 
+        colGroupStopLedNr.HeaderText = "Stop Led"
+        colGroupStopLedNr.Name = "colGroupStopLedNr"
+        ' 
+        ' colGroupOrder
+        ' 
+        colGroupOrder.HeaderText = "Order"
+        colGroupOrder.Name = "colGroupOrder"
+        ' 
+        ' TabSegments
+        ' 
+        TabSegments.BackColor = Color.Black
+        TabSegments.Controls.Add(pb_Stage)
+        TabSegments.Controls.Add(ToolStripSegments)
+        TabSegments.Location = New Point(4, 24)
+        TabSegments.Name = "TabSegments"
+        TabSegments.Padding = New Padding(3)
+        TabSegments.Size = New Size(1836, 849)
+        TabSegments.TabIndex = 6
+        TabSegments.Text = "Stage"
+        ' 
+        ' pb_Stage
+        ' 
+        pb_Stage.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
+        pb_Stage.BackColor = Color.Black
+        pb_Stage.Location = New Point(0, 31)
+        pb_Stage.Name = "pb_Stage"
+        pb_Stage.Size = New Size(1836, 818)
+        pb_Stage.TabIndex = 2
+        pb_Stage.TabStop = False
+        ' 
+        ' ToolStripSegments
+        ' 
+        ToolStripSegments.BackColor = Color.MidnightBlue
+        ToolStripSegments.GripStyle = ToolStripGripStyle.Hidden
+        ToolStripSegments.Items.AddRange(New ToolStripItem() {btnUpdateStage})
+        ToolStripSegments.Location = New Point(3, 3)
+        ToolStripSegments.Name = "ToolStripSegments"
+        ToolStripSegments.Size = New Size(1830, 25)
+        ToolStripSegments.TabIndex = 1
+        ToolStripSegments.Text = "ToolStripSegments"
+        ' 
+        ' btnUpdateStage
+        ' 
+        btnUpdateStage.DisplayStyle = ToolStripItemDisplayStyle.Text
+        btnUpdateStage.ForeColor = SystemColors.AppWorkspace
+        btnUpdateStage.Image = CType(resources.GetObject("btnUpdateStage.Image"), Image)
+        btnUpdateStage.ImageTransparentColor = Color.Magenta
+        btnUpdateStage.Name = "btnUpdateStage"
+        btnUpdateStage.Size = New Size(81, 22)
+        btnUpdateStage.Text = "Redraw stage"
+        ' 
         ' TabEffects
         ' 
         TabEffects.BackColor = Color.DimGray
+        TabEffects.Controls.Add(ToolStrip_Effecten)
+        TabEffects.Controls.Add(RichTextBox2)
         TabEffects.Controls.Add(DG_Effecten)
         TabEffects.Location = New Point(4, 24)
         TabEffects.Name = "TabEffects"
         TabEffects.Padding = New Padding(3)
-        TabEffects.Size = New Size(1435, 656)
+        TabEffects.Size = New Size(1836, 849)
         TabEffects.TabIndex = 1
         TabEffects.Text = "Effecten"
+        ' 
+        ' ToolStrip_Effecten
+        ' 
+        ToolStrip_Effecten.BackColor = Color.MidnightBlue
+        ToolStrip_Effecten.GripStyle = ToolStripGripStyle.Hidden
+        ToolStrip_Effecten.Items.AddRange(New ToolStripItem() {btnTestExistanceEffects})
+        ToolStrip_Effecten.Location = New Point(3, 3)
+        ToolStrip_Effecten.Name = "ToolStrip_Effecten"
+        ToolStrip_Effecten.Size = New Size(1830, 25)
+        ToolStrip_Effecten.TabIndex = 4
+        ToolStrip_Effecten.Text = "ToolStrip2"
+        ' 
+        ' btnTestExistanceEffects
+        ' 
+        btnTestExistanceEffects.DisplayStyle = ToolStripItemDisplayStyle.Text
+        btnTestExistanceEffects.ForeColor = SystemColors.ButtonShadow
+        btnTestExistanceEffects.Image = CType(resources.GetObject("btnTestExistanceEffects.Image"), Image)
+        btnTestExistanceEffects.ImageTransparentColor = Color.Magenta
+        btnTestExistanceEffects.Name = "btnTestExistanceEffects"
+        btnTestExistanceEffects.Size = New Size(32, 22)
+        btnTestExistanceEffects.Text = "Test"
+        ' 
+        ' RichTextBox2
+        ' 
+        RichTextBox2.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        RichTextBox2.BackColor = Color.DimGray
+        RichTextBox2.BorderStyle = BorderStyle.None
+        RichTextBox2.Location = New Point(3, 31)
+        RichTextBox2.Name = "RichTextBox2"
+        RichTextBox2.ReadOnly = True
+        RichTextBox2.Size = New Size(1463, 34)
+        RichTextBox2.TabIndex = 3
+        RichTextBox2.Text = "Hier vindt u de beschikbare effecten die een specifieke WLED aan kan. " & vbLf & "U kunt het effect toepassen op het eerste segment door op het checkbox te dubbelklikken."
         ' 
         ' TabPaletten
         ' 
         TabPaletten.BackColor = Color.DimGray
+        TabPaletten.Controls.Add(RichTextBox3)
+        TabPaletten.Controls.Add(ToolStrip_Paletten)
         TabPaletten.Controls.Add(DG_Paletten)
         TabPaletten.Location = New Point(4, 24)
         TabPaletten.Name = "TabPaletten"
         TabPaletten.Padding = New Padding(3)
-        TabPaletten.Size = New Size(1435, 656)
+        TabPaletten.Size = New Size(1836, 849)
         TabPaletten.TabIndex = 3
         TabPaletten.Text = "Paletten"
         ' 
+        ' RichTextBox3
+        ' 
+        RichTextBox3.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        RichTextBox3.BackColor = Color.DimGray
+        RichTextBox3.BorderStyle = BorderStyle.None
+        RichTextBox3.Location = New Point(3, 31)
+        RichTextBox3.Name = "RichTextBox3"
+        RichTextBox3.ReadOnly = True
+        RichTextBox3.Size = New Size(1463, 29)
+        RichTextBox3.TabIndex = 2
+        RichTextBox3.Text = "Hier vindt u de beschikbare pallet met kleuren die toegepast kunnen worden. Door op een vinkje te klikken past u het palette toe op het eerste segment van dat WLED device."
+        ' 
+        ' ToolStrip_Paletten
+        ' 
+        ToolStrip_Paletten.BackColor = Color.MidnightBlue
+        ToolStrip_Paletten.GripStyle = ToolStripGripStyle.Hidden
+        ToolStrip_Paletten.Items.AddRange(New ToolStripItem() {ToolStripButton1})
+        ToolStrip_Paletten.Location = New Point(3, 3)
+        ToolStrip_Paletten.Name = "ToolStrip_Paletten"
+        ToolStrip_Paletten.Size = New Size(1830, 25)
+        ToolStrip_Paletten.TabIndex = 1
+        ToolStrip_Paletten.Text = "ToolStrip1"
+        ' 
+        ' ToolStripButton1
+        ' 
+        ToolStripButton1.ForeColor = SystemColors.ControlLightLight
+        ToolStripButton1.Image = My.Resources.Resources.iconBlackBullet1
+        ToolStripButton1.ImageTransparentColor = Color.Magenta
+        ToolStripButton1.Name = "ToolStripButton1"
+        ToolStripButton1.Size = New Size(112, 22)
+        ToolStripButton1.Text = "Reload previews"
+        ' 
         ' DG_Paletten
         ' 
+        DG_Paletten.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         DG_Paletten.BackgroundColor = Color.DimGray
         DG_Paletten.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DG_Paletten.Dock = DockStyle.Fill
-        DG_Paletten.Location = New Point(3, 3)
+        DG_Paletten.Location = New Point(6, 66)
         DG_Paletten.Name = "DG_Paletten"
-        DG_Paletten.Size = New Size(1429, 650)
+        DG_Paletten.RowHeadersWidth = 10
+        DG_Paletten.Size = New Size(1827, 780)
         DG_Paletten.TabIndex = 0
         ' 
         ' TabSettings
@@ -606,12 +1386,16 @@ Partial Class FrmMain
         TabSettings.Location = New Point(4, 24)
         TabSettings.Name = "TabSettings"
         TabSettings.Padding = New Padding(3)
-        TabSettings.Size = New Size(1435, 656)
+        TabSettings.Size = New Size(1836, 849)
         TabSettings.TabIndex = 4
         TabSettings.Text = "Settings"
         ' 
         ' GroupBox8
         ' 
+        GroupBox8.Controls.Add(settings_EffectsPath)
+        GroupBox8.Controls.Add(Label11)
+        GroupBox8.Controls.Add(settings_PalettesPath)
+        GroupBox8.Controls.Add(Label10)
         GroupBox8.Controls.Add(settings_ProjectName)
         GroupBox8.Controls.Add(Label6)
         GroupBox8.Controls.Add(btnProjectFolder)
@@ -624,6 +1408,40 @@ Partial Class FrmMain
         GroupBox8.TabIndex = 7
         GroupBox8.TabStop = False
         GroupBox8.Text = "Project settings"
+        ' 
+        ' settings_EffectsPath
+        ' 
+        settings_EffectsPath.Location = New Point(133, 123)
+        settings_EffectsPath.Name = "settings_EffectsPath"
+        settings_EffectsPath.Size = New Size(199, 23)
+        settings_EffectsPath.TabIndex = 8
+        ' 
+        ' Label11
+        ' 
+        Label11.AutoSize = True
+        Label11.ForeColor = Color.Black
+        Label11.Location = New Point(6, 126)
+        Label11.Name = "Label11"
+        Label11.Size = New Size(72, 15)
+        Label11.TabIndex = 7
+        Label11.Text = "Effect's path"
+        ' 
+        ' settings_PalettesPath
+        ' 
+        settings_PalettesPath.Location = New Point(133, 94)
+        settings_PalettesPath.Name = "settings_PalettesPath"
+        settings_PalettesPath.Size = New Size(199, 23)
+        settings_PalettesPath.TabIndex = 6
+        ' 
+        ' Label10
+        ' 
+        Label10.AutoSize = True
+        Label10.ForeColor = Color.Black
+        Label10.Location = New Point(6, 97)
+        Label10.Name = "Label10"
+        Label10.Size = New Size(78, 15)
+        Label10.TabIndex = 5
+        Label10.Text = "Palette's path"
         ' 
         ' settings_ProjectName
         ' 
@@ -675,7 +1493,7 @@ Partial Class FrmMain
         GroupBox5.ForeColor = Color.MidnightBlue
         GroupBox5.Location = New Point(352, 109)
         GroupBox5.Name = "GroupBox5"
-        GroupBox5.Size = New Size(1072, 307)
+        GroupBox5.Size = New Size(1114, 307)
         GroupBox5.TabIndex = 6
         GroupBox5.TabStop = False
         GroupBox5.Text = "Active mediaplayers"
@@ -693,8 +1511,8 @@ Partial Class FrmMain
         ' SplitContainer1.Panel2
         ' 
         SplitContainer1.Panel2.Controls.Add(GroupBox7)
-        SplitContainer1.Size = New Size(1066, 285)
-        SplitContainer1.SplitterDistance = 533
+        SplitContainer1.Size = New Size(1108, 285)
+        SplitContainer1.SplitterDistance = 554
         SplitContainer1.TabIndex = 0
         ' 
         ' GroupBox6
@@ -709,7 +1527,7 @@ Partial Class FrmMain
         GroupBox6.ForeColor = Color.DarkGray
         GroupBox6.Location = New Point(0, 0)
         GroupBox6.Name = "GroupBox6"
-        GroupBox6.Size = New Size(533, 285)
+        GroupBox6.Size = New Size(554, 285)
         GroupBox6.TabIndex = 3
         GroupBox6.TabStop = False
         GroupBox6.Text = "Beamer 1"
@@ -788,7 +1606,7 @@ Partial Class FrmMain
         GroupBox7.ForeColor = Color.DarkGray
         GroupBox7.Location = New Point(0, 0)
         GroupBox7.Name = "GroupBox7"
-        GroupBox7.Size = New Size(529, 285)
+        GroupBox7.Size = New Size(550, 285)
         GroupBox7.TabIndex = 6
         GroupBox7.TabStop = False
         GroupBox7.Text = "Beamer 2"
@@ -852,7 +1670,7 @@ Partial Class FrmMain
         GroupBox4.ForeColor = Color.MidnightBlue
         GroupBox4.Location = New Point(352, 6)
         GroupBox4.Name = "GroupBox4"
-        GroupBox4.Size = New Size(1075, 100)
+        GroupBox4.Size = New Size(1114, 100)
         GroupBox4.TabIndex = 5
         GroupBox4.TabStop = False
         GroupBox4.Text = "Logging / Last status"
@@ -863,7 +1681,7 @@ Partial Class FrmMain
         txt_APIResult.Location = New Point(3, 19)
         txt_APIResult.Multiline = True
         txt_APIResult.Name = "txt_APIResult"
-        txt_APIResult.Size = New Size(1069, 78)
+        txt_APIResult.Size = New Size(1108, 78)
         txt_APIResult.TabIndex = 4
         ' 
         ' GroupBox2
@@ -1015,10 +1833,10 @@ Partial Class FrmMain
         ToolStrip_Form.BackColor = Color.LightGray
         ToolStrip_Form.Dock = DockStyle.Bottom
         ToolStrip_Form.GripStyle = ToolStripGripStyle.Hidden
-        ToolStrip_Form.Items.AddRange(New ToolStripItem() {btnSaveShow, btnLoad, ToolStripLabel1})
-        ToolStrip_Form.Location = New Point(0, 736)
+        ToolStrip_Form.Items.AddRange(New ToolStripItem() {btnSaveShow, ToolStripLabel1, btnLoad})
+        ToolStrip_Form.Location = New Point(0, 957)
         ToolStrip_Form.Name = "ToolStrip_Form"
-        ToolStrip_Form.Size = New Size(1443, 25)
+        ToolStrip_Form.Size = New Size(1844, 25)
         ToolStrip_Form.TabIndex = 5
         ToolStrip_Form.Text = "ToolStrip_General"
         ' 
@@ -1032,19 +1850,44 @@ Partial Class FrmMain
         btnSaveShow.Text = "Save"
         btnSaveShow.ToolTipText = "Save"
         ' 
-        ' btnLoad
-        ' 
-        btnLoad.DisplayStyle = ToolStripItemDisplayStyle.Text
-        btnLoad.Image = CType(resources.GetObject("btnLoad.Image"), Image)
-        btnLoad.ImageTransparentColor = Color.Magenta
-        btnLoad.Name = "btnLoad"
-        btnLoad.Size = New Size(58, 22)
-        btnLoad.Text = "(Re)Load"
-        ' 
         ' ToolStripLabel1
         ' 
         ToolStripLabel1.Name = "ToolStripLabel1"
         ToolStripLabel1.Size = New Size(0, 22)
+        ' 
+        ' btnLoad
+        ' 
+        btnLoad.DisplayStyle = ToolStripItemDisplayStyle.Text
+        btnLoad.DropDownItems.AddRange(New ToolStripItem() {SegmentsStageToolStripMenuItem, btnLoadEffectPalettes, btnLoadShow, btnLoadAll})
+        btnLoad.Image = CType(resources.GetObject("btnLoad.Image"), Image)
+        btnLoad.ImageTransparentColor = Color.Magenta
+        btnLoad.Name = "btnLoad"
+        btnLoad.Size = New Size(46, 22)
+        btnLoad.Text = "Load"
+        ' 
+        ' SegmentsStageToolStripMenuItem
+        ' 
+        SegmentsStageToolStripMenuItem.Name = "SegmentsStageToolStripMenuItem"
+        SegmentsStageToolStripMenuItem.Size = New Size(166, 22)
+        SegmentsStageToolStripMenuItem.Text = "Segments & Stage"
+        ' 
+        ' btnLoadEffectPalettes
+        ' 
+        btnLoadEffectPalettes.Name = "btnLoadEffectPalettes"
+        btnLoadEffectPalettes.Size = New Size(166, 22)
+        btnLoadEffectPalettes.Text = "Effects && Palettes"
+        ' 
+        ' btnLoadShow
+        ' 
+        btnLoadShow.Name = "btnLoadShow"
+        btnLoadShow.Size = New Size(166, 22)
+        btnLoadShow.Text = "Show"
+        ' 
+        ' btnLoadAll
+        ' 
+        btnLoadAll.Name = "btnLoadAll"
+        btnLoadAll.Size = New Size(166, 22)
+        btnLoadAll.Text = "All"
         ' 
         ' TimerEverySecond
         ' 
@@ -1056,7 +1899,7 @@ Partial Class FrmMain
         PictureBox1.Anchor = AnchorStyles.Top Or AnchorStyles.Right
         PictureBox1.BackgroundImageLayout = ImageLayout.Center
         PictureBox1.Image = My.Resources.Resources.logo_kklt_inverted1
-        PictureBox1.Location = New Point(1292, 2)
+        PictureBox1.Location = New Point(1693, 2)
         PictureBox1.Name = "PictureBox1"
         PictureBox1.Size = New Size(151, 94)
         PictureBox1.SizeMode = PictureBoxSizeMode.Zoom
@@ -1089,30 +1932,127 @@ Partial Class FrmMain
         lblCurrentTime.AutoSize = True
         lblCurrentTime.Font = New Font("Segoe UI", 36F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         lblCurrentTime.ForeColor = Color.White
-        lblCurrentTime.Location = New Point(1082, 8)
+        lblCurrentTime.Location = New Point(1483, 8)
         lblCurrentTime.Name = "lblCurrentTime"
         lblCurrentTime.Size = New Size(204, 65)
         lblCurrentTime.TabIndex = 8
         lblCurrentTime.Text = "00:00:00"
+        ' 
+        ' TimerNextEvent
+        ' 
+        ' 
+        ' TimerPingDevices
+        ' 
+        TimerPingDevices.Enabled = True
+        TimerPingDevices.Interval = 60000
+        ' 
+        ' colIPAddress
+        ' 
+        colIPAddress.HeaderText = "IP Address"
+        colIPAddress.Name = "colIPAddress"
+        colIPAddress.Width = 87
+        ' 
+        ' colInstance
+        ' 
+        colInstance.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colInstance.HeaderText = "Omschrijving"
+        colInstance.Name = "colInstance"
+        ' 
+        ' colNumberOfSegments
+        ' 
+        colNumberOfSegments.HeaderText = "Segments"
+        colNumberOfSegments.Name = "colNumberOfSegments"
+        colNumberOfSegments.Width = 84
+        ' 
+        ' colStartUniverse
+        ' 
+        colStartUniverse.HeaderText = "Start Universe"
+        colStartUniverse.Name = "colStartUniverse"
+        colStartUniverse.Width = 104
+        ' 
+        ' colEndUniverse
+        ' 
+        colEndUniverse.HeaderText = "Laatste Universe"
+        colEndUniverse.Name = "colEndUniverse"
+        colEndUniverse.Width = 117
+        ' 
+        ' colStartDMXChannel
+        ' 
+        colStartDMXChannel.HeaderText = "Start DMX"
+        colStartDMXChannel.Name = "colStartDMXChannel"
+        colStartDMXChannel.Width = 85
+        ' 
+        ' colProtocol
+        ' 
+        colProtocol.HeaderText = "Protocol"
+        colProtocol.Items.AddRange(New Object() {"sACN", "ArtNet"})
+        colProtocol.Name = "colProtocol"
+        colProtocol.Width = 58
+        ' 
+        ' colLayout
+        ' 
+        colLayout.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colLayout.HeaderText = "Layout"
+        colLayout.Name = "colLayout"
+        ' 
+        ' colLedCount
+        ' 
+        colLedCount.HeaderText = "Leds"
+        colLedCount.Name = "colLedCount"
+        colLedCount.ReadOnly = True
+        colLedCount.Width = 56
+        ' 
+        ' colPriority
+        ' 
+        colPriority.HeaderText = "Priority"
+        colPriority.Name = "colPriority"
+        colPriority.Width = 70
+        ' 
+        ' colEnabled
+        ' 
+        colEnabled.HeaderText = "Enabled"
+        colEnabled.Name = "colEnabled"
+        colEnabled.Width = 55
+        ' 
+        ' colOnline
+        ' 
+        colOnline.HeaderText = "Online"
+        colOnline.Image = My.Resources.Resources.iconRedBullet1
+        colOnline.Name = "colOnline"
+        colOnline.Width = 48
         ' 
         ' FrmMain
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.Black
-        ClientSize = New Size(1443, 761)
+        ClientSize = New Size(1844, 982)
         Controls.Add(lblCurrentTime)
         Controls.Add(lblTitleProject)
         Controls.Add(ToolStrip_Form)
-        Controls.Add(TabControl1)
+        Controls.Add(TabControl)
         Controls.Add(PictureBox1)
         Name = "FrmMain"
         Text = "KLT Show viewer"
         CType(DG_Devices, ComponentModel.ISupportInitialize).EndInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).EndInit()
-        TabControl1.ResumeLayout(False)
+        TabControl.ResumeLayout(False)
         TabShow.ResumeLayout(False)
         TabShow.PerformLayout()
+        gb_Controls.ResumeLayout(False)
+        gb_DetailWLed.ResumeLayout(False)
+        gb_DetailWLed.PerformLayout()
+        CType(detailWLed_Effect, ComponentModel.ISupportInitialize).EndInit()
+        GroupBox11.ResumeLayout(False)
+        CType(detailWLed_Color3, ComponentModel.ISupportInitialize).EndInit()
+        GroupBox10.ResumeLayout(False)
+        CType(detailWLed_Color2, ComponentModel.ISupportInitialize).EndInit()
+        GroupBox9.ResumeLayout(False)
+        CType(detailWLed_Color1, ComponentModel.ISupportInitialize).EndInit()
+        CType(detailWLed_Speed, ComponentModel.ISupportInitialize).EndInit()
+        CType(detailWLed_Intensity, ComponentModel.ISupportInitialize).EndInit()
+        CType(detailWLed_Brightness, ComponentModel.ISupportInitialize).EndInit()
+        CType(detailWLed_Palette, ComponentModel.ISupportInitialize).EndInit()
         GroupBox3.ResumeLayout(False)
         CType(WMP_Preview_B2, ComponentModel.ISupportInitialize).EndInit()
         gbMonitor1.ResumeLayout(False)
@@ -1120,12 +2060,40 @@ Partial Class FrmMain
         ToolStip_Show.ResumeLayout(False)
         ToolStip_Show.PerformLayout()
         CType(DG_Show, ComponentModel.ISupportInitialize).EndInit()
+        TabDMX.ResumeLayout(False)
+        TabDMX.PerformLayout()
+        CType(TrackBar4, ComponentModel.ISupportInitialize).EndInit()
+        CType(TrackBar5, ComponentModel.ISupportInitialize).EndInit()
+        CType(TrackBar6, ComponentModel.ISupportInitialize).EndInit()
+        CType(TrackBar1, ComponentModel.ISupportInitialize).EndInit()
+        CType(TrackBar2, ComponentModel.ISupportInitialize).EndInit()
+        CType(TrackBar3, ComponentModel.ISupportInitialize).EndInit()
+        CType(DMX_1_B, ComponentModel.ISupportInitialize).EndInit()
+        CType(DMX_1_G, ComponentModel.ISupportInitialize).EndInit()
+        CType(DMX_1_R, ComponentModel.ISupportInitialize).EndInit()
+        CType(DMX_Master, ComponentModel.ISupportInitialize).EndInit()
         TabDevices.ResumeLayout(False)
         TabDevices.PerformLayout()
         ToolStrip_Devices.ResumeLayout(False)
         ToolStrip_Devices.PerformLayout()
+        TabGroups.ResumeLayout(False)
+        TabGroups.PerformLayout()
+        ToolStrip1.ResumeLayout(False)
+        ToolStrip1.PerformLayout()
+        CType(DG_Groups, ComponentModel.ISupportInitialize).EndInit()
+        TabSegments.ResumeLayout(False)
+        TabSegments.PerformLayout()
+        CType(pb_Stage, ComponentModel.ISupportInitialize).EndInit()
+        ToolStripSegments.ResumeLayout(False)
+        ToolStripSegments.PerformLayout()
         TabEffects.ResumeLayout(False)
+        TabEffects.PerformLayout()
+        ToolStrip_Effecten.ResumeLayout(False)
+        ToolStrip_Effecten.PerformLayout()
         TabPaletten.ResumeLayout(False)
+        TabPaletten.PerformLayout()
+        ToolStrip_Paletten.ResumeLayout(False)
+        ToolStrip_Paletten.PerformLayout()
         CType(DG_Paletten, ComponentModel.ISupportInitialize).EndInit()
         TabSettings.ResumeLayout(False)
         GroupBox8.ResumeLayout(False)
@@ -1162,7 +2130,7 @@ Partial Class FrmMain
 
     Friend WithEvents DG_Devices As DataGridView
     Friend WithEvents DG_Effecten As DataGridView
-    Friend WithEvents TabControl1 As TabControl
+    Friend WithEvents TabControl As TabControl
     Friend WithEvents TabDevices As TabPage
     Friend WithEvents TabEffects As TabPage
     Friend WithEvents txt_APIResult As TextBox
@@ -1170,7 +2138,6 @@ Partial Class FrmMain
     Friend WithEvents DG_Show As DataGridView
     Friend WithEvents ToolStrip_Form As ToolStrip
     Friend WithEvents btnSaveShow As ToolStripButton
-    Friend WithEvents btnLoad As ToolStripButton
     Friend WithEvents TabPaletten As TabPage
     Friend WithEvents DG_Paletten As DataGridView
     Friend WithEvents ToolStip_Show As ToolStrip
@@ -1200,10 +2167,6 @@ Partial Class FrmMain
     Friend WithEvents pbSecondaryStatus As PictureBox
     Friend WithEvents pbPrimaryStatus As PictureBox
     Friend WithEvents TimerEverySecond As Timer
-    Friend WithEvents colIPAddress As DataGridViewTextBoxColumn
-    Friend WithEvents colInstance As DataGridViewTextBoxColumn
-    Friend WithEvents colNumberOfSegments As DataGridViewTextBoxColumn
-    Friend WithEvents colPreview As DataGridViewImageColumn
     Friend WithEvents ToolStripLabel1 As ToolStripLabel
     Friend WithEvents ToolStrip_Devices As ToolStrip
     Friend WithEvents BtnScanNetwork As ToolStripButton
@@ -1239,9 +2202,36 @@ Partial Class FrmMain
     Friend WithEvents Label6 As Label
     Friend WithEvents lblTitleProject As Label
     Friend WithEvents lblCurrentTime As Label
+    Friend WithEvents btnLockUnlocked As ToolStripButton
+    Friend WithEvents ToolStrip_Paletten As ToolStrip
+    Friend WithEvents ToolStripButton1 As ToolStripButton
+    Friend WithEvents RichTextBox1 As RichTextBox
+    Friend WithEvents RichTextBox2 As RichTextBox
+    Friend WithEvents ToolStrip_Effecten As ToolStrip
+    Friend WithEvents RichTextBox3 As RichTextBox
+    Friend WithEvents gb_DetailWLed As GroupBox
+    Friend WithEvents detailWLed_Palette As PictureBox
+    Friend WithEvents Label7 As Label
+    Friend WithEvents detailWLed_Brightness As TrackBar
+    Friend WithEvents Label9 As Label
+    Friend WithEvents detailWLed_Speed As TrackBar
+    Friend WithEvents Label8 As Label
+    Friend WithEvents detailWLed_Intensity As TrackBar
+    Friend WithEvents GroupBox9 As GroupBox
+    Friend WithEvents detailWLed_Color1 As PictureBox
+    Friend WithEvents GroupBox11 As GroupBox
+    Friend WithEvents detailWLed_Color3 As PictureBox
+    Friend WithEvents GroupBox10 As GroupBox
+    Friend WithEvents detailWLed_Color2 As PictureBox
+    Friend WithEvents detailWLed__EffectName As Label
+    Friend WithEvents gb_Controls As GroupBox
+    Friend WithEvents btnControl_NextEvent As Button
+    Friend WithEvents btnControl_Start As Button
+    Friend WithEvents btnApply As DataGridViewButtonColumn
     Friend WithEvents colAct As DataGridViewComboBoxColumn
     Friend WithEvents colSceneId As DataGridViewTextBoxColumn
     Friend WithEvents colEventId As DataGridViewTextBoxColumn
+    Friend WithEvents colTimer As DataGridViewTextBoxColumn
     Friend WithEvents colCue As DataGridViewTextBoxColumn
     Friend WithEvents colFixture As DataGridViewComboBoxColumn
     Friend WithEvents colStateOnOff As DataGridViewComboBoxColumn
@@ -1260,6 +2250,66 @@ Partial Class FrmMain
     Friend WithEvents colRepeat As DataGridViewCheckBoxColumn
     Friend WithEvents colMicrophone As DataGridViewCheckBoxColumn
     Friend WithEvents colFilename As DataGridViewTextBoxColumn
-    Friend WithEvents btnLockUnlocked As ToolStripButton
+    Friend WithEvents btnControl_NextScene As Button
+    Friend WithEvents lblControl_TimeLeft As Label
+    Friend WithEvents TimerNextEvent As Timer
+    Friend WithEvents TimerPingDevices As Timer
+    Friend WithEvents btnPingDevice As ToolStripButton
+    Friend WithEvents btnAddDevice As ToolStripButton
+    Friend WithEvents btnDeleteDevice As ToolStripButton
+    Friend WithEvents btnLoad As ToolStripDropDownButton
+    Friend WithEvents btnLoadEffectPalettes As ToolStripMenuItem
+    Friend WithEvents btnLoadShow As ToolStripMenuItem
+    Friend WithEvents btnLoadAll As ToolStripMenuItem
+    Friend WithEvents settings_EffectsPath As TextBox
+    Friend WithEvents Label11 As Label
+    Friend WithEvents settings_PalettesPath As TextBox
+    Friend WithEvents Label10 As Label
+    Friend WithEvents detailWLed_Effect As PictureBox
+    Friend WithEvents Label13 As Label
+    Friend WithEvents Label12 As Label
+    Friend WithEvents btnTestExistanceEffects As ToolStripButton
+    Friend WithEvents TabSegments As TabPage
+    Friend WithEvents SegmentsStageToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents btnGenerateStage As ToolStripButton
+    Friend WithEvents pb_Stage As PictureBox
+    Friend WithEvents ToolStripSegments As ToolStrip
+    Friend WithEvents btnUpdateStage As ToolStripButton
+    Friend WithEvents TabDMX As TabPage
+    Friend WithEvents TabGroups As TabPage
+    Friend WithEvents DG_Groups As DataGridView
+    Friend WithEvents RichTextBox4 As RichTextBox
+    Friend WithEvents ToolStrip1 As ToolStrip
+    Friend WithEvents btnGroupAddRowAfter As ToolStripButton
+    Friend WithEvents btnGroupAddRowBefore As ToolStripButton
+    Friend WithEvents btnGroupDeleteRow As ToolStripButton
+    Friend WithEvents colGroupName As DataGridViewTextBoxColumn
+    Friend WithEvents colGroupFixture As DataGridViewComboBoxColumn
+    Friend WithEvents colGroupStartLedNr As DataGridViewTextBoxColumn
+    Friend WithEvents colGroupStopLedNr As DataGridViewTextBoxColumn
+    Friend WithEvents colGroupOrder As DataGridViewTextBoxColumn
+    Friend WithEvents DMX_Master As TrackBar
+    Friend WithEvents DMX_1_B As TrackBar
+    Friend WithEvents DMX_1_G As TrackBar
+    Friend WithEvents DMX_1_R As TrackBar
+    Friend WithEvents TrackBar4 As TrackBar
+    Friend WithEvents TrackBar5 As TrackBar
+    Friend WithEvents TrackBar6 As TrackBar
+    Friend WithEvents TrackBar1 As TrackBar
+    Friend WithEvents TrackBar2 As TrackBar
+    Friend WithEvents TrackBar3 As TrackBar
+    Friend WithEvents btnStartDMXSync As ToolStripButton
+    Friend WithEvents colIPAddress As DataGridViewTextBoxColumn
+    Friend WithEvents colInstance As DataGridViewTextBoxColumn
+    Friend WithEvents colNumberOfSegments As DataGridViewTextBoxColumn
+    Friend WithEvents colStartUniverse As DataGridViewTextBoxColumn
+    Friend WithEvents colEndUniverse As DataGridViewTextBoxColumn
+    Friend WithEvents colStartDMXChannel As DataGridViewTextBoxColumn
+    Friend WithEvents colProtocol As DataGridViewComboBoxColumn
+    Friend WithEvents colLayout As DataGridViewTextBoxColumn
+    Friend WithEvents colLedCount As DataGridViewTextBoxColumn
+    Friend WithEvents colPriority As DataGridViewTextBoxColumn
+    Friend WithEvents colEnabled As DataGridViewCheckBoxColumn
+    Friend WithEvents colOnline As DataGridViewImageColumn
 
 End Class

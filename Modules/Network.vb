@@ -181,7 +181,7 @@ Module Network
     ' *************************************************************************************************
     ' Handler voor de knop om het netwerk te scannen
     ' *************************************************************************************************
-    Public Async Sub ScanNetworkForWLEDdevices(DG_Devices As DataGridView, DG_Effecten As DataGridView, DG_Show As DataGridView)
+    Public Async Sub ScanNetworkForWLEDdevices(DG_Devices As DataGridView, DG_Effecten As DataGridView, DG_Show As DataGridView, DG_Paletten As DataGridView, DG_Groups As DataGridView)
 
         ' Haal het huidige IP-bereik op
         Dim MyIpRange As String = GetCurrentIPRange()
@@ -252,14 +252,16 @@ Module Network
         Else
             FrmMain.txt_APIResult.Text = "Gevonden WLED apparaten: " & wledDevices.Count
 
-            UpdateFixuresPulldown(DG_Show)
+            UpdateFixuresPulldown_ForShow(DG_Show)
+            UpdateFixuresPulldown_ForGroups(DG_Groups)
 
             ' Werk de effecten en paletten bij voor de gevonden apparaten
-            UpdateEffectenPulldown_ForEachWLED()
-            UpdatePalettenPulldown_ForEachWLED()
+            Update_DGEffecten_BasedOnTuple()
+            Update_DGPaletten_BasedOnTuple()
 
-            ' Werk het aantal segmenten bij voor de gevonden apparaten
-            UpdateSegmenten_PerWLED(DG_Devices)
+
+            ' Laad de color paletten images in
+            DG_Palette_LoadImages(DG_Paletten)
         End If
     End Sub
 

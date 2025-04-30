@@ -1,9 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DataGridData>
     <Structure>
+        <Column Name="btnApply" Type="System.Windows.Forms.DataGridViewButtonColumn" AutoSizeMode="NotSet" />
         <Column Name="colAct" Type="System.Windows.Forms.DataGridViewComboBoxColumn" AutoSizeMode="NotSet" />
         <Column Name="colSceneId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
         <Column Name="colEventId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colTimer" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
         <Column Name="colCue" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="Fill" />
         <Column Name="colFixture" Type="System.Windows.Forms.DataGridViewComboBoxColumn" AutoSizeMode="NotSet" />
         <Column Name="colStateOnOff" Type="System.Windows.Forms.DataGridViewComboBoxColumn" AutoSizeMode="NotSet" />
@@ -23,52 +25,5 @@
         <Column Name="colMicrophone" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
         <Column Name="colFilename" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
     </Structure>
-    <Data>
-        <Row>
-            <colAct>Pre-Show</colAct>
-            <colSceneId>1</colSceneId>
-            <colEventId>1</colEventId>
-            <colCue></colCue>
-            <colFixture>WLED Demo 2 Long/1</colFixture>
-            <colStateOnOff>True</colStateOnOff>
-            <colEffectId>0</colEffectId>
-            <colEffect>Solid</colEffect>
-            <colPaletteId>0</colPaletteId>
-            <colPalette>Default</colPalette>
-            <colColor1>43775</colColor1>
-            <colColor2>0</colColor2>
-            <colColor3>0</colColor3>
-            <colBrightness>255</colBrightness>
-            <colSpeed>128</colSpeed>
-            <colIntensity>128</colIntensity>
-            <colTransition>0</colTransition>
-            <colBlend></colBlend>
-            <colRepeat></colRepeat>
-            <colMicrophone>False</colMicrophone>
-            <colFilename></colFilename>
-        </Row>
-        <Row>
-            <colAct>Pre-Show</colAct>
-            <colSceneId>1</colSceneId>
-            <colEventId>1</colEventId>
-            <colCue></colCue>
-            <colFixture>WLED Demo 2 Long/0</colFixture>
-            <colStateOnOff>True</colStateOnOff>
-            <colEffectId>0</colEffectId>
-            <colEffect>Solid</colEffect>
-            <colPaletteId>0</colPaletteId>
-            <colPalette>Default</colPalette>
-            <colColor1>41215</colColor1>
-            <colColor2>0</colColor2>
-            <colColor3>0</colColor3>
-            <colBrightness>255</colBrightness>
-            <colSpeed>128</colSpeed>
-            <colIntensity>128</colIntensity>
-            <colTransition>0</colTransition>
-            <colBlend></colBlend>
-            <colRepeat></colRepeat>
-            <colMicrophone>False</colMicrophone>
-            <colFilename></colFilename>
-        </Row>
-    </Data>
+    <Data />
 </DataGridData>

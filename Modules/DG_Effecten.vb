@@ -1,12 +1,18 @@
 ﻿Imports System.Net.Http
 Imports System.Text
 Imports Newtonsoft.Json.Linq
+Imports System.Drawing
+Imports System.Drawing.Imaging
+Imports System.IO
 
 Module DG_Effecten
     ' *********************************************************************************************
     ' Deze sub werkt de pulldown veld voor effecten, in geval de fixure is gewijzigd
     ' *********************************************************************************************
     Public Sub UpdateEffectenPulldown_ForCurrentFixure(ByVal DG_Show As DataGridView)
+        If DG_Show.RowCount = 0 Then
+            Exit Sub
+        End If
         Dim rowIndex = DG_Show.CurrentRow.Index
         Dim currentRow = DG_Show.Rows(rowIndex)
 
@@ -88,13 +94,14 @@ Module DG_Effecten
                     If effecten(i).ToString() = effectNaam Then
                         effectId = i
                         Debug.WriteLine($"Handle_DGEffecten_CellContentClick: Found effectId = {effectId}")
+                        ToonFlashBericht(wledNaam & " op segment 0 effect " & effectNaam & " toegepast.", 2)
                         Exit For
                     End If
                 Next
             End If
 
             If effectId <> -1 Then
-                SendEffectToWLed(wledIp, "1", effectId)
+                Await SendEffectToWLed(wledIp, "1", effectId)
             Else
                 MessageBox.Show("Effect niet beschikbaar.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End If
@@ -107,7 +114,7 @@ Module DG_Effecten
     ' ****************************************************************************************  
     '  Update de effectenpulldown in de DataGridView voor elk WLED-apparaat.
     ' ****************************************************************************************
-    Public Sub UpdateEffectenPulldown_ForEachWLED()
+    Public Sub Update_DGEffecten_BasedOnTuple()
         If wledDevices.Count = 0 Then Return
 
         Dim effectenLijst As New List(Of Tuple(Of Integer, String))()
@@ -203,5 +210,98 @@ Module DG_Effecten
     End Function
 
 
+
+
+    ''' <summary>
+    ''' Zet een effect plaatje van 15x3 om naar een effect plaatje van 45x1.
+    ''' </summary>
+    ''' <param name="inputImage">De originele afbeelding (15x3).</param>
+    ''' <returns>Een nieuwe afbeelding (45x1) of Nothing als er een fout optreedt.</returns>
+    Public Function ConvertEffectImage(ByVal inputImage As System.Drawing.Image) As System.Drawing.Image
+        Try
+            ' Controleer of de inputImage niet Nothing is.
+            If inputImage Is Nothing Then
+                Return Nothing ' Of gooi een exception, afhankelijk van de gewenste foutafhandeling.
+            End If
+
+            ' Definieer de nieuwe breedte en hoogte.
+            Dim newWidth As Integer = 45
+            Dim newHeight As Integer = 1
+
+            ' Maak een nieuwe Bitmap met de gewenste afmetingen.
+            Dim outputImage As New Bitmap(newWidth, newHeight, PixelFormat.Format32bppArgb)
+
+            ' Maak een Graphics object om op de nieuwe Bitmap te tekenen.
+            Using graphics As Graphics = Graphics.FromImage(outputImage)
+                ' Stel de interpolatiemodus in voor een betere kwaliteit (optioneel).
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic
+                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality 'Nieuw
+                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality 'Nieuw
+
+                ' Teken de originele afbeelding op de nieuwe Bitmap, waarbij elke kolom van de originele afbeelding
+                ' 3 keer horizontaal wordt getekend in de nieuwe afbeelding.
+                For x As Integer = 0 To 14 ' Loop door de 15 kolommen van de originele afbeelding.
+                    For y As Integer = 0 To 2
+                        Dim sourceX As Integer = x
+                        Dim sourceY As Integer = y
+                        Dim destX As Integer = x * 3 + y ' Bereken de x-positie in de nieuwe afbeelding.
+                        Dim destY As Integer = 0 ' De y-positie is altijd 0 in de nieuwe afbeelding.
+
+                        ' Haal de kleur van de pixel.
+                        Dim pixelColor As Color = DirectCast(inputImage, Bitmap).GetPixel(sourceX, sourceY)
+                        ' Zet de kleur van de pixel in de nieuwe afbeelding.
+                        outputImage.SetPixel(destX, destY, pixelColor)
+                    Next
+                Next
+            End Using
+
+            ' Retourneer de nieuwe afbeelding.
+            Return outputImage
+
+        Catch ex As Exception
+            ' Foutafhandeling: Log de fout, toon een bericht, of retourneer Nothing.
+            Console.WriteLine("Fout bij het converteren van de afbeelding: " & ex.Message)
+            Return Nothing ' Of gooi een exception, afhankelijk van de gewenste foutafhandeling.
+        End Try
+    End Function
+
+    Public Sub TestEffectImages(ByVal DG_Effecten As DataGridView, ByVal effectsImagePath As String)
+        ' Controleer of de DataGridView geldig is.
+        If DG_Effecten Is Nothing Then
+            Return
+        End If
+
+        ' Voeg de kolom toe als deze nog niet bestaat.
+        If DG_Effecten.Columns.Contains("colExists") = False Then
+            Dim imageColumn As New DataGridViewImageColumn()
+            imageColumn.Name = "colExists"
+            imageColumn.HeaderText = "Exists"
+            imageColumn.Width = 50
+            DG_Effecten.Columns.Add(imageColumn)
+        End If
+
+        ' Loop door alle rijen in de DataGridView.
+        For Each row As DataGridViewRow In DG_Effecten.Rows
+            ' Haal de effectnaam op.
+            Dim effectName As String = TryCast(row.Cells("Effect").Value, String)
+            If Not String.IsNullOrEmpty(effectName) Then
+                ' Stel het pad naar de image samen.
+                Dim imagePath As String = Path.Combine(effectsImagePath, effectName.Replace(" ", "_") & ".gif")
+
+                ' Controleer of het bestand bestaat.
+                If File.Exists(imagePath) Then
+                    ' Stel de celwaarde in op een groene vink.
+                    row.Cells("colExists").Value = My.Resources.iconGreenBullet1
+
+                Else
+                    ' Stel de celwaarde in op een rood kruis.
+                    row.Cells("colExists").Value = My.Resources.iconRedBullet1
+
+                End If
+            Else
+                row.Cells("colExists").Value = DBNull.Value
+            End If
+        Next
+    End Sub
 
 End Module

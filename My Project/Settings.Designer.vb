@@ -137,6 +137,30 @@ Namespace My
                 Me("Locked") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("E:\KLT\LedShow\KKLT Led Show v2\ColorMaps")>  _
+        Public Property PaletteImagesPath() As String
+            Get
+                Return CType(Me("PaletteImagesPath"),String)
+            End Get
+            Set
+                Me("PaletteImagesPath") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("E:\KLT\LedShow\KKLT Led Show v2\Effects")>  _
+        Public Property EffectsImagePath() As String
+            Get
+                Return CType(Me("EffectsImagePath"),String)
+            End Get
+            Set
+                Me("EffectsImagePath") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

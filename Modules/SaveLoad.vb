@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Runtime
 Imports System.Xml
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
@@ -128,7 +129,11 @@ Module SaveLoad
                                 End If
                                 rowValues.Add(boolValue)
                             Else
-                                rowValues.Add(cellValue)
+                                If (TypeOf dataGridView.Columns(columnName) Is DataGridViewImageColumn) Then
+                                    ' do nothing
+                                Else
+                                    rowValues.Add(cellValue)
+                                End If
                             End If
                         End If
                     Next
@@ -147,6 +152,8 @@ Module SaveLoad
 
 
     Public Sub LoadJSonToWLEDDevices(wledDevices As Dictionary(Of String, Tuple(Of String, JObject)), filename As String)
+        Return
+
         If File.Exists(filename) Then
             Try
                 Dim jsonString As String = File.ReadAllText(filename)
@@ -214,26 +221,109 @@ Module SaveLoad
     End Sub
 
     Public Sub LoadAll()
+        Dim progressPopUpForm As Form
+        Dim progressBar As ProgressBar
+        Dim progressText As Label
+
         Dim Folder As String = My.Settings.DatabaseFolder
 
+        ' Maak een nieuw formulier voor de voortgang te kunnen tonen
+        progressPopUpForm = New Form()
+        progressPopUpForm.Text = "Loading..."
+        progressPopUpForm.StartPosition = FormStartPosition.CenterScreen
+        progressPopUpForm.Size = New Size(300, 150)
+        progressPopUpForm.ControlBox = False
+        progressBar = New ProgressBar()
+        progressBar.Location = New Point(10, 10)
+        progressBar.Size = New Size(250, 20)
+        progressBar.Maximum = 254
+        progressBar.MarqueeAnimationSpeed = 100
+        progressBar.Minimum = 0
+        progressBar.Value = 0
+        progressBar.Step = 1
+        progressBar.Maximum = 15
+        progressBar.Style = ProgressBarStyle.Blocks
+        progressPopUpForm.Controls.Add(progressBar)
 
+        progressText = New Label()
+        progressText.Location = New Point(10, 40)
+        progressText.Size = New Size(280, 20)
+
+        progressPopUpForm.Controls.Add(progressText)
+
+        progressPopUpForm.Show()
+
+
+        progressBar.Value = 1
+        progressText.Text = "Loading WLED devices..."
         LoadJSonToWLEDDevices(wledDevices, Folder + "\Devices.json")
+
+        progressText.Text = "Loading devices..."
+        progressBar.Value = progressBar.Value + 1
         LoadXmlToDataGridView(FrmMain.DG_Devices, Folder + "\Devices.xml", False)
+
+
+
+        progressText.Text = "Loading effects..."
+        progressBar.Value = progressBar.Value + 1
         LoadXmlToDataGridView(FrmMain.DG_Effecten, Folder + "\Effects.xml", True)
+
+        progressText.Text = "Loading palettes..."
+        progressBar.Value = progressBar.Value + 1
         LoadXmlToDataGridView(FrmMain.DG_Paletten, Folder + "\Paletten.xml", True)
 
+        progressText.Text = "Loading show..."
+        progressBar.Value = progressBar.Value + 1
         LoadXmlToDataGridView(FrmMain.DG_Show, Folder + "\Show.xml", False)
 
+        progressText.Text = "Update fixure pulldown..."
+        progressBar.Value = progressBar.Value + 1
+        UpdateFixuresPulldown_ForShow(FrmMain.DG_Show)
+        UpdateFixuresPulldown_ForGroups(FrmMain.DG_Groups)
 
 
-        For Each row As DataGridViewRow In FrmMain.DG_Show.Rows
-            UpdateFixuresPulldown(FrmMain.DG_Show)
-            UpdateEffectenPulldown_ForEachWLED()
-            UpdatePalettenPulldown_ForEachWLED()
 
-        Next
 
+        If (FrmMain.DG_Show.RowCount > 0) Then
+            FrmMain.DG_Show.CurrentCell = FrmMain.DG_Show.Rows(0).Cells(0)
+        End If
+        progressText.Text = "Update effecten in show..."
+        progressBar.Value = progressBar.Value + 1
+        UpdateEffectenPulldown_ForCurrentFixure(FrmMain.DG_Show)
+
+        progressText.Text = "Update palettes in show..."
+        progressBar.Value = progressBar.Value + 1
+        UpdatePalettePulldown_ForCurrentFixure(FrmMain.DG_Show)
+
+
+        progressText.Text = "Drawing palettes..."
+        progressBar.Value = progressBar.Value + 1
+        DG_Palette_LoadImages(FrmMain.DG_Paletten)
+
+        progressText.Text = "Finishing up..."
+        progressBar.Value = 15
+        progressPopUpForm.Close()
 
 
     End Sub
+
+
+    Sub LoadShow()
+        Dim Folder As String = My.Settings.DatabaseFolder
+
+        LoadXmlToDataGridView(FrmMain.DG_Show, Folder + "\Show.xml", False)
+        UpdateFixuresPulldown_ForShow(FrmMain.DG_Show)
+        UpdateEffectenPulldown_ForCurrentFixure(FrmMain.DG_Show)
+        UpdatePalettePulldown_ForCurrentFixure(FrmMain.DG_Show)
+    End Sub
+
+
+    Sub LoadEffectPalettes()
+        Dim Folder As String = My.Settings.DatabaseFolder
+
+        LoadXmlToDataGridView(FrmMain.DG_Effecten, Folder + "\Effects.xml", True)
+        LoadXmlToDataGridView(FrmMain.DG_Paletten, Folder + "\Paletten.xml", True)
+    End Sub
+
+
 End Module

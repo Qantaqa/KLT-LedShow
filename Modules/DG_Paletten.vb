@@ -1,5 +1,8 @@
-﻿Imports System.Net.Http
+﻿Imports System.Drawing.Drawing2D
+Imports System.IO
+Imports System.Net.Http
 Imports System.Text
+Imports System.Windows.Forms.VisualStyles
 Imports Newtonsoft.Json.Linq
 
 Module DG_Paletten
@@ -8,6 +11,10 @@ Module DG_Paletten
     ' Deze sub werkt de pulldown veld voor palette, in geval de fixure is gewijzigd
     ' *********************************************************************************************
     Public Sub UpdatePalettePulldown_ForCurrentFixure(ByVal DG_Show As DataGridView)
+        If DG_Show.RowCount = 0 Then
+            Exit Sub
+        End If
+
         Dim RowIndex = DG_Show.CurrentRow.Index
         Dim currentRow = DG_Show.Rows(RowIndex)
         Dim paletteColumn As DataGridViewComboBoxColumn = TryCast(DG_Show.Columns("colPalette"), DataGridViewComboBoxColumn)
@@ -83,6 +90,7 @@ Module DG_Paletten
                     If paletten(i).ToString() = paletteNaam Then
                         paletteId = i
                         Debug.WriteLine($"DG_Paletten_CellContentClick: Found paletteId = {paletteId}")
+                        ToonFlashBericht(wledNaam & " op segment 0 met palette " & paletteNaam & " toegepast.", 2)
                         Exit For
                     End If
                 Next
@@ -103,7 +111,7 @@ Module DG_Paletten
     ' *********************************************************************************************
     ' Update de paletten pulldown voor alle WLED apparaten
     ' *********************************************************************************************
-    Public Sub UpdatePalettenPulldown_ForEachWLED()
+    Public Sub Update_DGPaletten_BasedOnTuple()
         If wledDevices.Count = 0 Then Return
 
         Dim paletteLijst As New List(Of Tuple(Of Integer, String))() ' Lijst voor paletten
@@ -174,6 +182,85 @@ Module DG_Paletten
         Return "Unknown Palette"
     End Function
 
+
+    ' *********************************************************
+    ' Deze functie haalt de palettenaam op aan de hand van het palette-ID 
+    ' *********************************************************
+    Public Function GetPaletteIdFromName(ByVal paletteName As String, ByVal DG_Palette As DataGridView) As String
+
+
+        ' Zoek de paletnaam in de DG_Palette DataGridView.
+        For Each paletteRow As DataGridViewRow In DG_Palette.Rows
+            Dim paletteIdCellValue = paletteRow.Cells("PaletteId").Value
+            Dim paletteNameCellValue = paletteRow.Cells("Palette").Value
+            If paletteNameCellValue IsNot Nothing AndAlso paletteNameCellValue.ToString() = paletteName Then
+                If paletteIdCellValue IsNot Nothing Then
+                    Return paletteIdCellValue.ToString()
+                Else
+                    Return ""
+                End If
+            End If
+        Next
+        Return "Unknown Palette"
+    End Function
+
+
+
+    ' **********************************************************
+    ' Sub om een kolom toe te voegen aan de DG_Palette grid en de palette-afbeeldingen te laden.
+    ' **********************************************************
+    Public Sub DG_Palette_LoadImages(ByVal DG_Palette As DataGridView)
+        Dim FoundName As String
+        Dim paletteName
+        Dim PaletteImagesPath As String = My.Settings.PaletteImagesPath
+        Dim imagePath
+
+        ' Controleer of de kolom al bestaat om duplicaten te voorkomen.
+        If DG_Palette.Columns.Contains("colPaletteImage") Then
+            ' Verwijder de bestaande kolom voordat je een nieuwe toevoegt.
+            DG_Palette.Columns.Remove("colPaletteImage")
+        End If
+        ' Voeg een nieuwe kolom toe aan de DataGridView voor de afbeeldingen.
+        Dim imageColumn As New DataGridViewImageColumn()
+            imageColumn.Name = "colPaletteImage"
+            imageColumn.HeaderText = "Preview" ' Koptekst voor de kolom.
+            imageColumn.ImageLayout = DataGridViewImageCellLayout.Stretch
+            imageColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+
+            DG_Palette.Columns.Add(imageColumn)
+
+
+            ' Loop door elke rij in de DataGridView om de bijbehorende afbeelding te laden.
+            For Each row As DataGridViewRow In DG_Palette.Rows
+            ' Controleer of de rij een geldige "Palette" cel heeft.
+            If row.Cells(1).Value IsNot Nothing Then
+                FoundName = row.Cells(1).Value.ToString
+                paletteName = row.Cells(1).Value.ToString().Replace(" ", "_") & ".png"
+                paletteName = paletteName.ToString().Replace("*_", "")
+                imagePath = Path.Combine(PaletteImagesPath, paletteName)
+
+                ' Controleer of het bestand bestaat voordat je het laadt.
+                If File.Exists(imagePath) Then
+                    Try
+                        ' Laad de afbeelding en wijs deze toe aan de cel.
+                        Dim image As Image = Image.FromFile(imagePath)
+                        row.Cells("colPaletteImage").Value = image
+                    Catch ex As Exception
+                        ' Foutafhandeling: Log de fout en toon een bericht.
+                        Console.WriteLine($"Fout bij het laden van afbeelding: {imagePath}. Fout: {ex.Message}")
+                        ' Je kunt er ook voor kiezen om een standaardafbeelding in te stellen of de cel leeg te laten.
+                        row.Cells("colPaletteImage").Value = Nothing ' Of een standaardafbeelding.
+                    End Try
+                Else
+                    ' Als het bestand niet bestaat, laat de cel dan leeg en log een waarschuwing.
+                    Console.WriteLine($"Afbeelding niet gevonden: {imagePath}")
+                    row.Cells("colPaletteImage").Value = Nothing
+                End If
+            End If
+        Next
+        ' Pas de kolombreedte aan.
+        DG_Palette.Columns("colPaletteImage").Width = 100
+    End Sub
 
 
 End Module

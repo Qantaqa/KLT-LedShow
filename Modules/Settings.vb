@@ -39,8 +39,11 @@
         FrmMain.lblCurrentTime.Text = DateTime.Now.ToString("HH:mm:ss")
     End Sub
 
-    Public Sub Update_LockUnlocked()
-        If FrmMain.btnLockUnlocked.Text = "Unlocked" Then
+    Public Sub Update_LockUnlocked(State As String)
+        FrmMain.btnLockUnlocked.Text = State
+        If State = "Locked" Then
+            My.Settings.Locked = True
+
             FrmMain.btnLockUnlocked.Text = "Locked"
             FrmMain.btnLockUnlocked.Image = My.Resources.iconLocked
 
@@ -50,8 +53,17 @@
             FrmMain.btn_DGGrid_AddNewRowAfter.Enabled = False
             FrmMain.btn_DGGrid_RemoveCurrentRow.Enabled = False
             FrmMain.DG_Show.ReadOnly = True
-            My.Settings.Locked = True
+
+            FrmMain.DG_Show.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+
+            FrmMain.gb_DetailWLed.Enabled = False
+
+            FrmMain.DG_Devices.ReadOnly = True
+            FrmMain.btnAddDevice.Enabled = False
+            FrmMain.btnDeleteDevice.Enabled = False
+
         Else
+            My.Settings.Locked = False
             FrmMain.btnLockUnlocked.Text = "Unlocked"
             FrmMain.btnLockUnlocked.Image = My.Resources.iconUnlocked_Green
 
@@ -60,9 +72,125 @@
             FrmMain.btn_DGGrid_AddNewRowBefore.Enabled = True
             FrmMain.btn_DGGrid_AddNewRowAfter.Enabled = True
             FrmMain.btn_DGGrid_RemoveCurrentRow.Enabled = True
-            FrmMain.DG_Show.ReadOnly = True
-            My.Settings.Locked = True
+            FrmMain.DG_Show.ReadOnly = False
 
+            FrmMain.DG_Show.SelectionMode = DataGridViewSelectionMode.RowHeaderSelect
+            FrmMain.gb_DetailWLed.Enabled = True
+
+            FrmMain.DG_Devices.ReadOnly = False
+            FrmMain.btnAddDevice.Enabled = True
+            FrmMain.btnDeleteDevice.Enabled = True
         End If
+        My.Settings.Save()
     End Sub
+
+
+    '''' <summary>
+    '''' Zet een tijdstring om in milliseconden.
+    '''' </summary>
+    '''' <param name="timeString">De tijdstring in een van de ondersteunde formaten.</param>
+    '''' <returns>Het aantal milliseconden, of -1 als de string ongeldig is.</returns>
+    'Public Function TimeStringToMilliseconds(timeString As String) As Integer
+    '    Dim formatStrings() As String = {"m\mss", "mm\mss", "m:ss", "mm:ss", "H:mm:ss", "HH:mm:ss", "H\hmm\mss", "HH\hmm\mss", "H\hmm:ss", "HH\hmm:ss", "H:mm", "HH:mm", "H\hmm", "HH\hmm"}
+    '    Dim timeSpan As TimeSpan
+    '    If timeSpan.TryParseExact(timeString, formatStrings, CultureInfo.InvariantCulture, TimeSpanStyles.None, timeSpan) Then
+    '        Return CInt(timeSpan.TotalMilliseconds)
+    '    Else
+    '        Return -1
+    '    End If
+    'End Function
+
+
+
+    Public Function TimeStringToMilliseconds(ByVal timeString As String) As Long
+        ' Controleer of de string het verwachte formaat heeft (mm:ss)
+        If Not System.Text.RegularExpressions.Regex.IsMatch(timeString, "^\d{2}:\d{2}$") Then
+            ' Gooi een exception of retourneer een foutwaarde als het formaat onjuist is
+            Throw New FormatException("De tijdstring moet het formaat mm:ss hebben.")
+            ' Of je kunt een foutwaarde retourneren, bijvoorbeeld -1:
+            ' Return -1
+        End If
+
+        ' Splits de string op de dubbele punt
+        Dim parts As String() = timeString.Split(":")
+
+        ' Parse de minuten en seconden naar integers
+        Dim minutes As Integer
+        If Not Integer.TryParse(parts(0), minutes) Then
+            Throw New FormatException("Ongeldige minutenwaarde.")
+            ' Return -1
+        End If
+
+        Dim seconds As Integer
+        If Not Integer.TryParse(parts(1), seconds) Then
+            Throw New FormatException("Ongeldige secondenwaarde.")
+            ' Return -1
+        End If
+
+        ' Controleer of de minuten en seconden binnen geldige bereiken liggen
+        If minutes < 0 Or minutes > 59 Or seconds < 0 Or seconds > 59 Then
+            Throw New ArgumentOutOfRangeException("De minuten en seconden moeten binnen het bereik 0-59 liggen.")
+            ' Return -1
+        End If
+
+        ' Bereken het totale aantal milliseconden
+        Dim totalMilliseconds As Long = (minutes * 60 + seconds) * 1000
+
+        Return totalMilliseconds
+
+    End Function
+
+
+
+    Public Function RemoveSecondFromStringTime(ByVal timeString As String) As String
+        If timeString = "00:00" Then
+            Return "00:00"
+        End If
+
+        ' Controleer of de string het verwachte formaat heeft (mm:ss)
+        If Not System.Text.RegularExpressions.Regex.IsMatch(timeString, "^\d{2}:\d{2}$") Then
+            Throw New FormatException("De tijdstring moet het formaat mm:ss hebben.")
+        End If
+
+        ' Splits de string op de dubbele punt
+        Dim parts As String() = timeString.Split(":")
+
+        ' Parse de minuten en seconden naar integers
+        Dim minutes As Integer
+        If Not Integer.TryParse(parts(0), minutes) Then
+            Throw New FormatException("Ongeldige minutenwaarde.")
+        End If
+
+        Dim seconds As Integer
+        If Not Integer.TryParse(parts(1), seconds) Then
+            Throw New FormatException("Ongeldige secondenwaarde.")
+        End If
+
+        ' Controleer of de minuten en seconden binnen geldige bereiken liggen
+        If minutes < 0 Or minutes > 59 Or seconds < 0 Or seconds > 59 Then
+            Throw New ArgumentOutOfRangeException("De minuten en seconden moeten binnen het bereik 0-59 liggen.")
+        End If
+
+        ' Verminder de seconden met 1
+        seconds -= 1
+
+        ' Handel het overgaan van seconden naar minuten af
+        If seconds < 0 Then
+            seconds = 59
+            minutes -= 1
+            ' Als de minuten ook onder 0 komen, dan is het resultaat 00:00
+            If minutes < 0 Then
+                minutes = 0
+            End If
+        End If
+
+        ' Formatteer de nieuwe minuten en seconden terug naar een string
+        Dim newTimeString As String = minutes.ToString("D2") & ":" & seconds.ToString("D2")
+
+        Return newTimeString
+
+    End Function
+
+
+
 End Module

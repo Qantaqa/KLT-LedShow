@@ -1,58 +1,14 @@
-﻿Imports System.Net
+﻿Imports System.ComponentModel
+Imports System.Drawing.Design
+Imports System.Net
 Imports System.Net.Http
 Imports System.Text
+Imports System.Text.RegularExpressions
+Imports System.Threading.Tasks.Dataflow
+Imports System.Windows.Forms.AxHost
 Imports Newtonsoft.Json.Linq
 
 Module WLEDControl
-
-
-    Public Async Sub SendOnOffToWLed(IPAddress As String, Segment As String, state As String)
-        Dim Payload As String
-        If state.ToLower() = "on" Then
-            Payload = "{""seg"":[{""on"":true,""id"":""" & Segment & """}]}"
-        Else
-            Payload = "{""seg"":[{""on"":false,""id"":""" & Segment & """}]}"
-        End If
-        ' Bouw de JSON-payload voor het POST-verzoek
-
-
-
-        Dim content As New StringContent(Payload, Encoding.UTF8, "application/json")
-
-        Await SendJsonToWLED2(IPAddress, content)
-    End Sub
-
-
-
-
-    ' **********************************************************
-    ' Deze sub roept de WLED api aan om de kleuren in te stellen
-    ' **********************************************************
-    Public Async Sub SendColorsToWLed(ipAddress As String, color1 As Integer, color2 As Integer, color3 As Integer)
-        Dim color1Value = ColorTranslator.FromOle(color1)
-        Dim color2Value = ColorTranslator.FromOle(color2)
-        Dim color3Value = ColorTranslator.FromOle(color3)
-        Dim colorsArray = New JArray()
-        colorsArray.Add(New JArray(color1Value.R, color1Value.G, color1Value.B))
-        colorsArray.Add(New JArray(color2Value.R, color2Value.G, color2Value.B))
-        colorsArray.Add(New JArray(color3Value.R, color3Value.G, color3Value.B))
-
-        Dim payload = New JObject From {
-            {"seg", New JArray(
-                New JObject From {
-                    {"col", colorsArray}
-                }
-            )}
-        }
-
-        Dim content As New StringContent(payload, Encoding.UTF8, "application/json")
-        Await SendJsonToWLED2(ipAddress, content)
-    End Sub
-
-
-
-
-
 
 
     ' ****************************************************************************************
@@ -174,4 +130,107 @@ Module WLEDControl
 
 
 
+
+    Public Async Sub Apply_DGShowRow_ToWLED(ByVal DG_Show As DataGridView, ByVal DG_Devices As DataGridView, ByVal DG_Effecten As DataGridView, ByVal DG_Paletten As DataGridView, notify As Boolean)
+        Dim Payload As String = ""          ' JSON payload
+        Dim Segment As String = ""          ' Segment of de WLED
+        Dim wledIp As String = ""           ' IPAddress Of WLED
+        Dim wledName As String = ""
+        Dim stateOnOff As String = "True"
+        Dim effectId As String = ""
+        Dim effectName As String = ""
+        Dim paletteId As String = ""
+        Dim paletteName As String = ""
+        Dim Speed As String = "127"
+        Dim Brightness As String = "255"
+        Dim Intensity As String = "127"
+
+
+        If DG_Show.RowCount = 0 Then
+            Exit Sub
+        End If
+
+        ' Controleer of er een rij is geselecteerd
+        If DG_Show.CurrentCell IsNot Nothing And Not DG_Show.CurrentRow.IsNewRow Then
+            Dim currentRow = DG_Show.Rows(DG_Show.CurrentCell.RowIndex)
+
+            Dim selectedFixture = currentRow.Cells("colFixture").Value                      ' De geselecteerde fixture
+            If selectedFixture IsNot Nothing And selectedFixture.substring(0, 2) <> "**" Then      ' Als deze niet een beamer is
+                Dim fixtureParts = selectedFixture.ToString().Split("/").ToArray()          ' De fixture naam en segment
+                If fixtureParts.Length = 2 Then
+                    wledName = fixtureParts(0)                                              ' De naam van de fixture
+                    Segment = Integer.Parse(fixtureParts(1))
+
+                    For Each row In DG_Devices.Rows
+                        If row.cells("colInstance").value = wledName Then
+                            wledIp = row.cells("colIPAddress").value
+                            Exit For
+                        End If
+                    Next
+
+                    If wledIp <> "" Then
+                        ' Er is een IP adres aanwezig. Bouw de JSON payload
+
+                        ' Segment aan of uit
+                        stateOnOff = currentRow.Cells("colStateOnOff").Value
+                        If stateOnOff = "Uit" Then
+                            stateOnOff = "false"
+                        Else
+                            stateOnOff = "true"
+                        End If
+
+                        effectName = currentRow.Cells("colEffect").Value
+                        effectId = GetEffectIdFromName(effectName, DG_Effecten)
+                        paletteName = currentRow.Cells("colPalette").Value
+                        paletteId = GetPaletteIdFromName(paletteName, DG_Paletten)
+
+                        Brightness = currentRow.Cells("colBrightness").Value
+
+
+                        Payload = "{" &
+                                  """seg"": [" &
+                                  "{" &
+                                  """id"": " & Segment.ToString() & "," &   ' Segment id
+                                  """on"": " & stateOnOff.ToLower() & "," & ' Segment On or off
+                                  """fx"": " & effectId & "," &             ' Effect
+                                  """pal"": " & paletteId & "," &           ' Palette
+                                  """sel"": true," &                        ' Selected
+                                  """bri"": " & Brightness &                ' Brighness
+                                  "}" &
+                                  "]" &
+                                  "}"
+                    End If
+                End If
+            End If
+
+
+            Dim content As New StringContent(Payload, Encoding.UTF8, "application/json")
+
+            Await SendJsonToWLED2(wledIp, content)
+
+            If (notify) Then
+                ' Toon een melding dat het effect is toegepast
+                ToonFlashBericht("Segment " & Segment & " van " & wledName & " is ingesteld op " & effectName & " met palette " & paletteName, 2)
+            End If
+        End If
+    End Sub
+
+    Public Sub Apply_Selected_Rows(DG_Show As DataGridView)
+        Dim rowNr As Integer = 0
+
+        For Each row In DG_Show.Rows
+            If row.cells("btnApply").value = ">" Then
+                rowNr = row.index
+                'Stel de focus op de nieuwe rij
+                DG_Show.CurrentCell = DG_Show.Rows(rowNr).Cells(0)
+                Apply_DGShowRow_ToWLED(DG_Show, FrmMain.DG_Devices, FrmMain.DG_Effecten, FrmMain.DG_Paletten, False)
+
+            End If
+        Next
+    End Sub
+
+
+
 End Module
+
+

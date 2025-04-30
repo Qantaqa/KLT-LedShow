@@ -1,9 +1,32 @@
-﻿Imports System.Net.Http
+﻿Imports System.IO
+Imports System.Net
+Imports System.Net.Http
+Imports System.Security.AccessControl
 Imports System.Text
 Imports System.Text.RegularExpressions
+Imports System.Windows.Forms.AxHost
 Imports Newtonsoft.Json.Linq
+Imports System.Drawing
+Imports System.Drawing.Imaging
+Imports System.Runtime.InteropServices ' Nodig voor Import
+
+
 
 Module DG_Show
+    Dim booleanBlinkStart As Boolean = True
+    Dim booleanBlinkNextEvent As Boolean = False
+    Dim booleanBlinkNextScene As Boolean = False
+    Dim booleanBlinkTimer As Boolean = False
+    Dim colorBlinkTimer As Color = Color.Green
+
+    ' Variabelen voor het afspelen van GIF-afbeeldingen
+    Private gifImage As Image
+    Private currentFrame As Integer
+    Private frameTimer As Timer
+    Private frameDelayList() As Integer ' Array om de frame delays op te slaan
+
+
+
     Public Class WledSegmentData
         Public Property id As Integer
         Public Property fx As String
@@ -15,10 +38,12 @@ Module DG_Show
     Public Event AddNewRowAfterClicked(ByVal sender As System.Object, ByVal e As System.EventArgs)
     Public Event RemoveCurrentRowClicked(ByVal sender As System.Object, ByVal e As System.EventArgs)
 
+
+
     ' *********************************************************
     ' Deze sub werkt het fixure pulldown veld bij, met beschikbare fixured
     ' *********************************************************
-    Public Sub UpdateFixuresPulldown(ByVal DG_Show As DataGridView)
+    Public Sub UpdateFixuresPulldown_ForShow(ByVal DG_Show As DataGridView)
         Dim currentRow As DataGridViewRow
         If (DG_Show.RowCount = 0) Then
             ' No show loaded yet, nothing to update
@@ -60,7 +85,7 @@ Module DG_Show
         Dim currentRow = DG_Show.Rows(RowIndex)
 
         Dim selectedFixture = currentRow.Cells("colFixture").Value
-        If selectedFixture IsNot Nothing And Left(selectedFixture, 2) <> "**" Then
+        If selectedFixture IsNot Nothing And selectedFixture.ToString.Substring(0, 2) <> "**" Then
             Dim fixtureParts = selectedFixture.ToString().Split("/").ToArray()
             If fixtureParts.Length = 2 Then
                 Dim wledName = fixtureParts(0)
@@ -99,15 +124,15 @@ Module DG_Show
                             If colors IsNot Nothing Then
                                 If colors.Count > 0 Then
                                     currentRow.Cells("colColor1").Value = ColorTranslator.ToOle(Color.FromArgb(colors(0)(0).Value(Of Integer), colors(0)(1).Value(Of Integer), colors(0)(2).Value(Of Integer)))
-                                    KleurDataGridViewKolomMetTekstContrast(DG_Show, "colColor1")
+
                                 End If
                                 If colors.Count > 1 Then
                                     currentRow.Cells("colColor2").Value = ColorTranslator.ToOle(Color.FromArgb(colors(1)(0).Value(Of Integer), colors(1)(1).Value(Of Integer), colors(1)(2).Value(Of Integer)))
-                                    KleurDataGridViewKolomMetTekstContrast(DG_Show, "colColor2")
+
                                 End If
                                 If colors.Count > 2 Then
                                     currentRow.Cells("colColor3").Value = ColorTranslator.ToOle(Color.FromArgb(colors(2)(0).Value(Of Integer), colors(2)(1).Value(Of Integer), colors(2)(2).Value(Of Integer)))
-                                    KleurDataGridViewKolomMetTekstContrast(DG_Show, "colColor3")
+
                                 End If
                             End If
 
@@ -135,85 +160,6 @@ Module DG_Show
     End Sub
 
 
-    ' *********************************************************
-    ' Deze sub werkt het Scenenummer of Eventnummer bij, in geval de Act is gewijzigd
-    ' *********************************************************
-    Public Sub UpdateSceneOrEventNumber_AfterUpdateAct(ByVal DG_Show As DataGridView, ByVal e As DataGridViewCellEventArgs)
-        Dim currentRow = DG_Show.Rows(e.RowIndex)
-        Dim currentAct = TryCast(currentRow.Cells("colAct").Value, String)
-
-        If String.IsNullOrEmpty(currentAct) Then
-            Return  ' Doe niets als de act leeg is
-        End If
-
-        Dim previousRow = If(e.RowIndex > 0, DG_Show.Rows(e.RowIndex - 1), Nothing)
-        If previousRow IsNot Nothing Then
-            Dim previousAct = TryCast(previousRow.Cells("colAct").Value, String)
-            If currentAct <> previousAct Then
-                ' Vraag de gebruiker om actie
-                Dim result = MessageBox.Show($"Wil je een nieuwe scène toevoegen voor Act '{currentAct}'?", "Nieuwe Act", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)
-                Dim previousScene = DirectCast(previousRow.Cells("colSceneId").Value, Integer)
-                If result = DialogResult.Yes Then
-                    ' Nieuwe scène
-                    Dim newSceneNumber = previousScene + 1
-                    currentRow.Cells("colSceneId").Value = 1
-                    currentRow.Cells("colEventId").Value = 1 ' Reset event nummer
-                ElseIf result = DialogResult.No Then
-                    ' Nieuw event in dezelfde scene
-                    Dim previousEvent = DirectCast(previousRow.Cells("colEventId").Value, Integer)
-                    currentRow.Cells("colSceneId").Value = previousScene
-                    currentRow.Cells("colEventId").Value = previousEvent + 1
-                Else
-                    ' Annuleer de wijziging
-                    currentRow.Cells("colAct").Value = previousAct
-                End If
-            End If
-        Else
-            currentRow.Cells("colSceneId").Value = 1
-            currentRow.Cells("colEventId").Value = 1
-        End If
-    End Sub
-
-    ' *********************************************************
-    ' Deze sub kleurt de cellen in de datagridview op basis van de waarde in de kolom
-    ' *********************************************************
-    Private Sub KleurDataGridViewKolomMetTekstContrast(ByVal dataGridView As DataGridView, ByVal kolomNaam As String)
-        For Each rij As DataGridViewRow In dataGridView.Rows
-            For Each cel As DataGridViewCell In rij.Cells
-                If dataGridView.Columns(cel.ColumnIndex).Name = kolomNaam Then
-                    If cel.Value IsNot Nothing AndAlso IsNumeric(cel.Value) Then
-                        Dim kleurCode As Integer = CInt(cel.Value)
-                        If kleurCode >= 1 AndAlso kleurCode <= 65535 Then
-                            Dim achtergrondKleur As Color = Color.FromArgb(kleurCode)
-                            cel.Style.BackColor = achtergrondKleur
-
-                            ' Bereken de luminantie van de achtergrondkleur
-                            Dim luminantie As Double = (0.299 * achtergrondKleur.R + 0.587 * achtergrondKleur.G + 0.114 * achtergrondKleur.B) / 255
-
-                            ' Kies de tekstkleur op basis van de luminantie
-                            If luminantie > 0.5 Then
-                                ' Achtergrond is licht, gebruik zwarte tekst
-                                cel.Style.ForeColor = Color.Black
-                            Else
-                                ' Achtergrond is donker, gebruik witte tekst
-                                cel.Style.ForeColor = Color.White
-                            End If
-
-                            'Markeer de cel om opnieuw te schilderen
-                            dataGridView.InvalidateCell(cel)
-                        End If
-                    End If
-                End If
-                'Markeer de kolom om opnieuw te schilderen
-                '                dataGridView.InvalidateColumn(dataGridView.Columns(kolomNaam).Index)
-            Next
-        Next
-
-        'Markeer de hele datagridview om opnieuw te schilderen
-        dataGridView.Invalidate()
-        dataGridView.Refresh()
-        dataGridView.Update()
-    End Sub
 
 
     ' *********************************************************
@@ -258,7 +204,8 @@ Module DG_Show
         DG_Show.CurrentCell = DG_Show.Rows(currentRowIndex).Cells(0)
 
         ' Vul het pulldown veld voor de fixture
-        UpdateFixuresPulldown(DG_Show)
+        UpdateFixuresPulldown_ForShow(DG_Show)
+
     End Sub
 
     ' *********************************************************
@@ -280,7 +227,9 @@ Module DG_Show
         'Stel de focus op de nieuwe rij
         DG_Show.CurrentCell = DG_Show.Rows(currentRowIndex + 1).Cells(0)
 
-        UpdateFixuresPulldown(DG_Show)
+        UpdateFixuresPulldown_ForShow(DG_Show)
+
+
     End Sub
 
     ' *********************************************************
@@ -321,33 +270,27 @@ Module DG_Show
         Next
     End Sub
 
-
     ' *********************************************************
     ' Deze sub werkt de kleurvelden bij met een kleurenwiel
     ' *********************************************************
-    Private Sub UpdateColor123WithColorWheel(ByVal DG_Show As DataGridView)
-        Dim rowIndex As Integer = DG_Show.CurrentCell.RowIndex
-        Dim colIndex As Integer = DG_Show.CurrentCell.ColumnIndex
-        Dim currentRow = DG_Show.Rows(rowIndex)
-        Dim colorColumn As DataGridViewTextBoxColumn = TryCast(DG_Show.Columns(colIndex), DataGridViewTextBoxColumn)
-        If colorColumn IsNot Nothing Then
-            ' Voeg de kleuren toe aan de dropdown list
-            Dim colorDialog As New ColorDialog()
-            If colorDialog.ShowDialog() = DialogResult.OK Then
-                Dim selectedColor = colorDialog.Color
-                currentRow.Cells(colIndex).Value = selectedColor.ToArgb()
-                KleurDataGridViewKolomMetTekstContrast(DG_Show, colIndex)
-            End If
+    Public Function GetColorByColorWheel() As System.Drawing.Color
+        ' Voeg de kleuren toe aan de dropdown list
+        Dim colorDialog As New ColorDialog()
+        If colorDialog.ShowDialog() = DialogResult.OK Then
+            Dim selectedColor = colorDialog.Color
+            Return colorDialog.Color
         End If
-    End Sub
+        Return Nothing
+    End Function
+
+
 
 
 
     ' *******************************************************************************************************************
     ' DG_SHOW event VALUE CHANGED 
     ' *******************************************************************************************************************   
-    Public Sub DG_Show_AfterUpdateCellValue(sender As Object, e As DataGridViewCellEventArgs, DG_Show As DataGridView, DG_Effecten As DataGridView, DG_Paletten As DataGridView)
-        On Error GoTo DG_Show_AfterUpdateCellValue_Error
+    Public Async Sub DG_Show_AfterUpdateCellValue(sender As Object, e As DataGridViewCellEventArgs, DG_Show As DataGridView, DG_Effecten As DataGridView, DG_Paletten As DataGridView)
 
         Dim wledName As String
         Dim wledIP As String
@@ -381,86 +324,290 @@ Module DG_Show
 
 
                     ' **************************************************
-                    ' Act wijzigd, update de scene en eventnummers
-                Case DG_Show.Columns("colAct").Index
-                    UpdateSceneOrEventNumber_AfterUpdateAct(DG_Show, e)             ' Werkt het scene en event nummer bij
-
-                    ' **************************************************
                     ' Effect update
                     ' **************************************************
                 Case DG_Show.Columns("colEffect").Index
 
                     Dim effectName = TryCast(DG_Show.CurrentRow.Cells("colEffect").Value, String)
-                    Dim effectIdValue = GetEffectIdFromName(effectName, DG_Effecten)
-                    If effectName IsNot Nothing AndAlso effectIdValue IsNot Nothing Then
-                        Dim result = MessageBox.Show($"Wil je het effect '{effectName}' op '{fixtureValue}' toepassen?", "Effect Toepassen", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                        If result = DialogResult.Yes Then
-                            SendEffectToWLed(wledName, wledSegment, effectIdValue)
-                        End If
-                    End If
+                    DG_Show.CurrentRow.Cells("colEffectId").Value = GetEffectIdFromName(effectName, DG_Effecten)
+
 
                     ' **************************************************
-                    ' On Off wijzigd, update de scene en eventnummers
-                Case DG_Show.Columns("colStateOnOff").Index
-                    If DG_Show.CurrentRow.Cells("colStateOnOff").Value = "Uit" Then
+                    ' Pallet update
+                    ' **************************************************
+                Case DG_Show.Columns("colPalette").Index
+                    Dim paletteName = TryCast(DG_Show.CurrentRow.Cells("colPalette").Value, String)
+                    DG_Show.CurrentRow.Cells("colPaletteId").Value = GetPaletteIdFromName(paletteName, DG_Paletten)
 
-                        Dim result = MessageBox.Show("Wil je de " & fixtureValue & " uitzetten?", "WLED Uitzetten", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                        If result = DialogResult.Yes Then
-                            If fixtureValue IsNot Nothing Then
-                                SendOnOffToWLed(wledName, wledSegment, DG_Show.CurrentRow.Cells("colStateOnOff").Value)
+            End Select
+        End If
+
+
+    End Sub
+
+
+    Sub Update_DGGRid_Details(DG_Show As DataGridView, RowId As Integer)
+        Dim PaletteImagesPath As String = My.Settings.PaletteImagesPath
+        Dim EffectsImagesPath As String = My.Settings.EffectsImagePath
+
+        Dim imagePath As String = ""
+
+        Dim CurrentRow = DG_Show.Rows(RowId)
+
+        If Not IsNothing(CurrentRow) Then
+            ' Controleer of er exact één rij geselecteerd is
+            If DG_Show.SelectedRows.Count = 1 Then
+                FrmMain.gb_DetailWLed.Visible = True
+
+                Dim PaletteName As String = CurrentRow.Cells("colPalette").Value
+                Dim EffectName As String = CurrentRow.Cells("colEffect").Value
+
+
+                FrmMain.detailWLed_Brightness.Value = CurrentRow.Cells("colBrightness").Value
+                FrmMain.detailWLed_Intensity.Value = CurrentRow.Cells("colIntensity").Value
+                FrmMain.detailWLed_Speed.Value = CurrentRow.Cells("colSpeed").Value
+                FrmMain.detailWLed_Color1.BackColor = ColorTranslator.FromOle(CurrentRow.Cells("colColor1").Value)
+                FrmMain.detailWLed_Color2.BackColor = ColorTranslator.FromOle(CurrentRow.Cells("colColor2").Value)
+                FrmMain.detailWLed_Color3.BackColor = ColorTranslator.FromOle(CurrentRow.Cells("colColor3").Value)
+
+                ' Toon plaatje van palette
+                PaletteName = PaletteName.ToString().Replace(" ", "_") & ".png"
+                PaletteName = PaletteName.ToString().Replace("*_", "")
+                imagePath = Path.Combine(PaletteImagesPath, PaletteName)
+
+                ' Controleer of het bestand bestaat voordat je het laadt.
+                If File.Exists(imagePath) Then
+                    Try
+                        ' Laad de afbeelding en wijs deze toe aan de cel.
+                        Dim image As Image = Image.FromFile(imagePath)
+
+                        FrmMain.detailWLed_Palette.Image = image
+                    Catch ex As Exception
+                        ' Foutafhandeling: Log de fout en toon een bericht.
+                        Console.WriteLine($"Fout bij het laden van afbeelding: {imagePath}. Fout: {ex.Message}")
+                        ' Je kunt er ook voor kiezen om een standaardafbeelding in te stellen of de cel leeg te laten.
+
+                    End Try
+                Else
+                    ' Als het bestand niet bestaat, laat de cel dan leeg en log een waarschuwing.
+                    Console.WriteLine($"Afbeelding niet gevonden: {imagePath}")
+                End If
+
+
+
+                ' Toon plaatje van effect
+                EffectName = EffectName.ToString().Replace(" ", "_") & ".gif"
+                EffectName = EffectName.ToString().Replace("*_", "")
+                imagePath = Path.Combine(EffectsImagesPath, EffectName)
+
+                ' Controleer of het bestand bestaat voordat je het laadt.
+                If File.Exists(imagePath) Then
+                    Try
+                        ' Laad de afbeelding en wijs deze toe aan de cel.
+                        Dim image As Image = Image.FromFile(imagePath)
+                        gifImage = image
+
+                        ' Initialiseert de timer voor de animatie
+                        frameTimer = New Timer()
+                        frameTimer.Interval = 100  ' Standaard interval, wordt later overschreven door de GIF's frame delays.
+                        AddHandler frameTimer.Tick, AddressOf FrameTimer_Tick
+                        frameTimer.Start()
+
+                        FrmMain.detailWLed_Effect.Image = image
+
+                        ' Haal de frame delays op en sla ze op in een array
+                        If gifImage IsNot Nothing Then
+                            Dim frameDimension As New FrameDimension(gifImage.FrameDimensionsList(0))
+                            Dim frameCount As Integer = gifImage.GetFrameCount(FrameDimension.Time)
+                            ReDim frameDelayList(frameCount - 1) ' Array initialiseren met de juiste grootte
+
+                            For i As Integer = 0 To frameCount - 1
+                                gifImage.SelectActiveFrame(frameDimension, i)
+                                Dim frameDelayBytes() As Byte = gifImage.GetPropertyItem(207).Value ' Property ID 207 bevat de frame delays
+                                frameDelayList(i) = BitConverter.ToInt32(frameDelayBytes, i * 4) * 10 ' Omzetten naar milliseconden
+                            Next
+
+                            ' Start de animatie met de eerste frame delay
+                            If frameDelayList.Length > 0 Then
+                                frameTimer.Interval = frameDelayList(0)
                             End If
                         End If
-                    End If
 
 
-            End Select
+                    Catch ex As Exception
+                        ' Foutafhandeling: Log de fout en toon een bericht.
+                        Console.WriteLine($"Fout bij het laden van afbeelding: {imagePath}. Fout: {ex.Message}")
+                        ' Je kunt er ook voor kiezen om een standaardafbeelding in te stellen of de cel leeg te laten.
+
+                    End Try
+                Else
+                    ' Als het bestand niet bestaat, laat de cel dan leeg en log een waarschuwing.
+                    Console.WriteLine($"Afbeelding niet gevonden: {imagePath}")
+                End If
+
+
+
+                FrmMain.detailWLed__EffectName.Text = CurrentRow.Cells("colEffect").Value
+
+            Else
+                ' Meerdere regels geselecteerd
+                FrmMain.gb_DetailWLed.Visible = False
+            End If
         End If
+    End Sub
 
-DG_Show_AfterUpdateCellValue_Error:
-        ' Do nothing else.
+
+    Private Sub FrameTimer_Tick(sender As Object, e As EventArgs)
+        Dim frameDimension As New FrameDimension(gifImage.FrameDimensionsList(0))
+
+        ' Gaat naar het volgende frame
+        currentFrame = (currentFrame + 1) Mod gifImage.GetFrameCount(frameDimension.Time)
+
+        ' Selecteert het actieve frame
+        gifImage.SelectActiveFrame(frameDimension, currentFrame)
+
+        ' Tekent het huidige frame in de PictureBox
+        FrmMain.detailWLed_Effect.Invalidate() ' Forceer PictureBox om opnieuw te tekenen
+
+        ' Stel het timer interval in op de delay van het huidige frame
+        If frameDelayList.Length > 0 Then
+            If frameDelayList(currentFrame) > 0 Then
+                frameTimer.Interval = frameDelayList(currentFrame)
+            Else
+                frameTimer.Interval = 100 ' Standaard interval als er geen delay is     
+            End If
+        End If
+    End Sub
+
+
+    Public Sub Show_PaintEvent(sender As Object, e As PaintEventArgs)
+        ' Tekent het huidige frame van de GIF
+        If gifImage IsNot Nothing Then
+            e.Graphics.DrawImage(gifImage, 0, 0, FrmMain.detailWLed_Effect.Width, FrmMain.detailWLed_Effect.Height)
+        End If
+    End Sub
+
+    Sub UpdateBlinkingButton()
+
+        If My.Settings.Locked Then
+            FrmMain.gb_Controls.Enabled = True
+
+            ' Start button
+            If booleanBlinkStart Then
+                If FrmMain.btnControl_Start.BackColor = Color.Black Then
+                    FrmMain.btnControl_Start.BackColor = Color.Green
+                Else
+                    FrmMain.btnControl_Start.BackColor = Color.Black
+                End If
+            Else
+                FrmMain.btnControl_Start.BackColor = Color.Black
+            End If
+
+            ' Next event button
+            If booleanBlinkNextEvent Then
+                If FrmMain.btnControl_NextEvent.BackColor = Color.Black Then
+                    FrmMain.btnControl_NextEvent.BackColor = Color.Green
+                Else
+                    FrmMain.btnControl_NextEvent.BackColor = Color.Black
+                End If
+            Else
+                FrmMain.btnControl_NextEvent.BackColor = Color.Black
+            End If
+
+            ' Next scene button
+            If booleanBlinkNextScene Then
+                If FrmMain.btnControl_NextScene.BackColor = Color.Black Then
+                    FrmMain.btnControl_NextScene.BackColor = Color.Green
+                Else
+                    FrmMain.btnControl_NextScene.BackColor = Color.Black
+                End If
+            Else
+                FrmMain.btnControl_NextScene.BackColor = Color.Black
+            End If
+
+            ' Timer
+            If booleanBlinkTimer Then
+                If FrmMain.lblControl_TimeLeft.BackColor = Color.Black Then
+                    FrmMain.lblControl_TimeLeft.BackColor = colorBlinkTimer
+                Else
+                    FrmMain.lblControl_TimeLeft.BackColor = Color.Black
+                End If
+            Else
+                FrmMain.lblControl_TimeLeft.BackColor = Color.Black
+            End If
+
+        Else
+            FrmMain.gb_Controls.Enabled = False
+            FrmMain.btnControl_Start.BackColor = Color.DarkRed
+            FrmMain.btnControl_NextEvent.BackColor = Color.DarkRed
+            FrmMain.btnControl_NextScene.BackColor = Color.DarkRed
+            FrmMain.lblControl_TimeLeft.BackColor = Color.Black
+        End If
+    End Sub
+
+    Sub EndEventTimer()
+        colorBlinkTimer = Color.DarkRed
+        FrmMain.TimerNextEvent.Stop()
+
+        booleanBlinkNextEvent = True
+
 
     End Sub
 
-    ' *******************************************************************************************************************
-    ' DG_SHOW event DOUBLCLICK on row
-    ' *******************************************************************************************************************   
-    Public Sub DG_Show_DoubleClick(ByVal DG_Show As DataGridView, ByVal DG_Devices As DataGridView, ByVal DG_Effecten As DataGridView, ByVal DG_Paletten As DataGridView)
-        ' Controleer of er een rij is geselecteerd
-        If DG_Show.CurrentCell IsNot Nothing Then
-            Dim currentRow = DG_Show.Rows(DG_Show.CurrentCell.RowIndex)
 
-            ' Haal de relevante waarden uit de geselecteerde rij
-            Dim fixtureValue = currentRow.Cells("colFixture").Value?.ToString()
-            Dim effectId = TryCast(currentRow.Cells("colEffectId").Value, String)
-            Dim paletteId = TryCast(currentRow.Cells("colPaletteId").Value, String)
-            Dim color1 = currentRow.Cells("colColor1").Value
-            Dim color2 = currentRow.Cells("colColor2").Value
-            Dim color3 = currentRow.Cells("colColor3").Value
-            Dim brightness = currentRow.Cells("colBrightness").Value
-            Dim transition = currentRow.Cells("colTransition").Value
-            Dim stateOnOff = currentRow.Cells("colStateOnOff").Value
-            Dim speed = currentRow.Cells("colSpeed").Value
-            Dim intensity = currentRow.Cells("colIntensity").Value
-            Dim blend = currentRow.Cells("colBlend").Value
-            Dim repeat = currentRow.Cells("colRepeat").Value
+    Sub Start_Show(DG_Show As DataGridView)
+        Dim FoundRows As Integer = 0
 
-            ' Bepaal welke kolom is geselecteerd    
-            Select Case (DG_Show.CurrentCell.ColumnIndex)
+        ' Find number of preshow - scene 1, event 1
+        For Each row In DG_Show.Rows
+            If row.cells("colAct").value = "Pre-Show" And row.cells("colSceneId").value = "1" And row.cells("colEventId").value = "1" Then
+                FoundRows = FoundRows + 1
 
-                    ' **************************************************
-                    ' Kleur velden, update met een kleurenwiel
-                    ' **************************************************
-                Case DG_Show.Columns("colColor1").Index
-                    UpdateColor123WithColorWheel(DG_Show)
-                Case DG_Show.Columns("colColor2").Index
-                    UpdateColor123WithColorWheel(DG_Show)
-                Case DG_Show.Columns("colColor3").Index
-                    UpdateColor123WithColorWheel(DG_Show)
+                ' Mark down this cell as active
+                row.cells("btnApply").value = ">"
+
+                If row.cells("colTimer").value <> "" Then
+                    ' A timer value is set
+                    FrmMain.TimerNextEvent.Interval = TimeStringToMilliseconds(row.cells("colTimer").value)
+                    FrmMain.TimerNextEvent.Start()
+                    colorBlinkTimer = Color.Green
+                    booleanBlinkTimer = True
+                    FrmMain.lblControl_TimeLeft.Text = row.cells("colTimer").value
+                End If
+            Else
+                row.cells("btnApply").value = ""
+            End If
+        Next
 
 
-            End Select
+        ' Update the blinking of buttons
+        booleanBlinkStart = False
+        booleanBlinkNextEvent = False
+        booleanBlinkNextScene = False
+
+        If FoundRows = 1 Then
+            booleanBlinkNextScene = True
+        Else
+            If Not booleanBlinkTimer Then
+                booleanBlinkNextScene = True
+            End If
         End If
+
+        ' Apply the selected rows
+        Apply_Selected_Rows(DG_Show)
+        Reselect_Rows(DG_Show)
     End Sub
+
+
+    Public Sub Reselect_Rows(DG_Show As DataGridView)
+        For Each row In DG_Show.Rows
+            If row.cells("btnApply").value = ">" Then
+                row.selected = True
+            End If
+        Next
+    End Sub
+
+
 
 
 End Module
