@@ -29,5 +29,11 @@
     <Setting Name="EffectsImagePath" Type="System.String" Scope="User">
       <Value Profile="(Default)">E:\KLT\LedShow\KKLT Led Show v2\Effects</Value>
     </Setting>
+    <Setting Name="DDPPort" Type="System.String" Scope="User">
+      <Value Profile="(Default)">4048</Value>
+    </Setting>
+    <Setting Name="LedsPerMeter" Type="System.String" Scope="User">
+      <Value Profile="(Default)">60</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

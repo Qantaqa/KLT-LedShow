@@ -1,7 +1,11 @@
 ﻿Imports System.IO
+Imports System.Net
 Imports System.Runtime.InteropServices
+Imports Newtonsoft.Json
 
 Public Class FrmMain
+    Private LedKleuren As New List(Of Color)
+
     Dim LastOfflineDevices As Integer = 0       'Nummer van offline apparaten
 
 
@@ -10,6 +14,10 @@ Public Class FrmMain
     Private Shared Function GetEnhMetaFilePixelFormat(ByVal hEmf As IntPtr) As UInteger
     End Function
 
+
+    ' **************************************************************************************************************************
+    ' MAIN FORM LOAD
+    ' **************************************************************************************************************************
     Private Sub FrmMain_Load_1(sender As Object, e As EventArgs) Handles MyBase.Load
         Try
             Dim c As Integer = 0
@@ -54,6 +62,8 @@ Public Class FrmMain
             cbMonitorControl.Text = My.Settings.MonitorControl
             cbMonitorPrime.Text = My.Settings.MonitorPrimary
             cbMonitorSecond.Text = My.Settings.MonitorSecond
+            settings_DDPPort.Text = My.Settings.DDPPort
+
 
             If My.Settings.Locked Then
                 Update_LockUnlocked("Locked")
@@ -74,6 +84,7 @@ Public Class FrmMain
             End If
 
 
+            StartDDPStream()
 
         Catch ex As Exception
             MessageBox.Show($"Fout tijdens laden van form: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -81,7 +92,9 @@ Public Class FrmMain
         End Try
     End Sub
 
-
+    ' **************************************************************************************************************************
+    ' EVENT HANDLERS - Klik op DG Devices en open de bijbehorende webste
+    ' **************************************************************************************************************************
     Private Sub DG_Devices_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Devices.CellContentClick
         If (e.ColumnIndex < 2) Then
             OpenWebsiteOfWLED(Me.DG_Devices, txt_APIResult, e)
@@ -89,20 +102,24 @@ Public Class FrmMain
     End Sub
 
 
-
+    ' **************************************************************************************************************************
+    ' EVENT HANDLERS - Klikken in de effecten tabel
+    ' **************************************************************************************************************************
     Private Sub DG_Effecten_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Effecten.CellContentClick
         Handle_DGEffecten_CellContentClick(sender, e, Me.DG_Effecten, Me.DG_Devices)
 
     End Sub
 
+    ' **************************************************************************************************************************
+    ' EVENT HANDLERS - Opslaan
+    ' **************************************************************************************************************************
     Private Sub btnSaveShow_Click(sender As Object, e As EventArgs) Handles btnSaveShow.Click
         SaveAll()
     End Sub
 
-    Private Sub btnLoad_Click(sender As Object, e As EventArgs)
-
-    End Sub
-
+    ' **************************************************************************************************************************
+    ' EVENT HANDLERS - Klikken in pallet tabel
+    ' **************************************************************************************************************************
     Private Sub DG_Paletten_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Paletten.CellContentClick
         KLT_LedShow.DG_Paletten_CellContentClick(sender, e, DG_Paletten, DG_Devices)
     End Sub
@@ -162,7 +179,6 @@ Public Class FrmMain
 
     Private Sub btnScanNetworkForWLed_Click(sender As Object, e As EventArgs) Handles btnScanNetworkForWLed.Click
         ScanNetworkForWLEDdevices(DG_Devices, DG_Effecten, DG_Show, DG_Paletten, DG_Groups)
-        '        PopulateSegmentsDataGridView(DG_Devices, DG_Segments)'
     End Sub
 
     Private Sub btnProjectFolder_Click(sender As Object, e As EventArgs) Handles btnProjectFolder.Click
@@ -176,12 +192,14 @@ Public Class FrmMain
                 MsgBox("Fout bij het openen van het bestand: " & ex.Message, MsgBoxStyle.Critical, "Fout")
             End Try
         End If
-
+        My.Settings.Save()
     End Sub
 
     Private Sub settings_ProjectName_TextChanged(sender As Object, e As EventArgs) Handles settings_ProjectName.TextChanged
         My.Settings.ProjectName = settings_ProjectName.Text
         lblTitleProject.Text = settings_ProjectName.Text
+
+        My.Settings.Save()
     End Sub
 
     Private Sub btnLockUnlocked_Click(sender As Object, e As EventArgs) Handles btnLockUnlocked.Click
@@ -288,7 +306,7 @@ Public Class FrmMain
     End Sub
 
     Private Sub btnTestExistanceEffects_Click(sender As Object, e As EventArgs) Handles btnTestExistanceEffects.Click
-        TestEffectImages(DG_Effecten, My.Settings.EffectsImagePath)
+        TextExistanceEffects(DG_Effecten, My.Settings.EffectsImagePath)
     End Sub
 
     Private Sub btnGenerateStage_Click(sender As Object, e As EventArgs) Handles btnGenerateStage.Click
@@ -325,94 +343,56 @@ Public Class FrmMain
     End Sub
 
 
-    Private Sub DMX_1_R_Scroll(sender As Object, e As EventArgs) Handles DMX_1_R.Scroll
-        Dim ipAddress As String = "192.168.86.62" ' Haal dit eventueel uit een globale variabele of configuratie
-        Dim universe As Integer = 1
-        Dim dmxValue As Integer = DMX_1_R.Value
-        Dim dmxData(0) As Byte ' Maak een byte array van de juiste grootte (1 in dit geval, index 0)
-        dmxData(0) = CByte(dmxValue) ' Zet de integer waarde om naar een byte
 
-        SetDMXData(universe, dmxData)
+    Sub ControlOneLed(DeviceRow As DataGridViewRow, lednr As Integer, redvalue As Integer, greenvalue As Integer, bluevalue As Integer)
+        Dim r As Integer = redvalue
+        Dim g As Integer = greenvalue
+        Dim b As Integer = bluevalue
+
+        ' Segment voor LED 0 instellen (start 0, stop 1)
+        Dim json As String = JsonConvert.SerializeObject(New With {
+        .seg = New Object() {
+            New With {
+                .id = 0,
+                .start = lednr - 1,
+                .stop = lednr,
+                .col = New Integer()() {New Integer() {r, g, b}}
+            }
+        }
+    })
+
+        Dim client As New WebClient()
+        client.Headers(HttpRequestHeader.ContentType) = "application/json"
+
+        Dim MyUrl = "http://" + DeviceRow.Cells("colIPAddress").Value + "/json/state"
+        Try
+            client.UploadString(MyUrl, "POST", json)
+        Catch ex As Exception
+            MessageBox.Show("Fout bij verzenden naar WLED: " & ex.Message)
+        End Try
+
     End Sub
 
-    Private Sub btnStartDMXSync_Click(sender As Object, e As EventArgs) Handles btnStartDMXSync.Click
-        For Each row As DataGridViewRow In DG_Devices.Rows
-            If CBool(row.Cells("colEnabled").Value) Then
-                Dim ipAddress As String = row.Cells("colIPAddress").Value.ToString()
-                Dim startUniverse As Integer = CInt(row.Cells("colStartUniverse").Value)
-                Dim ledCount As Integer = CInt(row.Cells("colLedCount").Value)
-                Dim dmxDataLength As Integer = ledCount * 3
-                Dim currentUniverse As Integer = startUniverse
-                Dim ledsLeft As Integer = ledCount
-                Dim endUniverse As Integer = 0
-                Dim priority As Byte = 100 ' Prioriteit van het sACN-pakket
-
-                If DG_Devices.Columns.Contains("colEndUniverse") Then
-                    ' Lees de waarde van colEndUniverse uit de DataGridView.
-                    If row.Cells("colEndUniverse").Value IsNot Nothing AndAlso row.Cells("colEndUniverse").Value.ToString() <> "" Then
-                        endUniverse = CInt(row.Cells("colEndUniverse").Value)
-                    End If
-                End If
-
-                ' Controleer of het aantal LEDs groter is dan 170.
-                If ledCount > 170 Then
-                    Dim universesNeeded As Integer = CInt(Math.Ceiling(ledCount / 170))
-                    For i As Integer = 0 To universesNeeded - 1
-                        Dim ledsForUniverse As Integer = Math.Min(ledsLeft, 170)
-                        Dim dmxLengthForUniverse As Integer = ledsForUniverse * 3
-                        If dmxLengthForUniverse > 512 Then
-                            dmxLengthForUniverse = 512
-                        End If
-
-                        Dim rowCopy As DataGridViewRow = DirectCast(row.Clone(), DataGridViewRow)
-                        For j As Integer = 0 To row.Cells.Count - 1
-                            rowCopy.Cells(j).Value = row.Cells(j).Value
-                        Next
-
-                        ' Gebruik colStartUniverse als het beschikbaar is, anders bereken het universe nummer.
-                        Dim universeToSend As Integer
-                        If DG_Devices.Columns.Contains("colStartUniverse") Then
-                            universeToSend = currentUniverse ' Stel het universe nummer in voor deze iteratie
-                            rowCopy.Cells("colStartUniverse").Value = currentUniverse
-                        ElseIf DG_Devices.Columns.Contains("colEndUniverse") Then
-                            universeToSend = currentUniverse
-                        Else
-                            ' Als colStartUniverse niet beschikbaar is, gebruik dan currentUniverse.
-                            universeToSend = currentUniverse
-                            rowCopy.Cells("colUniverse").Value = currentUniverse
-                        End If
-
-                        ' Maak de DMX data array.
-                        Dim dmxData(dmxLengthForUniverse - 1) As Byte
-                        For k As Integer = 0 To dmxLengthForUniverse - 1
-                            dmxData(k) = CByte(k) ' Vul de array met voorbeeldwaarden.  Dit moet uiteindelijk de juiste data zijn.
-                        Next
-
-                        ' Verzend de sACN data.
-                        SendSacnData(ipAddress, universeToSend, dmxData, priority)
-
-                        currentUniverse += 1
-                        ledsLeft -= ledsForUniverse
-                    Next
-                Else
-                    ' Als het aantal LEDs <= 170, handel het af zoals voorheen.
-                    If dmxDataLength > 512 Then
-                        dmxDataLength = 512
-                        MessageBox.Show($"Het aantal DMX kanalen voor IP: {ipAddress}, Universe: {startUniverse} is te hoog. Maximale waarde van 512 wordt gebruikt.", "Waarschuwing", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                    End If
-
-                    ' Maak de DMX data array.
-                    Dim dmxData(dmxDataLength - 1) As Byte
-                    For k As Integer = 0 To dmxDataLength - 1
-                        dmxData(k) = CByte(k) ' Vul de array met voorbeeldwaarden. Dit moet uiteindelijk de juiste data zijn.
-                    Next
-
-                    ' Verzend de sACN data.
-                    SendSacnData(ipAddress, startUniverse, dmxData, priority)
-                End If
-            End If
-        Next
+    Private Sub btnGenerateSlider_Click(sender As Object, e As EventArgs) Handles btnGenerateSliders.Click
+        GenerateSlidersForSelectedFixture()
     End Sub
 
+    Private Sub settings_EffectsPath_TextChanged(sender As Object, e As EventArgs) Handles settings_EffectsPath.TextChanged
+        My.Settings.EffectsImagePath = settings_EffectsPath.Text
+        My.Settings.Save()
+    End Sub
 
+    Private Sub settings_PalettesPath_TextChanged(sender As Object, e As EventArgs) Handles settings_PalettesPath.TextChanged
+        My.Settings.PaletteImagesPath = settings_PalettesPath.Text
+        My.Settings.Save()
+    End Sub
+
+    Private Sub settings_DDPPort_TextChanged(sender As Object, e As EventArgs) Handles settings_DDPPort.TextChanged
+        My.Settings.DDPPort = CInt(settings_DDPPort.Text)
+        My.Settings.Save()
+    End Sub
+
+    Private Sub ddpTimer_Tick(sender As Object, e As EventArgs)
+        UpdateWLEDFromSliders_DDP()
+    End Sub
 End Class

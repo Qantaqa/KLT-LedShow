@@ -55,7 +55,6 @@ Module Network
     End Function
 
 
-
     ' ************************************************************************************************* 
     ' Functie om te controleren of een IP-adres een WLED-apparaat is
     ' *************************************************************************************************
@@ -63,10 +62,7 @@ Module Network
         Using client As New HttpClient()
             Try
                 Dim url As String = $"http://{ipAddress}/json"
-                Debug.WriteLine($"Scannen van {url}, index: {scanIndex}")
                 Dim response As HttpResponseMessage = Await client.GetAsync(url, New CancellationTokenSource(TimeoutValue).Token)
-
-                Debug.WriteLine($"HTTP statuscode voor {ipAddress}: {response.StatusCode}")
 
                 If response.IsSuccessStatusCode Then
                     Dim responseBody As String = Await response.Content.ReadAsStringAsync()
@@ -74,24 +70,42 @@ Module Network
                         Dim json As JObject = JObject.Parse(responseBody)
                         Dim wledName As String = json("info")("name").ToString()
 
-                        ' Sla het volledige JSON object op, niet alleen de effecten
-                        wledDevices.Add(ipAddress, New Tuple(Of String, JObject)(wledName, json))
+                        ' Aantal LEDs
+                        Dim ledCount As Integer = 0
+                        If json("info")("leds")("count") IsNot Nothing Then
+                            ledCount = Convert.ToInt32(json("info")("leds")("count"))
+                        End If
+
+
+                        ' Aantal segmenten
+                        Dim segmentCount As Integer = 0
+                        If json("state") IsNot Nothing AndAlso json("state")("seg") IsNot Nothing Then
+                            segmentCount = json("state")("seg").Count()
+                        End If
+
+                        ' Sla JSON op
+                        wledDevices(ipAddress) = New Tuple(Of String, JObject)(wledName, json)
 
                         FrmMain.Invoke(Sub()
                                            foundDevicesCount += 1
                                            foundDevicesLabel.Text = $"Gevonden apparaten: {foundDevicesCount}"
-                                           FrmMain.DG_Devices.Rows.Add(ipAddress, wledName)
+
+                                           Dim rowIndex = FrmMain.DG_Devices.Rows.Add(ipAddress, wledName)
+                                           Dim row = FrmMain.DG_Devices.Rows(rowIndex)
+                                           row.Cells("colLedCount").Value = ledCount
+
+                                           row.Cells("colEnabled").Value = True
+                                           row.Cells("colOnline").Value = My.Resources.iconRedBullet1
+                                           row.Cells("colLayout").Value = "Y" + ((ledCount + 1) * 10).ToString + ",X10,R" + ledCount.ToString()
+
                                        End Sub)
-                    Catch jsonEx As JsonReaderException
-                        Debug.WriteLine($"Fout bij het parsen van JSON van {ipAddress}: {jsonEx.Message}")
-                    Catch nullEx As NullReferenceException
-                        Debug.WriteLine($"Fout bij het ophalen van gegevens van {ipAddress}: {nullEx.Message}")
+
+                    Catch ex As Exception
+                        Debug.WriteLine($"JSON-verwerking fout voor {ipAddress}: {ex.Message}")
                     End Try
-                Else
-                    Debug.WriteLine($"HTTP fout bij scannen van {ipAddress}: {response.StatusCode}")
                 End If
             Catch ex As Exception
-                Debug.WriteLine($"Fout bij scannen van {ipAddress}: {ex.Message}")
+                Debug.WriteLine($"Fout bij contact met {ipAddress}: {ex.Message}")
             End Try
         End Using
     End Function
@@ -174,8 +188,6 @@ Module Network
 
         Await Task.WhenAll(tasks)
     End Function
-
-
 
 
     ' *************************************************************************************************

@@ -6,36 +6,23 @@ Imports System.Windows.Forms
 
 Module Stage
 
-    ' Structuur om de eigenschappen van een LED te bevatten
+    ' *********************************************************************************
+    ' Structuur om de eigenschappen van een LED te bevatten voor de layout
+    ' *********************************************************************************
     Public Structure LedInfo
         Public DeviceNaam As String ' Naam van het apparaat (WLED-instance naam)
-        Public RoodKanaal As Integer ' DMX-kanaal voor rood
-        Public GroenKanaal As Integer ' DMX-kanaal voor groen
-        Public BlauwKanaal As Integer ' DMX-kanaal voor blauw
-        Public UniverseNummer As Integer ' DMX-universe nummer
         Public X As Integer ' X-positie in de podiummatrix
         Public Y As Integer ' Y-positie in de podiummatrix
     End Structure
-
-    ' Lijst om alle LED-info objecten op te slaan
     Public LedLijst As New List(Of LedInfo)()
 
-    ''' <summary>
-    ''' Genereert een lijst van LedInfo structuren op basis van de gevonden WLED-apparaten en hun configuratie.
-    ''' </summary>
-    ''' <param name="dgDevices">De DataGridView die de WLED-apparaten bevat.</param>
-    ''' <param name="podiumBreedte">De breedte van het podium in matrix-eenheden.</param>
-    ''' <param name="podiumHoogte">De hoogte van het podium in matrix-eenheden.</param>
-    ''' <remarks>
-    ''' Deze functie gaat ervan uit dat de DataGridView `dgDevices` de kolommen
-    ''' "colInstance" (apparaatnaam), "colIPAddress" (IP-adres), "colStartUniverse" (start universe),
-    ''' "colStartDMXChannel" (start DMX-kanaal) en "colLayout" (LED-layout) bevat.
-    ''' </remarks>
-    ''' 
 
-    Public LedsPerMeter As Integer = 60 ' Aantal LEDs per meter
-
+    ' *********************************************************************************
+    ' GenereerLedLijst
+    ' Genereert een lijst van LED-informatie op basis van de gegevens in de DataGridView.
+    ' *********************************************************************************
     Public Sub GenereerLedLijst(ByVal dgDevices As DataGridView, ByVal podiumBreedteinCm As Integer, ByVal podiumHoogteinCm As Integer)
+        Dim LedsPerMeter As Integer = My.Settings.LedsPerMeter
         ' Clear de lijst eerst
         LedLijst.Clear()
 
@@ -51,8 +38,6 @@ Module Stage
             If Not row.IsNewRow Then ' Zorg ervoor dat we geen nieuwe, lege rij verwerken.
                 Dim deviceNaam As String = TryCast(row.Cells("colInstance").Value, String)
                 Dim deviceIpAdres As String = TryCast(row.Cells("colIPAddress").Value, String)
-                Dim Universe As Integer = Convert.ToInt32(row.Cells("colStartUniverse").Value)
-                Dim DmxChannel As Integer = Convert.ToInt32(row.Cells("colStartDMXChannel").Value)
                 Dim layoutString As String = TryCast(row.Cells("colLayout").Value, String)
                 Dim totalLedInStrip As Integer = 0
 
@@ -60,7 +45,6 @@ Module Stage
                     ' Parse de layout string.
                     Dim ledSegments() As String = layoutString.Split(New Char() {","}, StringSplitOptions.RemoveEmptyEntries)
                     Dim segmentIndex As Integer = 0
-                    Dim kanaalOffset As Integer = DmxChannel - 1
 
                     Dim currentX As Integer = 0
                     Dim currentY As Integer = 0
@@ -108,16 +92,16 @@ Module Stage
                                 Dim directionX As Integer = 0
                                 Dim directionY As Integer = 0
                                 Select Case directionChar
-                                    Case "↑"
+                                    Case "U"
                                         directionX = 0
                                         directionY = 1
-                                    Case "↓"
+                                    Case "D"
                                         directionX = 0
                                         directionY = -1
-                                    Case "←"
+                                    Case "L"
                                         directionX = -1
                                         directionY = 0
-                                    Case "→"
+                                    Case "R"
                                         directionX = 1
                                         directionY = 0
                                     Case Else
@@ -131,10 +115,6 @@ Module Stage
                                     If LedLijst.Count < (podiumBreedteLeds * podiumHoogteLeds) Then
                                         Dim ledInfo As LedInfo
                                         ledInfo.DeviceNaam = deviceNaam
-                                        ledInfo.RoodKanaal = kanaalOffset + (j * 3) + 1
-                                        ledInfo.GroenKanaal = kanaalOffset + (j * 3) + 2
-                                        ledInfo.BlauwKanaal = kanaalOffset + (j * 3) + 3
-                                        ledInfo.UniverseNummer = Universe
                                         ledInfo.X = currentX
                                         ledInfo.Y = currentY
                                         LedLijst.Add(ledInfo)
@@ -143,16 +123,6 @@ Module Stage
                                         ' Update de huidige positie
                                         currentX += directionX
                                         currentY += directionY
-
-                                        ' Werk univere en kanaal bij als we de limiet van 512 bereiken
-                                        If ledInfo.RoodKanaal >= BerekenHoogsteRoodKanaal(Convert.ToInt32(row.Cells("colStartUniverse").Value)) Then
-                                            kanaalOffset = Convert.ToInt32(row.Cells("colStartUniverse").Value)
-                                            Universe += 1
-                                            ledInfo.RoodKanaal = kanaalOffset + (j * 3) + 1
-                                            ledInfo.GroenKanaal = kanaalOffset + (j * 3) + 2
-                                            ledInfo.BlauwKanaal = kanaalOffset + (j * 3) + 3
-                                        End If
-
 
                                         totalLedInStrip += 1
                                     Else
@@ -179,15 +149,14 @@ Module Stage
                       End Function)
     End Sub
 
-    ''' <summary>
-    ''' Tekent de visuele weergave van het podium op een PictureBox.
-    ''' </summary>
-    ''' <param name="pbStage">De PictureBox waarop de weergave moet worden getekend.</param>
-    ''' <param name="podiumBreedteCm">De breedte van het podium in centimeters.</param>
-    ''' <param name="podiumHoogteCm">De hoogte van het podium in centimeters.</param>
+
+    ' *********************************************************************************
+    ' TekenPodium
+    ' Teken het podium in de opgegeven PictureBox met de opgegeven breedte en hoogte.
+    ' *********************************************************************************
     Public Sub TekenPodium(ByVal pbStage As PictureBox, ByVal podiumBreedteCm As Integer, ByVal podiumHoogteCm As Integer)
         ' Stel het aantal LEDs per meter vast.
-        Dim ledsPerMeter As Integer = 60
+        Dim ledsPerMeter As Integer = My.Settings.LedsPerMeter
         Dim cmPerMeter As Integer = 100
 
         ' Bereken de breedte en hoogte van het podium in LEDs.
@@ -325,59 +294,23 @@ Module Stage
         pbStage.Invalidate()
     End Sub
 
-    ''' <summary>
-    ''' Hulpfunctie om een DMX-waarde op te halen (moet nog geïmplementeerd worden).
-    ''' </summary>
-    ''' <param name="kanaal">Het DMX-kanaal.</param>
-    ''' <param name="universe">Het DMX-universe nummer.</param>
-    ''' <returns>De DMX-waarde (0-255).</returns>
-    ''' <remarks>
-    ''' Deze functie moet nog worden geïmplementeerd om de daadwerkelijke DMX-waarden op te halen
-    ''' van de DMX-controller of de gesimuleerde waarden.  Dit is afhankelijk van je DMX-bibliotheek.
-    ''' </remarks>
-    Private Function GetDmxValue(ByVal kanaal As Integer, ByVal universe As Integer) As Byte
-        ' ** Implementeer deze functie **
-        ' Deze functie is een placeholder.  Je moet hier de code toevoegen om
-        ' de DMX-waarde voor het gegeven kanaal en universe op te halen.
-        ' Dit kan betekenen dat je communiceert met een DMX-bibliotheek
-        ' (bijv. Art-Net, sACN) of dat je de waarden opslaat in een array.
 
-        Return 0 ' Placeholder
-    End Function
-
-
-
+    ' *********************************************************************************
+    ' VervangRichtingDoorPijlen
+    ' Vervangt de richtingkarakters in de layoutstring door pijlen.
+    ' *********************************************************************************
     Public Function VervangRichtingDoorPijlen(ByVal layoutString As String) As String
+        Dim aangepasteString As String
+
         ' Controleer of de inputstring niet leeg is
         If String.IsNullOrEmpty(layoutString) Then
             Return layoutString
         End If
 
         ' Vervang de richtingkarakters door ASCII-pijlen
-        Dim aangepasteString As String = layoutString.Replace("U", "↑")
-        aangepasteString = aangepasteString.Replace("D", "↓")
-        aangepasteString = aangepasteString.Replace("L", "←")
-        aangepasteString = aangepasteString.Replace("R", "→")
+        aangepasteString = layoutString.ToUpper
 
         Return aangepasteString
-    End Function
-    Public Function BerekenHoogsteRoodKanaal(ByVal startDmx As Integer) As Integer
-        If startDmx > 512 Then
-            Return -1 ' Startkanaal is al ongeldig.
-        End If
-
-        Dim hoogsteRood As Integer = startDmx ' Begin met het startkanaal.
-
-
-        ' Bereken het hoogste rode kanaal op basis van de DMX-limiet.
-        hoogsteRood = 512 - 2 ' Trek 2 af voor groen en blauw.
-
-        ' Controleer of het resultaat geldig is.
-        If hoogsteRood < startDmx Then
-            Return -1 ' Er is geen geldig rood kanaal.
-        End If
-
-        Return hoogsteRood
     End Function
 
 End Module

@@ -3,912 +3,1094 @@
     <Structure>
         <Column Name="EffectId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
         <Column Name="Effect" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="WLED-44" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
         <Column Name="WLED-23" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
     </Structure>
     <Data>
         <Row>
             <EffectId>186</EffectId>
             <Effect>Akemi</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>27</EffectId>
             <Effect>Android</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>38</EffectId>
             <Effect>Aurora</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>183</EffectId>
             <Effect>Black Hole</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>115</EffectId>
             <Effect>Blends</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>1</EffectId>
             <Effect>Blink</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>26</EffectId>
             <Effect>Blink Rainbow</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>121</EffectId>
             <Effect>Blobs</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>163</EffectId>
             <Effect>Blurz</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>91</EffectId>
             <Effect>Bouncing Balls</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>68</EffectId>
             <Effect>Bpm</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>2</EffectId>
             <Effect>Breathe</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>88</EffectId>
             <Effect>Candle</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>102</EffectId>
             <Effect>Candle Multi</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>28</EffectId>
             <Effect>Chase</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>37</EffectId>
             <Effect>Chase 2</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>54</EffectId>
             <Effect>Chase 3</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>31</EffectId>
             <Effect>Chase Flash</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>32</EffectId>
             <Effect>Chase Flash Rnd</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>30</EffectId>
             <Effect>Chase Rainbow</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>29</EffectId>
             <Effect>Chase Random</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>111</EffectId>
             <Effect>Chunchun</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>167</EffectId>
             <Effect>Colored Bursts</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>34</EffectId>
             <Effect>Colorful</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>8</EffectId>
             <Effect>Colorloop</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>74</EffectId>
             <Effect>Colortwinkles</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>67</EffectId>
             <Effect>Colorwaves</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>119</EffectId>
             <Effect>Crazy Bees</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>112</EffectId>
             <Effect>Dancing Shadows</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>18</EffectId>
             <Effect>Dissolve</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>19</EffectId>
             <Effect>Dissolve Rnd</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>124</EffectId>
             <Effect>Distortion Waves</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>159</EffectId>
             <Effect>DJ Light</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>152</EffectId>
             <Effect>DNA</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>182</EffectId>
             <Effect>DNA Spiral</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>164</EffectId>
             <Effect>Drift</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>123</EffectId>
             <Effect>Drift Rose</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>96</EffectId>
             <Effect>Drip</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>7</EffectId>
             <Effect>Dynamic</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>117</EffectId>
             <Effect>Dynamic Smooth</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>12</EffectId>
             <Effect>Fade</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>49</EffectId>
             <Effect>Fairy</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>51</EffectId>
             <Effect>Fairytwinkle</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>69</EffectId>
             <Effect>Fill Noise</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>66</EffectId>
             <Effect>Fire 2012</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>45</EffectId>
             <Effect>Fire Flicker</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>149</EffectId>
             <Effect>Firenoise</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>42</EffectId>
             <Effect>Fireworks</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>90</EffectId>
             <Effect>Fireworks 1D</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>89</EffectId>
             <Effect>Fireworks Starburst</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>110</EffectId>
             <Effect>Flow</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>179</EffectId>
             <Effect>Flow Stripe</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>155</EffectId>
             <Effect>Freqmap</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>138</EffectId>
             <Effect>Freqmatrix</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>141</EffectId>
             <Effect>Freqpixels</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>137</EffectId>
             <Effect>Freqwave</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>177</EffectId>
             <Effect>Frizzles</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>160</EffectId>
             <Effect>Funky Plank</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>172</EffectId>
             <Effect>Game Of Life</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>139</EffectId>
             <Effect>GEQ</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>120</EffectId>
             <Effect>Ghost Rider</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>87</EffectId>
             <Effect>Glitter</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>46</EffectId>
             <Effect>Gradient</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>156</EffectId>
             <Effect>Gravcenter</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>157</EffectId>
             <Effect>Gravcentric</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>158</EffectId>
             <Effect>Gravfreq</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>132</EffectId>
             <Effect>Gravimeter</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>82</EffectId>
             <Effect>Halloween Eyes</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>100</EffectId>
             <Effect>Heartbeat</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>180</EffectId>
             <Effect>Hiphotic</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>58</EffectId>
             <Effect>ICU</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>64</EffectId>
             <Effect>Juggle</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>130</EffectId>
             <Effect>Juggles</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>168</EffectId>
             <Effect>Julia</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>75</EffectId>
             <Effect>Lake</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>41</EffectId>
             <Effect>Lighthouse</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>57</EffectId>
             <Effect>Lightning</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>176</EffectId>
             <Effect>Lissajous</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>47</EffectId>
             <Effect>Loading</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>131</EffectId>
             <Effect>Matripix</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>153</EffectId>
             <Effect>Matrix</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>154</EffectId>
             <Effect>Metaballs</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>76</EffectId>
             <Effect>Meteor</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>77</EffectId>
             <Effect>Meteor Smooth</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>135</EffectId>
             <Effect>Midnoise</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>59</EffectId>
             <Effect>Multi Comet</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>70</EffectId>
             <Effect>Noise 1</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>71</EffectId>
             <Effect>Noise 2</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>72</EffectId>
             <Effect>Noise 3</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>73</EffectId>
             <Effect>Noise 4</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>107</EffectId>
             <Effect>Noise Pal</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>146</EffectId>
             <Effect>Noise2D</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>143</EffectId>
             <Effect>Noisefire</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>136</EffectId>
             <Effect>Noisemeter</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>145</EffectId>
             <Effect>Noisemove</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>126</EffectId>
             <Effect>Octopus</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>62</EffectId>
             <Effect>Oscillate</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>101</EffectId>
             <Effect>Pacifica</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>65</EffectId>
             <Effect>Palette</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>98</EffectId>
             <Effect>Percent</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>147</EffectId>
             <Effect>Perlin Move</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>105</EffectId>
             <Effect>Phased</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>109</EffectId>
             <Effect>Phased Noise</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>128</EffectId>
             <Effect>Pixels</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>129</EffectId>
             <Effect>Pixelwave</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>97</EffectId>
             <Effect>Plasma</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>178</EffectId>
             <Effect>Plasma Ball</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>133</EffectId>
             <Effect>Plasmoid</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>174</EffectId>
             <Effect>Polar Lights</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>95</EffectId>
             <Effect>Popcorn</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>63</EffectId>
             <Effect>Pride 2015</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>144</EffectId>
             <Effect>Puddlepeak</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>134</EffectId>
             <Effect>Puddles</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>162</EffectId>
             <Effect>Pulser</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>78</EffectId>
             <Effect>Railway</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>43</EffectId>
             <Effect>Rain</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>9</EffectId>
             <Effect>Rainbow</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>33</EffectId>
             <Effect>Rainbow Runner</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>5</EffectId>
             <Effect>Random Colors</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>79</EffectId>
             <Effect>Ripple</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>148</EffectId>
             <Effect>Ripple Peak</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>99</EffectId>
             <Effect>Ripple Rainbow</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>185</EffectId>
             <Effect>Rocktaves</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>48</EffectId>
             <Effect>Rolling Balls</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>114</EffectId>
             <Effect>Rotozoomer</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>53</EffectId>
             <Effect>RSVD</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>15</EffectId>
             <Effect>Running</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>52</EffectId>
             <Effect>Running Dual</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>16</EffectId>
             <Effect>Saw</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>10</EffectId>
             <Effect>Scan</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>11</EffectId>
             <Effect>Scan Dual</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>40</EffectId>
             <Effect>Scanner</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>60</EffectId>
             <Effect>Scanner Dual</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>122</EffectId>
             <Effect>Scrolling Text</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>181</EffectId>
             <Effect>Sindots</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>108</EffectId>
             <Effect>Sine</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>92</EffectId>
             <Effect>Sinelon</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>93</EffectId>
             <Effect>Sinelon Dual</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>94</EffectId>
             <Effect>Sinelon Rainbow</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>125</EffectId>
             <Effect>Soap</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>0</EffectId>
             <Effect>Solid</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>103</EffectId>
             <Effect>Solid Glitter</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>83</EffectId>
             <Effect>Solid Pattern</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>84</EffectId>
             <Effect>Solid Pattern Tri</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>118</EffectId>
             <Effect>Spaceships</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>20</EffectId>
             <Effect>Sparkle</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>21</EffectId>
             <Effect>Sparkle Dark</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>22</EffectId>
             <Effect>Sparkle+</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>85</EffectId>
             <Effect>Spots</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>86</EffectId>
             <Effect>Spots Fade</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>150</EffectId>
             <Effect>Squared Swirl</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>39</EffectId>
             <Effect>Stream</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>61</EffectId>
             <Effect>Stream 2</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>23</EffectId>
             <Effect>Strobe</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>25</EffectId>
             <Effect>Strobe Mega</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>24</EffectId>
             <Effect>Strobe Rainbow</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>166</EffectId>
             <Effect>Sun Radiation</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>104</EffectId>
             <Effect>Sunrise</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>6</EffectId>
             <Effect>Sweep</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>36</EffectId>
             <Effect>Sweep Random</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>175</EffectId>
             <Effect>Swirl</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>173</EffectId>
             <Effect>Tartan</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>44</EffectId>
             <Effect>Tetrix</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>13</EffectId>
             <Effect>Theater</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>14</EffectId>
             <Effect>Theater Rainbow</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>35</EffectId>
             <Effect>Traffic Light</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>56</EffectId>
             <Effect>Tri Fade</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>55</EffectId>
             <Effect>Tri Wipe</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>116</EffectId>
             <Effect>TV Simulator</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>17</EffectId>
             <Effect>Twinkle</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>81</EffectId>
             <Effect>Twinklecat</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>80</EffectId>
             <Effect>Twinklefox</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>106</EffectId>
             <Effect>Twinkleup</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>50</EffectId>
             <Effect>Two Dots</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>113</EffectId>
             <Effect>Washing Machine</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>140</EffectId>
             <Effect>Waterfall</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>165</EffectId>
             <Effect>Waverly</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>184</EffectId>
             <Effect>Wavesins</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>127</EffectId>
             <Effect>Waving Cell</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>3</EffectId>
             <Effect>Wipe</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
         <Row>
             <EffectId>4</EffectId>
             <Effect>Wipe Random</Effect>
+            <WLED-44>True</WLED-44>
             <WLED-23>True</WLED-23>
         </Row>
     </Data>

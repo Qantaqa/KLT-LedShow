@@ -74,8 +74,7 @@ Module DG_Devices
             ' Controleer of de rij geldig is en de benodigde cellen niet Nothing zijn.
             If row IsNot Nothing AndAlso
                row.Cells("colIPAddress")?.Value IsNot Nothing AndAlso
-               row.Cells("colInstance")?.Value IsNot Nothing AndAlso
-               row.Cells("colOnline")?.Value IsNot Nothing Then
+               row.Cells("colInstance")?.Value IsNot Nothing Then
 
                 Dim ipAddress As String = row.Cells("colIPAddress").Value.ToString()
                 Dim instance As String = row.Cells("colInstance").Value.ToString()

@@ -52,10 +52,6 @@ Module DG_Effecten
     End Sub
 
 
-
-
-
-
     ' ****************************************************************************************
     '  Behandel de klik op een cel in de effecten DataGridView. 
     ' ****************************************************************************************
@@ -210,62 +206,10 @@ Module DG_Effecten
     End Function
 
 
-
-
-    ''' <summary>
-    ''' Zet een effect plaatje van 15x3 om naar een effect plaatje van 45x1.
-    ''' </summary>
-    ''' <param name="inputImage">De originele afbeelding (15x3).</param>
-    ''' <returns>Een nieuwe afbeelding (45x1) of Nothing als er een fout optreedt.</returns>
-    Public Function ConvertEffectImage(ByVal inputImage As System.Drawing.Image) As System.Drawing.Image
-        Try
-            ' Controleer of de inputImage niet Nothing is.
-            If inputImage Is Nothing Then
-                Return Nothing ' Of gooi een exception, afhankelijk van de gewenste foutafhandeling.
-            End If
-
-            ' Definieer de nieuwe breedte en hoogte.
-            Dim newWidth As Integer = 45
-            Dim newHeight As Integer = 1
-
-            ' Maak een nieuwe Bitmap met de gewenste afmetingen.
-            Dim outputImage As New Bitmap(newWidth, newHeight, PixelFormat.Format32bppArgb)
-
-            ' Maak een Graphics object om op de nieuwe Bitmap te tekenen.
-            Using graphics As Graphics = Graphics.FromImage(outputImage)
-                ' Stel de interpolatiemodus in voor een betere kwaliteit (optioneel).
-                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic
-                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality 'Nieuw
-                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality 'Nieuw
-
-                ' Teken de originele afbeelding op de nieuwe Bitmap, waarbij elke kolom van de originele afbeelding
-                ' 3 keer horizontaal wordt getekend in de nieuwe afbeelding.
-                For x As Integer = 0 To 14 ' Loop door de 15 kolommen van de originele afbeelding.
-                    For y As Integer = 0 To 2
-                        Dim sourceX As Integer = x
-                        Dim sourceY As Integer = y
-                        Dim destX As Integer = x * 3 + y ' Bereken de x-positie in de nieuwe afbeelding.
-                        Dim destY As Integer = 0 ' De y-positie is altijd 0 in de nieuwe afbeelding.
-
-                        ' Haal de kleur van de pixel.
-                        Dim pixelColor As Color = DirectCast(inputImage, Bitmap).GetPixel(sourceX, sourceY)
-                        ' Zet de kleur van de pixel in de nieuwe afbeelding.
-                        outputImage.SetPixel(destX, destY, pixelColor)
-                    Next
-                Next
-            End Using
-
-            ' Retourneer de nieuwe afbeelding.
-            Return outputImage
-
-        Catch ex As Exception
-            ' Foutafhandeling: Log de fout, toon een bericht, of retourneer Nothing.
-            Console.WriteLine("Fout bij het converteren van de afbeelding: " & ex.Message)
-            Return Nothing ' Of gooi een exception, afhankelijk van de gewenste foutafhandeling.
-        End Try
-    End Function
-
-    Public Sub TestEffectImages(ByVal DG_Effecten As DataGridView, ByVal effectsImagePath As String)
+    ' ****************************************************************************************
+    '  Deze functie controleert of de effecten bestaan en toont een vinkje of kruisje in de DataGridView
+    ' ****************************************************************************************
+    Public Sub TextExistanceEffects(ByVal DG_Effecten As DataGridView, ByVal effectsImagePath As String)
         ' Controleer of de DataGridView geldig is.
         If DG_Effecten Is Nothing Then
             Return

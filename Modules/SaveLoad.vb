@@ -39,7 +39,11 @@ Module SaveLoad
                 For Each cell As DataGridViewCell In row.Cells
                     writer.WriteStartElement(dataGridView.Columns(cell.ColumnIndex).Name.Replace(" ", "_")) ' Vervang spaties door underscores
                     If cell.Value IsNot Nothing Then
-                        writer.WriteString(cell.Value.ToString())
+                        If dataGridView.Columns(cell.ColumnIndex).Name = "colDDPData" AndAlso TypeOf cell.Value Is Byte() Then
+                            writer.WriteString(Convert.ToBase64String(CType(cell.Value, Byte())))
+                        Else
+                            writer.WriteString(cell.Value.ToString())
+                        End If
                     Else
                         writer.WriteString("")
                     End If
@@ -132,7 +136,15 @@ Module SaveLoad
                                 If (TypeOf dataGridView.Columns(columnName) Is DataGridViewImageColumn) Then
                                     ' do nothing
                                 Else
-                                    rowValues.Add(cellValue)
+                                    If columnName = "colDDPData" Then
+                                        If Not String.IsNullOrEmpty(cellValue) Then
+                                            rowValues.Add(Convert.FromBase64String(cellValue))
+                                        Else
+                                            rowValues.Add(Nothing)
+                                        End If
+                                    Else
+                                        rowValues.Add(cellValue)
+                                    End If
                                 End If
                             End If
                         End If
@@ -304,7 +316,7 @@ Module SaveLoad
         progressBar.Value = 15
         progressPopUpForm.Close()
 
-
+        CheckWLEDOnlineStatus(FrmMain.DG_Devices)
     End Sub
 
 

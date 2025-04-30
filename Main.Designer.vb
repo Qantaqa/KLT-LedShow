@@ -89,18 +89,12 @@ Partial Class FrmMain
         colRepeat = New DataGridViewCheckBoxColumn()
         colMicrophone = New DataGridViewCheckBoxColumn()
         colFilename = New DataGridViewTextBoxColumn()
-        TabDMX = New TabPage()
-        TrackBar4 = New TrackBar()
-        TrackBar5 = New TrackBar()
-        TrackBar6 = New TrackBar()
-        TrackBar1 = New TrackBar()
-        TrackBar2 = New TrackBar()
-        TrackBar3 = New TrackBar()
-        DMX_1_B = New TrackBar()
-        DMX_1_G = New TrackBar()
-        DMX_1_R = New TrackBar()
-        DMX_Master = New TrackBar()
+        TabStage = New TabPage()
+        pb_Stage = New PictureBox()
+        ToolStripSegments = New ToolStrip()
+        btnUpdateStage = New ToolStripButton()
         TabDevices = New TabPage()
+        SplitContainer_Devices = New SplitContainer()
         RichTextBox1 = New RichTextBox()
         ToolStrip_Devices = New ToolStrip()
         LblDeviceStatus = New ToolStripLabel()
@@ -109,7 +103,7 @@ Partial Class FrmMain
         btnDeleteDevice = New ToolStripButton()
         btnAddDevice = New ToolStripButton()
         btnGenerateStage = New ToolStripButton()
-        btnStartDMXSync = New ToolStripButton()
+        btnGenerateSliders = New ToolStripButton()
         TabGroups = New TabPage()
         RichTextBox4 = New RichTextBox()
         ToolStrip1 = New ToolStrip()
@@ -122,10 +116,6 @@ Partial Class FrmMain
         colGroupStartLedNr = New DataGridViewTextBoxColumn()
         colGroupStopLedNr = New DataGridViewTextBoxColumn()
         colGroupOrder = New DataGridViewTextBoxColumn()
-        TabSegments = New TabPage()
-        pb_Stage = New PictureBox()
-        ToolStripSegments = New ToolStrip()
-        btnUpdateStage = New ToolStripButton()
         TabEffects = New TabPage()
         ToolStrip_Effecten = New ToolStrip()
         btnTestExistanceEffects = New ToolStripButton()
@@ -137,6 +127,8 @@ Partial Class FrmMain
         DG_Paletten = New DataGridView()
         TabSettings = New TabPage()
         GroupBox8 = New GroupBox()
+        Label14 = New Label()
+        settings_DDPPort = New TextBox()
         settings_EffectsPath = New TextBox()
         Label11 = New Label()
         settings_PalettesPath = New TextBox()
@@ -192,17 +184,13 @@ Partial Class FrmMain
         lblCurrentTime = New Label()
         TimerNextEvent = New Timer(components)
         TimerPingDevices = New Timer(components)
+        ddpTimer = New Timer(components)
         colIPAddress = New DataGridViewTextBoxColumn()
         colInstance = New DataGridViewTextBoxColumn()
-        colNumberOfSegments = New DataGridViewTextBoxColumn()
-        colStartUniverse = New DataGridViewTextBoxColumn()
-        colEndUniverse = New DataGridViewTextBoxColumn()
-        colStartDMXChannel = New DataGridViewTextBoxColumn()
-        colProtocol = New DataGridViewComboBoxColumn()
         colLayout = New DataGridViewTextBoxColumn()
         colLedCount = New DataGridViewTextBoxColumn()
-        colPriority = New DataGridViewTextBoxColumn()
         colEnabled = New DataGridViewCheckBoxColumn()
+        colDDPData = New DataGridViewTextBoxColumn()
         colOnline = New DataGridViewImageColumn()
         CType(DG_Devices, ComponentModel.ISupportInitialize).BeginInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).BeginInit()
@@ -227,25 +215,17 @@ Partial Class FrmMain
         CType(WMP_Preview_B1, ComponentModel.ISupportInitialize).BeginInit()
         ToolStip_Show.SuspendLayout()
         CType(DG_Show, ComponentModel.ISupportInitialize).BeginInit()
-        TabDMX.SuspendLayout()
-        CType(TrackBar4, ComponentModel.ISupportInitialize).BeginInit()
-        CType(TrackBar5, ComponentModel.ISupportInitialize).BeginInit()
-        CType(TrackBar6, ComponentModel.ISupportInitialize).BeginInit()
-        CType(TrackBar1, ComponentModel.ISupportInitialize).BeginInit()
-        CType(TrackBar2, ComponentModel.ISupportInitialize).BeginInit()
-        CType(TrackBar3, ComponentModel.ISupportInitialize).BeginInit()
-        CType(DMX_1_B, ComponentModel.ISupportInitialize).BeginInit()
-        CType(DMX_1_G, ComponentModel.ISupportInitialize).BeginInit()
-        CType(DMX_1_R, ComponentModel.ISupportInitialize).BeginInit()
-        CType(DMX_Master, ComponentModel.ISupportInitialize).BeginInit()
+        TabStage.SuspendLayout()
+        CType(pb_Stage, ComponentModel.ISupportInitialize).BeginInit()
+        ToolStripSegments.SuspendLayout()
         TabDevices.SuspendLayout()
+        CType(SplitContainer_Devices, ComponentModel.ISupportInitialize).BeginInit()
+        SplitContainer_Devices.Panel1.SuspendLayout()
+        SplitContainer_Devices.SuspendLayout()
         ToolStrip_Devices.SuspendLayout()
         TabGroups.SuspendLayout()
         ToolStrip1.SuspendLayout()
         CType(DG_Groups, ComponentModel.ISupportInitialize).BeginInit()
-        TabSegments.SuspendLayout()
-        CType(pb_Stage, ComponentModel.ISupportInitialize).BeginInit()
-        ToolStripSegments.SuspendLayout()
         TabEffects.SuspendLayout()
         ToolStrip_Effecten.SuspendLayout()
         TabPaletten.SuspendLayout()
@@ -276,14 +256,14 @@ Partial Class FrmMain
         ' 
         ' DG_Devices
         ' 
-        DG_Devices.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        DG_Devices.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader
         DG_Devices.BackgroundColor = Color.DimGray
-        DG_Devices.Columns.AddRange(New DataGridViewColumn() {colIPAddress, colInstance, colNumberOfSegments, colStartUniverse, colEndUniverse, colStartDMXChannel, colProtocol, colLayout, colLedCount, colPriority, colEnabled, colOnline})
-        DG_Devices.Location = New Point(0, 69)
+        DG_Devices.Columns.AddRange(New DataGridViewColumn() {colIPAddress, colInstance, colLayout, colLedCount, colEnabled, colDDPData, colOnline})
+        DG_Devices.Dock = DockStyle.Fill
+        DG_Devices.Location = New Point(0, 0)
+        DG_Devices.MultiSelect = False
         DG_Devices.Name = "DG_Devices"
         DG_Devices.RowHeadersWidth = 10
-        DG_Devices.Size = New Size(1836, 780)
+        DG_Devices.Size = New Size(1827, 393)
         DG_Devices.TabIndex = 1
         ' 
         ' DG_Effecten
@@ -301,10 +281,9 @@ Partial Class FrmMain
         ' 
         TabControl.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         TabControl.Controls.Add(TabShow)
-        TabControl.Controls.Add(TabDMX)
+        TabControl.Controls.Add(TabStage)
         TabControl.Controls.Add(TabDevices)
         TabControl.Controls.Add(TabGroups)
-        TabControl.Controls.Add(TabSegments)
         TabControl.Controls.Add(TabEffects)
         TabControl.Controls.Add(TabPaletten)
         TabControl.Controls.Add(TabSettings)
@@ -893,148 +872,79 @@ Partial Class FrmMain
         colFilename.Visible = False
         colFilename.Width = 200
         ' 
-        ' TabDMX
+        ' TabStage
         ' 
-        TabDMX.BackColor = Color.Black
-        TabDMX.Controls.Add(TrackBar4)
-        TabDMX.Controls.Add(TrackBar5)
-        TabDMX.Controls.Add(TrackBar6)
-        TabDMX.Controls.Add(TrackBar1)
-        TabDMX.Controls.Add(TrackBar2)
-        TabDMX.Controls.Add(TrackBar3)
-        TabDMX.Controls.Add(DMX_1_B)
-        TabDMX.Controls.Add(DMX_1_G)
-        TabDMX.Controls.Add(DMX_1_R)
-        TabDMX.Controls.Add(DMX_Master)
-        TabDMX.Location = New Point(4, 24)
-        TabDMX.Name = "TabDMX"
-        TabDMX.Padding = New Padding(3)
-        TabDMX.Size = New Size(1836, 849)
-        TabDMX.TabIndex = 7
-        TabDMX.Text = "DMX Panel"
+        TabStage.BackColor = Color.Black
+        TabStage.Controls.Add(pb_Stage)
+        TabStage.Controls.Add(ToolStripSegments)
+        TabStage.Location = New Point(4, 24)
+        TabStage.Name = "TabStage"
+        TabStage.Padding = New Padding(3)
+        TabStage.Size = New Size(1836, 849)
+        TabStage.TabIndex = 6
+        TabStage.Text = "Stage"
         ' 
-        ' TrackBar4
+        ' pb_Stage
         ' 
-        TrackBar4.Location = New Point(233, 133)
-        TrackBar4.Maximum = 255
-        TrackBar4.Name = "TrackBar4"
-        TrackBar4.Orientation = Orientation.Vertical
-        TrackBar4.Size = New Size(45, 104)
-        TrackBar4.TabIndex = 8
-        TrackBar4.TickStyle = TickStyle.None
-        TrackBar4.UseWaitCursor = True
+        pb_Stage.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
+        pb_Stage.BackColor = Color.Black
+        pb_Stage.Location = New Point(0, 31)
+        pb_Stage.Name = "pb_Stage"
+        pb_Stage.Size = New Size(1836, 818)
+        pb_Stage.TabIndex = 2
+        pb_Stage.TabStop = False
         ' 
-        ' TrackBar5
+        ' ToolStripSegments
         ' 
-        TrackBar5.Location = New Point(213, 133)
-        TrackBar5.Maximum = 255
-        TrackBar5.Name = "TrackBar5"
-        TrackBar5.Orientation = Orientation.Vertical
-        TrackBar5.Size = New Size(45, 104)
-        TrackBar5.TabIndex = 9
-        TrackBar5.TickStyle = TickStyle.None
-        TrackBar5.UseWaitCursor = True
+        ToolStripSegments.BackColor = Color.MidnightBlue
+        ToolStripSegments.GripStyle = ToolStripGripStyle.Hidden
+        ToolStripSegments.Items.AddRange(New ToolStripItem() {btnUpdateStage})
+        ToolStripSegments.Location = New Point(3, 3)
+        ToolStripSegments.Name = "ToolStripSegments"
+        ToolStripSegments.Size = New Size(1830, 25)
+        ToolStripSegments.TabIndex = 1
+        ToolStripSegments.Text = "ToolStripSegments"
         ' 
-        ' TrackBar6
+        ' btnUpdateStage
         ' 
-        TrackBar6.Location = New Point(193, 133)
-        TrackBar6.Maximum = 255
-        TrackBar6.Name = "TrackBar6"
-        TrackBar6.Orientation = Orientation.Vertical
-        TrackBar6.Size = New Size(45, 104)
-        TrackBar6.TabIndex = 7
-        TrackBar6.TickStyle = TickStyle.None
-        TrackBar6.UseWaitCursor = True
-        ' 
-        ' TrackBar1
-        ' 
-        TrackBar1.Location = New Point(150, 133)
-        TrackBar1.Maximum = 255
-        TrackBar1.Name = "TrackBar1"
-        TrackBar1.Orientation = Orientation.Vertical
-        TrackBar1.Size = New Size(45, 104)
-        TrackBar1.TabIndex = 5
-        TrackBar1.TickStyle = TickStyle.None
-        TrackBar1.UseWaitCursor = True
-        ' 
-        ' TrackBar2
-        ' 
-        TrackBar2.Location = New Point(130, 133)
-        TrackBar2.Maximum = 255
-        TrackBar2.Name = "TrackBar2"
-        TrackBar2.Orientation = Orientation.Vertical
-        TrackBar2.Size = New Size(45, 104)
-        TrackBar2.TabIndex = 6
-        TrackBar2.TickStyle = TickStyle.None
-        TrackBar2.UseWaitCursor = True
-        ' 
-        ' TrackBar3
-        ' 
-        TrackBar3.Location = New Point(110, 133)
-        TrackBar3.Maximum = 255
-        TrackBar3.Name = "TrackBar3"
-        TrackBar3.Orientation = Orientation.Vertical
-        TrackBar3.Size = New Size(45, 104)
-        TrackBar3.TabIndex = 4
-        TrackBar3.TickStyle = TickStyle.None
-        TrackBar3.UseWaitCursor = True
-        ' 
-        ' DMX_1_B
-        ' 
-        DMX_1_B.Location = New Point(60, 133)
-        DMX_1_B.Maximum = 255
-        DMX_1_B.Name = "DMX_1_B"
-        DMX_1_B.Orientation = Orientation.Vertical
-        DMX_1_B.Size = New Size(45, 104)
-        DMX_1_B.TabIndex = 2
-        DMX_1_B.TickStyle = TickStyle.None
-        DMX_1_B.UseWaitCursor = True
-        ' 
-        ' DMX_1_G
-        ' 
-        DMX_1_G.Location = New Point(40, 133)
-        DMX_1_G.Maximum = 255
-        DMX_1_G.Name = "DMX_1_G"
-        DMX_1_G.Orientation = Orientation.Vertical
-        DMX_1_G.Size = New Size(45, 104)
-        DMX_1_G.TabIndex = 3
-        DMX_1_G.TickStyle = TickStyle.None
-        DMX_1_G.UseWaitCursor = True
-        ' 
-        ' DMX_1_R
-        ' 
-        DMX_1_R.Location = New Point(20, 133)
-        DMX_1_R.Maximum = 255
-        DMX_1_R.Name = "DMX_1_R"
-        DMX_1_R.Orientation = Orientation.Vertical
-        DMX_1_R.Size = New Size(45, 104)
-        DMX_1_R.TabIndex = 1
-        DMX_1_R.TickStyle = TickStyle.None
-        DMX_1_R.UseWaitCursor = True
-        ' 
-        ' DMX_Master
-        ' 
-        DMX_Master.Location = New Point(8, 6)
-        DMX_Master.Maximum = 255
-        DMX_Master.Name = "DMX_Master"
-        DMX_Master.Orientation = Orientation.Vertical
-        DMX_Master.Size = New Size(45, 104)
-        DMX_Master.TabIndex = 0
-        DMX_Master.TickStyle = TickStyle.None
-        DMX_Master.UseWaitCursor = True
+        btnUpdateStage.DisplayStyle = ToolStripItemDisplayStyle.Text
+        btnUpdateStage.ForeColor = SystemColors.AppWorkspace
+        btnUpdateStage.Image = CType(resources.GetObject("btnUpdateStage.Image"), Image)
+        btnUpdateStage.ImageTransparentColor = Color.Magenta
+        btnUpdateStage.Name = "btnUpdateStage"
+        btnUpdateStage.Size = New Size(81, 22)
+        btnUpdateStage.Text = "Redraw stage"
         ' 
         ' TabDevices
         ' 
         TabDevices.BackColor = Color.DimGray
+        TabDevices.Controls.Add(SplitContainer_Devices)
         TabDevices.Controls.Add(RichTextBox1)
         TabDevices.Controls.Add(ToolStrip_Devices)
-        TabDevices.Controls.Add(DG_Devices)
         TabDevices.Location = New Point(4, 24)
         TabDevices.Name = "TabDevices"
         TabDevices.Padding = New Padding(3)
         TabDevices.Size = New Size(1836, 849)
         TabDevices.TabIndex = 0
         TabDevices.Text = "Devices"
+        ' 
+        ' SplitContainer_Devices
+        ' 
+        SplitContainer_Devices.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        SplitContainer_Devices.Location = New Point(3, 63)
+        SplitContainer_Devices.Name = "SplitContainer_Devices"
+        SplitContainer_Devices.Orientation = Orientation.Horizontal
+        ' 
+        ' SplitContainer_Devices.Panel1
+        ' 
+        SplitContainer_Devices.Panel1.Controls.Add(DG_Devices)
+        ' 
+        ' SplitContainer_Devices.Panel2
+        ' 
+        SplitContainer_Devices.Panel2.AutoScroll = True
+        SplitContainer_Devices.Size = New Size(1827, 786)
+        SplitContainer_Devices.SplitterDistance = 393
+        SplitContainer_Devices.TabIndex = 4
         ' 
         ' RichTextBox1
         ' 
@@ -1053,7 +963,7 @@ Partial Class FrmMain
         ToolStrip_Devices.BackColor = Color.MidnightBlue
         ToolStrip_Devices.Font = New Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         ToolStrip_Devices.GripStyle = ToolStripGripStyle.Hidden
-        ToolStrip_Devices.Items.AddRange(New ToolStripItem() {LblDeviceStatus, btnScanNetworkForWLed, btnPingDevice, btnDeleteDevice, btnAddDevice, btnGenerateStage, btnStartDMXSync})
+        ToolStrip_Devices.Items.AddRange(New ToolStripItem() {LblDeviceStatus, btnScanNetworkForWLed, btnPingDevice, btnDeleteDevice, btnAddDevice, btnGenerateStage, btnGenerateSliders})
         ToolStrip_Devices.Location = New Point(3, 3)
         ToolStrip_Devices.Name = "ToolStrip_Devices"
         ToolStrip_Devices.Size = New Size(1830, 25)
@@ -1115,14 +1025,14 @@ Partial Class FrmMain
         btnGenerateStage.Size = New Size(89, 22)
         btnGenerateStage.Text = "Generate stage"
         ' 
-        ' btnStartDMXSync
+        ' btnGenerateSliders
         ' 
-        btnStartDMXSync.ForeColor = SystemColors.ButtonFace
-        btnStartDMXSync.Image = My.Resources.Resources.iconPlay
-        btnStartDMXSync.ImageTransparentColor = Color.Magenta
-        btnStartDMXSync.Name = "btnStartDMXSync"
-        btnStartDMXSync.Size = New Size(92, 22)
-        btnStartDMXSync.Text = "Take control"
+        btnGenerateSliders.ForeColor = SystemColors.Control
+        btnGenerateSliders.Image = CType(resources.GetObject("btnGenerateSliders.Image"), Image)
+        btnGenerateSliders.ImageTransparentColor = Color.Magenta
+        btnGenerateSliders.Name = "btnGenerateSliders"
+        btnGenerateSliders.Size = New Size(89, 22)
+        btnGenerateSliders.Text = "DMX sliders"
         ' 
         ' TabGroups
         ' 
@@ -1229,49 +1139,6 @@ Partial Class FrmMain
         ' 
         colGroupOrder.HeaderText = "Order"
         colGroupOrder.Name = "colGroupOrder"
-        ' 
-        ' TabSegments
-        ' 
-        TabSegments.BackColor = Color.Black
-        TabSegments.Controls.Add(pb_Stage)
-        TabSegments.Controls.Add(ToolStripSegments)
-        TabSegments.Location = New Point(4, 24)
-        TabSegments.Name = "TabSegments"
-        TabSegments.Padding = New Padding(3)
-        TabSegments.Size = New Size(1836, 849)
-        TabSegments.TabIndex = 6
-        TabSegments.Text = "Stage"
-        ' 
-        ' pb_Stage
-        ' 
-        pb_Stage.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
-        pb_Stage.BackColor = Color.Black
-        pb_Stage.Location = New Point(0, 31)
-        pb_Stage.Name = "pb_Stage"
-        pb_Stage.Size = New Size(1836, 818)
-        pb_Stage.TabIndex = 2
-        pb_Stage.TabStop = False
-        ' 
-        ' ToolStripSegments
-        ' 
-        ToolStripSegments.BackColor = Color.MidnightBlue
-        ToolStripSegments.GripStyle = ToolStripGripStyle.Hidden
-        ToolStripSegments.Items.AddRange(New ToolStripItem() {btnUpdateStage})
-        ToolStripSegments.Location = New Point(3, 3)
-        ToolStripSegments.Name = "ToolStripSegments"
-        ToolStripSegments.Size = New Size(1830, 25)
-        ToolStripSegments.TabIndex = 1
-        ToolStripSegments.Text = "ToolStripSegments"
-        ' 
-        ' btnUpdateStage
-        ' 
-        btnUpdateStage.DisplayStyle = ToolStripItemDisplayStyle.Text
-        btnUpdateStage.ForeColor = SystemColors.AppWorkspace
-        btnUpdateStage.Image = CType(resources.GetObject("btnUpdateStage.Image"), Image)
-        btnUpdateStage.ImageTransparentColor = Color.Magenta
-        btnUpdateStage.Name = "btnUpdateStage"
-        btnUpdateStage.Size = New Size(81, 22)
-        btnUpdateStage.Text = "Redraw stage"
         ' 
         ' TabEffects
         ' 
@@ -1392,6 +1259,8 @@ Partial Class FrmMain
         ' 
         ' GroupBox8
         ' 
+        GroupBox8.Controls.Add(Label14)
+        GroupBox8.Controls.Add(settings_DDPPort)
         GroupBox8.Controls.Add(settings_EffectsPath)
         GroupBox8.Controls.Add(Label11)
         GroupBox8.Controls.Add(settings_PalettesPath)
@@ -1408,6 +1277,23 @@ Partial Class FrmMain
         GroupBox8.TabIndex = 7
         GroupBox8.TabStop = False
         GroupBox8.Text = "Project settings"
+        ' 
+        ' Label14
+        ' 
+        Label14.AutoSize = True
+        Label14.ForeColor = Color.Black
+        Label14.Location = New Point(6, 156)
+        Label14.Name = "Label14"
+        Label14.Size = New Size(55, 15)
+        Label14.TabIndex = 11
+        Label14.Text = "DDP Port"
+        ' 
+        ' settings_DDPPort
+        ' 
+        settings_DDPPort.Location = New Point(132, 151)
+        settings_DDPPort.Name = "settings_DDPPort"
+        settings_DDPPort.Size = New Size(200, 23)
+        settings_DDPPort.TabIndex = 9
         ' 
         ' settings_EffectsPath
         ' 
@@ -1948,65 +1834,29 @@ Partial Class FrmMain
         ' 
         ' colIPAddress
         ' 
-        colIPAddress.HeaderText = "IP Address"
+        colIPAddress.HeaderText = "IP"
         colIPAddress.Name = "colIPAddress"
-        colIPAddress.Width = 87
+        colIPAddress.Width = 200
         ' 
         ' colInstance
         ' 
         colInstance.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-        colInstance.HeaderText = "Omschrijving"
+        colInstance.HeaderText = "WLed Instantie"
         colInstance.Name = "colInstance"
-        ' 
-        ' colNumberOfSegments
-        ' 
-        colNumberOfSegments.HeaderText = "Segments"
-        colNumberOfSegments.Name = "colNumberOfSegments"
-        colNumberOfSegments.Width = 84
-        ' 
-        ' colStartUniverse
-        ' 
-        colStartUniverse.HeaderText = "Start Universe"
-        colStartUniverse.Name = "colStartUniverse"
-        colStartUniverse.Width = 104
-        ' 
-        ' colEndUniverse
-        ' 
-        colEndUniverse.HeaderText = "Laatste Universe"
-        colEndUniverse.Name = "colEndUniverse"
-        colEndUniverse.Width = 117
-        ' 
-        ' colStartDMXChannel
-        ' 
-        colStartDMXChannel.HeaderText = "Start DMX"
-        colStartDMXChannel.Name = "colStartDMXChannel"
-        colStartDMXChannel.Width = 85
-        ' 
-        ' colProtocol
-        ' 
-        colProtocol.HeaderText = "Protocol"
-        colProtocol.Items.AddRange(New Object() {"sACN", "ArtNet"})
-        colProtocol.Name = "colProtocol"
-        colProtocol.Width = 58
         ' 
         ' colLayout
         ' 
         colLayout.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
         colLayout.HeaderText = "Layout"
         colLayout.Name = "colLayout"
+        colLayout.Resizable = DataGridViewTriState.True
+        colLayout.SortMode = DataGridViewColumnSortMode.NotSortable
         ' 
         ' colLedCount
         ' 
-        colLedCount.HeaderText = "Leds"
+        colLedCount.HeaderText = "#Leds"
         colLedCount.Name = "colLedCount"
-        colLedCount.ReadOnly = True
-        colLedCount.Width = 56
-        ' 
-        ' colPriority
-        ' 
-        colPriority.HeaderText = "Priority"
-        colPriority.Name = "colPriority"
-        colPriority.Width = 70
+        colLedCount.Width = 63
         ' 
         ' colEnabled
         ' 
@@ -2014,10 +1864,14 @@ Partial Class FrmMain
         colEnabled.Name = "colEnabled"
         colEnabled.Width = 55
         ' 
+        ' colDDPData
+        ' 
+        colDDPData.HeaderText = "Data"
+        colDDPData.Name = "colDDPData"
+        ' 
         ' colOnline
         ' 
         colOnline.HeaderText = "Online"
-        colOnline.Image = My.Resources.Resources.iconRedBullet1
         colOnline.Name = "colOnline"
         colOnline.Width = 48
         ' 
@@ -2060,20 +1914,16 @@ Partial Class FrmMain
         ToolStip_Show.ResumeLayout(False)
         ToolStip_Show.PerformLayout()
         CType(DG_Show, ComponentModel.ISupportInitialize).EndInit()
-        TabDMX.ResumeLayout(False)
-        TabDMX.PerformLayout()
-        CType(TrackBar4, ComponentModel.ISupportInitialize).EndInit()
-        CType(TrackBar5, ComponentModel.ISupportInitialize).EndInit()
-        CType(TrackBar6, ComponentModel.ISupportInitialize).EndInit()
-        CType(TrackBar1, ComponentModel.ISupportInitialize).EndInit()
-        CType(TrackBar2, ComponentModel.ISupportInitialize).EndInit()
-        CType(TrackBar3, ComponentModel.ISupportInitialize).EndInit()
-        CType(DMX_1_B, ComponentModel.ISupportInitialize).EndInit()
-        CType(DMX_1_G, ComponentModel.ISupportInitialize).EndInit()
-        CType(DMX_1_R, ComponentModel.ISupportInitialize).EndInit()
-        CType(DMX_Master, ComponentModel.ISupportInitialize).EndInit()
+        TabStage.ResumeLayout(False)
+        TabStage.PerformLayout()
+        CType(pb_Stage, ComponentModel.ISupportInitialize).EndInit()
+        ToolStripSegments.ResumeLayout(False)
+        ToolStripSegments.PerformLayout()
         TabDevices.ResumeLayout(False)
         TabDevices.PerformLayout()
+        SplitContainer_Devices.Panel1.ResumeLayout(False)
+        CType(SplitContainer_Devices, ComponentModel.ISupportInitialize).EndInit()
+        SplitContainer_Devices.ResumeLayout(False)
         ToolStrip_Devices.ResumeLayout(False)
         ToolStrip_Devices.PerformLayout()
         TabGroups.ResumeLayout(False)
@@ -2081,11 +1931,6 @@ Partial Class FrmMain
         ToolStrip1.ResumeLayout(False)
         ToolStrip1.PerformLayout()
         CType(DG_Groups, ComponentModel.ISupportInitialize).EndInit()
-        TabSegments.ResumeLayout(False)
-        TabSegments.PerformLayout()
-        CType(pb_Stage, ComponentModel.ISupportInitialize).EndInit()
-        ToolStripSegments.ResumeLayout(False)
-        ToolStripSegments.PerformLayout()
         TabEffects.ResumeLayout(False)
         TabEffects.PerformLayout()
         ToolStrip_Effecten.ResumeLayout(False)
@@ -2269,13 +2114,12 @@ Partial Class FrmMain
     Friend WithEvents Label13 As Label
     Friend WithEvents Label12 As Label
     Friend WithEvents btnTestExistanceEffects As ToolStripButton
-    Friend WithEvents TabSegments As TabPage
+    Friend WithEvents TabStage As TabPage
     Friend WithEvents SegmentsStageToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents btnGenerateStage As ToolStripButton
     Friend WithEvents pb_Stage As PictureBox
     Friend WithEvents ToolStripSegments As ToolStrip
     Friend WithEvents btnUpdateStage As ToolStripButton
-    Friend WithEvents TabDMX As TabPage
     Friend WithEvents TabGroups As TabPage
     Friend WithEvents DG_Groups As DataGridView
     Friend WithEvents RichTextBox4 As RichTextBox
@@ -2288,28 +2132,17 @@ Partial Class FrmMain
     Friend WithEvents colGroupStartLedNr As DataGridViewTextBoxColumn
     Friend WithEvents colGroupStopLedNr As DataGridViewTextBoxColumn
     Friend WithEvents colGroupOrder As DataGridViewTextBoxColumn
-    Friend WithEvents DMX_Master As TrackBar
-    Friend WithEvents DMX_1_B As TrackBar
-    Friend WithEvents DMX_1_G As TrackBar
-    Friend WithEvents DMX_1_R As TrackBar
-    Friend WithEvents TrackBar4 As TrackBar
-    Friend WithEvents TrackBar5 As TrackBar
-    Friend WithEvents TrackBar6 As TrackBar
-    Friend WithEvents TrackBar1 As TrackBar
-    Friend WithEvents TrackBar2 As TrackBar
-    Friend WithEvents TrackBar3 As TrackBar
-    Friend WithEvents btnStartDMXSync As ToolStripButton
+    Friend WithEvents SplitContainer_Devices As SplitContainer
+    Friend WithEvents btnGenerateSliders As ToolStripButton
+    Friend WithEvents Label14 As Label
+    Friend WithEvents settings_DDPPort As TextBox
+    Friend WithEvents ddpTimer As Timer
     Friend WithEvents colIPAddress As DataGridViewTextBoxColumn
     Friend WithEvents colInstance As DataGridViewTextBoxColumn
-    Friend WithEvents colNumberOfSegments As DataGridViewTextBoxColumn
-    Friend WithEvents colStartUniverse As DataGridViewTextBoxColumn
-    Friend WithEvents colEndUniverse As DataGridViewTextBoxColumn
-    Friend WithEvents colStartDMXChannel As DataGridViewTextBoxColumn
-    Friend WithEvents colProtocol As DataGridViewComboBoxColumn
     Friend WithEvents colLayout As DataGridViewTextBoxColumn
     Friend WithEvents colLedCount As DataGridViewTextBoxColumn
-    Friend WithEvents colPriority As DataGridViewTextBoxColumn
     Friend WithEvents colEnabled As DataGridViewCheckBoxColumn
+    Friend WithEvents colDDPData As DataGridViewTextBoxColumn
     Friend WithEvents colOnline As DataGridViewImageColumn
 
 End Class

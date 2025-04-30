@@ -161,6 +161,30 @@ Namespace My
                 Me("EffectsImagePath") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("4048")>  _
+        Public Property DDPPort() As String
+            Get
+                Return CType(Me("DDPPort"),String)
+            End Get
+            Set
+                Me("DDPPort") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("60")>  _
+        Public Property LedsPerMeter() As String
+            Get
+                Return CType(Me("LedsPerMeter"),String)
+            End Get
+            Set
+                Me("LedsPerMeter") = value
+            End Set
+        End Property
     End Class
 End Namespace
 
