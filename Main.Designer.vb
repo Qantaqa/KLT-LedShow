@@ -27,6 +27,15 @@ Partial Class FrmMain
         Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         DG_Devices = New DataGridView()
+        colIPAddress = New DataGridViewTextBoxColumn()
+        colInstance = New DataGridViewTextBoxColumn()
+        colLayout = New DataGridViewTextBoxColumn()
+        colLedCount = New DataGridViewTextBoxColumn()
+        colEnabled = New DataGridViewCheckBoxColumn()
+        colDDPData = New DataGridViewTextBoxColumn()
+        colDDPOffset = New DataGridViewTextBoxColumn()
+        colDataProvider = New DataGridViewComboBoxColumn()
+        colOnline = New DataGridViewImageColumn()
         DG_Effecten = New DataGridView()
         TabControl = New TabControl()
         TabShow = New TabPage()
@@ -90,18 +99,66 @@ Partial Class FrmMain
         colMicrophone = New DataGridViewCheckBoxColumn()
         colFilename = New DataGridViewTextBoxColumn()
         TabStage = New TabPage()
+        SplitContainerStage = New SplitContainer()
+        btnStopEffectPreview = New Button()
+        btnStartEffectPreview = New Button()
+        GroupBox12 = New GroupBox()
+        tvGroupsSelected = New TreeView()
+        btnApplyCustomEffect = New Button()
+        gbEffectDirection = New GroupBox()
+        EffectDirectionDownRight = New RadioButton()
+        EffectDirectionDown = New RadioButton()
+        EffectDirectionDownLeft = New RadioButton()
+        EffectDirectionRight = New RadioButton()
+        EffectDirectionLeft = New RadioButton()
+        EffectDirectionUpRight = New RadioButton()
+        EffectDirectionUp = New RadioButton()
+        EffectDirectionUpLeft = New RadioButton()
+        gbEffectsStartPosition = New GroupBox()
+        EffectStartPositionBottomRight = New RadioButton()
+        EffectStartPositionBottom = New RadioButton()
+        EffectStartPositionBottomLeft = New RadioButton()
+        EffectStartPositionRight = New RadioButton()
+        EffectStartPositionCenter = New RadioButton()
+        EffectStartPositionLeft = New RadioButton()
+        EffectStartPositionTopRight = New RadioButton()
+        EffectStartPositionTop = New RadioButton()
+        EffectStartPositionTopLeft = New RadioButton()
+        gbEffectSettings = New GroupBox()
+        tbEffectDuration = New TrackBar()
+        Label18 = New Label()
+        cbEffectRepeat = New CheckBox()
+        tbEffectFPS = New TrackBar()
+        lblEffectFPS = New Label()
+        tbEffectBrightness = New TrackBar()
+        Label17 = New Label()
+        EffectColor5 = New Button()
+        EffectColor4 = New Button()
+        EffectColor3 = New Button()
+        EffectColor2 = New Button()
+        EffectColor1 = New Button()
+        tbEffectIntensity = New TrackBar()
+        tbEffectSpeed = New TrackBar()
+        Label16 = New Label()
+        Label15 = New Label()
+        LblSpeed = New Label()
+        cbListCustomEffects = New ComboBox()
+        lblCustomEffect = New Label()
         pb_Stage = New PictureBox()
         ToolStripSegments = New ToolStrip()
         btnUpdateStage = New ToolStripButton()
+        ToolStripSeparator1 = New ToolStripSeparator()
         TabDevices = New TabPage()
         SplitContainer_Devices = New SplitContainer()
         RichTextBox1 = New RichTextBox()
         ToolStrip_Devices = New ToolStrip()
         LblDeviceStatus = New ToolStripLabel()
         btnScanNetworkForWLed = New ToolStripButton()
+        btnDevicesRefreshIPs = New ToolStripButton()
         btnPingDevice = New ToolStripButton()
         btnDeleteDevice = New ToolStripButton()
         btnAddDevice = New ToolStripButton()
+        ToolStripSeparator4 = New ToolStripSeparator()
         btnGenerateStage = New ToolStripButton()
         btnGenerateSliders = New ToolStripButton()
         TabGroups = New TabPage()
@@ -110,12 +167,9 @@ Partial Class FrmMain
         btnGroupDeleteRow = New ToolStripButton()
         btnGroupAddRowBefore = New ToolStripButton()
         btnGroupAddRowAfter = New ToolStripButton()
+        btnGroupsAutoSplit = New ToolStripButton()
+        btnGroupDMXSlider = New ToolStripButton()
         DG_Groups = New DataGridView()
-        colGroupName = New DataGridViewTextBoxColumn()
-        colGroupFixture = New DataGridViewComboBoxColumn()
-        colGroupStartLedNr = New DataGridViewTextBoxColumn()
-        colGroupStopLedNr = New DataGridViewTextBoxColumn()
-        colGroupOrder = New DataGridViewTextBoxColumn()
         TabEffects = New TabPage()
         ToolStrip_Effecten = New ToolStrip()
         btnTestExistanceEffects = New ToolStripButton()
@@ -185,13 +239,17 @@ Partial Class FrmMain
         TimerNextEvent = New Timer(components)
         TimerPingDevices = New Timer(components)
         ddpTimer = New Timer(components)
-        colIPAddress = New DataGridViewTextBoxColumn()
-        colInstance = New DataGridViewTextBoxColumn()
-        colLayout = New DataGridViewTextBoxColumn()
-        colLedCount = New DataGridViewTextBoxColumn()
-        colEnabled = New DataGridViewCheckBoxColumn()
-        colDDPData = New DataGridViewTextBoxColumn()
-        colOnline = New DataGridViewImageColumn()
+        colGroupId = New DataGridViewTextBoxColumn()
+        colGroupParentId = New DataGridViewTextBoxColumn()
+        colGroupName = New DataGridViewTextBoxColumn()
+        colGroupFixture = New DataGridViewComboBoxColumn()
+        colGroupStartLedNr = New DataGridViewTextBoxColumn()
+        colGroupStopLedNr = New DataGridViewTextBoxColumn()
+        colGroupOrder = New DataGridViewTextBoxColumn()
+        colAllFrames = New DataGridViewTextBoxColumn()
+        colActiveFrame = New DataGridViewTextBoxColumn()
+        colGroupRepeat = New DataGridViewCheckBoxColumn()
+        colGroupLayout = New DataGridViewTextBoxColumn()
         CType(DG_Devices, ComponentModel.ISupportInitialize).BeginInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).BeginInit()
         TabControl.SuspendLayout()
@@ -216,6 +274,19 @@ Partial Class FrmMain
         ToolStip_Show.SuspendLayout()
         CType(DG_Show, ComponentModel.ISupportInitialize).BeginInit()
         TabStage.SuspendLayout()
+        CType(SplitContainerStage, ComponentModel.ISupportInitialize).BeginInit()
+        SplitContainerStage.Panel1.SuspendLayout()
+        SplitContainerStage.Panel2.SuspendLayout()
+        SplitContainerStage.SuspendLayout()
+        GroupBox12.SuspendLayout()
+        gbEffectDirection.SuspendLayout()
+        gbEffectsStartPosition.SuspendLayout()
+        gbEffectSettings.SuspendLayout()
+        CType(tbEffectDuration, ComponentModel.ISupportInitialize).BeginInit()
+        CType(tbEffectFPS, ComponentModel.ISupportInitialize).BeginInit()
+        CType(tbEffectBrightness, ComponentModel.ISupportInitialize).BeginInit()
+        CType(tbEffectIntensity, ComponentModel.ISupportInitialize).BeginInit()
+        CType(tbEffectSpeed, ComponentModel.ISupportInitialize).BeginInit()
         CType(pb_Stage, ComponentModel.ISupportInitialize).BeginInit()
         ToolStripSegments.SuspendLayout()
         TabDevices.SuspendLayout()
@@ -257,7 +328,7 @@ Partial Class FrmMain
         ' DG_Devices
         ' 
         DG_Devices.BackgroundColor = Color.DimGray
-        DG_Devices.Columns.AddRange(New DataGridViewColumn() {colIPAddress, colInstance, colLayout, colLedCount, colEnabled, colDDPData, colOnline})
+        DG_Devices.Columns.AddRange(New DataGridViewColumn() {colIPAddress, colInstance, colLayout, colLedCount, colEnabled, colDDPData, colDDPOffset, colDataProvider, colOnline})
         DG_Devices.Dock = DockStyle.Fill
         DG_Devices.Location = New Point(0, 0)
         DG_Devices.MultiSelect = False
@@ -265,6 +336,63 @@ Partial Class FrmMain
         DG_Devices.RowHeadersWidth = 10
         DG_Devices.Size = New Size(1827, 393)
         DG_Devices.TabIndex = 1
+        ' 
+        ' colIPAddress
+        ' 
+        colIPAddress.HeaderText = "IP"
+        colIPAddress.Name = "colIPAddress"
+        colIPAddress.Width = 200
+        ' 
+        ' colInstance
+        ' 
+        colInstance.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colInstance.HeaderText = "WLed Instantie"
+        colInstance.Name = "colInstance"
+        ' 
+        ' colLayout
+        ' 
+        colLayout.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colLayout.HeaderText = "Layout"
+        colLayout.Name = "colLayout"
+        colLayout.Resizable = DataGridViewTriState.True
+        colLayout.SortMode = DataGridViewColumnSortMode.NotSortable
+        ' 
+        ' colLedCount
+        ' 
+        colLedCount.HeaderText = "#Leds"
+        colLedCount.Name = "colLedCount"
+        colLedCount.Width = 63
+        ' 
+        ' colEnabled
+        ' 
+        colEnabled.HeaderText = "Enabled"
+        colEnabled.Name = "colEnabled"
+        colEnabled.Width = 55
+        ' 
+        ' colDDPData
+        ' 
+        colDDPData.HeaderText = "Data"
+        colDDPData.Name = "colDDPData"
+        ' 
+        ' colDDPOffset
+        ' 
+        colDDPOffset.HeaderText = "Offset"
+        colDDPOffset.Name = "colDDPOffset"
+        ' 
+        ' colDataProvider
+        ' 
+        colDataProvider.HeaderText = "Source"
+        colDataProvider.Items.AddRange(New Object() {"DMX", "Effects", "Show"})
+        colDataProvider.MaxDropDownItems = 3
+        colDataProvider.Name = "colDataProvider"
+        colDataProvider.Resizable = DataGridViewTriState.True
+        colDataProvider.SortMode = DataGridViewColumnSortMode.Automatic
+        ' 
+        ' colOnline
+        ' 
+        colOnline.HeaderText = "Online"
+        colOnline.Name = "colOnline"
+        colOnline.Width = 48
         ' 
         ' DG_Effecten
         ' 
@@ -875,7 +1003,7 @@ Partial Class FrmMain
         ' TabStage
         ' 
         TabStage.BackColor = Color.Black
-        TabStage.Controls.Add(pb_Stage)
+        TabStage.Controls.Add(SplitContainerStage)
         TabStage.Controls.Add(ToolStripSegments)
         TabStage.Location = New Point(4, 24)
         TabStage.Name = "TabStage"
@@ -884,13 +1012,502 @@ Partial Class FrmMain
         TabStage.TabIndex = 6
         TabStage.Text = "Stage"
         ' 
+        ' SplitContainerStage
+        ' 
+        SplitContainerStage.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        SplitContainerStage.FixedPanel = FixedPanel.Panel1
+        SplitContainerStage.Location = New Point(3, 31)
+        SplitContainerStage.Name = "SplitContainerStage"
+        SplitContainerStage.Orientation = Orientation.Horizontal
+        ' 
+        ' SplitContainerStage.Panel1
+        ' 
+        SplitContainerStage.Panel1.BackColor = Color.FromArgb(CByte(64), CByte(64), CByte(64))
+        SplitContainerStage.Panel1.Controls.Add(btnStopEffectPreview)
+        SplitContainerStage.Panel1.Controls.Add(btnStartEffectPreview)
+        SplitContainerStage.Panel1.Controls.Add(GroupBox12)
+        SplitContainerStage.Panel1.Controls.Add(btnApplyCustomEffect)
+        SplitContainerStage.Panel1.Controls.Add(gbEffectDirection)
+        SplitContainerStage.Panel1.Controls.Add(gbEffectsStartPosition)
+        SplitContainerStage.Panel1.Controls.Add(gbEffectSettings)
+        ' 
+        ' SplitContainerStage.Panel2
+        ' 
+        SplitContainerStage.Panel2.Controls.Add(pb_Stage)
+        SplitContainerStage.Size = New Size(1830, 815)
+        SplitContainerStage.SplitterDistance = 138
+        SplitContainerStage.TabIndex = 3
+        ' 
+        ' btnStopEffectPreview
+        ' 
+        btnStopEffectPreview.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
+        btnStopEffectPreview.Image = My.Resources.Resources.iconPause
+        btnStopEffectPreview.ImageAlign = ContentAlignment.MiddleLeft
+        btnStopEffectPreview.Location = New Point(1508, 106)
+        btnStopEffectPreview.Name = "btnStopEffectPreview"
+        btnStopEffectPreview.Size = New Size(165, 23)
+        btnStopEffectPreview.TabIndex = 8
+        btnStopEffectPreview.Text = "Stop preview"
+        btnStopEffectPreview.UseVisualStyleBackColor = True
+        ' 
+        ' btnStartEffectPreview
+        ' 
+        btnStartEffectPreview.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
+        btnStartEffectPreview.Image = My.Resources.Resources.iconPlay
+        btnStartEffectPreview.ImageAlign = ContentAlignment.MiddleLeft
+        btnStartEffectPreview.Location = New Point(1508, 77)
+        btnStartEffectPreview.Name = "btnStartEffectPreview"
+        btnStartEffectPreview.Size = New Size(165, 23)
+        btnStartEffectPreview.TabIndex = 7
+        btnStartEffectPreview.Text = "Start preview"
+        btnStartEffectPreview.UseVisualStyleBackColor = True
+        ' 
+        ' GroupBox12
+        ' 
+        GroupBox12.Controls.Add(tvGroupsSelected)
+        GroupBox12.ForeColor = SystemColors.ButtonFace
+        GroupBox12.Location = New Point(1105, 3)
+        GroupBox12.Name = "GroupBox12"
+        GroupBox12.Size = New Size(381, 129)
+        GroupBox12.TabIndex = 6
+        GroupBox12.TabStop = False
+        GroupBox12.Text = "Selected groups"
+        ' 
+        ' tvGroupsSelected
+        ' 
+        tvGroupsSelected.BackColor = Color.FromArgb(CByte(64), CByte(64), CByte(64))
+        tvGroupsSelected.BorderStyle = BorderStyle.None
+        tvGroupsSelected.CheckBoxes = True
+        tvGroupsSelected.Dock = DockStyle.Fill
+        tvGroupsSelected.ForeColor = SystemColors.ButtonFace
+        tvGroupsSelected.Location = New Point(3, 19)
+        tvGroupsSelected.Name = "tvGroupsSelected"
+        tvGroupsSelected.Size = New Size(375, 107)
+        tvGroupsSelected.TabIndex = 5
+        ' 
+        ' btnApplyCustomEffect
+        ' 
+        btnApplyCustomEffect.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
+        btnApplyCustomEffect.Image = My.Resources.Resources.iconChecked
+        btnApplyCustomEffect.ImageAlign = ContentAlignment.MiddleLeft
+        btnApplyCustomEffect.Location = New Point(1508, 17)
+        btnApplyCustomEffect.Name = "btnApplyCustomEffect"
+        btnApplyCustomEffect.Size = New Size(165, 23)
+        btnApplyCustomEffect.TabIndex = 4
+        btnApplyCustomEffect.Text = "Apply effect"
+        btnApplyCustomEffect.UseVisualStyleBackColor = True
+        ' 
+        ' gbEffectDirection
+        ' 
+        gbEffectDirection.Controls.Add(EffectDirectionDownRight)
+        gbEffectDirection.Controls.Add(EffectDirectionDown)
+        gbEffectDirection.Controls.Add(EffectDirectionDownLeft)
+        gbEffectDirection.Controls.Add(EffectDirectionRight)
+        gbEffectDirection.Controls.Add(EffectDirectionLeft)
+        gbEffectDirection.Controls.Add(EffectDirectionUpRight)
+        gbEffectDirection.Controls.Add(EffectDirectionUp)
+        gbEffectDirection.Controls.Add(EffectDirectionUpLeft)
+        gbEffectDirection.ForeColor = SystemColors.Control
+        gbEffectDirection.Location = New Point(977, 3)
+        gbEffectDirection.Name = "gbEffectDirection"
+        gbEffectDirection.Size = New Size(122, 129)
+        gbEffectDirection.TabIndex = 3
+        gbEffectDirection.TabStop = False
+        gbEffectDirection.Text = "Direction"
+        ' 
+        ' EffectDirectionDownRight
+        ' 
+        EffectDirectionDownRight.AutoSize = True
+        EffectDirectionDownRight.Location = New Point(82, 97)
+        EffectDirectionDownRight.Name = "EffectDirectionDownRight"
+        EffectDirectionDownRight.Size = New Size(14, 13)
+        EffectDirectionDownRight.TabIndex = 9
+        EffectDirectionDownRight.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionDown
+        ' 
+        EffectDirectionDown.AutoSize = True
+        EffectDirectionDown.Location = New Point(53, 96)
+        EffectDirectionDown.Name = "EffectDirectionDown"
+        EffectDirectionDown.Size = New Size(14, 13)
+        EffectDirectionDown.TabIndex = 8
+        EffectDirectionDown.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionDownLeft
+        ' 
+        EffectDirectionDownLeft.AutoSize = True
+        EffectDirectionDownLeft.Location = New Point(24, 96)
+        EffectDirectionDownLeft.Name = "EffectDirectionDownLeft"
+        EffectDirectionDownLeft.Size = New Size(14, 13)
+        EffectDirectionDownLeft.TabIndex = 7
+        EffectDirectionDownLeft.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionRight
+        ' 
+        EffectDirectionRight.AutoSize = True
+        EffectDirectionRight.Location = New Point(82, 65)
+        EffectDirectionRight.Name = "EffectDirectionRight"
+        EffectDirectionRight.Size = New Size(14, 13)
+        EffectDirectionRight.TabIndex = 6
+        EffectDirectionRight.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionLeft
+        ' 
+        EffectDirectionLeft.AutoSize = True
+        EffectDirectionLeft.Location = New Point(24, 64)
+        EffectDirectionLeft.Name = "EffectDirectionLeft"
+        EffectDirectionLeft.Size = New Size(14, 13)
+        EffectDirectionLeft.TabIndex = 4
+        EffectDirectionLeft.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionUpRight
+        ' 
+        EffectDirectionUpRight.AutoSize = True
+        EffectDirectionUpRight.Location = New Point(82, 36)
+        EffectDirectionUpRight.Name = "EffectDirectionUpRight"
+        EffectDirectionUpRight.Size = New Size(14, 13)
+        EffectDirectionUpRight.TabIndex = 3
+        EffectDirectionUpRight.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionUp
+        ' 
+        EffectDirectionUp.AutoSize = True
+        EffectDirectionUp.Checked = True
+        EffectDirectionUp.Location = New Point(53, 35)
+        EffectDirectionUp.Name = "EffectDirectionUp"
+        EffectDirectionUp.Size = New Size(14, 13)
+        EffectDirectionUp.TabIndex = 2
+        EffectDirectionUp.TabStop = True
+        EffectDirectionUp.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionUpLeft
+        ' 
+        EffectDirectionUpLeft.AutoSize = True
+        EffectDirectionUpLeft.Location = New Point(24, 35)
+        EffectDirectionUpLeft.Name = "EffectDirectionUpLeft"
+        EffectDirectionUpLeft.Size = New Size(14, 13)
+        EffectDirectionUpLeft.TabIndex = 1
+        EffectDirectionUpLeft.UseVisualStyleBackColor = True
+        ' 
+        ' gbEffectsStartPosition
+        ' 
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionBottomRight)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionBottom)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionBottomLeft)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionRight)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionCenter)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionLeft)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionTopRight)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionTop)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionTopLeft)
+        gbEffectsStartPosition.ForeColor = SystemColors.Control
+        gbEffectsStartPosition.Location = New Point(849, 3)
+        gbEffectsStartPosition.Name = "gbEffectsStartPosition"
+        gbEffectsStartPosition.Size = New Size(122, 129)
+        gbEffectsStartPosition.TabIndex = 2
+        gbEffectsStartPosition.TabStop = False
+        gbEffectsStartPosition.Text = "Start position"
+        ' 
+        ' EffectStartPositionBottomRight
+        ' 
+        EffectStartPositionBottomRight.AutoSize = True
+        EffectStartPositionBottomRight.Location = New Point(82, 97)
+        EffectStartPositionBottomRight.Name = "EffectStartPositionBottomRight"
+        EffectStartPositionBottomRight.Size = New Size(14, 13)
+        EffectStartPositionBottomRight.TabIndex = 9
+        EffectStartPositionBottomRight.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionBottom
+        ' 
+        EffectStartPositionBottom.AutoSize = True
+        EffectStartPositionBottom.Location = New Point(53, 96)
+        EffectStartPositionBottom.Name = "EffectStartPositionBottom"
+        EffectStartPositionBottom.Size = New Size(14, 13)
+        EffectStartPositionBottom.TabIndex = 8
+        EffectStartPositionBottom.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionBottomLeft
+        ' 
+        EffectStartPositionBottomLeft.AutoSize = True
+        EffectStartPositionBottomLeft.Location = New Point(24, 96)
+        EffectStartPositionBottomLeft.Name = "EffectStartPositionBottomLeft"
+        EffectStartPositionBottomLeft.Size = New Size(14, 13)
+        EffectStartPositionBottomLeft.TabIndex = 7
+        EffectStartPositionBottomLeft.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionRight
+        ' 
+        EffectStartPositionRight.AutoSize = True
+        EffectStartPositionRight.Location = New Point(82, 65)
+        EffectStartPositionRight.Name = "EffectStartPositionRight"
+        EffectStartPositionRight.Size = New Size(14, 13)
+        EffectStartPositionRight.TabIndex = 6
+        EffectStartPositionRight.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionCenter
+        ' 
+        EffectStartPositionCenter.AutoSize = True
+        EffectStartPositionCenter.Checked = True
+        EffectStartPositionCenter.Location = New Point(53, 64)
+        EffectStartPositionCenter.Name = "EffectStartPositionCenter"
+        EffectStartPositionCenter.Size = New Size(14, 13)
+        EffectStartPositionCenter.TabIndex = 5
+        EffectStartPositionCenter.TabStop = True
+        EffectStartPositionCenter.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionLeft
+        ' 
+        EffectStartPositionLeft.AutoSize = True
+        EffectStartPositionLeft.Location = New Point(24, 64)
+        EffectStartPositionLeft.Name = "EffectStartPositionLeft"
+        EffectStartPositionLeft.Size = New Size(14, 13)
+        EffectStartPositionLeft.TabIndex = 4
+        EffectStartPositionLeft.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionTopRight
+        ' 
+        EffectStartPositionTopRight.AutoSize = True
+        EffectStartPositionTopRight.Location = New Point(82, 36)
+        EffectStartPositionTopRight.Name = "EffectStartPositionTopRight"
+        EffectStartPositionTopRight.Size = New Size(14, 13)
+        EffectStartPositionTopRight.TabIndex = 3
+        EffectStartPositionTopRight.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionTop
+        ' 
+        EffectStartPositionTop.AutoSize = True
+        EffectStartPositionTop.Location = New Point(53, 35)
+        EffectStartPositionTop.Name = "EffectStartPositionTop"
+        EffectStartPositionTop.Size = New Size(14, 13)
+        EffectStartPositionTop.TabIndex = 2
+        EffectStartPositionTop.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionTopLeft
+        ' 
+        EffectStartPositionTopLeft.AutoSize = True
+        EffectStartPositionTopLeft.Location = New Point(24, 35)
+        EffectStartPositionTopLeft.Name = "EffectStartPositionTopLeft"
+        EffectStartPositionTopLeft.Size = New Size(14, 13)
+        EffectStartPositionTopLeft.TabIndex = 1
+        EffectStartPositionTopLeft.UseVisualStyleBackColor = True
+        ' 
+        ' gbEffectSettings
+        ' 
+        gbEffectSettings.Controls.Add(tbEffectDuration)
+        gbEffectSettings.Controls.Add(Label18)
+        gbEffectSettings.Controls.Add(cbEffectRepeat)
+        gbEffectSettings.Controls.Add(tbEffectFPS)
+        gbEffectSettings.Controls.Add(lblEffectFPS)
+        gbEffectSettings.Controls.Add(tbEffectBrightness)
+        gbEffectSettings.Controls.Add(Label17)
+        gbEffectSettings.Controls.Add(EffectColor5)
+        gbEffectSettings.Controls.Add(EffectColor4)
+        gbEffectSettings.Controls.Add(EffectColor3)
+        gbEffectSettings.Controls.Add(EffectColor2)
+        gbEffectSettings.Controls.Add(EffectColor1)
+        gbEffectSettings.Controls.Add(tbEffectIntensity)
+        gbEffectSettings.Controls.Add(tbEffectSpeed)
+        gbEffectSettings.Controls.Add(Label16)
+        gbEffectSettings.Controls.Add(Label15)
+        gbEffectSettings.Controls.Add(LblSpeed)
+        gbEffectSettings.Controls.Add(cbListCustomEffects)
+        gbEffectSettings.Controls.Add(lblCustomEffect)
+        gbEffectSettings.ForeColor = SystemColors.ButtonFace
+        gbEffectSettings.Location = New Point(7, 3)
+        gbEffectSettings.Name = "gbEffectSettings"
+        gbEffectSettings.Size = New Size(836, 129)
+        gbEffectSettings.TabIndex = 0
+        gbEffectSettings.TabStop = False
+        gbEffectSettings.Text = "Effect"
+        ' 
+        ' tbEffectDuration
+        ' 
+        tbEffectDuration.LargeChange = 45
+        tbEffectDuration.Location = New Point(709, 44)
+        tbEffectDuration.Maximum = 90
+        tbEffectDuration.Minimum = 1
+        tbEffectDuration.Name = "tbEffectDuration"
+        tbEffectDuration.Size = New Size(104, 45)
+        tbEffectDuration.TabIndex = 18
+        tbEffectDuration.TickFrequency = 10
+        tbEffectDuration.Value = 10
+        ' 
+        ' Label18
+        ' 
+        Label18.AutoSize = True
+        Label18.Location = New Point(650, 49)
+        Label18.Name = "Label18"
+        Label18.Size = New Size(53, 15)
+        Label18.TabIndex = 17
+        Label18.Text = "Duration"
+        ' 
+        ' cbEffectRepeat
+        ' 
+        cbEffectRepeat.AutoSize = True
+        cbEffectRepeat.Checked = True
+        cbEffectRepeat.CheckState = CheckState.Checked
+        cbEffectRepeat.Location = New Point(669, 19)
+        cbEffectRepeat.Name = "cbEffectRepeat"
+        cbEffectRepeat.Size = New Size(62, 19)
+        cbEffectRepeat.TabIndex = 16
+        cbEffectRepeat.Text = "Repeat"
+        cbEffectRepeat.UseVisualStyleBackColor = True
+        ' 
+        ' tbEffectFPS
+        ' 
+        tbEffectFPS.LargeChange = 30
+        tbEffectFPS.Location = New Point(546, 45)
+        tbEffectFPS.Maximum = 60
+        tbEffectFPS.Minimum = 15
+        tbEffectFPS.Name = "tbEffectFPS"
+        tbEffectFPS.Size = New Size(104, 45)
+        tbEffectFPS.SmallChange = 10
+        tbEffectFPS.TabIndex = 15
+        tbEffectFPS.TickFrequency = 5
+        tbEffectFPS.Value = 15
+        ' 
+        ' lblEffectFPS
+        ' 
+        lblEffectFPS.AutoSize = True
+        lblEffectFPS.Location = New Point(514, 52)
+        lblEffectFPS.Name = "lblEffectFPS"
+        lblEffectFPS.Size = New Size(26, 15)
+        lblEffectFPS.TabIndex = 14
+        lblEffectFPS.Text = "FPS"
+        ' 
+        ' tbEffectBrightness
+        ' 
+        tbEffectBrightness.Location = New Point(408, 45)
+        tbEffectBrightness.Maximum = 100
+        tbEffectBrightness.Name = "tbEffectBrightness"
+        tbEffectBrightness.Size = New Size(104, 45)
+        tbEffectBrightness.TabIndex = 13
+        tbEffectBrightness.TickFrequency = 10
+        ' 
+        ' Label17
+        ' 
+        Label17.AutoSize = True
+        Label17.Location = New Point(350, 52)
+        Label17.Name = "Label17"
+        Label17.Size = New Size(62, 15)
+        Label17.TabIndex = 12
+        Label17.Text = "Brightness"
+        ' 
+        ' EffectColor5
+        ' 
+        EffectColor5.Location = New Point(190, 92)
+        EffectColor5.Name = "EffectColor5"
+        EffectColor5.Size = New Size(23, 23)
+        EffectColor5.TabIndex = 11
+        EffectColor5.Text = "Button5"
+        EffectColor5.UseVisualStyleBackColor = True
+        ' 
+        ' EffectColor4
+        ' 
+        EffectColor4.Location = New Point(161, 92)
+        EffectColor4.Name = "EffectColor4"
+        EffectColor4.Size = New Size(23, 23)
+        EffectColor4.TabIndex = 10
+        EffectColor4.Text = "Button4"
+        EffectColor4.UseVisualStyleBackColor = True
+        ' 
+        ' EffectColor3
+        ' 
+        EffectColor3.Location = New Point(132, 92)
+        EffectColor3.Name = "EffectColor3"
+        EffectColor3.Size = New Size(23, 23)
+        EffectColor3.TabIndex = 9
+        EffectColor3.Text = "Button3"
+        EffectColor3.UseVisualStyleBackColor = True
+        ' 
+        ' EffectColor2
+        ' 
+        EffectColor2.Location = New Point(103, 92)
+        EffectColor2.Name = "EffectColor2"
+        EffectColor2.Size = New Size(23, 23)
+        EffectColor2.TabIndex = 8
+        EffectColor2.Text = "Button2"
+        EffectColor2.UseVisualStyleBackColor = True
+        ' 
+        ' EffectColor1
+        ' 
+        EffectColor1.Location = New Point(74, 92)
+        EffectColor1.Name = "EffectColor1"
+        EffectColor1.Size = New Size(23, 23)
+        EffectColor1.TabIndex = 7
+        EffectColor1.Text = "Button1"
+        EffectColor1.UseVisualStyleBackColor = True
+        ' 
+        ' tbEffectIntensity
+        ' 
+        tbEffectIntensity.Location = New Point(234, 45)
+        tbEffectIntensity.Maximum = 100
+        tbEffectIntensity.Name = "tbEffectIntensity"
+        tbEffectIntensity.Size = New Size(104, 45)
+        tbEffectIntensity.TabIndex = 6
+        tbEffectIntensity.TickFrequency = 10
+        ' 
+        ' tbEffectSpeed
+        ' 
+        tbEffectSpeed.Location = New Point(74, 45)
+        tbEffectSpeed.Maximum = 100
+        tbEffectSpeed.Name = "tbEffectSpeed"
+        tbEffectSpeed.Size = New Size(104, 45)
+        tbEffectSpeed.TabIndex = 5
+        tbEffectSpeed.TickFrequency = 10
+        ' 
+        ' Label16
+        ' 
+        Label16.AutoSize = True
+        Label16.Location = New Point(15, 96)
+        Label16.Name = "Label16"
+        Label16.Size = New Size(41, 15)
+        Label16.TabIndex = 4
+        Label16.Text = "Colors"
+        ' 
+        ' Label15
+        ' 
+        Label15.AutoSize = True
+        Label15.Location = New Point(176, 52)
+        Label15.Name = "Label15"
+        Label15.Size = New Size(52, 15)
+        Label15.TabIndex = 3
+        Label15.Text = "Intensity"
+        ' 
+        ' LblSpeed
+        ' 
+        LblSpeed.AutoSize = True
+        LblSpeed.Location = New Point(15, 50)
+        LblSpeed.Name = "LblSpeed"
+        LblSpeed.Size = New Size(39, 15)
+        LblSpeed.TabIndex = 2
+        LblSpeed.Text = "Speed"
+        ' 
+        ' cbListCustomEffects
+        ' 
+        cbListCustomEffects.FormattingEnabled = True
+        cbListCustomEffects.Items.AddRange(New Object() {"DawnHarbor      " & vbTab & "- Vroege ochtendgloed vanaf onderen in warm oranje", "FixedTwinkle" & vbTab & "- Een vaste kleur achtergrond met een willekeurige twinkle in kleur 5", "CalmOcean" & vbTab & "- Langzame, vloeiende pulseringen die het ritme van rustige oceaangolven"})
+        cbListCustomEffects.Location = New Point(74, 17)
+        cbListCustomEffects.Name = "cbListCustomEffects"
+        cbListCustomEffects.Size = New Size(576, 23)
+        cbListCustomEffects.TabIndex = 1
+        ' 
+        ' lblCustomEffect
+        ' 
+        lblCustomEffect.AutoSize = True
+        lblCustomEffect.Location = New Point(14, 22)
+        lblCustomEffect.Name = "lblCustomEffect"
+        lblCustomEffect.Size = New Size(37, 15)
+        lblCustomEffect.TabIndex = 0
+        lblCustomEffect.Text = "Effect"
+        ' 
         ' pb_Stage
         ' 
-        pb_Stage.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
         pb_Stage.BackColor = Color.Black
-        pb_Stage.Location = New Point(0, 31)
+        pb_Stage.Dock = DockStyle.Fill
+        pb_Stage.Location = New Point(0, 0)
         pb_Stage.Name = "pb_Stage"
-        pb_Stage.Size = New Size(1836, 818)
+        pb_Stage.Size = New Size(1830, 673)
         pb_Stage.TabIndex = 2
         pb_Stage.TabStop = False
         ' 
@@ -898,7 +1515,7 @@ Partial Class FrmMain
         ' 
         ToolStripSegments.BackColor = Color.MidnightBlue
         ToolStripSegments.GripStyle = ToolStripGripStyle.Hidden
-        ToolStripSegments.Items.AddRange(New ToolStripItem() {btnUpdateStage})
+        ToolStripSegments.Items.AddRange(New ToolStripItem() {btnUpdateStage, ToolStripSeparator1})
         ToolStripSegments.Location = New Point(3, 3)
         ToolStripSegments.Name = "ToolStripSegments"
         ToolStripSegments.Size = New Size(1830, 25)
@@ -914,6 +1531,11 @@ Partial Class FrmMain
         btnUpdateStage.Name = "btnUpdateStage"
         btnUpdateStage.Size = New Size(81, 22)
         btnUpdateStage.Text = "Redraw stage"
+        ' 
+        ' ToolStripSeparator1
+        ' 
+        ToolStripSeparator1.Name = "ToolStripSeparator1"
+        ToolStripSeparator1.Size = New Size(6, 25)
         ' 
         ' TabDevices
         ' 
@@ -963,7 +1585,7 @@ Partial Class FrmMain
         ToolStrip_Devices.BackColor = Color.MidnightBlue
         ToolStrip_Devices.Font = New Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         ToolStrip_Devices.GripStyle = ToolStripGripStyle.Hidden
-        ToolStrip_Devices.Items.AddRange(New ToolStripItem() {LblDeviceStatus, btnScanNetworkForWLed, btnPingDevice, btnDeleteDevice, btnAddDevice, btnGenerateStage, btnGenerateSliders})
+        ToolStrip_Devices.Items.AddRange(New ToolStripItem() {LblDeviceStatus, btnScanNetworkForWLed, btnDevicesRefreshIPs, btnPingDevice, btnDeleteDevice, btnAddDevice, ToolStripSeparator4, btnGenerateStage, btnGenerateSliders})
         ToolStrip_Devices.Location = New Point(3, 3)
         ToolStrip_Devices.Name = "ToolStrip_Devices"
         ToolStrip_Devices.Size = New Size(1830, 25)
@@ -985,6 +1607,15 @@ Partial Class FrmMain
         btnScanNetworkForWLed.Name = "btnScanNetworkForWLed"
         btnScanNetworkForWLed.Size = New Size(192, 22)
         btnScanNetworkForWLed.Text = "Scan network for WLED devices"
+        ' 
+        ' btnDevicesRefreshIPs
+        ' 
+        btnDevicesRefreshIPs.ForeColor = SystemColors.ButtonFace
+        btnDevicesRefreshIPs.Image = My.Resources.Resources.iconTime
+        btnDevicesRefreshIPs.ImageTransparentColor = Color.Magenta
+        btnDevicesRefreshIPs.Name = "btnDevicesRefreshIPs"
+        btnDevicesRefreshIPs.Size = New Size(87, 22)
+        btnDevicesRefreshIPs.Text = "Refresh IP's"
         ' 
         ' btnPingDevice
         ' 
@@ -1015,6 +1646,11 @@ Partial Class FrmMain
         btnAddDevice.Size = New Size(23, 22)
         btnAddDevice.Text = "Insert device"
         ' 
+        ' ToolStripSeparator4
+        ' 
+        ToolStripSeparator4.Name = "ToolStripSeparator4"
+        ToolStripSeparator4.Size = New Size(6, 25)
+        ' 
         ' btnGenerateStage
         ' 
         btnGenerateStage.DisplayStyle = ToolStripItemDisplayStyle.Text
@@ -1028,7 +1664,7 @@ Partial Class FrmMain
         ' btnGenerateSliders
         ' 
         btnGenerateSliders.ForeColor = SystemColors.Control
-        btnGenerateSliders.Image = CType(resources.GetObject("btnGenerateSliders.Image"), Image)
+        btnGenerateSliders.Image = My.Resources.Resources.iconDMXslider
         btnGenerateSliders.ImageTransparentColor = Color.Magenta
         btnGenerateSliders.Name = "btnGenerateSliders"
         btnGenerateSliders.Size = New Size(89, 22)
@@ -1063,12 +1699,12 @@ Partial Class FrmMain
         ' 
         ToolStrip1.BackColor = Color.MidnightBlue
         ToolStrip1.GripStyle = ToolStripGripStyle.Hidden
-        ToolStrip1.Items.AddRange(New ToolStripItem() {btnGroupDeleteRow, btnGroupAddRowBefore, btnGroupAddRowAfter})
+        ToolStrip1.Items.AddRange(New ToolStripItem() {btnGroupDeleteRow, btnGroupAddRowBefore, btnGroupAddRowAfter, btnGroupsAutoSplit, btnGroupDMXSlider})
         ToolStrip1.Location = New Point(3, 3)
         ToolStrip1.Name = "ToolStrip1"
         ToolStrip1.Size = New Size(1830, 25)
         ToolStrip1.TabIndex = 1
-        ToolStrip1.Text = "ToolStrip1"
+        ToolStrip1.Text = "DMS Slider"
         ' 
         ' btnGroupDeleteRow
         ' 
@@ -1100,45 +1736,36 @@ Partial Class FrmMain
         btnGroupAddRowAfter.Size = New Size(23, 22)
         btnGroupAddRowAfter.Text = "Add row after"
         ' 
+        ' btnGroupsAutoSplit
+        ' 
+        btnGroupsAutoSplit.ForeColor = SystemColors.ButtonFace
+        btnGroupsAutoSplit.Image = CType(resources.GetObject("btnGroupsAutoSplit.Image"), Image)
+        btnGroupsAutoSplit.ImageTransparentColor = Color.Magenta
+        btnGroupsAutoSplit.Name = "btnGroupsAutoSplit"
+        btnGroupsAutoSplit.Size = New Size(79, 22)
+        btnGroupsAutoSplit.Text = "Auto Split"
+        ' 
+        ' btnGroupDMXSlider
+        ' 
+        btnGroupDMXSlider.ForeColor = SystemColors.ButtonFace
+        btnGroupDMXSlider.Image = My.Resources.Resources.iconDMXslider
+        btnGroupDMXSlider.ImageTransparentColor = Color.Magenta
+        btnGroupDMXSlider.Name = "btnGroupDMXSlider"
+        btnGroupDMXSlider.Size = New Size(84, 22)
+        btnGroupDMXSlider.Text = "DMX slider"
+        ' 
         ' DG_Groups
         ' 
         DG_Groups.AllowUserToAddRows = False
         DG_Groups.AllowUserToDeleteRows = False
         DG_Groups.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         DG_Groups.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DG_Groups.Columns.AddRange(New DataGridViewColumn() {colGroupName, colGroupFixture, colGroupStartLedNr, colGroupStopLedNr, colGroupOrder})
+        DG_Groups.Columns.AddRange(New DataGridViewColumn() {colGroupId, colGroupParentId, colGroupName, colGroupFixture, colGroupStartLedNr, colGroupStopLedNr, colGroupOrder, colAllFrames, colActiveFrame, colGroupRepeat, colGroupLayout})
         DG_Groups.Location = New Point(3, 69)
         DG_Groups.Name = "DG_Groups"
         DG_Groups.RowHeadersWidth = 11
         DG_Groups.Size = New Size(1830, 774)
         DG_Groups.TabIndex = 0
-        ' 
-        ' colGroupName
-        ' 
-        colGroupName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-        colGroupName.HeaderText = "Groupname"
-        colGroupName.Name = "colGroupName"
-        ' 
-        ' colGroupFixture
-        ' 
-        colGroupFixture.HeaderText = "Fixture"
-        colGroupFixture.Name = "colGroupFixture"
-        colGroupFixture.Width = 300
-        ' 
-        ' colGroupStartLedNr
-        ' 
-        colGroupStartLedNr.HeaderText = "Start Led"
-        colGroupStartLedNr.Name = "colGroupStartLedNr"
-        ' 
-        ' colGroupStopLedNr
-        ' 
-        colGroupStopLedNr.HeaderText = "Stop Led"
-        colGroupStopLedNr.Name = "colGroupStopLedNr"
-        ' 
-        ' colGroupOrder
-        ' 
-        colGroupOrder.HeaderText = "Order"
-        colGroupOrder.Name = "colGroupOrder"
         ' 
         ' TabEffects
         ' 
@@ -1832,48 +2459,68 @@ Partial Class FrmMain
         TimerPingDevices.Enabled = True
         TimerPingDevices.Interval = 60000
         ' 
-        ' colIPAddress
+        ' ddpTimer
         ' 
-        colIPAddress.HeaderText = "IP"
-        colIPAddress.Name = "colIPAddress"
-        colIPAddress.Width = 200
+        ddpTimer.Enabled = True
         ' 
-        ' colInstance
+        ' colGroupId
         ' 
-        colInstance.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-        colInstance.HeaderText = "WLed Instantie"
-        colInstance.Name = "colInstance"
+        colGroupId.HeaderText = "ID"
+        colGroupId.Name = "colGroupId"
+        colGroupId.Width = 50
         ' 
-        ' colLayout
+        ' colGroupParentId
         ' 
-        colLayout.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-        colLayout.HeaderText = "Layout"
-        colLayout.Name = "colLayout"
-        colLayout.Resizable = DataGridViewTriState.True
-        colLayout.SortMode = DataGridViewColumnSortMode.NotSortable
+        colGroupParentId.HeaderText = "Parent"
+        colGroupParentId.Name = "colGroupParentId"
+        colGroupParentId.Width = 50
         ' 
-        ' colLedCount
+        ' colGroupName
         ' 
-        colLedCount.HeaderText = "#Leds"
-        colLedCount.Name = "colLedCount"
-        colLedCount.Width = 63
+        colGroupName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colGroupName.HeaderText = "Groupname"
+        colGroupName.Name = "colGroupName"
         ' 
-        ' colEnabled
+        ' colGroupFixture
         ' 
-        colEnabled.HeaderText = "Enabled"
-        colEnabled.Name = "colEnabled"
-        colEnabled.Width = 55
+        colGroupFixture.HeaderText = "Fixture"
+        colGroupFixture.Name = "colGroupFixture"
+        colGroupFixture.Width = 300
         ' 
-        ' colDDPData
+        ' colGroupStartLedNr
         ' 
-        colDDPData.HeaderText = "Data"
-        colDDPData.Name = "colDDPData"
+        colGroupStartLedNr.HeaderText = "Start Led"
+        colGroupStartLedNr.Name = "colGroupStartLedNr"
         ' 
-        ' colOnline
+        ' colGroupStopLedNr
         ' 
-        colOnline.HeaderText = "Online"
-        colOnline.Name = "colOnline"
-        colOnline.Width = 48
+        colGroupStopLedNr.HeaderText = "Stop Led"
+        colGroupStopLedNr.Name = "colGroupStopLedNr"
+        ' 
+        ' colGroupOrder
+        ' 
+        colGroupOrder.HeaderText = "Order"
+        colGroupOrder.Name = "colGroupOrder"
+        ' 
+        ' colAllFrames
+        ' 
+        colAllFrames.HeaderText = "Frames"
+        colAllFrames.Name = "colAllFrames"
+        ' 
+        ' colActiveFrame
+        ' 
+        colActiveFrame.HeaderText = "ActiveFrame"
+        colActiveFrame.Name = "colActiveFrame"
+        ' 
+        ' colGroupRepeat
+        ' 
+        colGroupRepeat.HeaderText = "Repeat"
+        colGroupRepeat.Name = "colGroupRepeat"
+        ' 
+        ' colGroupLayout
+        ' 
+        colGroupLayout.HeaderText = "Layout"
+        colGroupLayout.Name = "colGroupLayout"
         ' 
         ' FrmMain
         ' 
@@ -1916,6 +2563,22 @@ Partial Class FrmMain
         CType(DG_Show, ComponentModel.ISupportInitialize).EndInit()
         TabStage.ResumeLayout(False)
         TabStage.PerformLayout()
+        SplitContainerStage.Panel1.ResumeLayout(False)
+        SplitContainerStage.Panel2.ResumeLayout(False)
+        CType(SplitContainerStage, ComponentModel.ISupportInitialize).EndInit()
+        SplitContainerStage.ResumeLayout(False)
+        GroupBox12.ResumeLayout(False)
+        gbEffectDirection.ResumeLayout(False)
+        gbEffectDirection.PerformLayout()
+        gbEffectsStartPosition.ResumeLayout(False)
+        gbEffectsStartPosition.PerformLayout()
+        gbEffectSettings.ResumeLayout(False)
+        gbEffectSettings.PerformLayout()
+        CType(tbEffectDuration, ComponentModel.ISupportInitialize).EndInit()
+        CType(tbEffectFPS, ComponentModel.ISupportInitialize).EndInit()
+        CType(tbEffectBrightness, ComponentModel.ISupportInitialize).EndInit()
+        CType(tbEffectIntensity, ComponentModel.ISupportInitialize).EndInit()
+        CType(tbEffectSpeed, ComponentModel.ISupportInitialize).EndInit()
         CType(pb_Stage, ComponentModel.ISupportInitialize).EndInit()
         ToolStripSegments.ResumeLayout(False)
         ToolStripSegments.PerformLayout()
@@ -2127,22 +2790,82 @@ Partial Class FrmMain
     Friend WithEvents btnGroupAddRowAfter As ToolStripButton
     Friend WithEvents btnGroupAddRowBefore As ToolStripButton
     Friend WithEvents btnGroupDeleteRow As ToolStripButton
-    Friend WithEvents colGroupName As DataGridViewTextBoxColumn
-    Friend WithEvents colGroupFixture As DataGridViewComboBoxColumn
-    Friend WithEvents colGroupStartLedNr As DataGridViewTextBoxColumn
-    Friend WithEvents colGroupStopLedNr As DataGridViewTextBoxColumn
-    Friend WithEvents colGroupOrder As DataGridViewTextBoxColumn
     Friend WithEvents SplitContainer_Devices As SplitContainer
     Friend WithEvents btnGenerateSliders As ToolStripButton
     Friend WithEvents Label14 As Label
     Friend WithEvents settings_DDPPort As TextBox
     Friend WithEvents ddpTimer As Timer
+    Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
+    Friend WithEvents ToolStripLabel2 As ToolStripLabel
+    Friend WithEvents ListCustomEffects As ToolStripComboBox
+    Friend WithEvents SplitContainerStage As SplitContainer
+    Friend WithEvents gbEffectSettings As GroupBox
+    Friend WithEvents LblSpeed As Label
+    Friend WithEvents cbListCustomEffects As ComboBox
+    Friend WithEvents lblCustomEffect As Label
+    Friend WithEvents EffectColor5 As Button
+    Friend WithEvents EffectColor4 As Button
+    Friend WithEvents EffectColor3 As Button
+    Friend WithEvents EffectColor2 As Button
+    Friend WithEvents EffectColor1 As Button
+    Friend WithEvents tbEffectIntensity As TrackBar
+    Friend WithEvents tbEffectSpeed As TrackBar
+    Friend WithEvents Label16 As Label
+    Friend WithEvents Label15 As Label
+    Friend WithEvents gbEffectsStartPosition As GroupBox
+    Friend WithEvents EffectStartPositionBottomRight As RadioButton
+    Friend WithEvents EffectStartPositionBottom As RadioButton
+    Friend WithEvents EffectStartPositionBottomLeft As RadioButton
+    Friend WithEvents EffectStartPositionRight As RadioButton
+    Friend WithEvents EffectStartPositionCenter As RadioButton
+    Friend WithEvents EffectStartPositionLeft As RadioButton
+    Friend WithEvents EffectStartPositionTopRight As RadioButton
+    Friend WithEvents EffectStartPositionTop As RadioButton
+    Friend WithEvents EffectStartPositionTopLeft As RadioButton
+    Friend WithEvents gbEffectDirection As GroupBox
+    Friend WithEvents EffectDirectionDownRight As RadioButton
+    Friend WithEvents EffectDirectionDown As RadioButton
+    Friend WithEvents EffectDirectionDownLeft As RadioButton
+    Friend WithEvents EffectDirectionRight As RadioButton
+    Friend WithEvents EffectDirectionLeft As RadioButton
+    Friend WithEvents EffectDirectionUpRight As RadioButton
+    Friend WithEvents EffectDirectionUp As RadioButton
+    Friend WithEvents EffectDirectionUpLeft As RadioButton
+    Friend WithEvents btnApplyCustomEffect As Button
+    Friend WithEvents btnDevicesRefreshIPs As ToolStripButton
+    Friend WithEvents ToolStripSeparator4 As ToolStripSeparator
+    Friend WithEvents btnGroupsAutoSplit As ToolStripButton
+    Friend WithEvents GroupBox12 As GroupBox
+    Friend WithEvents tvGroupsSelected As TreeView
+    Friend WithEvents tbEffectBrightness As TrackBar
+    Friend WithEvents Label17 As Label
+    Friend WithEvents tbEffectFPS As TrackBar
+    Friend WithEvents lblEffectFPS As Label
+    Friend WithEvents cbEffectRepeat As CheckBox
+    Friend WithEvents btnStopEffectPreview As Button
+    Friend WithEvents btnStartEffectPreview As Button
+    Friend WithEvents tbEffectDuration As TrackBar
+    Friend WithEvents Label18 As Label
     Friend WithEvents colIPAddress As DataGridViewTextBoxColumn
     Friend WithEvents colInstance As DataGridViewTextBoxColumn
     Friend WithEvents colLayout As DataGridViewTextBoxColumn
     Friend WithEvents colLedCount As DataGridViewTextBoxColumn
     Friend WithEvents colEnabled As DataGridViewCheckBoxColumn
     Friend WithEvents colDDPData As DataGridViewTextBoxColumn
+    Friend WithEvents colDDPOffset As DataGridViewTextBoxColumn
+    Friend WithEvents colDataProvider As DataGridViewComboBoxColumn
     Friend WithEvents colOnline As DataGridViewImageColumn
+    Friend WithEvents btnGroupDMXSlider As ToolStripButton
+    Friend WithEvents colGroupId As DataGridViewTextBoxColumn
+    Friend WithEvents colGroupParentId As DataGridViewTextBoxColumn
+    Friend WithEvents colGroupName As DataGridViewTextBoxColumn
+    Friend WithEvents colGroupFixture As DataGridViewComboBoxColumn
+    Friend WithEvents colGroupStartLedNr As DataGridViewTextBoxColumn
+    Friend WithEvents colGroupStopLedNr As DataGridViewTextBoxColumn
+    Friend WithEvents colGroupOrder As DataGridViewTextBoxColumn
+    Friend WithEvents colAllFrames As DataGridViewTextBoxColumn
+    Friend WithEvents colActiveFrame As DataGridViewTextBoxColumn
+    Friend WithEvents colGroupRepeat As DataGridViewCheckBoxColumn
+    Friend WithEvents colGroupLayout As DataGridViewTextBoxColumn
 
 End Class

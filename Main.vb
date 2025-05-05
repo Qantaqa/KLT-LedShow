@@ -4,9 +4,10 @@ Imports System.Runtime.InteropServices
 Imports Newtonsoft.Json
 
 Public Class FrmMain
-    Private LedKleuren As New List(Of Color)
-
+    'Private LedKleuren As New List(Of Color)
     Dim LastOfflineDevices As Integer = 0       'Nummer van offline apparaten
+    Public CurrentGroupId As Integer = 0
+    Public CurrentDeviceId As Integer = 0
 
 
     ' Importeer de functie voor het ophalen van Frame delays
@@ -63,6 +64,22 @@ Public Class FrmMain
             cbMonitorPrime.Text = My.Settings.MonitorPrimary
             cbMonitorSecond.Text = My.Settings.MonitorSecond
             settings_DDPPort.Text = My.Settings.DDPPort
+            EffectColor1.BackColor = Color.FromArgb(My.Settings.CustomEffectC1)
+            EffectColor2.BackColor = Color.FromArgb(My.Settings.CustomEffectC2)
+            EffectColor3.BackColor = Color.FromArgb(My.Settings.CustomEffectC3)
+            EffectColor4.BackColor = Color.FromArgb(My.Settings.CustomEffectC4)
+            EffectColor5.BackColor = Color.FromArgb(My.Settings.CustomEffectC5)
+            tbEffectIntensity.Value = My.Settings.CustomEffectIntensity
+            tbEffectSpeed.Value = My.Settings.CustomEffectSpeed
+            tbEffectBrightness.Value = My.Settings.CustomEffectBrightness
+
+            Dim tip As New ToolTip()
+            tip.SetToolTip(tbEffectSpeed, "Snelheid van het effect. Hoe hoger, hoe sneller de animatie verloopt (range 1-100%).")
+            tip.SetToolTip(tbEffectIntensity, "Hoe intens is de beweging of kleurenwissel. Bepaalt het bereik van de helderheid. (range 1-100%)")
+            tip.SetToolTip(tbEffectBrightness, "Maximale helderheid van het effect (globale limiet). (1-100%)")
+            tip.SetToolTip(tbEffectFPS, "Aantal frames per seconde. Hoger = vloeiender, maar ook meer belasting. (15-60 fps, advies 15")
+            tip.SetToolTip(tbEffectDuration, "Duur van het effect in seconden. (5-90 sec)")
+
 
 
             If My.Settings.Locked Then
@@ -83,8 +100,10 @@ Public Class FrmMain
                 ToonFlashBericht("Er zijn " + c.ToString + " WLED-apparaten offline op het netwerk.", 2)
             End If
 
+            CurrentGroupId = -1
+            CurrentDeviceId = -1
 
-            StartDDPStream()
+            'StartDDPStream()
 
         Catch ex As Exception
             MessageBox.Show($"Fout tijdens laden van form: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -178,7 +197,7 @@ Public Class FrmMain
 
 
     Private Sub btnScanNetworkForWLed_Click(sender As Object, e As EventArgs) Handles btnScanNetworkForWLed.Click
-        ScanNetworkForWLEDdevices(DG_Devices, DG_Effecten, DG_Show, DG_Paletten, DG_Groups)
+        ScanNetworkForWLEDDevices(DG_Devices)
     End Sub
 
     Private Sub btnProjectFolder_Click(sender As Object, e As EventArgs) Handles btnProjectFolder.Click
@@ -291,6 +310,7 @@ Public Class FrmMain
 
     Private Sub btnLoadAll_Click(sender As Object, e As EventArgs) Handles btnLoadAll.Click
         LoadAll()
+        'ClearGroupsToBlack()
     End Sub
 
     Private Sub btnLoadShow_Click(sender As Object, e As EventArgs) Handles btnLoadShow.Click
@@ -310,13 +330,13 @@ Public Class FrmMain
     End Sub
 
     Private Sub btnGenerateStage_Click(sender As Object, e As EventArgs) Handles btnGenerateStage.Click
-        GenereerLedLijst(DG_Devices, 1000, 400)
-        TekenPodium(pb_Stage, 1000, 400)
+        GenereerLedLijst(DG_Devices, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+        TekenPodium(pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
     End Sub
 
 
     Private Sub btnUpdateStage_Click(sender As Object, e As EventArgs) Handles btnUpdateStage.Click
-        TekenPodium(pb_Stage, 1000, 400)
+        TekenPodium(pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
     End Sub
 
     Private Sub DG_Devices_CellValidated(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Devices.CellValidated
@@ -325,7 +345,7 @@ Public Class FrmMain
         If (e.ColumnIndex = DG_Devices.Columns("colLayout").Index) Then
 
             Dim oldValue = DG_Devices.Rows(e.RowIndex).Cells(e.ColumnIndex).Value
-            Dim newValue = VervangRichtingDoorPijlen(oldValue)
+            Dim newValue = ValidateLayoutString(oldValue)
             DG_Devices.Rows(e.RowIndex).Cells(e.ColumnIndex).Value = newValue
         End If
     End Sub
@@ -374,7 +394,14 @@ Public Class FrmMain
     End Sub
 
     Private Sub btnGenerateSlider_Click(sender As Object, e As EventArgs) Handles btnGenerateSliders.Click
-        GenerateSlidersForSelectedFixture()
+
+        If (DG_Devices.CurrentRow Is Nothing) Then
+            ToonFlashBericht("Selecteer eerst een device in de tabel.", 2)
+            Return
+        End If
+        CurrentDeviceId = DG_Devices.CurrentRow.Index
+        CurrentGroupId = -1
+        GenerateSlidersForSelectedFixture(DG_Devices.CurrentRow, SplitContainer_Devices.Panel2)
     End Sub
 
     Private Sub settings_EffectsPath_TextChanged(sender As Object, e As EventArgs) Handles settings_EffectsPath.TextChanged
@@ -393,6 +420,115 @@ Public Class FrmMain
     End Sub
 
     Private Sub ddpTimer_Tick(sender As Object, e As EventArgs)
-        UpdateWLEDFromSliders_DDP()
+        'UpdateWLEDFromSliders_DDP()
     End Sub
+
+    Private Sub btnApplyCustomEffect_Click(sender As Object, e As EventArgs) Handles btnApplyCustomEffect.Click
+        HandleApplyCustomEffectClick()
+    End Sub
+
+
+    Private Sub EffectColor1_Click(sender As Object, e As EventArgs) Handles EffectColor1.Click
+        EffectColor1.BackColor = GetColorByColorWheel()
+        My.Settings.CustomEffectC1 = EffectColor1.BackColor.ToArgb()
+        My.Settings.Save()
+    End Sub
+
+    Private Sub EffectColor2_Click(sender As Object, e As EventArgs) Handles EffectColor2.Click
+        EffectColor2.BackColor = GetColorByColorWheel()
+        My.Settings.CustomEffectC2 = EffectColor2.BackColor.ToArgb()
+        My.Settings.Save()
+    End Sub
+
+    Private Sub EffectColor3_Click(sender As Object, e As EventArgs) Handles EffectColor3.Click
+        EffectColor3.BackColor = GetColorByColorWheel()
+        My.Settings.CustomEffectC3 = EffectColor3.BackColor.ToArgb()
+        My.Settings.Save()
+    End Sub
+
+    Private Sub EffectColor4_Click(sender As Object, e As EventArgs) Handles EffectColor4.Click
+        EffectColor4.BackColor = GetColorByColorWheel()
+        My.Settings.CustomEffectC4 = EffectColor4.BackColor.ToArgb()
+        My.Settings.Save()
+    End Sub
+
+    Private Sub EffectColor5_Click(sender As Object, e As EventArgs) Handles EffectColor5.Click
+        EffectColor5.BackColor = GetColorByColorWheel()
+        My.Settings.CustomEffectC5 = EffectColor5.BackColor.ToArgb()
+        My.Settings.Save()
+    End Sub
+
+    Private Sub btnDevicesRefreshIPs_Click(sender As Object, e As EventArgs) Handles btnDevicesRefreshIPs.Click
+        RefreshIPAddresses(DG_Devices)
+    End Sub
+
+    Private Sub btnGroupsAutoSplit_Click(sender As Object, e As EventArgs) Handles btnGroupsAutoSplit.Click
+        SplitIntoGroups(DG_Devices, DG_Groups)
+        PopulateTreeView(DG_Groups, tvGroupsSelected)
+        ClearGroupsToBlack()
+    End Sub
+
+    Private Sub tbEffectSpeed_Scroll(sender As Object, e As EventArgs) Handles tbEffectSpeed.Scroll
+        My.Settings.CustomEffectSpeed = tbEffectSpeed.Value
+        My.Settings.Save()
+    End Sub
+
+    Private Sub tbEffectIntensity_Scroll(sender As Object, e As EventArgs) Handles tbEffectIntensity.Scroll
+        My.Settings.CustomEffectIntensity = tbEffectIntensity.Value
+        My.Settings.Save()
+    End Sub
+
+    Private Sub tbEffectBrightness_Scroll(sender As Object, e As EventArgs) Handles tbEffectBrightness.Scroll
+        My.Settings.CustomEffectBrightness = tbEffectBrightness.Value
+        My.Settings.Save()
+    End Sub
+
+    Private Sub ddpTimer_Tick_1(sender As Object, e As EventArgs) Handles ddpTimer.Tick
+        HandleDDPTimer_Tick()
+    End Sub
+
+    Private Sub btnStartEffectPreview_Click(sender As Object, e As EventArgs) Handles btnStartEffectPreview.Click
+        ' Start voor alle groepen die frames hebben
+        For Each row As DataGridViewRow In DG_Groups.Rows.Cast(Of DataGridViewRow)()
+            If Not row.IsNewRow Then
+                Dim frames = TryCast(row.Cells("colAllFrames").Value, List(Of Byte()))
+                If frames IsNot Nothing AndAlso frames.Count > 0 Then
+                    Dim groupId = CInt(row.Cells("colGroupId").Value)
+                    DDP.StartGroupStream(groupId)
+                End If
+            End If
+        Next
+    End Sub
+
+    Private Sub btnStopEffectPreview_Click(sender As Object, e As EventArgs) Handles btnStopEffectPreview.Click
+        ' Stop voor álle actieve groep-streamers
+        For Each row As DataGridViewRow In DG_Groups.Rows.Cast(Of DataGridViewRow)()
+            If Not row.IsNewRow Then
+                Dim frames = TryCast(row.Cells("colAllFrames").Value, List(Of Byte()))
+                If frames IsNot Nothing AndAlso frames.Count > 0 Then
+                    Dim groupId = CInt(row.Cells("colGroupId").Value)
+                    DDP.StopGroupStream(groupId)
+                End If
+            End If
+        Next
+    End Sub
+
+    Private Sub tbEffectDuration_Scroll(sender As Object, e As EventArgs) Handles tbEffectDuration.Scroll
+        My.Settings.CustomEffectDuration = tbEffectDuration.Value
+        My.Settings.Save()
+    End Sub
+
+    Private Sub btnGroupDMXSlider_Click(sender As Object, e As EventArgs) Handles btnGroupDMXSlider.Click
+
+        If (DG_Groups.CurrentRow Is Nothing) Then
+            ToonFlashBericht("Selecteer eerst een groep in de tabel.", 2)
+            Return
+        End If
+
+        CurrentDeviceId = -1
+        CurrentGroupId = DG_Groups.CurrentRow.Cells("colGroupId").Value
+        GenerateSlidersForSelectedGroup(DG_Groups.CurrentRow, SplitContainer_Devices.Panel2)
+    End Sub
+
+
 End Class

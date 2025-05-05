@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DataGridData>
+    <Structure>
+        <Column Name="colGroupId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colGroupParentId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colGroupName" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="Fill" />
+        <Column Name="colGroupFixture" Type="System.Windows.Forms.DataGridViewComboBoxColumn" AutoSizeMode="NotSet" />
+        <Column Name="colGroupStartLedNr" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colGroupStopLedNr" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colGroupOrder" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colAllFrames" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colActiveFrame" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colGroupRepeat" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
+        <Column Name="colGroupLayout" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+    </Structure>
+    <Data>
+        <Row>
+            <colGroupId>1</colGroupId>
+            <colGroupParentId>0</colGroupParentId>
+            <colGroupName>WLED-23</colGroupName>
+            <colGroupFixture>WLED-23</colGroupFixture>
+            <colGroupStartLedNr>1</colGroupStartLedNr>
+            <colGroupStopLedNr>3</colGroupStopLedNr>
+            <colGroupOrder>0</colGroupOrder>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>Y0,X0,R3</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>2</colGroupId>
+            <colGroupParentId>1</colGroupParentId>
+            <colGroupName>WLED-23-Group1</colGroupName>
+            <colGroupFixture>WLED-23</colGroupFixture>
+            <colGroupStartLedNr>1</colGroupStartLedNr>
+            <colGroupStopLedNr>3</colGroupStopLedNr>
+            <colGroupOrder>1</colGroupOrder>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>Y0,X0,R3</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>3</colGroupId>
+            <colGroupParentId>0</colGroupParentId>
+            <colGroupName>WLED56</colGroupName>
+            <colGroupFixture>WLED56</colGroupFixture>
+            <colGroupStartLedNr>1</colGroupStartLedNr>
+            <colGroupStopLedNr>428</colGroupStopLedNr>
+            <colGroupOrder>0</colGroupOrder>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>X10,Y20,U24,R41,DR10,D17,L48,Y80,U48,R24,D48,L24,Y180,U48,R24,D48,L24</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>4</colGroupId>
+            <colGroupParentId>3</colGroupParentId>
+            <colGroupName>WLED56-Group1</colGroupName>
+            <colGroupFixture>WLED56</colGroupFixture>
+            <colGroupStartLedNr>1</colGroupStartLedNr>
+            <colGroupStopLedNr>140</colGroupStopLedNr>
+            <colGroupOrder>1</colGroupOrder>
+            <colAllFrames>System.Collections.Generic.List`1[System.Byte[]]</colAllFrames>
+            <colActiveFrame>192</colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>X10,Y20,U24,R41,DR10,D17,L48</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>5</colGroupId>
+            <colGroupParentId>3</colGroupParentId>
+            <colGroupName>WLED56-Group2</colGroupName>
+            <colGroupFixture>WLED56</colGroupFixture>
+            <colGroupStartLedNr>141</colGroupStartLedNr>
+            <colGroupStopLedNr>284</colGroupStopLedNr>
+            <colGroupOrder>2</colGroupOrder>
+            <colAllFrames>System.Collections.Generic.List`1[System.Byte[]]</colAllFrames>
+            <colActiveFrame>185</colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>X10,Y80,U48,R24,D48,L24</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>6</colGroupId>
+            <colGroupParentId>3</colGroupParentId>
+            <colGroupName>WLED56-Group3</colGroupName>
+            <colGroupFixture>WLED56</colGroupFixture>
+            <colGroupStartLedNr>285</colGroupStartLedNr>
+            <colGroupStopLedNr>428</colGroupStopLedNr>
+            <colGroupOrder>3</colGroupOrder>
+            <colAllFrames>System.Collections.Generic.List`1[System.Byte[]]</colAllFrames>
+            <colActiveFrame>46</colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>X10,Y180,U48,R24,D48,L24</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>7</colGroupId>
+            <colGroupParentId>0</colGroupParentId>
+            <colGroupName>WLED-44</colGroupName>
+            <colGroupFixture>WLED-44</colGroupFixture>
+            <colGroupStartLedNr>1</colGroupStartLedNr>
+            <colGroupStopLedNr>428</colGroupStopLedNr>
+            <colGroupOrder>0</colGroupOrder>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>X990,Y20,U24,L41,DL10,D17,R48,Y80,U48,L24,D48,R24,Y180,U48,L24,D48,R24</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>8</colGroupId>
+            <colGroupParentId>7</colGroupParentId>
+            <colGroupName>WLED-44-Group1</colGroupName>
+            <colGroupFixture>WLED-44</colGroupFixture>
+            <colGroupStartLedNr>1</colGroupStartLedNr>
+            <colGroupStopLedNr>140</colGroupStopLedNr>
+            <colGroupOrder>1</colGroupOrder>
+            <colAllFrames>System.Collections.Generic.List`1[System.Byte[]]</colAllFrames>
+            <colActiveFrame>185</colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>X990,Y20,U24,L41,DL10,D17,R48</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>9</colGroupId>
+            <colGroupParentId>7</colGroupParentId>
+            <colGroupName>WLED-44-Group2</colGroupName>
+            <colGroupFixture>WLED-44</colGroupFixture>
+            <colGroupStartLedNr>141</colGroupStartLedNr>
+            <colGroupStopLedNr>284</colGroupStopLedNr>
+            <colGroupOrder>2</colGroupOrder>
+            <colAllFrames>System.Collections.Generic.List`1[System.Byte[]]</colAllFrames>
+            <colActiveFrame>178</colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>X990,Y80,U48,L24,D48,R24</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>10</colGroupId>
+            <colGroupParentId>7</colGroupParentId>
+            <colGroupName>WLED-44-Group3</colGroupName>
+            <colGroupFixture>WLED-44</colGroupFixture>
+            <colGroupStartLedNr>285</colGroupStartLedNr>
+            <colGroupStopLedNr>428</colGroupStopLedNr>
+            <colGroupOrder>3</colGroupOrder>
+            <colAllFrames>System.Collections.Generic.List`1[System.Byte[]]</colAllFrames>
+            <colActiveFrame>46</colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>X990,Y180,U48,L24,D48,R24</colGroupLayout>
+        </Row>
+    </Data>
+</DataGridData>

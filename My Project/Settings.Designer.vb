@@ -185,6 +185,162 @@ Namespace My
                 Me("LedsPerMeter") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("1000")>  _
+        Public Property PodiumBreedte() As String
+            Get
+                Return CType(Me("PodiumBreedte"),String)
+            End Get
+            Set
+                Me("PodiumBreedte") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("400")>  _
+        Public Property PodiumHoogte() As String
+            Get
+                Return CType(Me("PodiumHoogte"),String)
+            End Get
+            Set
+                Me("PodiumHoogte") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectC1() As String
+            Get
+                Return CType(Me("CustomEffectC1"),String)
+            End Get
+            Set
+                Me("CustomEffectC1") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectC2() As String
+            Get
+                Return CType(Me("CustomEffectC2"),String)
+            End Get
+            Set
+                Me("CustomEffectC2") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectC3() As String
+            Get
+                Return CType(Me("CustomEffectC3"),String)
+            End Get
+            Set
+                Me("CustomEffectC3") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectC4() As String
+            Get
+                Return CType(Me("CustomEffectC4"),String)
+            End Get
+            Set
+                Me("CustomEffectC4") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectC5() As String
+            Get
+                Return CType(Me("CustomEffectC5"),String)
+            End Get
+            Set
+                Me("CustomEffectC5") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectIntensity() As String
+            Get
+                Return CType(Me("CustomEffectIntensity"),String)
+            End Get
+            Set
+                Me("CustomEffectIntensity") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectSpeed() As String
+            Get
+                Return CType(Me("CustomEffectSpeed"),String)
+            End Get
+            Set
+                Me("CustomEffectSpeed") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectBrightness() As String
+            Get
+                Return CType(Me("CustomEffectBrightness"),String)
+            End Get
+            Set
+                Me("CustomEffectBrightness") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectDirection() As String
+            Get
+                Return CType(Me("CustomEffectDirection"),String)
+            End Get
+            Set
+                Me("CustomEffectDirection") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectPosition() As String
+            Get
+                Return CType(Me("CustomEffectPosition"),String)
+            End Get
+            Set
+                Me("CustomEffectPosition") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectDuration() As String
+            Get
+                Return CType(Me("CustomEffectDuration"),String)
+            End Get
+            Set
+                Me("CustomEffectDuration") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

@@ -223,6 +223,7 @@ Module SaveLoad
         Dim Folder As String = My.Settings.DatabaseFolder
 
         SaveDataGridViewToXml(FrmMain.DG_Devices, Folder + "\Devices.xml")
+        SaveDataGridViewToXml(FrmMain.DG_Groups, Folder + "\Groups.xml")
         SaveWLEDDevicesToJson(wledDevices, Folder + "\Devices.json")
         SaveDataGridViewToXml(FrmMain.DG_Effecten, Folder + "\Effects.xml")
         SaveDataGridViewToXml(FrmMain.DG_Paletten, Folder + "\Paletten.xml")
@@ -274,7 +275,9 @@ Module SaveLoad
         progressBar.Value = progressBar.Value + 1
         LoadXmlToDataGridView(FrmMain.DG_Devices, Folder + "\Devices.xml", False)
 
-
+        progressText.Text = "Loading groups..."
+        progressBar.Value = progressBar.Value + 1
+        LoadXmlToDataGridView(FrmMain.DG_Groups, Folder + "\Groups.xml", False)
 
         progressText.Text = "Loading effects..."
         progressBar.Value = progressBar.Value + 1
@@ -288,10 +291,12 @@ Module SaveLoad
         progressBar.Value = progressBar.Value + 1
         LoadXmlToDataGridView(FrmMain.DG_Show, Folder + "\Show.xml", False)
 
+
+
         progressText.Text = "Update fixure pulldown..."
         progressBar.Value = progressBar.Value + 1
         UpdateFixuresPulldown_ForShow(FrmMain.DG_Show)
-        UpdateFixuresPulldown_ForGroups(FrmMain.DG_Groups)
+
 
 
 
@@ -317,6 +322,10 @@ Module SaveLoad
         progressPopUpForm.Close()
 
         CheckWLEDOnlineStatus(FrmMain.DG_Devices)
+        PopulateFixtureDropdown_InGroups(FrmMain.DG_Devices, FrmMain.DG_Groups)
+        PopulateTreeView(FrmMain.DG_Groups, FrmMain.tvGroupsSelected)
+        GenereerLedLijst(FrmMain.DG_Devices, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+        TekenPodium(FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
     End Sub
 
 

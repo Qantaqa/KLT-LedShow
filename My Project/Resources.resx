@@ -142,6 +142,9 @@
   <data name="iconBlackBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconBlackBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="iconRowAddAfter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconRowAddAfter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="iconFilter1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconFilter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -153,6 +156,9 @@
   </data>
   <data name="iconUnlocked_Green" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconUnlocked_Green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconFilter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconFilter.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="iconGreenBullet1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconGreenBullet1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -169,8 +175,8 @@
   <data name="iconTime" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconTime.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="iconFilter" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconFilter.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="iconFastForward" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconFastForward.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="iconRedBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconRedBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -181,14 +187,17 @@
   <data name="iconScanNetwork" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconScanNetwork.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="iconRowAddBefore" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconRowAddBefore.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="iconScanNetwork_21" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconScanNetwork_21.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="iconFastForward" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconFastForward.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="iconFilter2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconFilter1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="iconRowDelete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconRowDelete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="iconOpen" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconOpen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -220,13 +229,7 @@
   <data name="iconGreyBullet" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconGreyBullet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="iconRowAddAfter" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconRowAddAfter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="iconRowAddBefore" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconRowAddBefore.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="iconRowDelete" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconRowDelete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="iconDMXslider" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconDMXslider.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

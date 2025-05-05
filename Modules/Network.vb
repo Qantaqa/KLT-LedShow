@@ -4,277 +4,199 @@ Imports System.Net
 Imports System.Net.Http
 Imports System.Net.NetworkInformation
 Imports System.Threading
+Imports System.Threading.Tasks
+Imports System.Windows.Forms
+
+' ------------------------------------------
+' Form voor voortgang tijdens netwerkscans
+' ------------------------------------------
+Public Class frmScanStatus
+    Inherits Form
+
+    Public ProgressBar1 As New ProgressBar() With {
+        .Dock = DockStyle.Bottom,
+        .Height = 30
+    }
+    Public lblStatus As New Label() With {
+        .Dock = DockStyle.Top,
+        .Height = 30,
+        .TextAlign = ContentAlignment.MiddleCenter,
+        .Text = "Start scan..."
+    }
+    Public lblFound As New Label() With {
+        .Dock = DockStyle.Top,
+        .Height = 30,
+        .TextAlign = ContentAlignment.MiddleCenter,
+        .Text = "Gevonden: 0"
+    }
+
+    Public Sub New(maxValue As Integer)
+        Me.Text = "WLED Netwerkscan"
+        Me.Width = 450
+        Me.Height = 160
+        Me.FormBorderStyle = FormBorderStyle.FixedDialog
+        Me.ControlBox = False
+        Me.StartPosition = FormStartPosition.CenterParent
+
+        ProgressBar1.Minimum = 0
+        ProgressBar1.Maximum = maxValue
+        ProgressBar1.Value = 0
+
+        Me.Controls.Add(ProgressBar1)
+        Me.Controls.Add(lblFound)
+        Me.Controls.Add(lblStatus)
+    End Sub
+
+    Public Sub UpdateProgress(current As Integer, ip As String, foundCount As Integer)
+        If current <= ProgressBar1.Maximum Then
+            ProgressBar1.Value = current
+            lblStatus.Text = $"Scannen {ip} ({current}/{ProgressBar1.Maximum})"
+            lblFound.Text = $"Gevonden: {foundCount}"
+            Application.DoEvents()
+        End If
+    End Sub
+End Class
+
+' -----------------------------
+' Network Scanning Module
+' -----------------------------
 Module Network
-    Private Const TimeoutValue = 5000       ' Aantal milliseconden voor de timeout afgaat bij testen of het een WLED device is
+    Private ReadOnly client As New HttpClient()
+    Private Const PerIpTimeoutMs As Integer = 300
 
-    Private foundDevicesLabel As Label
-    Private foundDevicesCount As Integer = 0
-    Private progressBar As ProgressBar
-    Private progressPopUpForm As Form
+    ''' <summary>
+    ''' Volledige netwerkscan: zoekt WLED devices, vult alle kolommen inclusief naam, IP, leds en layout.
+    ''' </summary>
+    Public Async Function ScanNetworkForWLEDDevices(dg As DataGridView) As Task
+        Dim ipRange = My.Settings.IPRange
+        Dim parts = ipRange.Split("/"c)
+        Dim baseIp = parts(0)
+        Dim subnetBits = If(parts.Length > 1, Integer.Parse(parts(1)), 24)
 
-    '*************************************************************************************************
-    ' Functie om het IP-bereik te berekenen op basis van een IP-adres en subnetmasker   
-    '*************************************************************************************************
-    Private Function CalculateIPRange(ipAddress As IPAddress, subnetMask As IPAddress) As String
-        Dim ipBytes As Byte() = ipAddress.GetAddressBytes()
-        Dim maskBytes As Byte() = subnetMask.GetAddressBytes()
-        Dim networkAddressBytes(3) As Byte
+        Dim baseBytes = IPAddress.Parse(baseIp).GetAddressBytes()
+        Dim baseInt As UInteger = CUInt(baseBytes(0)) << 24 Or CUInt(baseBytes(1)) << 16 Or CUInt(baseBytes(2)) << 8 Or CUInt(baseBytes(3))
+        Dim total As Integer = CInt(Math.Pow(2, 32 - subnetBits))
 
-        For i As Integer = 0 To 3
-            networkAddressBytes(i) = ipBytes(i) And maskBytes(i)
-        Next
+        client.Timeout = TimeSpan.FromMilliseconds(PerIpTimeoutMs)
 
-        Dim networkAddress As New IPAddress(networkAddressBytes)
-        Dim cidr As Integer = maskBytes.Sum(Function(b) Convert.ToString(b, 2).Count(Function(c) c = "1"c))
+        Using popup As New frmScanStatus(total)
+            popup.Show(dg.FindForm())
+            Dim foundCount As Integer = 0
 
-        Return $"{networkAddress}/{cidr}"
-    End Function
+            For i As Integer = 0 To total - 1
+                Dim ipInt = baseInt + CUInt(i)
+                Dim bytes = {
+                    CByte(ipInt >> 24),
+                    CByte((ipInt >> 16) And 255),
+                    CByte((ipInt >> 8) And 255),
+                    CByte(ipInt And 255)
+                }
+                Dim ipStr = New IPAddress(bytes).ToString()
 
+                ' Update voortgang
+                popup.UpdateProgress(i + 1, ipStr, foundCount)
 
-    '*************************************************************************************************  
-    ' Functie om het huidige IP-bereik van de actieve netwerkinterface te verkrijgen    
-    '*************************************************************************************************  
-    Private Function GetCurrentIPRange() As String
-        Dim ipRange As String = String.Empty
+                Try
+                    Dim res = Await client.GetAsync($"http://{ipStr}/json")
+                    If res.IsSuccessStatusCode Then
+                        Dim body = Await res.Content.ReadAsStringAsync()
+                        Dim json = JObject.Parse(body)
+                        Dim name = json("info")("name").ToString()
+                        Dim ledCount = If(json("info")("leds")("count")?.ToObject(Of Integer)(), 0)
+                        Dim segCount = If(json("state")("seg")?.Count(), 0)
 
-        For Each networkInterface As NetworkInterface In NetworkInterface.GetAllNetworkInterfaces()
-            If networkInterface.NetworkInterfaceType = NetworkInterfaceType.Wireless80211 AndAlso networkInterface.OperationalStatus = OperationalStatus.Up Then
-                Dim ipProperties As IPInterfaceProperties = networkInterface.GetIPProperties()
-                For Each ipAddressInfo As UnicastIPAddressInformation In ipProperties.UnicastAddresses
-                    If ipAddressInfo.Address.AddressFamily = Sockets.AddressFamily.InterNetwork Then
-                        Dim ipAddress As IPAddress = ipAddressInfo.Address
-                        Dim subnetMask As IPAddress = ipAddressInfo.IPv4Mask
-                        ipRange = CalculateIPRange(ipAddress, subnetMask)
-                        Exit For
+                        ' UI-thread update
+                        dg.Invoke(Sub()
+                                      Dim existing = dg.Rows.Cast(Of DataGridViewRow)() _
+                                          .FirstOrDefault(Function(r) Convert.ToString(r.Cells("colInstance").Value) = name)
+                                      If existing Is Nothing Then
+                                          Dim idx = dg.Rows.Add()
+                                          Dim row = dg.Rows(idx)
+                                          row.Cells("colInstance").Value = name
+                                          row.Cells("colIPAddress").Value = ipStr
+                                          row.Cells("colLedCount").Value = ledCount
+                                          row.Cells("colEnabled").Value = True
+                                          row.Cells("colOnline").Value = My.Resources.iconRedBullet1
+                                          row.Cells("colLayout").Value = GenerateDefaultLayout(ledCount)
+                                      Else
+                                          existing.Cells("colIPAddress").Value = ipStr
+                                      End If
+                                  End Sub)
+
+                        foundCount += 1
                     End If
-                Next
-            End If
-        Next
+                Catch
+                    ' Timeouts en niet-WLED negeren
+                End Try
+            Next
 
-        Return ipRange
-    End Function
-
-
-    ' ************************************************************************************************* 
-    ' Functie om te controleren of een IP-adres een WLED-apparaat is
-    ' *************************************************************************************************
-    Private Async Function CheckIfIpAdressIsWLED(ipAddress As String, scanIndex As Integer) As Task
-        Using client As New HttpClient()
-            Try
-                Dim url As String = $"http://{ipAddress}/json"
-                Dim response As HttpResponseMessage = Await client.GetAsync(url, New CancellationTokenSource(TimeoutValue).Token)
-
-                If response.IsSuccessStatusCode Then
-                    Dim responseBody As String = Await response.Content.ReadAsStringAsync()
-                    Try
-                        Dim json As JObject = JObject.Parse(responseBody)
-                        Dim wledName As String = json("info")("name").ToString()
-
-                        ' Aantal LEDs
-                        Dim ledCount As Integer = 0
-                        If json("info")("leds")("count") IsNot Nothing Then
-                            ledCount = Convert.ToInt32(json("info")("leds")("count"))
-                        End If
-
-
-                        ' Aantal segmenten
-                        Dim segmentCount As Integer = 0
-                        If json("state") IsNot Nothing AndAlso json("state")("seg") IsNot Nothing Then
-                            segmentCount = json("state")("seg").Count()
-                        End If
-
-                        ' Sla JSON op
-                        wledDevices(ipAddress) = New Tuple(Of String, JObject)(wledName, json)
-
-                        FrmMain.Invoke(Sub()
-                                           foundDevicesCount += 1
-                                           foundDevicesLabel.Text = $"Gevonden apparaten: {foundDevicesCount}"
-
-                                           Dim rowIndex = FrmMain.DG_Devices.Rows.Add(ipAddress, wledName)
-                                           Dim row = FrmMain.DG_Devices.Rows(rowIndex)
-                                           row.Cells("colLedCount").Value = ledCount
-
-                                           row.Cells("colEnabled").Value = True
-                                           row.Cells("colOnline").Value = My.Resources.iconRedBullet1
-                                           row.Cells("colLayout").Value = "Y" + ((ledCount + 1) * 10).ToString + ",X10,R" + ledCount.ToString()
-
-                                       End Sub)
-
-                    Catch ex As Exception
-                        Debug.WriteLine($"JSON-verwerking fout voor {ipAddress}: {ex.Message}")
-                    End Try
-                End If
-            Catch ex As Exception
-                Debug.WriteLine($"Fout bij contact met {ipAddress}: {ex.Message}")
-            End Try
+            popup.Close()
         End Using
     End Function
 
+    ''' <summary>
+    ''' Alleen IP-update scan: voor bestaande DG rows update IP-kolom op basis van instance-naam.
+    ''' </summary>
+    Public Async Function RefreshIPAddresses(dg As DataGridView) As Task
+        Dim ipRange = My.Settings.IPRange
+        Dim parts = ipRange.Split("/"c)
+        Dim baseIp = parts(0)
+        Dim subnetBits = If(parts.Length > 1, Integer.Parse(parts(1)), 24)
 
-    ' *************************************************************************************************
-    ' Functie om het netwerk te scannen op WLED-apparaten
-    ' *************************************************************************************************
-    Private Async Function ScanNetworkRange(ipRange As String) As Task
-        Dim tasks As New List(Of Task)
-        Dim ipBase As String
-        Dim subnetBits As Integer
-        Dim baseIpAddress As IPAddress = IPAddress.Parse("192.168.86.0")
+        Dim baseBytes = IPAddress.Parse(baseIp).GetAddressBytes()
+        Dim baseInt As UInteger = CUInt(baseBytes(0)) << 24 Or CUInt(baseBytes(1)) << 16 Or CUInt(baseBytes(2)) << 8 Or CUInt(baseBytes(3))
+        Dim total As Integer = CInt(Math.Pow(2, 32 - subnetBits))
 
-        ' Parse het IP-bereik om basis-IP en subnetmasker te verkrijgen
-        Dim parts() As String = ipRange.Split("/"c)
-        If parts.Length = 2 Then
-            ' Als er een subnetmasker is opgegeven, splits het dan
-            ipBase = parts(0)
-            If Not Integer.TryParse(parts(1), subnetBits) Then
-                MessageBox.Show("Ongeldig subnetmasker formaat.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Return
-            End If
-        ElseIf parts.Length = 1 Then
-            ' Als er geen subnetmasker is opgegeven, gebruik dan standaard /24
-            ipBase = parts(0)
-            subnetBits = 24 ' Standaard /24 als er geen masker is opgegeven
-        Else
-            ' Ongeldig IP -bereik formaat
-            MessageBox.Show("Ongeldig IP-bereik formaat.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Return
-        End If
+        client.Timeout = TimeSpan.FromMilliseconds(PerIpTimeoutMs)
 
+        Using popup As New frmScanStatus(total)
+            popup.Show(dg.FindForm())
+            Dim updatedCount As Integer = 0
 
-        ' Zet het basis-IP om naar een IPAddress object
-        If Not IPAddress.TryParse(ipBase, baseIpAddress) Then
-            MessageBox.Show("Ongeldig IP-adres formaat.", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Return
-        End If
+            For i As Integer = 0 To total - 1
+                Dim ipInt = baseInt + CUInt(i)
+                Dim bytes = {
+                    CByte(ipInt >> 24),
+                    CByte((ipInt >> 16) And 255),
+                    CByte((ipInt >> 8) And 255),
+                    CByte(ipInt And 255)
+                }
+                Dim ipStr = New IPAddress(bytes).ToString()
 
-        ' Zet het IP-adres om naar een integer voor bitwise operaties
-        Dim baseIpBytes As Byte() = baseIpAddress.GetAddressBytes()
-        If baseIpBytes.Length <> 4 Then
-            MessageBox.Show("Ongeldig IP-adres formaat (IPv4 verwacht).", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Return
-        End If
-        Dim baseIpInt As UInteger = CUInt(baseIpBytes(0)) << 24 Or CUInt(baseIpBytes(1)) << 16 Or CUInt(baseIpBytes(2)) << 8 Or CUInt(baseIpBytes(3))
+                popup.UpdateProgress(i + 1, ipStr, updatedCount)
 
-        ' Bereken het aantal adressen in het subnet
-        Dim addressCount As UInteger = CUInt(Math.Pow(2, 32 - subnetBits))
-        Dim progressBarValue As Integer = 0
+                Try
+                    Dim res = Await client.GetAsync($"http://{ipStr}/json")
+                    If res.IsSuccessStatusCode Then
+                        Dim body = Await res.Content.ReadAsStringAsync()
+                        Dim json = JObject.Parse(body)
+                        Dim name = json("info")("name").ToString()
 
-        ' Loop door alle IP-adressen in het subnet
-        For i As UInteger = 0 To addressCount - 1
-            progressBarValue = CInt(i)
+                        ' Alleen IP updaten
+                        dg.Invoke(Sub()
+                                      For Each row As DataGridViewRow In dg.Rows
+                                          If row.IsNewRow Then Continue For
+                                          If Convert.ToString(row.Cells("colInstance").Value) = name Then
+                                              row.Cells("colIPAddress").Value = ipStr
+                                              updatedCount += 1
+                                              Exit For
+                                          End If
+                                      Next
+                                  End Sub)
+                    End If
+                Catch
+                    ' Negeer fouten
+                End Try
+            Next
 
-            ' Bereken het IP-adres door de offset toe te voegen
-            Dim currentIpInt As UInteger = baseIpInt + i
-
-            ' Zet de integer terug om naar een IPAddress
-            Dim currentIpBytes As Byte() = {
-                CByte(currentIpInt >> 24),
-                CByte(currentIpInt >> 16 And 255),
-                CByte(currentIpInt >> 8 And 255),
-                CByte(currentIpInt And 255)
-            }
-            Dim currentIpAddress As IPAddress = New IPAddress(currentIpBytes)
-            Dim currentIpString = currentIpAddress.ToString()
-
-            tasks.Add(CheckIfIpAdressIsWLED(currentIpString, CInt(i)))
-
-            ' Controleer of scanIndex niet groter is dan het maximum
-            If progressBarValue <= progressBar.Maximum Then
-                FrmMain.Invoke(Sub() progressBar.Value = progressBarValue)
-            Else
-                FrmMain.Invoke(Sub() progressBar.Value = progressBar.Maximum)
-            End If
-
-        Next
-
-        Await Task.WhenAll(tasks)
+            popup.Close()
+        End Using
     End Function
 
-
-    ' *************************************************************************************************
-    ' Handler voor de knop om het netwerk te scannen
-    ' *************************************************************************************************
-    Public Async Sub ScanNetworkForWLEDdevices(DG_Devices As DataGridView, DG_Effecten As DataGridView, DG_Show As DataGridView, DG_Paletten As DataGridView, DG_Groups As DataGridView)
-
-        ' Haal het huidige IP-bereik op
-        Dim MyIpRange As String = GetCurrentIPRange()
-
-
-        ' Initialiseer variabelen
-        foundDevicesCount = 0
-
-        ' Clear de devices, effecten en paletten lists
-        wledDevices.Clear()
-        DG_Effecten.Columns.Clear()
-        DG_Effecten.Rows.Clear()
-        DG_Devices.Rows.Clear()
-
-
-        ' Lees het IP-bereik uit de applicatie settings
-        Dim ipRange As String = My.Settings.IPRange
-        If String.IsNullOrEmpty(ipRange) Then
-            ipRange = "192.168.86.0/24" ' Standaardwaarde als de setting niet is gevonden
-        End If
-
-        ' Als het IP-bereik is gewijzigd, vraag de gebruiker om bevestiging
-        If (MyIpRange <> ipRange) Then
-            If (MsgBox("Het IP-bereik is gewijzigd naar: " & MyIpRange & ".", MsgBoxStyle.YesNo, "Bevestig") = vbYes) Then
-                ipRange = MyIpRange
-                If (MsgBox("Wilt u het nieuwe IP-bereik opslaan?", MsgBoxStyle.YesNo, "Opslaan?")) Then
-                    My.Settings.IPRange = ipRange
-                End If
-            End If
-        End If
-
-
-        ' Maak een nieuw formulier voor de voortgang te kunnen tonen
-        progressPopUpForm = New Form()
-        progressPopUpForm.Text = "Scannen range " + ipRange
-        progressPopUpForm.StartPosition = FormStartPosition.CenterScreen
-        progressPopUpForm.Size = New Size(300, 150)
-        progressPopUpForm.ControlBox = False
-
-        progressBar = New ProgressBar()
-        progressBar.Location = New Point(10, 10)
-        progressBar.Size = New Size(250, 20)
-        progressBar.Maximum = 254
-        progressBar.MarqueeAnimationSpeed = 100
-        progressBar.Style = ProgressBarStyle.Blocks
-
-        progressPopUpForm.Controls.Add(progressBar)
-
-        foundDevicesLabel = New Label()
-        foundDevicesLabel.Location = New Point(10, 40)
-        foundDevicesLabel.Size = New Size(280, 20)
-
-        progressPopUpForm.Controls.Add(foundDevicesLabel)
-
-        progressPopUpForm.Show()
-
-
-        ' Start de netwerk scan
-        Await ScanNetworkRange(ipRange)
-
-        ' Sluit het voortgangsformulier
-        progressPopUpForm.Close()
-
-
-        ' Controleer of er apparaten zijn gevonden
-        If wledDevices.Count = 0 Then
-            MessageBox.Show("Geen WLED apparaten gevonden op het netwerk (" + ipRange + ").", "Geen apparaten gevonden", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        Else
-            FrmMain.txt_APIResult.Text = "Gevonden WLED apparaten: " & wledDevices.Count
-
-            UpdateFixuresPulldown_ForShow(DG_Show)
-            UpdateFixuresPulldown_ForGroups(DG_Groups)
-
-            ' Werk de effecten en paletten bij voor de gevonden apparaten
-            Update_DGEffecten_BasedOnTuple()
-            Update_DGPaletten_BasedOnTuple()
-
-
-            ' Laad de color paletten images in
-            DG_Palette_LoadImages(DG_Paletten)
-        End If
-    End Sub
-
+    ''' <summary>
+    ''' Generieke layout generator voor nieuw gevonden WLED devices.
+    ''' </summary>
+    Private Function GenerateDefaultLayout(ledCount As Integer) As String
+        Return $"Y0,X0,R{ledCount}"
+    End Function
 End Module

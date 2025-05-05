@@ -2,11 +2,15 @@
 Imports System.Net.Http
 Imports System.Net.NetworkInformation
 Imports System.Threading
+Imports System.Threading.Tasks
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
+Imports System.Windows.Forms
+
 
 Module DG_Devices
     Public wledDevices As New Dictionary(Of String, Tuple(Of String, JObject)) ' Dictionary om WLED-apparaten, namen en alle data op te slaan
+
 
     ' ****************************************************************************************
     '  Opent de WLED-website in de standaardbrowser.
@@ -119,7 +123,6 @@ Module DG_Devices
     End Function
 
 
-
     ' *********************************************************
     ' Add Row AFTER
     ' *********************************************************
@@ -140,7 +143,7 @@ Module DG_Devices
         DG_Devices.CurrentCell = DG_Devices.Rows(currentRowIndex + 1).Cells(0)
 
         UpdateFixuresPulldown_ForShow(DG_Show)
-        UpdateFixuresPulldown_ForGroups(DG_Groups)
+        PopulateFixtureDropdown_InGroups(DG_Devices, DG_Groups)
     End Sub
 
     ' *********************************************************
