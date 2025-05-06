@@ -61,8 +61,8 @@
             <colGroupStartLedNr>1</colGroupStartLedNr>
             <colGroupStopLedNr>140</colGroupStopLedNr>
             <colGroupOrder>1</colGroupOrder>
-            <colAllFrames>System.Collections.Generic.List`1[System.Byte[]]</colAllFrames>
-            <colActiveFrame>192</colActiveFrame>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
             <colGroupLayout>X10,Y20,U24,R41,DR10,D17,L48</colGroupLayout>
         </Row>
@@ -74,8 +74,8 @@
             <colGroupStartLedNr>141</colGroupStartLedNr>
             <colGroupStopLedNr>284</colGroupStopLedNr>
             <colGroupOrder>2</colGroupOrder>
-            <colAllFrames>System.Collections.Generic.List`1[System.Byte[]]</colAllFrames>
-            <colActiveFrame>185</colActiveFrame>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
             <colGroupLayout>X10,Y80,U48,R24,D48,L24</colGroupLayout>
         </Row>
@@ -87,8 +87,8 @@
             <colGroupStartLedNr>285</colGroupStartLedNr>
             <colGroupStopLedNr>428</colGroupStopLedNr>
             <colGroupOrder>3</colGroupOrder>
-            <colAllFrames>System.Collections.Generic.List`1[System.Byte[]]</colAllFrames>
-            <colActiveFrame>46</colActiveFrame>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
             <colGroupLayout>X10,Y180,U48,R24,D48,L24</colGroupLayout>
         </Row>
@@ -113,8 +113,8 @@
             <colGroupStartLedNr>1</colGroupStartLedNr>
             <colGroupStopLedNr>140</colGroupStopLedNr>
             <colGroupOrder>1</colGroupOrder>
-            <colAllFrames>System.Collections.Generic.List`1[System.Byte[]]</colAllFrames>
-            <colActiveFrame>185</colActiveFrame>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
             <colGroupLayout>X990,Y20,U24,L41,DL10,D17,R48</colGroupLayout>
         </Row>
@@ -126,8 +126,8 @@
             <colGroupStartLedNr>141</colGroupStartLedNr>
             <colGroupStopLedNr>284</colGroupStopLedNr>
             <colGroupOrder>2</colGroupOrder>
-            <colAllFrames>System.Collections.Generic.List`1[System.Byte[]]</colAllFrames>
-            <colActiveFrame>178</colActiveFrame>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
             <colGroupLayout>X990,Y80,U48,L24,D48,R24</colGroupLayout>
         </Row>
@@ -139,8 +139,8 @@
             <colGroupStartLedNr>285</colGroupStartLedNr>
             <colGroupStopLedNr>428</colGroupStopLedNr>
             <colGroupOrder>3</colGroupOrder>
-            <colAllFrames>System.Collections.Generic.List`1[System.Byte[]]</colAllFrames>
-            <colActiveFrame>46</colActiveFrame>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
             <colGroupLayout>X990,Y180,U48,L24,D48,R24</colGroupLayout>
         </Row>

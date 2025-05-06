@@ -8,6 +8,7 @@ Public Class FrmMain
     Dim LastOfflineDevices As Integer = 0       'Nummer van offline apparaten
     Public CurrentGroupId As Integer = 0
     Public CurrentDeviceId As Integer = 0
+    Private laatsteDDPHash As Integer = 0
 
 
     ' Importeer de functie voor het ophalen van Frame delays
@@ -330,7 +331,7 @@ Public Class FrmMain
     End Sub
 
     Private Sub btnGenerateStage_Click(sender As Object, e As EventArgs) Handles btnGenerateStage.Click
-        GenereerLedLijst(DG_Devices, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+        GenereerLedLijst(DG_Devices, pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
         TekenPodium(pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
     End Sub
 
@@ -530,5 +531,34 @@ Public Class FrmMain
         GenerateSlidersForSelectedGroup(DG_Groups.CurrentRow, SplitContainer_Devices.Panel2)
     End Sub
 
+    Private Sub stageTimer_Tick(sender As Object, e As EventArgs) Handles stageTimer.Tick
+        Try
+            ' Dim huidigeHash As ULong = 0UL
+            'Const prime As ULong = 31UL
 
+            ' Bepaal hash op basis van alle DDP-data
+            'For Each row As DataGridViewRow In DG_Devices.Rows
+            '    If row.IsNewRow Then Continue For
+            '    Dim buf = TryCast(row.Cells("colDDPData").Value, Byte())
+            '    If buf IsNot Nothing Then
+            '        For i = 0 To buf.Length - 1
+            '            huidigeHash = ((huidigeHash * prime) Xor buf(i))
+            '        Next
+            '    End If
+            'Next
+
+            ' Alleen tekenen bij verandering
+            'If huidigeHash <> laatsteDDPHash Then
+            Stage.TekenPodium(pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+            '    laatsteDDPHash = huidigeHash
+            'End If
+
+        Catch ex As Exception
+            Debug.WriteLine("[stageTimer_Tick] Fout: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub pb_Stage_Resize(sender As Object, e As EventArgs) Handles pb_Stage.Resize
+        GenereerLedLijst(DG_Devices, pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+    End Sub
 End Class

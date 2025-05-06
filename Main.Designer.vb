@@ -163,13 +163,24 @@ Partial Class FrmMain
         btnGenerateSliders = New ToolStripButton()
         TabGroups = New TabPage()
         RichTextBox4 = New RichTextBox()
-        ToolStrip1 = New ToolStrip()
+        ToolStripGroups = New ToolStrip()
         btnGroupDeleteRow = New ToolStripButton()
         btnGroupAddRowBefore = New ToolStripButton()
         btnGroupAddRowAfter = New ToolStripButton()
         btnGroupsAutoSplit = New ToolStripButton()
         btnGroupDMXSlider = New ToolStripButton()
         DG_Groups = New DataGridView()
+        colGroupId = New DataGridViewTextBoxColumn()
+        colGroupParentId = New DataGridViewTextBoxColumn()
+        colGroupName = New DataGridViewTextBoxColumn()
+        colGroupFixture = New DataGridViewComboBoxColumn()
+        colGroupStartLedNr = New DataGridViewTextBoxColumn()
+        colGroupStopLedNr = New DataGridViewTextBoxColumn()
+        colGroupOrder = New DataGridViewTextBoxColumn()
+        colAllFrames = New DataGridViewTextBoxColumn()
+        colActiveFrame = New DataGridViewTextBoxColumn()
+        colGroupRepeat = New DataGridViewCheckBoxColumn()
+        colGroupLayout = New DataGridViewTextBoxColumn()
         TabEffects = New TabPage()
         ToolStrip_Effecten = New ToolStrip()
         btnTestExistanceEffects = New ToolStripButton()
@@ -239,17 +250,7 @@ Partial Class FrmMain
         TimerNextEvent = New Timer(components)
         TimerPingDevices = New Timer(components)
         ddpTimer = New Timer(components)
-        colGroupId = New DataGridViewTextBoxColumn()
-        colGroupParentId = New DataGridViewTextBoxColumn()
-        colGroupName = New DataGridViewTextBoxColumn()
-        colGroupFixture = New DataGridViewComboBoxColumn()
-        colGroupStartLedNr = New DataGridViewTextBoxColumn()
-        colGroupStopLedNr = New DataGridViewTextBoxColumn()
-        colGroupOrder = New DataGridViewTextBoxColumn()
-        colAllFrames = New DataGridViewTextBoxColumn()
-        colActiveFrame = New DataGridViewTextBoxColumn()
-        colGroupRepeat = New DataGridViewCheckBoxColumn()
-        colGroupLayout = New DataGridViewTextBoxColumn()
+        stageTimer = New Timer(components)
         CType(DG_Devices, ComponentModel.ISupportInitialize).BeginInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).BeginInit()
         TabControl.SuspendLayout()
@@ -295,7 +296,7 @@ Partial Class FrmMain
         SplitContainer_Devices.SuspendLayout()
         ToolStrip_Devices.SuspendLayout()
         TabGroups.SuspendLayout()
-        ToolStrip1.SuspendLayout()
+        ToolStripGroups.SuspendLayout()
         CType(DG_Groups, ComponentModel.ISupportInitialize).BeginInit()
         TabEffects.SuspendLayout()
         ToolStrip_Effecten.SuspendLayout()
@@ -1673,7 +1674,7 @@ Partial Class FrmMain
         ' TabGroups
         ' 
         TabGroups.Controls.Add(RichTextBox4)
-        TabGroups.Controls.Add(ToolStrip1)
+        TabGroups.Controls.Add(ToolStripGroups)
         TabGroups.Controls.Add(DG_Groups)
         TabGroups.Location = New Point(4, 24)
         TabGroups.Name = "TabGroups"
@@ -1695,16 +1696,16 @@ Partial Class FrmMain
         RichTextBox4.TabIndex = 4
         RichTextBox4.Text = "U kunt hier groepen aanmaken. Elke groep kan 1 of meerdere leds bevatten van 1 of meerdere devices."
         ' 
-        ' ToolStrip1
+        ' ToolStripGroups
         ' 
-        ToolStrip1.BackColor = Color.MidnightBlue
-        ToolStrip1.GripStyle = ToolStripGripStyle.Hidden
-        ToolStrip1.Items.AddRange(New ToolStripItem() {btnGroupDeleteRow, btnGroupAddRowBefore, btnGroupAddRowAfter, btnGroupsAutoSplit, btnGroupDMXSlider})
-        ToolStrip1.Location = New Point(3, 3)
-        ToolStrip1.Name = "ToolStrip1"
-        ToolStrip1.Size = New Size(1830, 25)
-        ToolStrip1.TabIndex = 1
-        ToolStrip1.Text = "DMS Slider"
+        ToolStripGroups.BackColor = Color.MidnightBlue
+        ToolStripGroups.GripStyle = ToolStripGripStyle.Hidden
+        ToolStripGroups.Items.AddRange(New ToolStripItem() {btnGroupDeleteRow, btnGroupAddRowBefore, btnGroupAddRowAfter, btnGroupsAutoSplit, btnGroupDMXSlider})
+        ToolStripGroups.Location = New Point(3, 3)
+        ToolStripGroups.Name = "ToolStripGroups"
+        ToolStripGroups.Size = New Size(1830, 25)
+        ToolStripGroups.TabIndex = 1
+        ToolStripGroups.Text = "DMS Slider"
         ' 
         ' btnGroupDeleteRow
         ' 
@@ -1766,6 +1767,65 @@ Partial Class FrmMain
         DG_Groups.RowHeadersWidth = 11
         DG_Groups.Size = New Size(1830, 774)
         DG_Groups.TabIndex = 0
+        ' 
+        ' colGroupId
+        ' 
+        colGroupId.HeaderText = "ID"
+        colGroupId.Name = "colGroupId"
+        colGroupId.Width = 50
+        ' 
+        ' colGroupParentId
+        ' 
+        colGroupParentId.HeaderText = "Parent"
+        colGroupParentId.Name = "colGroupParentId"
+        colGroupParentId.Width = 50
+        ' 
+        ' colGroupName
+        ' 
+        colGroupName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colGroupName.HeaderText = "Groupname"
+        colGroupName.Name = "colGroupName"
+        ' 
+        ' colGroupFixture
+        ' 
+        colGroupFixture.HeaderText = "Fixture"
+        colGroupFixture.Name = "colGroupFixture"
+        colGroupFixture.Width = 300
+        ' 
+        ' colGroupStartLedNr
+        ' 
+        colGroupStartLedNr.HeaderText = "Start Led"
+        colGroupStartLedNr.Name = "colGroupStartLedNr"
+        ' 
+        ' colGroupStopLedNr
+        ' 
+        colGroupStopLedNr.HeaderText = "Stop Led"
+        colGroupStopLedNr.Name = "colGroupStopLedNr"
+        ' 
+        ' colGroupOrder
+        ' 
+        colGroupOrder.HeaderText = "Order"
+        colGroupOrder.Name = "colGroupOrder"
+        ' 
+        ' colAllFrames
+        ' 
+        colAllFrames.HeaderText = "Frames"
+        colAllFrames.Name = "colAllFrames"
+        ' 
+        ' colActiveFrame
+        ' 
+        colActiveFrame.HeaderText = "ActiveFrame"
+        colActiveFrame.Name = "colActiveFrame"
+        ' 
+        ' colGroupRepeat
+        ' 
+        colGroupRepeat.HeaderText = "Repeat"
+        colGroupRepeat.Name = "colGroupRepeat"
+        ' 
+        ' colGroupLayout
+        ' 
+        colGroupLayout.HeaderText = "Layout"
+        colGroupLayout.Name = "colGroupLayout"
         ' 
         ' TabEffects
         ' 
@@ -2463,64 +2523,10 @@ Partial Class FrmMain
         ' 
         ddpTimer.Enabled = True
         ' 
-        ' colGroupId
+        ' stageTimer
         ' 
-        colGroupId.HeaderText = "ID"
-        colGroupId.Name = "colGroupId"
-        colGroupId.Width = 50
-        ' 
-        ' colGroupParentId
-        ' 
-        colGroupParentId.HeaderText = "Parent"
-        colGroupParentId.Name = "colGroupParentId"
-        colGroupParentId.Width = 50
-        ' 
-        ' colGroupName
-        ' 
-        colGroupName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-        colGroupName.HeaderText = "Groupname"
-        colGroupName.Name = "colGroupName"
-        ' 
-        ' colGroupFixture
-        ' 
-        colGroupFixture.HeaderText = "Fixture"
-        colGroupFixture.Name = "colGroupFixture"
-        colGroupFixture.Width = 300
-        ' 
-        ' colGroupStartLedNr
-        ' 
-        colGroupStartLedNr.HeaderText = "Start Led"
-        colGroupStartLedNr.Name = "colGroupStartLedNr"
-        ' 
-        ' colGroupStopLedNr
-        ' 
-        colGroupStopLedNr.HeaderText = "Stop Led"
-        colGroupStopLedNr.Name = "colGroupStopLedNr"
-        ' 
-        ' colGroupOrder
-        ' 
-        colGroupOrder.HeaderText = "Order"
-        colGroupOrder.Name = "colGroupOrder"
-        ' 
-        ' colAllFrames
-        ' 
-        colAllFrames.HeaderText = "Frames"
-        colAllFrames.Name = "colAllFrames"
-        ' 
-        ' colActiveFrame
-        ' 
-        colActiveFrame.HeaderText = "ActiveFrame"
-        colActiveFrame.Name = "colActiveFrame"
-        ' 
-        ' colGroupRepeat
-        ' 
-        colGroupRepeat.HeaderText = "Repeat"
-        colGroupRepeat.Name = "colGroupRepeat"
-        ' 
-        ' colGroupLayout
-        ' 
-        colGroupLayout.HeaderText = "Layout"
-        colGroupLayout.Name = "colGroupLayout"
+        stageTimer.Enabled = True
+        stageTimer.Interval = 500
         ' 
         ' FrmMain
         ' 
@@ -2591,8 +2597,8 @@ Partial Class FrmMain
         ToolStrip_Devices.PerformLayout()
         TabGroups.ResumeLayout(False)
         TabGroups.PerformLayout()
-        ToolStrip1.ResumeLayout(False)
-        ToolStrip1.PerformLayout()
+        ToolStripGroups.ResumeLayout(False)
+        ToolStripGroups.PerformLayout()
         CType(DG_Groups, ComponentModel.ISupportInitialize).EndInit()
         TabEffects.ResumeLayout(False)
         TabEffects.PerformLayout()
@@ -2786,7 +2792,7 @@ Partial Class FrmMain
     Friend WithEvents TabGroups As TabPage
     Friend WithEvents DG_Groups As DataGridView
     Friend WithEvents RichTextBox4 As RichTextBox
-    Friend WithEvents ToolStrip1 As ToolStrip
+    Friend WithEvents ToolStripGroups As ToolStrip
     Friend WithEvents btnGroupAddRowAfter As ToolStripButton
     Friend WithEvents btnGroupAddRowBefore As ToolStripButton
     Friend WithEvents btnGroupDeleteRow As ToolStripButton
@@ -2867,5 +2873,6 @@ Partial Class FrmMain
     Friend WithEvents colActiveFrame As DataGridViewTextBoxColumn
     Friend WithEvents colGroupRepeat As DataGridViewCheckBoxColumn
     Friend WithEvents colGroupLayout As DataGridViewTextBoxColumn
+    Friend WithEvents stageTimer As Timer
 
 End Class

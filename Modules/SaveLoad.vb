@@ -39,7 +39,7 @@ Module SaveLoad
                 For Each cell As DataGridViewCell In row.Cells
                     writer.WriteStartElement(dataGridView.Columns(cell.ColumnIndex).Name.Replace(" ", "_")) ' Vervang spaties door underscores
                     If cell.Value IsNot Nothing Then
-                        If dataGridView.Columns(cell.ColumnIndex).Name = "colDDPData" AndAlso TypeOf cell.Value Is Byte() Then
+                        If (dataGridView.Columns(cell.ColumnIndex).Name = "colDDPData" Or dataGridView.Columns(cell.ColumnIndex).Name = "colAllFrames") AndAlso TypeOf cell.Value Is Byte() Then
                             writer.WriteString(Convert.ToBase64String(CType(cell.Value, Byte())))
                         Else
                             writer.WriteString(cell.Value.ToString())
@@ -136,7 +136,7 @@ Module SaveLoad
                                 If (TypeOf dataGridView.Columns(columnName) Is DataGridViewImageColumn) Then
                                     ' do nothing
                                 Else
-                                    If columnName = "colDDPData" Then
+                                    If (columnName = "colDDPData" Or columnName = "colAllFrames") Then
                                         If Not String.IsNullOrEmpty(cellValue) Then
                                             rowValues.Add(Convert.FromBase64String(cellValue))
                                         Else
@@ -234,6 +234,7 @@ Module SaveLoad
     End Sub
 
     Public Sub LoadAll()
+        FrmMain.stageTimer.Enabled = False
         Dim progressPopUpForm As Form
         Dim progressBar As ProgressBar
         Dim progressText As Label
@@ -324,8 +325,10 @@ Module SaveLoad
         CheckWLEDOnlineStatus(FrmMain.DG_Devices)
         PopulateFixtureDropdown_InGroups(FrmMain.DG_Devices, FrmMain.DG_Groups)
         PopulateTreeView(FrmMain.DG_Groups, FrmMain.tvGroupsSelected)
-        GenereerLedLijst(FrmMain.DG_Devices, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+        GenereerLedLijst(FrmMain.DG_Devices, FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
         TekenPodium(FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+
+        FrmMain.stageTimer.Enabled = True
     End Sub
 
 

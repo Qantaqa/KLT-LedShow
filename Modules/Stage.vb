@@ -1,203 +1,273 @@
 ﻿Imports System.Collections.Generic
-Imports System.Configuration
 Imports System.Drawing
-Imports System.Text.RegularExpressions
+Imports System.Drawing.Imaging
 Imports System.Windows.Forms
 
 Module Stage
-
     ' *********************************************************************************
-    ' Structuur om de eigenschappen van een LED te bevatten met posities in mm
+    ' Structuur om de eigenschappen van een LED te bevatten,
+    ' inclusief layout-coördinaten (mm), pixel-coördinaten (px) en index in device.
     ' *********************************************************************************
     Public Structure LedInfo
-        Public DeviceNaam As String  ' Naam van het apparaat (WLED-instance naam)
-        Public Xmm As Integer        ' X-positie in millimeters t.o.v. (0,0)
-        Public Ymm As Integer        ' Y-positie in millimeters t.o.v. (0,0)
+        Public DeviceNaam As String   ' WLED-instance naam
+        Public IndexInDevice As Integer ' Zero-based position in the device strip
+        Public Xmm As Double          ' X in mm on stage
+        Public Ymm As Double          ' Y in mm on stage
+        Public Xpx As Integer         ' Precomputed X coordinate in pixels
+        Public Ypx As Integer         ' Precomputed Y coordinate in pixels
     End Structure
     Public LedLijst As New List(Of LedInfo)()
 
     ' *********************************************************************************
     ' GenereerLedLijst
-    ' Genereert een lijst van LED-informatie (in mm) op basis van layoutstrings.
+    ' - Parseert layoutstrings, bouwt LedLijst met mm-posities en device-index
+    ' - Berekent eenmalig pixel-coördinaten (Xpx,Ypx) op basis van PictureBox en stage dims
     ' *********************************************************************************
-    Public Sub GenereerLedLijst(ByVal dgDevices As DataGridView, ByVal podiumBreedteinCm As Integer, ByVal podiumHoogteinCm As Integer)
-        Dim ledsPerMeter As Integer = My.Settings.LedsPerMeter
+    Public Sub GenereerLedLijst(
+            dgDevices As DataGridView,
+            pbStage As PictureBox,
+            podiumBreedteCm As Integer,
+            podiumHoogteinCm As Integer)
+
+        ' Zorg ervoor dat PB_Stage het juiste formaat heeft bij opstarten.
+        pbStage.Refresh()
+        Application.DoEvents()
+
         LedLijst.Clear()
+        Dim ledsPerMeter = My.Settings.LedsPerMeter
+        Dim stepMm = 1000.0F / ledsPerMeter
 
-        ' Stapgrootte in mm per LED
-        Dim stepMm As Single = 1000.0F / ledsPerMeter
+        ' Bereken schaal en offsets
+        Dim wPx = pbStage.ClientSize.Width
+        Dim hPx = pbStage.ClientSize.Height
+        Dim mL = 50, mR = 20, mT = 20, mB = 40
+        Dim drawW = wPx - mL - mR
+        Dim drawH = hPx - mT - mB
+        Dim bwMm = podiumBreedteCm * 10
+        Dim bhMm = podiumHoogteinCm * 10
+        Dim pxPerMm = Math.Min(drawW / bwMm, drawH / bhMm)
+        Dim axisX = mL
+        Dim axisY = mT + drawH
 
+        ' Loop alle devices
         For Each row As DataGridViewRow In dgDevices.Rows
             If row.IsNewRow Then Continue For
-            Dim deviceNaam As String = TryCast(row.Cells("colInstance").Value, String)
-            Dim rawLayout As String = TryCast(row.Cells("colLayout").Value, String)
+            Dim deviceNaam = CStr(row.Cells("colInstance").Value)
+            Dim rawLayout = CStr(row.Cells("colLayout").Value)
             If String.IsNullOrEmpty(deviceNaam) OrElse String.IsNullOrEmpty(rawLayout) Then Continue For
 
-            ' Valideer en splits de layoutstring
-            Dim layoutString = ValidateLayoutString(rawLayout)
-            Dim segments() As String = layoutString.Split(","c)
-
-            Dim currXmm As Integer = 0
-            Dim currYmm As Integer = 0
-            Dim totalLedInStrip As Integer = 0
+            ' Parse layoutstring
+            Dim segments = ValidateLayoutString(rawLayout).Split(","c)
+            Dim currXmm As Double = 0
+            Dim currYmm As Double = 0
+            Dim deviceIndex = 0
 
             For Each seg In segments
                 Dim s = seg.Trim().ToUpper()
-                If s.Length < 2 Then Continue For
-
-                ' Reset coördinaten: Xnn of Ynn (in cm) => omzetten naar mm
                 If s.StartsWith("X") Then
-                    Dim valCm As Integer
-                    If Integer.TryParse(s.Substring(1), valCm) Then
-                        currXmm = valCm * 10
-                    End If
+                    ' Reset X coordinate in mm (value in cm from layout)
+                    Dim cm As Double
+                    If Double.TryParse(s.Substring(1), cm) Then currXmm = cm * 10
                     Continue For
                 ElseIf s.StartsWith("Y") Then
-                    Dim valCm As Integer
-                    If Integer.TryParse(s.Substring(1), valCm) Then
-                        currYmm = valCm * 10
-                    End If
+                    ' Reset Y coordinate in mm (value in cm from layout)
+                    Dim cmY As Double
+                    If Double.TryParse(s.Substring(1), cmY) Then currYmm = cmY * 10
                     Continue For
                 End If
-
-                ' Bepaal lengte (aantal leds) en richtingen
-                Dim numStr = String.Concat(s.Where(AddressOf Char.IsDigit))
-                Dim aantalleds As Integer
-                Integer.TryParse(numStr, aantalleds)
-                Dim dirStr = String.Concat(s.Where(AddressOf Char.IsLetter))
-
-                ' Bereken vector in mm
-                Dim dxMm As Single = 0.0F, dyMm As Single = 0.0F
-
-                Select Case dirStr
-                    Case "U" : dyMm = stepMm
-                    Case "D" : dyMm = -stepMm
-                    Case "L" : dxMm = -stepMm
-                    Case "R" : dxMm = stepMm
-                    Case "UL" : dxMm = -stepMm / Math.Sqrt(2)
-                        dyMm = stepMm / Math.Sqrt(2)
-                    Case "UR" : dxMm = stepMm / Math.Sqrt(2)
-                        dyMm = stepMm / Math.Sqrt(2)
-                    Case "DL" : dxMm = -stepMm / Math.Sqrt(2)
-                        dyMm = -stepMm / Math.Sqrt(2)
-                    Case "DR" : dxMm = stepMm / Math.Sqrt(2)
-                        dyMm = -stepMm / Math.Sqrt(2)
+                ' Aantal leds en richting
+                Dim count = Integer.Parse(New String(s.Where(AddressOf Char.IsDigit).ToArray()))
+                Dim dir = New String(s.Where(AddressOf Char.IsLetter).ToArray())
+                Dim dx = 0.0F, dy = 0.0F
+                Select Case dir
+                    Case "U" : dy = stepMm
+                    Case "D" : dy = -stepMm
+                    Case "L" : dx = -stepMm
+                    Case "R" : dx = stepMm
+                    Case "UL" : dx = -stepMm / Math.Sqrt(2) : dy = stepMm / Math.Sqrt(2)
+                    Case "UR" : dx = stepMm / Math.Sqrt(2) : dy = stepMm / Math.Sqrt(2)
+                    Case "DL" : dx = -stepMm / Math.Sqrt(2) : dy = -stepMm / Math.Sqrt(2)
+                    Case "DR" : dx = stepMm / Math.Sqrt(2) : dy = -stepMm / Math.Sqrt(2)
                 End Select
 
-                ' Voeg voor elk LED stap in mm toe
-                For i As Integer = 1 To aantalleds
-                    LedLijst.Add(New LedInfo With {.DeviceNaam = deviceNaam, .Xmm = CInt(currXmm), .Ymm = CInt(currYmm)})
-                    currXmm += CInt(dxMm)
-                    currYmm += CInt(dyMm)
-                    totalLedInStrip += 1
+                ' Voeg leds toe
+                For i = 1 To count
+                    ' Bereken pixel-posities
+                    Dim xpx = axisX + CInt(Math.Round(currXmm * pxPerMm))
+                    Dim ypx = axisY - CInt(Math.Round(currYmm * pxPerMm))
+                    ' Voeg LedInfo toe
+                    LedLijst.Add(New LedInfo With {
+                        .DeviceNaam = deviceNaam,
+                        .IndexInDevice = deviceIndex,
+                        .Xmm = currXmm,
+                        .Ymm = currYmm,
+                        .Xpx = xpx,
+                        .Ypx = ypx
+                    })
+                    deviceIndex += 1
+                    currXmm += dx
+                    currYmm += dy
                 Next
             Next
-
-            ' Werk teller bij in grid
-            row.Cells("colLedCount").Value = totalLedInStrip
+            ' Update LED-count in grid
+            row.Cells("colLedCount").Value = deviceIndex
         Next
-
-        ' (optioneel) sorteer op Xmm en dan Ymm
-        LedLijst.Sort(Function(a, b)
-                          If a.Xmm = b.Xmm Then Return a.Ymm.CompareTo(b.Ymm)
-                          Return a.Xmm.CompareTo(b.Xmm)
-                      End Function)
     End Sub
 
     ' *********************************************************************************
     ' TekenPodium
-    ' Teken het podium in cm schaal: lijst Xmm/Ymm wordt omgezet naar px
+    ' - Tekent achtergrond, assen, baseline en effect (via pixel-coördinaten uit LedInfo)
     ' *********************************************************************************
-    Public Sub TekenPodium(ByVal pbStage As PictureBox, ByVal podiumBreedteCm As Integer, ByVal podiumHoogteinCm As Integer)
-        ' Omzetten cm naar mm
-        Dim podiumBreedteMm As Integer = podiumBreedteCm * 10
-        Dim podiumHoogteMm As Integer = podiumHoogteinCm * 10
+    Public Sub TekenPodium(
+            pbStage As PictureBox,
+            podiumBreedteCm As Integer,
+            podiumHoogteinCm As Integer)
 
-        ' Bereken tekengebied (met marges voor labels)
-        Dim wPx = pbStage.ClientSize.Width
-        Dim hPx = pbStage.ClientSize.Height
-        Dim marginLeft As Integer = 50, marginRight As Integer = 20, marginTop As Integer = 20, marginBottom As Integer = 40
-        Dim drawWidth = wPx - marginLeft - marginRight
-        Dim drawHeight = hPx - marginTop - marginBottom
+        ' Bouw kleurdata
+        Dim colorMap As New Dictionary(Of String, List(Of Color))
+        For Each r As DataGridViewRow In FrmMain.DG_Devices.Rows
+            If r.IsNewRow Then Continue For
+            Dim inst = CStr(r.Cells("colInstance").Value)
+            Dim data = TryCast(r.Cells("colDDPData").Value, Byte())
+            Dim lst As New List(Of Color)
+            If data IsNot Nothing AndAlso data.Length Mod 3 = 0 Then
+                For i = 0 To data.Length \ 3 - 1
+                    lst.Add(Color.FromArgb(data(i * 3), data(i * 3 + 1), data(i * 3 + 2)))
+                Next
+            End If
+            colorMap(inst) = lst
+        Next
 
-        ' Pixel per mm (zodat het volledige podium in beeld past)
-        Dim pxPerMm As Single = Math.Min(drawWidth / podiumBreedteMm, drawHeight / podiumHoogteMm)
+        ' Maak bitmap
+        Dim w = pbStage.ClientSize.Width, h = pbStage.ClientSize.Height
+        Using bmp As New Bitmap(w, h, PixelFormat.Format24bppRgb)
+            ' Achtergrond
+            Using g = Graphics.FromImage(bmp) : g.Clear(Color.Black) : End Using
+            ' Assen
+            DrawAxes(bmp, podiumBreedteCm, podiumHoogteinCm, pbStage.Font)
 
-        ' Assenpunten
-        Dim axisX As Integer = marginLeft
-        Dim axisY As Integer = marginTop + drawHeight
+            'Baseline:   grijs vlak
+            DrawBaselinePixels(bmp)
 
-        ' Voor LED-squares
-        Dim ledPixelSize As Integer = 2
-        Using bmp As New Bitmap(wPx, hPx),
-              g As Graphics = Graphics.FromImage(bmp),
-              grayPen As New Pen(Color.Gray),
-              brushRed As New SolidBrush(Color.Red)
+            ' Effects: overschrijf waar nodig
+            DrawEffectPixels(bmp, colorMap)
 
-            g.Clear(Color.Black)
-            g.TextRenderingHint = Drawing.Text.TextRenderingHint.ClearTypeGridFit
-
-            ' 2) teken assen
-            g.DrawLine(grayPen, axisX, marginTop, axisX, axisY) ' Y-as
-            g.DrawLine(grayPen, axisX, axisY, axisX + podiumBreedteMm * pxPerMm, axisY) ' X-as
-
-            ' 3) ticks en labels
-            Dim font As Font = pbStage.Font
-            ' op X-as iedere 10cm
-            For cmMark As Integer = 0 To podiumBreedteCm Step 10
-                Dim xPos As Integer = axisX + CInt(cmMark * 10 * pxPerMm)
-                Dim tickH As Integer = If(cmMark Mod 100 = 0, 10, If(cmMark Mod 50 = 0, 7, 4))
-                g.DrawLine(grayPen, xPos, axisY, xPos, axisY + tickH)
-                If cmMark Mod 100 = 0 Then
-                    Dim label = (cmMark / 100).ToString("0") & "m"
-                    Dim size = g.MeasureString(label, font)
-                    g.DrawString(label, font, Brushes.White, xPos - size.Width / 2, axisY + tickH)
-                End If
-            Next
-            ' op Y-as iedere 10cm
-            For cmMark As Integer = 0 To podiumHoogteinCm Step 10
-                Dim yPos As Integer = axisY - CInt(cmMark * 10 * pxPerMm)
-                Dim tickW As Integer = If(cmMark Mod 100 = 0, 10, If(cmMark Mod 50 = 0, 7, 4))
-                g.DrawLine(grayPen, axisX - tickW, yPos, axisX, yPos)
-                If cmMark Mod 100 = 0 Then
-                    Dim label = (cmMark / 100).ToString("0") & "m"
-                    Dim size = g.MeasureString(label, font)
-                    g.DrawString(label, font, Brushes.White, axisX - tickW - size.Width, yPos - size.Height / 2)
-                End If
-            Next
-
-            ' 4) teken LEDs als 2x2 squares met border
-            For Each led In LedLijst
-                Dim xC As Integer = axisX + CInt(led.Xmm * pxPerMm)
-                Dim yC As Integer = axisY - CInt(led.Ymm * pxPerMm)
-                ' teken border
-                g.DrawRectangle(grayPen, xC - 1, yC - 1, ledPixelSize + 1, ledPixelSize + 1)
-                ' teken fill
-                g.FillRectangle(brushRed, xC, yC, ledPixelSize, ledPixelSize)
-            Next
-
-            ' toon
+            pbStage.Image?.Dispose()
             pbStage.Image = CType(bmp.Clone(), Bitmap)
         End Using
         pbStage.Invalidate()
     End Sub
 
     ' *********************************************************************************
-    ' VervangRichtingDoorPijlen en ValidateLayoutString ongewijzigd
+    ' Helper: teken assen met ticks en labels
     ' *********************************************************************************
-    Public Function VervangRichtingDoorPijlen(ByVal layoutString As String) As String
-        If String.IsNullOrEmpty(layoutString) Then Return layoutString
-        Dim s = layoutString.ToUpper()
-        Return s
-    End Function
+    Private Sub DrawAxes(bmp As Bitmap, bwCm As Integer, bhCm As Integer, font As Font)
+        ' Bereken marges en schaal
+        Dim wPx = bmp.Width, hPx = bmp.Height
+        Dim mL = 50, mR = 20, mT = 20, mB = 40
+        Dim drawW = wPx - mL - mR, drawH = hPx - mT - mB
+        Dim bwMm = bwCm * 10, bhMm = bhCm * 10
+        Dim pxPerMm = Math.Min(drawW / bwMm, drawH / bhMm)
+        Dim axisX = mL, axisY = mT + drawH
 
-    Public Function ValidateLayoutString(ByVal layoutString As String) As String
-        If String.IsNullOrEmpty(layoutString) Then Return layoutString
-        Dim allowedLetters = "UDLRXY"
-        Dim digits = "0123456789"
-        Return String.Concat(layoutString.ToUpper().Where(Function(c)
-                                                              Return allowedLetters.Contains(c) OrElse digits.Contains(c) OrElse c = ","
-                                                          End Function))
-    End Function
+        Using g = Graphics.FromImage(bmp)
+            g.SmoothingMode = Drawing2D.SmoothingMode.None
+            Using pen As New Pen(Color.Gray)
+                g.DrawLine(pen, axisX, mT, axisX, axisY)                                         ' Y-as
+                g.DrawLine(pen, axisX, axisY, axisX + CInt(Math.Round(bwMm * pxPerMm)), axisY)   ' X-as
+            End Using
+            Dim tickFont = New Font(font.FontFamily, font.Size - 2, FontStyle.Regular)
+            Using brush As New SolidBrush(Color.Gray)
+                ' X-as ticks/labels
+                For cmMark = 0 To bwCm Step 10
+                    Dim xPos = axisX + CInt(Math.Round(cmMark * 10 * pxPerMm))
+                    Dim tickH = If(cmMark Mod 50 = 0, 10, 4)
+                    g.DrawLine(Pens.Gray, xPos, axisY, xPos, axisY + tickH)
+                    If cmMark Mod 50 = 0 Then
+                        Dim lbl = (cmMark / 100.0).ToString("0.0") & "m"
+                        Dim sz = g.MeasureString(lbl, tickFont)
+                        g.DrawString(lbl, tickFont, brush, xPos - sz.Width / 2, axisY + tickH)
+                    End If
+                Next
+                ' Y-as ticks/labels
+                For cmMark = 0 To bhCm Step 10
+                    Dim yPos = axisY - CInt(Math.Round(cmMark * 10 * pxPerMm))
+                    Dim tickW = If(cmMark Mod 50 = 0, 10, 4)
+                    g.DrawLine(Pens.Gray, axisX - tickW, yPos, axisX, yPos)
+                    If cmMark Mod 50 = 0 Then
+                        Dim lbl = (cmMark / 100.0).ToString("0.0") & "m"
+                        Dim sz = g.MeasureString(lbl, tickFont)
+                        g.DrawString(lbl, tickFont, brush, axisX - tickW - sz.Width, yPos - sz.Height / 2)
+                    End If
+                Next
+            End Using
+        End Using
+    End Sub
 
+    ' *********************************************************************************
+    ' Helper: teken baseline pixels met LedInfo.Xpx/Ypx
+    ' *********************************************************************************
+    Private Sub DrawBaselinePixels(bmp As Bitmap)
+        Const size As Integer = 2
+        Dim gray As Color = Color.FromArgb(40, 40, 40)
+        ' Lock full read/write to preserve existing axes
+        Dim bmpData = bmp.LockBits(New Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat)
+        Dim stride = bmpData.Stride, ptr = bmpData.Scan0
+        Dim totalBytes As Long = CLng(stride) * bmp.Height
+        Dim raw(CInt(totalBytes) - 1) As Byte
+        ' Copy existing pixels (axes, background) into buffer
+        System.Runtime.InteropServices.Marshal.Copy(ptr, raw, 0, raw.Length)
+
+        ' Overlay baseline only (preserve axes)
+        For Each led In LedLijst
+            For dx = 0 To size - 1
+                For dy = 0 To size - 1
+                    Dim idx = (led.Ypx + dy) * stride + (led.Xpx + dx) * 3
+                    raw(idx) = gray.B : raw(idx + 1) = gray.G : raw(idx + 2) = gray.R
+                Next
+            Next
+        Next
+
+        ' Write back modified buffer
+        System.Runtime.InteropServices.Marshal.Copy(raw, 0, ptr, raw.Length)
+        bmp.UnlockBits(bmpData)
+    End Sub
+
+    ' *********************************************************************************
+    ' Helper: teken effect pixels via LedInfo.Xpx/Ypx en colorMap[IndexInDevice]
+    ' *********************************************************************************
+    Private Sub DrawEffectPixels(bmp As Bitmap, colorMap As Dictionary(Of String, List(Of Color)))
+        Const size As Integer = 2
+        Const threshold As Integer = 30
+        Dim bmpData = bmp.LockBits(New Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat)
+        Dim stride = bmpData.Stride, ptr = bmpData.Scan0
+        Dim totalBytes As Long = CLng(stride) * bmp.Height
+        Dim raw(CInt(totalBytes) - 1) As Byte
+        System.Runtime.InteropServices.Marshal.Copy(ptr, raw, 0, raw.Length)
+        For Each led In LedLijst
+            Dim inst = led.DeviceNaam
+            Dim idx = led.IndexInDevice
+            If colorMap.ContainsKey(inst) AndAlso idx < colorMap(inst).Count Then
+                Dim col = colorMap(inst)(idx)
+                If CInt(col.R) + CInt(col.G) + CInt(col.B) >= threshold Then
+                    For dx = 0 To size - 1
+                        For dy = 0 To size - 1
+                            Dim i = (led.Ypx + dy) * stride + (led.Xpx + dx) * 3
+                            raw(i) = col.B : raw(i + 1) = col.G : raw(i + 2) = col.R
+                        Next
+                    Next
+                End If
+            End If
+        Next
+        System.Runtime.InteropServices.Marshal.Copy(raw, 0, ptr, raw.Length)
+        bmp.UnlockBits(bmpData)
+    End Sub
+
+    ' *********************************************************************************
+    ' ValidateLayoutString ongewijzigd
+    ' *********************************************************************************
+    Public Function ValidateLayoutString(layoutString As String) As String
+        Dim allowed = "UDLRXY", digits = "0123456789"
+        Return String.Concat(layoutString.ToUpper().Where(Function(c) allowed.Contains(c) OrElse digits.Contains(c) OrElse c = ","c))
+    End Function
 End Module
