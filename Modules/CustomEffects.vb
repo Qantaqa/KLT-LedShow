@@ -1,7 +1,7 @@
 ﻿Imports System.Drawing
 Imports System.Windows.Forms
 
-Module CustomEffects
+Partial Public Module CustomEffects
     ' ***************************************************************************************
     ' CUSTOM EFFECT LOCAL PARAMETERS STRUCT
     ' ***************************************************************************************
@@ -10,7 +10,10 @@ Module CustomEffects
         Public Duration As Integer            ' in seconden
         Public FPS As Integer
         Public Intensity As Single
-        Public Brightness As Single
+        Public Brightness_Baseline As Single
+        Public Brightness_Effect As Single
+        Public Dispersion As Single
+        Public Speed As Single
         Public Kleuren As Color()
         Public Direction As EffectDirection
         Public StartPostion As EffectStartPosition
@@ -194,254 +197,14 @@ Module CustomEffects
     End Function
 
 
+
+
     ' ***************************************************************************************
     ' DAWNHARBOR EFFECT
     ' ***************************************************************************************
-    Public Sub CompileCustomEffect_DawnHarbor(groupIds As List(Of Integer), Params As EffectParams)
-        ' Progress popup
-        Dim estimatedSteps = groupIds.Count * Params.FPS * Params.Duration
-        Dim dlg As New Form() With {
-        .Text = "Compiling DawnHarbor...",
-        .FormBorderStyle = FormBorderStyle.FixedDialog,
-        .ControlBox = False,
-        .StartPosition = FormStartPosition.CenterParent,
-        .Width = 300,
-        .Height = 80
-    }
-        Dim pb As New ProgressBar() With {
-        .Minimum = 0,
-        .Maximum = estimatedSteps,
-        .Dock = DockStyle.Fill
-    }
-        dlg.Controls.Add(pb)
-        dlg.Show(FrmMain)
-        Dim stepCount As Integer = 0
-
-        For Each grpId As Integer In groupIds
-            ' Bepaal groep en coords
-            Dim row = FrmMain.DG_Groups.Rows.Cast(Of DataGridViewRow)() _
-            .First(Function(r) CInt(r.Cells("colGroupId").Value) = grpId)
-            Dim fixture = CStr(row.Cells("colGroupFixture").Value)
-            Dim startLed = CInt(row.Cells("colGroupStartLedNr").Value)
-            Dim stopLed = CInt(row.Cells("colGroupStopLedNr").Value)
-            Dim devRow = FrmMain.DG_Devices.Rows.Cast(Of DataGridViewRow)() _
-            .First(Function(r) CStr(r.Cells("colInstance").Value) = fixture)
-            Dim allCoords = ParseLayout(CStr(devRow.Cells("colLayout").Value))
-            Dim grpCoords = allCoords.Where(Function(c) c.Index + 1 >= startLed AndAlso c.Index + 1 <= stopLed).ToList()
-            ' Frames count
-            Dim rawCount = Params.Duration * Params.FPS
-            Dim ledCount = grpCoords.Count
-            Dim minFrames = Math.Max(15, CInt(ledCount * Params.Intensity))
-            Dim maxFrames = Math.Min(60, rawCount)
-            Dim frameCount = Math.Min(maxFrames, Math.Max(minFrames, rawCount))
-            ' Prepare selectors...
-            Dim sorted = SortByDirection(grpCoords, Params.Direction)
-            Dim total = sorted.Count
-            Dim startIndex As Integer = If(Params.StartPostion = EffectStartPosition.Center, total \ 2, If({EffectStartPosition.Top, EffectStartPosition.TopLeft, EffectStartPosition.TopRight, EffectStartPosition.Left}.Contains(Params.StartPostion), 0, total - 1))
-            Dim stepDir = If(startIndex = 0, 1, -1)
-            Dim pixelSelector = Function(f As Integer) If(frameCount <= 1, startIndex, Math.Max(0, Math.Min(total - 1, startIndex + stepDir * CInt((f / CSng(frameCount - 1)) * (total - 1)))))
-            Dim colorSelector = Function(p As Single) InterpolateColors(Params.Kleuren, p)
-            Dim intensityFn = Function(dist As Integer, tot As Integer) If(tot <= 0 OrElse Params.Intensity <= 0F, Params.Brightness, Math.Max(0F, 1.0F - (dist / (tot * Params.Intensity))) * Params.Brightness)
-            ' Generate frames
-            Dim frames = GenerateEffectFrames(frameCount, total, pixelSelector, colorSelector, intensityFn)
-            If Not Params.Repeat Then frames.Add(frames.Last())
-            ' Save
-            row.Cells("colAllFrames").Value = frames
-            row.Cells("colActiveFrame").Value = 0
-            row.Cells("colGroupRepeat").Value = Params.Repeat
-            ' Update progress
-            stepCount += frameCount
-            pb.Value = Math.Min(pb.Maximum, stepCount)
-            Application.DoEvents()
-        Next
-        dlg.Close()
-        ToonFlashBericht($"DawnHarbor: {estimatedSteps} stappen voltooid.", 2)
-    End Sub
-
-    ' ***************************************************************************************
-    ' FIXED TWINKLE EFFECT
-    ' ***************************************************************************************
-    Public Sub CompileCustomEffect_FixedTwinkle(groupIds As List(Of Integer), Params As EffectParams)
-        ' Progress popup
-        Dim estimatedSteps = groupIds.Count * Params.FPS * Params.Duration
-        Dim dlg As New Form() With {
-        .Text = "Compiling FixedTwinkle...",
-        .FormBorderStyle = FormBorderStyle.FixedDialog,
-        .ControlBox = False,
-        .StartPosition = FormStartPosition.CenterParent,
-        .Width = 300,
-        .Height = 80
-    }
-        Dim pb As New ProgressBar() With {
-        .Minimum = 0,
-        .Maximum = estimatedSteps,
-        .Dock = DockStyle.Fill
-    }
-        dlg.Controls.Add(pb)
-        dlg.Show(FrmMain)
-        Dim stepCount As Integer = 0
-
-        ' Verzamel globale coords
-        Dim groupCoordsList As New List(Of List(Of LedCoord))
-        For Each grpId In groupIds
-            Dim row = FrmMain.DG_Groups.Rows.Cast(Of DataGridViewRow)().First(Function(r) CInt(r.Cells("colGroupId").Value) = grpId)
-            Dim fixture = CStr(row.Cells("colGroupFixture").Value)
-            Dim startLed = CInt(row.Cells("colGroupStartLedNr").Value)
-            Dim stopLed = CInt(row.Cells("colGroupStopLedNr").Value)
-            Dim devRow = FrmMain.DG_Devices.Rows.Cast(Of DataGridViewRow)().First(Function(r) CStr(r.Cells("colInstance").Value) = fixture)
-            Dim coords = ParseLayout(CStr(devRow.Cells("colLayout").Value)).Where(Function(c) c.Index + 1 >= startLed AndAlso c.Index + 1 <= stopLed).ToList()
-            groupCoordsList.Add(coords)
-        Next
-        Dim globalCount = groupCoordsList.Sum(Function(list) list.Count)
-
-        ' Bepaal aantal frames
-        Dim rawCount = Params.Duration * Params.FPS
-        Dim minFrames = Math.Max(15, CInt(globalCount * Params.Intensity))
-        Dim maxFrames = Math.Min(60, rawCount)
-        Dim frameCount = Math.Min(maxFrames, Math.Max(minFrames, rawCount))
-
-        Dim baseColor = Params.Kleuren(0)
-        Dim twinkleColor = If(Params.Kleuren.Length >= 5, Params.Kleuren(4), baseColor)
-        Dim rnd As New Random()
-
-        For gi = 0 To groupIds.Count - 1
-            Dim grpCoords = groupCoordsList(gi)
-            Dim total = grpCoords.Count
-            Dim row = FrmMain.DG_Groups.Rows.Cast(Of DataGridViewRow)().First(Function(r) CInt(r.Cells("colGroupId").Value) = groupIds(gi))
-            Dim frames As New List(Of Byte())
-            Dim offset = groupCoordsList.Take(gi).Sum(Function(list) list.Count)
-
-            For f = 0 To frameCount - 1
-                ' kies globale twinkle-indexen
-                Dim twinkleCount = Math.Max(1, CInt(Math.Round(Params.Intensity * globalCount)))
-                Dim globalTwinkles = Enumerable.Range(0, globalCount).OrderBy(Function() rnd.Next()).Take(twinkleCount).ToHashSet()
-                Dim buf(total * 3 - 1) As Byte
-
-                For i = 0 To total - 1
-                    ' achtergrondkleur
-                    buf(i * 3) = CByte(baseColor.R * Params.Brightness)
-                    buf(i * 3 + 1) = CByte(baseColor.G * Params.Brightness)
-                    buf(i * 3 + 2) = CByte(baseColor.B * Params.Brightness)
-                    ' twinkle
-                    If globalTwinkles.Contains(offset + i) Then
-                        buf(i * 3) = CByte(twinkleColor.R * Params.Brightness)
-                        buf(i * 3 + 1) = CByte(twinkleColor.G * Params.Brightness)
-                        buf(i * 3 + 2) = CByte(twinkleColor.B * Params.Brightness)
-                    End If
-                Next
-                frames.Add(buf)
-                ' voortgang update
-                stepCount += 1
-                pb.Value = Math.Min(pb.Maximum, stepCount)
-                Application.DoEvents()
-            Next
-
-            If Not Params.Repeat Then frames.Add(frames.Last())
-            row.Cells("colAllFrames").Value = frames
-            row.Cells("colActiveFrame").Value = 0
-            row.Cells("colGroupRepeat").Value = Params.Repeat
-        Next
-
-        dlg.Close()
-        ToonFlashBericht($"FixedTwinkle: {frameCount} frames gecompileerd.", 2)
-    End Sub
 
 
-    Public Sub CompileCustomEffect_CalmOcean(groupIds As List(Of Integer), Params As EffectParams)
-        ' 1. Verzamel alle coördinaten en hun groepsinfo
-        Dim allEntries As New List(Of (Coord As LedCoord, GroupId As Integer, GroupIndex As Integer))()
-        Dim groupRows As New Dictionary(Of Integer, DataGridViewRow)
 
-        For Each grpId In groupIds
-            Dim row = FrmMain.DG_Groups.Rows.Cast(Of DataGridViewRow)().
-            FirstOrDefault(Function(r) CInt(r.Cells("colGroupId").Value) = grpId)
-            If row Is Nothing Then Continue For
-            groupRows(grpId) = row
-
-            Dim layoutStr = CStr(row.Cells("colGroupLayout").Value)
-            Dim coords = ParseLayout(layoutStr)
-            For i = 0 To coords.Count - 1
-                allEntries.Add((coords(i), grpId, i))
-            Next
-        Next
-
-        If allEntries.Count = 0 Then
-            ToonFlashBericht("Geen coördinaten beschikbaar voor CalmOcean.", 3)
-            Exit Sub
-        End If
-
-        ' 2. Richting en oorsprong bepalen
-        Dim allCoords = allEntries.Select(Function(e) e.Coord).ToList()
-        Dim dirVector = GetVectorFromDirection(Params.Direction)
-        Dim origin = GetStartVector(Params.StartPostion, allCoords)
-
-        ' 3. Projecteer alles
-        Dim projected = allEntries.Select(Function(e) New With {
-        .Coord = e.Coord,
-        .GroupId = e.GroupId,
-        .GroupIndex = e.GroupIndex,
-        .Projection = ProjectOntoDirection(e.Coord, origin, dirVector)
-    }).ToList()
-
-        Dim minP = projected.Min(Function(p) p.Projection)
-        Dim maxP = projected.Max(Function(p) p.Projection)
-        Dim spanP = Math.Max(1.0F, maxP - minP)
-
-        Dim normalized = projected.Select(Function(p) New With {
-        p.GroupId,
-        p.GroupIndex,
-        .Pct = (p.Projection - minP) / spanP
-    }).ToList()
-
-        ' 4. Frames berekenen over alle LEDs
-        Dim frameCount = Math.Max(15, Params.Duration * Params.FPS)
-        Dim speedFactor = Math.Max(0.01F, Params.Intensity * 2)
-        Dim groupMap = normalized.GroupBy(Function(p) p.GroupId).ToDictionary(Function(g) g.Key, Function(g) g.ToList())
-
-        ' Vooruitgangsvenster
-        Dim dlg As New Form() With {.Text = "Compiling CalmOcean...", .FormBorderStyle = FormBorderStyle.FixedDialog, .ControlBox = False, .StartPosition = FormStartPosition.CenterParent, .Width = 300, .Height = 80}
-        Dim pb As New ProgressBar() With {.Minimum = 0, .Maximum = frameCount * groupMap.Count, .Dock = DockStyle.Fill}
-        dlg.Controls.Add(pb)
-        dlg.Show(FrmMain)
-
-        ' 5. Per groep: eigen frames genereren gebaseerd op gedeeld patroon
-        For Each grpId In groupMap.Keys
-            Dim ledList = groupMap(grpId).OrderBy(Function(p) p.GroupIndex).ToList()
-            Dim frames As New List(Of Byte())
-
-            For f = 0 To frameCount - 1
-                Dim buf(ledList.Count * 3 - 1) As Byte
-
-                For i = 0 To ledList.Count - 1
-                    Dim pct = ledList(i).Pct
-                    Dim phase = pct * 2 * Math.PI - f * speedFactor
-                    Dim wave = (Math.Sin(phase) + 1.0F) / 2.0F
-                    wave = Math.Pow(wave, 2.2)
-                    wave *= Params.Intensity * Params.Brightness
-                    wave = Math.Min(1.0F, Math.Max(0.0F, wave))
-
-                    Dim col = InterpolateColors(Params.Kleuren, pct)
-                    buf(i * 3) = CByte(col.R * wave)
-                    buf(i * 3 + 1) = CByte(col.G * wave)
-                    buf(i * 3 + 2) = CByte(col.B * wave)
-                Next
-
-                frames.Add(buf)
-                pb.Value = Math.Min(pb.Maximum, pb.Value + 1)
-                Application.DoEvents()
-            Next
-
-            If Not Params.Repeat Then frames.Add(frames.Last())
-
-            Dim row = groupRows(grpId)
-            row.Cells("colAllFrames").Value = frames
-            row.Cells("colActiveFrame").Value = 0
-            row.Cells("colGroupRepeat").Value = Params.Repeat
-        Next
-
-        dlg.Close()
-        ToonFlashBericht($"CalmOcean: {groupMap.Count} groep(en), {frameCount} frames gegenereerd.", 2)
-    End Sub
 
 
 
@@ -493,6 +256,13 @@ Module CustomEffects
         ToonFlashBericht("Alle groepen op zwart gezet.", 2)
     End Sub
 
+    Public Sub ResetGroupsEffects()
+        For Each row As DataGridViewRow In FrmMain.DG_Groups.Rows.Cast(Of DataGridViewRow)()
+            If row.IsNewRow Then Continue For
+            row.Cells("colAllFrames").Value = Nothing
+            row.Cells("colActiveFrame").Value = 0
+        Next
+    End Sub
 
     Private Sub CollectCheckedNodes(node As TreeNode, list As List(Of Integer))
         If node.Checked Then
@@ -611,7 +381,10 @@ Module CustomEffects
             .Duration = FrmMain.tbEffectDuration.Value,
             .FPS = FrmMain.tbEffectFPS.Value,
             .Intensity = FrmMain.tbEffectIntensity.Value / 100.0F,
-            .Brightness = FrmMain.tbEffectBrightness.Value / 100.0F,
+            .Brightness_Baseline = FrmMain.tbEffectBrightnessBaseline.Value / 100.0F,
+            .Brightness_Effect = FrmMain.tbEffectBrightnessEffect.Value / 100.0F,
+            .Speed = FrmMain.tbEffectSpeed.Value / 100.0F,
+            .Dispersion = FrmMain.tbEffectDispersion.Value / 100.0F,
             .Kleuren = kleuren,
             .Direction = direction,
             .StartPostion = position,
@@ -625,6 +398,11 @@ Module CustomEffects
                 CompileCustomEffect_FixedTwinkle(groupIds, Params)
             Case "CalmOcean"
                 CompileCustomEffect_CalmOcean(groupIds, Params)
+            Case "Iceberg"
+                CompileCustomEffect_Iceberg(groupIds, Params)
+            Case "IcebergHit"
+                CompileCustomEffect_IcebergHit(groupIds, Params)
+
         End Select
     End Sub
 

@@ -341,6 +341,30 @@ Namespace My
                 Me("CustomEffectDuration") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectBrightnessEffect() As String
+            Get
+                Return CType(Me("CustomEffectBrightnessEffect"),String)
+            End Get
+            Set
+                Me("CustomEffectBrightnessEffect") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property CustomEffectDispersion() As String
+            Get
+                Return CType(Me("CustomEffectDispersion"),String)
+            End Get
+            Set
+                Me("CustomEffectDispersion") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

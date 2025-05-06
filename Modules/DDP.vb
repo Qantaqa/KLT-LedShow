@@ -62,7 +62,18 @@ Module DDP
         Dim currentIndex = CInt(row.Cells("colActiveFrame").Value)
 
         ' Bepaal volgende index (cyclus) en update groep
-        Dim nextIndex = (currentIndex + 1) Mod frames.Count
+        Dim nextIndex As Integer = 0
+        If (row.Cells("colGroupRepeat").Value = "True") Then
+            nextIndex = (currentIndex + 1) Mod frames.Count
+        Else
+            If currentIndex = frames.Count - 1 Then
+                ' Reached end of frame, keep this one
+                nextIndex = currentIndex
+            Else
+                nextIndex = (currentIndex + 1) Mod frames.Count
+            End If
+        End If
+
         row.Cells("colActiveFrame").Value = nextIndex
 
         ' Haal buffer voor deze frame

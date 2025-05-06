@@ -100,6 +100,13 @@ Partial Class FrmMain
         colFilename = New DataGridViewTextBoxColumn()
         TabStage = New TabPage()
         SplitContainerStage = New SplitContainer()
+        btnResetEffect = New Button()
+        GroupBox13 = New GroupBox()
+        EffectColor1 = New Button()
+        EffectColor2 = New Button()
+        EffectColor3 = New Button()
+        EffectColor4 = New Button()
+        EffectColor5 = New Button()
         btnStopEffectPreview = New Button()
         btnStartEffectPreview = New Button()
         GroupBox12 = New GroupBox()
@@ -125,21 +132,19 @@ Partial Class FrmMain
         EffectStartPositionTop = New RadioButton()
         EffectStartPositionTopLeft = New RadioButton()
         gbEffectSettings = New GroupBox()
+        tbEffectDispersion = New TrackBar()
+        lblEffectDispersion = New Label()
+        tbEffectFPS = New TrackBar()
+        lblEffectFPS = New Label()
+        tbEffectBrightnessEffect = New TrackBar()
+        Label16 = New Label()
         tbEffectDuration = New TrackBar()
         Label18 = New Label()
         cbEffectRepeat = New CheckBox()
-        tbEffectFPS = New TrackBar()
-        lblEffectFPS = New Label()
-        tbEffectBrightness = New TrackBar()
+        tbEffectBrightnessBaseline = New TrackBar()
         Label17 = New Label()
-        EffectColor5 = New Button()
-        EffectColor4 = New Button()
-        EffectColor3 = New Button()
-        EffectColor2 = New Button()
-        EffectColor1 = New Button()
         tbEffectIntensity = New TrackBar()
         tbEffectSpeed = New TrackBar()
-        Label16 = New Label()
         Label15 = New Label()
         LblSpeed = New Label()
         cbListCustomEffects = New ComboBox()
@@ -279,13 +284,16 @@ Partial Class FrmMain
         SplitContainerStage.Panel1.SuspendLayout()
         SplitContainerStage.Panel2.SuspendLayout()
         SplitContainerStage.SuspendLayout()
+        GroupBox13.SuspendLayout()
         GroupBox12.SuspendLayout()
         gbEffectDirection.SuspendLayout()
         gbEffectsStartPosition.SuspendLayout()
         gbEffectSettings.SuspendLayout()
-        CType(tbEffectDuration, ComponentModel.ISupportInitialize).BeginInit()
+        CType(tbEffectDispersion, ComponentModel.ISupportInitialize).BeginInit()
         CType(tbEffectFPS, ComponentModel.ISupportInitialize).BeginInit()
-        CType(tbEffectBrightness, ComponentModel.ISupportInitialize).BeginInit()
+        CType(tbEffectBrightnessEffect, ComponentModel.ISupportInitialize).BeginInit()
+        CType(tbEffectDuration, ComponentModel.ISupportInitialize).BeginInit()
+        CType(tbEffectBrightnessBaseline, ComponentModel.ISupportInitialize).BeginInit()
         CType(tbEffectIntensity, ComponentModel.ISupportInitialize).BeginInit()
         CType(tbEffectSpeed, ComponentModel.ISupportInitialize).BeginInit()
         CType(pb_Stage, ComponentModel.ISupportInitialize).BeginInit()
@@ -1024,6 +1032,8 @@ Partial Class FrmMain
         ' SplitContainerStage.Panel1
         ' 
         SplitContainerStage.Panel1.BackColor = Color.FromArgb(CByte(64), CByte(64), CByte(64))
+        SplitContainerStage.Panel1.Controls.Add(btnResetEffect)
+        SplitContainerStage.Panel1.Controls.Add(GroupBox13)
         SplitContainerStage.Panel1.Controls.Add(btnStopEffectPreview)
         SplitContainerStage.Panel1.Controls.Add(btnStartEffectPreview)
         SplitContainerStage.Panel1.Controls.Add(GroupBox12)
@@ -1039,12 +1049,84 @@ Partial Class FrmMain
         SplitContainerStage.SplitterDistance = 138
         SplitContainerStage.TabIndex = 3
         ' 
+        ' btnResetEffect
+        ' 
+        btnResetEffect.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
+        btnResetEffect.Image = My.Resources.Resources.iconCancel
+        btnResetEffect.ImageAlign = ContentAlignment.MiddleLeft
+        btnResetEffect.Location = New Point(1660, 47)
+        btnResetEffect.Name = "btnResetEffect"
+        btnResetEffect.Size = New Size(165, 23)
+        btnResetEffect.TabIndex = 10
+        btnResetEffect.Text = "Reset effect"
+        btnResetEffect.UseVisualStyleBackColor = True
+        ' 
+        ' GroupBox13
+        ' 
+        GroupBox13.Controls.Add(EffectColor1)
+        GroupBox13.Controls.Add(EffectColor2)
+        GroupBox13.Controls.Add(EffectColor3)
+        GroupBox13.Controls.Add(EffectColor4)
+        GroupBox13.Controls.Add(EffectColor5)
+        GroupBox13.ForeColor = SystemColors.Control
+        GroupBox13.Location = New Point(886, 3)
+        GroupBox13.Name = "GroupBox13"
+        GroupBox13.Size = New Size(122, 129)
+        GroupBox13.TabIndex = 9
+        GroupBox13.TabStop = False
+        GroupBox13.Text = "Palette"
+        ' 
+        ' EffectColor1
+        ' 
+        EffectColor1.Location = New Point(6, 22)
+        EffectColor1.Name = "EffectColor1"
+        EffectColor1.Size = New Size(23, 23)
+        EffectColor1.TabIndex = 7
+        EffectColor1.Text = "Button1"
+        EffectColor1.UseVisualStyleBackColor = True
+        ' 
+        ' EffectColor2
+        ' 
+        EffectColor2.Location = New Point(35, 22)
+        EffectColor2.Name = "EffectColor2"
+        EffectColor2.Size = New Size(23, 23)
+        EffectColor2.TabIndex = 8
+        EffectColor2.Text = "Button2"
+        EffectColor2.UseVisualStyleBackColor = True
+        ' 
+        ' EffectColor3
+        ' 
+        EffectColor3.Location = New Point(64, 22)
+        EffectColor3.Name = "EffectColor3"
+        EffectColor3.Size = New Size(23, 23)
+        EffectColor3.TabIndex = 9
+        EffectColor3.Text = "Button3"
+        EffectColor3.UseVisualStyleBackColor = True
+        ' 
+        ' EffectColor4
+        ' 
+        EffectColor4.Location = New Point(93, 22)
+        EffectColor4.Name = "EffectColor4"
+        EffectColor4.Size = New Size(23, 23)
+        EffectColor4.TabIndex = 10
+        EffectColor4.Text = "Button4"
+        EffectColor4.UseVisualStyleBackColor = True
+        ' 
+        ' EffectColor5
+        ' 
+        EffectColor5.Location = New Point(6, 50)
+        EffectColor5.Name = "EffectColor5"
+        EffectColor5.Size = New Size(23, 23)
+        EffectColor5.TabIndex = 11
+        EffectColor5.Text = "Button5"
+        EffectColor5.UseVisualStyleBackColor = True
+        ' 
         ' btnStopEffectPreview
         ' 
         btnStopEffectPreview.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
         btnStopEffectPreview.Image = My.Resources.Resources.iconPause
         btnStopEffectPreview.ImageAlign = ContentAlignment.MiddleLeft
-        btnStopEffectPreview.Location = New Point(1508, 106)
+        btnStopEffectPreview.Location = New Point(1660, 106)
         btnStopEffectPreview.Name = "btnStopEffectPreview"
         btnStopEffectPreview.Size = New Size(165, 23)
         btnStopEffectPreview.TabIndex = 8
@@ -1056,7 +1138,7 @@ Partial Class FrmMain
         btnStartEffectPreview.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
         btnStartEffectPreview.Image = My.Resources.Resources.iconPlay
         btnStartEffectPreview.ImageAlign = ContentAlignment.MiddleLeft
-        btnStartEffectPreview.Location = New Point(1508, 77)
+        btnStartEffectPreview.Location = New Point(1660, 77)
         btnStartEffectPreview.Name = "btnStartEffectPreview"
         btnStartEffectPreview.Size = New Size(165, 23)
         btnStartEffectPreview.TabIndex = 7
@@ -1067,7 +1149,7 @@ Partial Class FrmMain
         ' 
         GroupBox12.Controls.Add(tvGroupsSelected)
         GroupBox12.ForeColor = SystemColors.ButtonFace
-        GroupBox12.Location = New Point(1105, 3)
+        GroupBox12.Location = New Point(1270, 3)
         GroupBox12.Name = "GroupBox12"
         GroupBox12.Size = New Size(381, 129)
         GroupBox12.TabIndex = 6
@@ -1091,7 +1173,7 @@ Partial Class FrmMain
         btnApplyCustomEffect.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
         btnApplyCustomEffect.Image = My.Resources.Resources.iconChecked
         btnApplyCustomEffect.ImageAlign = ContentAlignment.MiddleLeft
-        btnApplyCustomEffect.Location = New Point(1508, 17)
+        btnApplyCustomEffect.Location = New Point(1660, 17)
         btnApplyCustomEffect.Name = "btnApplyCustomEffect"
         btnApplyCustomEffect.Size = New Size(165, 23)
         btnApplyCustomEffect.TabIndex = 4
@@ -1109,7 +1191,7 @@ Partial Class FrmMain
         gbEffectDirection.Controls.Add(EffectDirectionUp)
         gbEffectDirection.Controls.Add(EffectDirectionUpLeft)
         gbEffectDirection.ForeColor = SystemColors.Control
-        gbEffectDirection.Location = New Point(977, 3)
+        gbEffectDirection.Location = New Point(1142, 3)
         gbEffectDirection.Name = "gbEffectDirection"
         gbEffectDirection.Size = New Size(122, 129)
         gbEffectDirection.TabIndex = 3
@@ -1202,7 +1284,7 @@ Partial Class FrmMain
         gbEffectsStartPosition.Controls.Add(EffectStartPositionTop)
         gbEffectsStartPosition.Controls.Add(EffectStartPositionTopLeft)
         gbEffectsStartPosition.ForeColor = SystemColors.Control
-        gbEffectsStartPosition.Location = New Point(849, 3)
+        gbEffectsStartPosition.Location = New Point(1014, 3)
         gbEffectsStartPosition.Name = "gbEffectsStartPosition"
         gbEffectsStartPosition.Size = New Size(122, 129)
         gbEffectsStartPosition.TabIndex = 2
@@ -1294,21 +1376,19 @@ Partial Class FrmMain
         ' 
         ' gbEffectSettings
         ' 
+        gbEffectSettings.Controls.Add(tbEffectDispersion)
+        gbEffectSettings.Controls.Add(lblEffectDispersion)
+        gbEffectSettings.Controls.Add(tbEffectFPS)
+        gbEffectSettings.Controls.Add(lblEffectFPS)
+        gbEffectSettings.Controls.Add(tbEffectBrightnessEffect)
+        gbEffectSettings.Controls.Add(Label16)
         gbEffectSettings.Controls.Add(tbEffectDuration)
         gbEffectSettings.Controls.Add(Label18)
         gbEffectSettings.Controls.Add(cbEffectRepeat)
-        gbEffectSettings.Controls.Add(tbEffectFPS)
-        gbEffectSettings.Controls.Add(lblEffectFPS)
-        gbEffectSettings.Controls.Add(tbEffectBrightness)
+        gbEffectSettings.Controls.Add(tbEffectBrightnessBaseline)
         gbEffectSettings.Controls.Add(Label17)
-        gbEffectSettings.Controls.Add(EffectColor5)
-        gbEffectSettings.Controls.Add(EffectColor4)
-        gbEffectSettings.Controls.Add(EffectColor3)
-        gbEffectSettings.Controls.Add(EffectColor2)
-        gbEffectSettings.Controls.Add(EffectColor1)
         gbEffectSettings.Controls.Add(tbEffectIntensity)
         gbEffectSettings.Controls.Add(tbEffectSpeed)
-        gbEffectSettings.Controls.Add(Label16)
         gbEffectSettings.Controls.Add(Label15)
         gbEffectSettings.Controls.Add(LblSpeed)
         gbEffectSettings.Controls.Add(cbListCustomEffects)
@@ -1316,48 +1396,33 @@ Partial Class FrmMain
         gbEffectSettings.ForeColor = SystemColors.ButtonFace
         gbEffectSettings.Location = New Point(7, 3)
         gbEffectSettings.Name = "gbEffectSettings"
-        gbEffectSettings.Size = New Size(836, 129)
+        gbEffectSettings.Size = New Size(873, 129)
         gbEffectSettings.TabIndex = 0
         gbEffectSettings.TabStop = False
         gbEffectSettings.Text = "Effect"
         ' 
-        ' tbEffectDuration
+        ' tbEffectDispersion
         ' 
-        tbEffectDuration.LargeChange = 45
-        tbEffectDuration.Location = New Point(709, 44)
-        tbEffectDuration.Maximum = 90
-        tbEffectDuration.Minimum = 1
-        tbEffectDuration.Name = "tbEffectDuration"
-        tbEffectDuration.Size = New Size(104, 45)
-        tbEffectDuration.TabIndex = 18
-        tbEffectDuration.TickFrequency = 10
-        tbEffectDuration.Value = 10
+        tbEffectDispersion.Location = New Point(481, 45)
+        tbEffectDispersion.Maximum = 100
+        tbEffectDispersion.Name = "tbEffectDispersion"
+        tbEffectDispersion.Size = New Size(104, 45)
+        tbEffectDispersion.TabIndex = 22
+        tbEffectDispersion.TickFrequency = 10
         ' 
-        ' Label18
+        ' lblEffectDispersion
         ' 
-        Label18.AutoSize = True
-        Label18.Location = New Point(650, 49)
-        Label18.Name = "Label18"
-        Label18.Size = New Size(53, 15)
-        Label18.TabIndex = 17
-        Label18.Text = "Duration"
-        ' 
-        ' cbEffectRepeat
-        ' 
-        cbEffectRepeat.AutoSize = True
-        cbEffectRepeat.Checked = True
-        cbEffectRepeat.CheckState = CheckState.Checked
-        cbEffectRepeat.Location = New Point(669, 19)
-        cbEffectRepeat.Name = "cbEffectRepeat"
-        cbEffectRepeat.Size = New Size(62, 19)
-        cbEffectRepeat.TabIndex = 16
-        cbEffectRepeat.Text = "Repeat"
-        cbEffectRepeat.UseVisualStyleBackColor = True
+        lblEffectDispersion.AutoSize = True
+        lblEffectDispersion.Location = New Point(423, 52)
+        lblEffectDispersion.Name = "lblEffectDispersion"
+        lblEffectDispersion.Size = New Size(62, 15)
+        lblEffectDispersion.TabIndex = 21
+        lblEffectDispersion.Text = "Dispersion"
         ' 
         ' tbEffectFPS
         ' 
         tbEffectFPS.LargeChange = 30
-        tbEffectFPS.Location = New Point(546, 45)
+        tbEffectFPS.Location = New Point(763, 74)
         tbEffectFPS.Maximum = 60
         tbEffectFPS.Minimum = 15
         tbEffectFPS.Name = "tbEffectFPS"
@@ -1370,78 +1435,86 @@ Partial Class FrmMain
         ' lblEffectFPS
         ' 
         lblEffectFPS.AutoSize = True
-        lblEffectFPS.Location = New Point(514, 52)
+        lblEffectFPS.Location = New Point(731, 81)
         lblEffectFPS.Name = "lblEffectFPS"
         lblEffectFPS.Size = New Size(26, 15)
         lblEffectFPS.TabIndex = 14
         lblEffectFPS.Text = "FPS"
         ' 
-        ' tbEffectBrightness
+        ' tbEffectBrightnessEffect
         ' 
-        tbEffectBrightness.Location = New Point(408, 45)
-        tbEffectBrightness.Maximum = 100
-        tbEffectBrightness.Name = "tbEffectBrightness"
-        tbEffectBrightness.Size = New Size(104, 45)
-        tbEffectBrightness.TabIndex = 13
-        tbEffectBrightness.TickFrequency = 10
+        tbEffectBrightnessEffect.Location = New Point(312, 74)
+        tbEffectBrightnessEffect.Maximum = 100
+        tbEffectBrightnessEffect.Name = "tbEffectBrightnessEffect"
+        tbEffectBrightnessEffect.Size = New Size(104, 45)
+        tbEffectBrightnessEffect.TabIndex = 20
+        tbEffectBrightnessEffect.TickFrequency = 10
+        ' 
+        ' Label16
+        ' 
+        Label16.AutoSize = True
+        Label16.Location = New Point(208, 81)
+        Label16.Name = "Label16"
+        Label16.Size = New Size(95, 15)
+        Label16.TabIndex = 19
+        Label16.Text = "Brightness effect"
+        ' 
+        ' tbEffectDuration
+        ' 
+        tbEffectDuration.LargeChange = 45
+        tbEffectDuration.Location = New Point(764, 46)
+        tbEffectDuration.Maximum = 90
+        tbEffectDuration.Minimum = 1
+        tbEffectDuration.Name = "tbEffectDuration"
+        tbEffectDuration.Size = New Size(104, 45)
+        tbEffectDuration.TabIndex = 18
+        tbEffectDuration.TickFrequency = 10
+        tbEffectDuration.Value = 10
+        ' 
+        ' Label18
+        ' 
+        Label18.AutoSize = True
+        Label18.Location = New Point(705, 51)
+        Label18.Name = "Label18"
+        Label18.Size = New Size(53, 15)
+        Label18.TabIndex = 17
+        Label18.Text = "Duration"
+        ' 
+        ' cbEffectRepeat
+        ' 
+        cbEffectRepeat.AutoSize = True
+        cbEffectRepeat.CheckAlign = ContentAlignment.MiddleRight
+        cbEffectRepeat.Checked = True
+        cbEffectRepeat.CheckState = CheckState.Checked
+        cbEffectRepeat.Location = New Point(805, 21)
+        cbEffectRepeat.Name = "cbEffectRepeat"
+        cbEffectRepeat.Size = New Size(62, 19)
+        cbEffectRepeat.TabIndex = 16
+        cbEffectRepeat.Text = "Repeat"
+        cbEffectRepeat.TextAlign = ContentAlignment.MiddleCenter
+        cbEffectRepeat.UseVisualStyleBackColor = True
+        ' 
+        ' tbEffectBrightnessBaseline
+        ' 
+        tbEffectBrightnessBaseline.Location = New Point(312, 45)
+        tbEffectBrightnessBaseline.Maximum = 100
+        tbEffectBrightnessBaseline.Name = "tbEffectBrightnessBaseline"
+        tbEffectBrightnessBaseline.Size = New Size(104, 45)
+        tbEffectBrightnessBaseline.TabIndex = 13
+        tbEffectBrightnessBaseline.TickFrequency = 10
         ' 
         ' Label17
         ' 
         Label17.AutoSize = True
-        Label17.Location = New Point(350, 52)
+        Label17.Location = New Point(208, 52)
         Label17.Name = "Label17"
-        Label17.Size = New Size(62, 15)
+        Label17.Size = New Size(108, 15)
         Label17.TabIndex = 12
-        Label17.Text = "Brightness"
-        ' 
-        ' EffectColor5
-        ' 
-        EffectColor5.Location = New Point(190, 92)
-        EffectColor5.Name = "EffectColor5"
-        EffectColor5.Size = New Size(23, 23)
-        EffectColor5.TabIndex = 11
-        EffectColor5.Text = "Button5"
-        EffectColor5.UseVisualStyleBackColor = True
-        ' 
-        ' EffectColor4
-        ' 
-        EffectColor4.Location = New Point(161, 92)
-        EffectColor4.Name = "EffectColor4"
-        EffectColor4.Size = New Size(23, 23)
-        EffectColor4.TabIndex = 10
-        EffectColor4.Text = "Button4"
-        EffectColor4.UseVisualStyleBackColor = True
-        ' 
-        ' EffectColor3
-        ' 
-        EffectColor3.Location = New Point(132, 92)
-        EffectColor3.Name = "EffectColor3"
-        EffectColor3.Size = New Size(23, 23)
-        EffectColor3.TabIndex = 9
-        EffectColor3.Text = "Button3"
-        EffectColor3.UseVisualStyleBackColor = True
-        ' 
-        ' EffectColor2
-        ' 
-        EffectColor2.Location = New Point(103, 92)
-        EffectColor2.Name = "EffectColor2"
-        EffectColor2.Size = New Size(23, 23)
-        EffectColor2.TabIndex = 8
-        EffectColor2.Text = "Button2"
-        EffectColor2.UseVisualStyleBackColor = True
-        ' 
-        ' EffectColor1
-        ' 
-        EffectColor1.Location = New Point(74, 92)
-        EffectColor1.Name = "EffectColor1"
-        EffectColor1.Size = New Size(23, 23)
-        EffectColor1.TabIndex = 7
-        EffectColor1.Text = "Button1"
-        EffectColor1.UseVisualStyleBackColor = True
+        Label17.Text = "Brightness baseline"
         ' 
         ' tbEffectIntensity
         ' 
-        tbEffectIntensity.Location = New Point(234, 45)
+        tbEffectIntensity.Location = New Point(74, 74)
         tbEffectIntensity.Maximum = 100
         tbEffectIntensity.Name = "tbEffectIntensity"
         tbEffectIntensity.Size = New Size(104, 45)
@@ -1457,19 +1530,10 @@ Partial Class FrmMain
         tbEffectSpeed.TabIndex = 5
         tbEffectSpeed.TickFrequency = 10
         ' 
-        ' Label16
-        ' 
-        Label16.AutoSize = True
-        Label16.Location = New Point(15, 96)
-        Label16.Name = "Label16"
-        Label16.Size = New Size(41, 15)
-        Label16.TabIndex = 4
-        Label16.Text = "Colors"
-        ' 
         ' Label15
         ' 
         Label15.AutoSize = True
-        Label15.Location = New Point(176, 52)
+        Label15.Location = New Point(16, 81)
         Label15.Name = "Label15"
         Label15.Size = New Size(52, 15)
         Label15.TabIndex = 3
@@ -1487,10 +1551,10 @@ Partial Class FrmMain
         ' cbListCustomEffects
         ' 
         cbListCustomEffects.FormattingEnabled = True
-        cbListCustomEffects.Items.AddRange(New Object() {"DawnHarbor      " & vbTab & "- Vroege ochtendgloed vanaf onderen in warm oranje", "FixedTwinkle" & vbTab & "- Een vaste kleur achtergrond met een willekeurige twinkle in kleur 5", "CalmOcean" & vbTab & "- Langzame, vloeiende pulseringen die het ritme van rustige oceaangolven"})
+        cbListCustomEffects.Items.AddRange(New Object() {"DawnHarbor      " & vbTab & "- Vroege ochtendgloed vanaf onderen in warm oranje", "FixedTwinkle" & vbTab & "- Een vaste kleur achtergrond met een willekeurige twinkle in kleur 5", "CalmOcean" & vbTab & "- Langzame, vloeiende pulseringen die het ritme van rustige oceaangolven", "Iceberg" & vbTab & vbTab & "- Een naderende ijsberg waarbij we die raken en stukken afbreken.", "IcebergHit " & vbTab & "- We raken een ijsberg, knipperend en fel wit "})
         cbListCustomEffects.Location = New Point(74, 17)
         cbListCustomEffects.Name = "cbListCustomEffects"
-        cbListCustomEffects.Size = New Size(576, 23)
+        cbListCustomEffects.Size = New Size(725, 23)
         cbListCustomEffects.TabIndex = 1
         ' 
         ' lblCustomEffect
@@ -2573,6 +2637,7 @@ Partial Class FrmMain
         SplitContainerStage.Panel2.ResumeLayout(False)
         CType(SplitContainerStage, ComponentModel.ISupportInitialize).EndInit()
         SplitContainerStage.ResumeLayout(False)
+        GroupBox13.ResumeLayout(False)
         GroupBox12.ResumeLayout(False)
         gbEffectDirection.ResumeLayout(False)
         gbEffectDirection.PerformLayout()
@@ -2580,9 +2645,11 @@ Partial Class FrmMain
         gbEffectsStartPosition.PerformLayout()
         gbEffectSettings.ResumeLayout(False)
         gbEffectSettings.PerformLayout()
-        CType(tbEffectDuration, ComponentModel.ISupportInitialize).EndInit()
+        CType(tbEffectDispersion, ComponentModel.ISupportInitialize).EndInit()
         CType(tbEffectFPS, ComponentModel.ISupportInitialize).EndInit()
-        CType(tbEffectBrightness, ComponentModel.ISupportInitialize).EndInit()
+        CType(tbEffectBrightnessEffect, ComponentModel.ISupportInitialize).EndInit()
+        CType(tbEffectDuration, ComponentModel.ISupportInitialize).EndInit()
+        CType(tbEffectBrightnessBaseline, ComponentModel.ISupportInitialize).EndInit()
         CType(tbEffectIntensity, ComponentModel.ISupportInitialize).EndInit()
         CType(tbEffectSpeed, ComponentModel.ISupportInitialize).EndInit()
         CType(pb_Stage, ComponentModel.ISupportInitialize).EndInit()
@@ -2816,7 +2883,6 @@ Partial Class FrmMain
     Friend WithEvents EffectColor1 As Button
     Friend WithEvents tbEffectIntensity As TrackBar
     Friend WithEvents tbEffectSpeed As TrackBar
-    Friend WithEvents Label16 As Label
     Friend WithEvents Label15 As Label
     Friend WithEvents gbEffectsStartPosition As GroupBox
     Friend WithEvents EffectStartPositionBottomRight As RadioButton
@@ -2843,7 +2909,7 @@ Partial Class FrmMain
     Friend WithEvents btnGroupsAutoSplit As ToolStripButton
     Friend WithEvents GroupBox12 As GroupBox
     Friend WithEvents tvGroupsSelected As TreeView
-    Friend WithEvents tbEffectBrightness As TrackBar
+    Friend WithEvents tbEffectBrightnessBaseline As TrackBar
     Friend WithEvents Label17 As Label
     Friend WithEvents tbEffectFPS As TrackBar
     Friend WithEvents lblEffectFPS As Label
@@ -2874,5 +2940,11 @@ Partial Class FrmMain
     Friend WithEvents colGroupRepeat As DataGridViewCheckBoxColumn
     Friend WithEvents colGroupLayout As DataGridViewTextBoxColumn
     Friend WithEvents stageTimer As Timer
+    Friend WithEvents GroupBox13 As GroupBox
+    Friend WithEvents tbEffectBrightnessEffect As TrackBar
+    Friend WithEvents Label16 As Label
+    Friend WithEvents tbEffectDispersion As TrackBar
+    Friend WithEvents lblEffectDispersion As Label
+    Friend WithEvents btnResetEffect As Button
 
 End Class

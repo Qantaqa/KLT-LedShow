@@ -72,12 +72,14 @@ Public Class FrmMain
             EffectColor5.BackColor = Color.FromArgb(My.Settings.CustomEffectC5)
             tbEffectIntensity.Value = My.Settings.CustomEffectIntensity
             tbEffectSpeed.Value = My.Settings.CustomEffectSpeed
-            tbEffectBrightness.Value = My.Settings.CustomEffectBrightness
+            tbEffectBrightnessBaseline.Value = My.Settings.CustomEffectBrightness
+            tbEffectBrightnessEffect.Value = My.Settings.CustomEffectBrightnessEffect
+            tbEffectDispersion.Value = My.Settings.CustomEffectDispersion
 
             Dim tip As New ToolTip()
             tip.SetToolTip(tbEffectSpeed, "Snelheid van het effect. Hoe hoger, hoe sneller de animatie verloopt (range 1-100%).")
             tip.SetToolTip(tbEffectIntensity, "Hoe intens is de beweging of kleurenwissel. Bepaalt het bereik van de helderheid. (range 1-100%)")
-            tip.SetToolTip(tbEffectBrightness, "Maximale helderheid van het effect (globale limiet). (1-100%)")
+            tip.SetToolTip(tbEffectBrightnessBaseline, "Maximale helderheid van het effect (globale limiet). (1-100%)")
             tip.SetToolTip(tbEffectFPS, "Aantal frames per seconde. Hoger = vloeiender, maar ook meer belasting. (15-60 fps, advies 15")
             tip.SetToolTip(tbEffectDuration, "Duur van het effect in seconden. (5-90 sec)")
 
@@ -479,8 +481,8 @@ Public Class FrmMain
         My.Settings.Save()
     End Sub
 
-    Private Sub tbEffectBrightness_Scroll(sender As Object, e As EventArgs) Handles tbEffectBrightness.Scroll
-        My.Settings.CustomEffectBrightness = tbEffectBrightness.Value
+    Private Sub tbEffectBrightness_Scroll(sender As Object, e As EventArgs) Handles tbEffectBrightnessBaseline.Scroll
+        My.Settings.CustomEffectBrightness = tbEffectBrightnessBaseline.Value
         My.Settings.Save()
     End Sub
 
@@ -560,5 +562,21 @@ Public Class FrmMain
 
     Private Sub pb_Stage_Resize(sender As Object, e As EventArgs) Handles pb_Stage.Resize
         GenereerLedLijst(DG_Devices, pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+    End Sub
+
+    Private Sub tbEffectBrightnessBaselineEffect_Scroll(sender As Object, e As EventArgs) Handles tbEffectBrightnessEffect.Scroll
+        My.Settings.CustomEffectBrightnessEffect = tbEffectBrightnessEffect.Value
+        My.Settings.Save()
+    End Sub
+
+    Private Sub tbEffectDispersion_Scroll(sender As Object, e As EventArgs) Handles tbEffectDispersion.Scroll
+        My.Settings.CustomEffectDispersion = tbEffectDispersion.Value
+        My.Settings.Save()
+
+    End Sub
+
+    Private Sub btnResetEffect_Click(sender As Object, e As EventArgs) Handles btnResetEffect.Click
+        ResetGroupsEffects()
+        ClearGroupsToBlack()
     End Sub
 End Class
