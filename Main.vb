@@ -114,6 +114,7 @@ Public Class FrmMain
             AddHandler EffectBuilder.TrackClicked, AddressOf EffectBuilder.OnTrackClicked
             AddHandler EffectBuilder.LightSourceClicked, AddressOf EffectBuilder.OnLightSourceClicked
 
+            SetZoom(ZoomFactor)
 
 
         Catch ex As Exception
@@ -324,11 +325,11 @@ Public Class FrmMain
         'ClearGroupsToBlack()
     End Sub
 
-    Private Sub btnLoadShow_Click(sender As Object, e As EventArgs) Handles btnLoadShow.Click
+    Private Sub btnLoadShow_Click(sender As Object, e As EventArgs)
         LoadShow()
     End Sub
 
-    Private Sub btnLoadEffectPalettes_Click(sender As Object, e As EventArgs) Handles btnLoadEffectPalettes.Click
+    Private Sub btnLoadEffectPalettes_Click(sender As Object, e As EventArgs)
         LoadEffectPalettes()
     End Sub
 
@@ -341,7 +342,7 @@ Public Class FrmMain
     End Sub
 
     Private Sub btnGenerateStage_Click(sender As Object, e As EventArgs) Handles btnGenerateStage.Click
-        GenereerLedLijst(DG_Devices, pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+        GenereerLedLijst(DG_Devices, DG_Groups, pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
         TekenPodium(pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
     End Sub
 
@@ -543,25 +544,8 @@ Public Class FrmMain
 
     Private Sub stageTimer_Tick(sender As Object, e As EventArgs) Handles stageTimer.Tick
         Try
-            ' Dim huidigeHash As ULong = 0UL
-            'Const prime As ULong = 31UL
 
-            ' Bepaal hash op basis van alle DDP-data
-            'For Each row As DataGridViewRow In DG_Devices.Rows
-            '    If row.IsNewRow Then Continue For
-            '    Dim buf = TryCast(row.Cells("colDDPData").Value, Byte())
-            '    If buf IsNot Nothing Then
-            '        For i = 0 To buf.Length - 1
-            '            huidigeHash = ((huidigeHash * prime) Xor buf(i))
-            '        Next
-            '    End If
-            'Next
-
-            ' Alleen tekenen bij verandering
-            'If huidigeHash <> laatsteDDPHash Then
             Stage.TekenPodium(pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
-            '    laatsteDDPHash = huidigeHash
-            'End If
 
         Catch ex As Exception
             Debug.WriteLine("[stageTimer_Tick] Fout: " & ex.Message)
@@ -569,7 +553,7 @@ Public Class FrmMain
     End Sub
 
     Private Sub pb_Stage_Resize(sender As Object, e As EventArgs) Handles pb_Stage.Resize
-        GenereerLedLijst(DG_Devices, pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+        GenereerLedLijst(DG_Devices, DG_Groups, pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
     End Sub
 
     Private Sub tbEffectBrightnessBaselineEffect_Scroll(sender As Object, e As EventArgs) Handles tbEffectBrightnessEffect.Scroll
@@ -712,5 +696,10 @@ Public Class FrmMain
 
     Private Sub DG_Tracks_RowValidated(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Tracks.RowValidated
         EffectBuilder.RefreshTimeline()
+    End Sub
+
+
+    Private Sub btnLoadAll_Click_1(sender As Object, e As EventArgs) Handles btnLoadAll.Click
+        LoadAll()
     End Sub
 End Class

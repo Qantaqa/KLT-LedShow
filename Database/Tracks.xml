@@ -9,12 +9,12 @@
         <Row>
             <colTrackId>1</colTrackId>
             <colTrackName>Track 1</colTrackName>
-            <colTrackActive></colTrackActive>
+            <colTrackActive>False</colTrackActive>
         </Row>
         <Row>
             <colTrackId>2</colTrackId>
             <colTrackName>Track 2</colTrackName>
-            <colTrackActive></colTrackActive>
+            <colTrackActive>False</colTrackActive>
         </Row>
     </Data>
 </DataGridData>

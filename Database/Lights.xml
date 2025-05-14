@@ -29,37 +29,37 @@
             <colLSPositionY>100</colLSPositionY>
             <colLSSize>50</colLSSize>
             <colLSShape>Circle</colLSShape>
-            <colLSBlend>false</colLSBlend>
-            <colLSDirection>UP</colLSDirection>
-            <colLSColor1></colLSColor1>
-            <colLSColor2></colLSColor2>
-            <colLSColor3></colLSColor3>
-            <colLSColor4></colLSColor4>
-            <colLSColor5></colLSColor5>
-            <colLSBrightnessBaseline></colLSBrightnessBaseline>
-            <colLSBrightnessEffect></colLSBrightnessEffect>
+            <colLSBlend>False</colLSBlend>
+            <colLSDirection>Up</colLSDirection>
+            <colLSColor1>-16777216</colLSColor1>
+            <colLSColor2>-16777216</colLSColor2>
+            <colLSColor3>-16777216</colLSColor3>
+            <colLSColor4>-16777216</colLSColor4>
+            <colLSColor5>-16777216</colLSColor5>
+            <colLSBrightnessBaseline>10</colLSBrightnessBaseline>
+            <colLSBrightnessEffect>1</colLSBrightnessEffect>
             <colLSEffect></colLSEffect>
-            <colLSGroups></colLSGroups>
+            <colLSGroups>2,4,5,6,8,9,10</colLSGroups>
         </Row>
         <Row>
             <colLSTrackId>2</colLSTrackId>
             <colLSStartMoment>20</colLSStartMoment>
-            <colLSDuration>5</colLSDuration>
+            <colLSDuration>20</colLSDuration>
             <colLSPositionX>900</colLSPositionX>
             <colLSPositionY>100</colLSPositionY>
             <colLSSize>50</colLSSize>
             <colLSShape>Circle</colLSShape>
-            <colLSBlend>false</colLSBlend>
-            <colLSDirection>UP</colLSDirection>
-            <colLSColor1></colLSColor1>
-            <colLSColor2></colLSColor2>
-            <colLSColor3></colLSColor3>
-            <colLSColor4></colLSColor4>
-            <colLSColor5></colLSColor5>
-            <colLSBrightnessBaseline></colLSBrightnessBaseline>
-            <colLSBrightnessEffect></colLSBrightnessEffect>
+            <colLSBlend>False</colLSBlend>
+            <colLSDirection>Up</colLSDirection>
+            <colLSColor1>-16711936</colLSColor1>
+            <colLSColor2>-16776961</colLSColor2>
+            <colLSColor3>-16777152</colLSColor3>
+            <colLSColor4>-8388480</colLSColor4>
+            <colLSColor5>-65408</colLSColor5>
+            <colLSBrightnessBaseline>10</colLSBrightnessBaseline>
+            <colLSBrightnessEffect>9</colLSBrightnessEffect>
             <colLSEffect></colLSEffect>
-            <colLSGroups></colLSGroups>
+            <colLSGroups>2,4,5,6,8,9,10</colLSGroups>
         </Row>
     </Data>
 </DataGridData>

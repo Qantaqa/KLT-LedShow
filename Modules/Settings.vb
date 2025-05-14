@@ -47,7 +47,7 @@
             FrmMain.btnLockUnlocked.Text = "Locked"
             FrmMain.btnLockUnlocked.Image = My.Resources.iconLocked
 
-            FrmMain.btnLoad.Enabled = False
+            FrmMain.btnLoadAll.Enabled = False
             FrmMain.btnSaveShow.Enabled = False
             FrmMain.btn_DGGrid_AddNewRowBefore.Enabled = False
             FrmMain.btn_DGGrid_AddNewRowAfter.Enabled = False
@@ -67,7 +67,7 @@
             FrmMain.btnLockUnlocked.Text = "Unlocked"
             FrmMain.btnLockUnlocked.Image = My.Resources.iconUnlocked_Green
 
-            FrmMain.btnLoad.Enabled = True
+            FrmMain.btnLoadAll.Enabled = True
             FrmMain.btnSaveShow.Enabled = True
             FrmMain.btn_DGGrid_AddNewRowBefore.Enabled = True
             FrmMain.btn_DGGrid_AddNewRowAfter.Enabled = True
@@ -83,22 +83,6 @@
         End If
         My.Settings.Save()
     End Sub
-
-
-    '''' <summary>
-    '''' Zet een tijdstring om in milliseconden.
-    '''' </summary>
-    '''' <param name="timeString">De tijdstring in een van de ondersteunde formaten.</param>
-    '''' <returns>Het aantal milliseconden, of -1 als de string ongeldig is.</returns>
-    'Public Function TimeStringToMilliseconds(timeString As String) As Integer
-    '    Dim formatStrings() As String = {"m\mss", "mm\mss", "m:ss", "mm:ss", "H:mm:ss", "HH:mm:ss", "H\hmm\mss", "HH\hmm\mss", "H\hmm:ss", "HH\hmm:ss", "H:mm", "HH:mm", "H\hmm", "HH\hmm"}
-    '    Dim timeSpan As TimeSpan
-    '    If timeSpan.TryParseExact(timeString, formatStrings, CultureInfo.InvariantCulture, TimeSpanStyles.None, timeSpan) Then
-    '        Return CInt(timeSpan.TotalMilliseconds)
-    '    Else
-    '        Return -1
-    '    End If
-    'End Function
 
 
 

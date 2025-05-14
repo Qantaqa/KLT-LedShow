@@ -130,6 +130,8 @@ Partial Class FrmMain
         EffectColor3 = New Button()
         EffectColor4 = New Button()
         EffectColor5 = New Button()
+        GroupBox12 = New GroupBox()
+        tvGroupsSelected = New TreeView()
         gbEffectsStartPosition = New GroupBox()
         EffectStartPositionBottomRight = New RadioButton()
         EffectStartPositionBottom = New RadioButton()
@@ -151,8 +153,6 @@ Partial Class FrmMain
         EffectDirectionUpLeft = New RadioButton()
         btnApplyCustomEffect = New Button()
         btnResetEffect = New Button()
-        GroupBox12 = New GroupBox()
-        tvGroupsSelected = New TreeView()
         btnStopEffectPreview = New Button()
         btnStartEffectPreview = New Button()
         pb_Stage = New PictureBox()
@@ -164,6 +164,13 @@ Partial Class FrmMain
         btnZoom30 = New ToolStripMenuItem()
         btnZoom60 = New ToolStripMenuItem()
         btnZoom90 = New ToolStripMenuItem()
+        ToolStripSeparator6 = New ToolStripSeparator()
+        BtnAddTrack = New ToolStripButton()
+        BtnRemoveTrack = New ToolStripButton()
+        ToolStripSeparator8 = New ToolStripSeparator()
+        btnAddShape = New ToolStripButton()
+        btnRemoveShape = New ToolStripButton()
+        ToolStripSeparator7 = New ToolStripSeparator()
         TabTables = New TabPage()
         ToolStripTables = New ToolStrip()
         btnTablesAddRowBefore = New ToolStripButton()
@@ -298,11 +305,7 @@ Partial Class FrmMain
         ToolStrip_Form = New ToolStrip()
         btnSaveShow = New ToolStripButton()
         ToolStripLabel1 = New ToolStripLabel()
-        btnLoad = New ToolStripDropDownButton()
-        SegmentsStageToolStripMenuItem = New ToolStripMenuItem()
-        btnLoadEffectPalettes = New ToolStripMenuItem()
-        btnLoadShow = New ToolStripMenuItem()
-        btnLoadAll = New ToolStripMenuItem()
+        btnLoadAll = New ToolStripButton()
         TimerEverySecond = New Timer(components)
         PictureBox1 = New PictureBox()
         OpenFileDialog1 = New OpenFileDialog()
@@ -312,13 +315,6 @@ Partial Class FrmMain
         TimerPingDevices = New Timer(components)
         ddpTimer = New Timer(components)
         stageTimer = New Timer(components)
-        BtnAddTrack = New ToolStripButton()
-        BtnRemoveTrack = New ToolStripButton()
-        btnAddShape = New ToolStripButton()
-        btnRemoveShape = New ToolStripButton()
-        ToolStripSeparator6 = New ToolStripSeparator()
-        ToolStripSeparator7 = New ToolStripSeparator()
-        ToolStripSeparator8 = New ToolStripSeparator()
         CType(DG_Devices, ComponentModel.ISupportInitialize).BeginInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).BeginInit()
         TabControl.SuspendLayout()
@@ -363,9 +359,9 @@ Partial Class FrmMain
         CType(tbEffectIntensity, ComponentModel.ISupportInitialize).BeginInit()
         CType(tbEffectSpeed, ComponentModel.ISupportInitialize).BeginInit()
         GroupBox13.SuspendLayout()
+        GroupBox12.SuspendLayout()
         gbEffectsStartPosition.SuspendLayout()
         gbEffectDirection.SuspendLayout()
-        GroupBox12.SuspendLayout()
         CType(pb_Stage, ComponentModel.ISupportInitialize).BeginInit()
         ToolStripSegments.SuspendLayout()
         TabTables.SuspendLayout()
@@ -1136,7 +1132,6 @@ Partial Class FrmMain
         ' 
         SplitContainer1.Dock = DockStyle.Fill
         SplitContainer1.FixedPanel = FixedPanel.Panel2
-        SplitContainer1.IsSplitterFixed = True
         SplitContainer1.Location = New Point(0, 0)
         SplitContainer1.Name = "SplitContainer1"
         ' 
@@ -1148,11 +1143,10 @@ Partial Class FrmMain
         ' 
         SplitContainer1.Panel2.Controls.Add(btnApplyCustomEffect)
         SplitContainer1.Panel2.Controls.Add(btnResetEffect)
-        SplitContainer1.Panel2.Controls.Add(GroupBox12)
         SplitContainer1.Panel2.Controls.Add(btnStopEffectPreview)
         SplitContainer1.Panel2.Controls.Add(btnStartEffectPreview)
         SplitContainer1.Size = New Size(1830, 171)
-        SplitContainer1.SplitterDistance = 1498
+        SplitContainer1.SplitterDistance = 1671
         SplitContainer1.TabIndex = 12
         ' 
         ' TabStageControl
@@ -1163,7 +1157,7 @@ Partial Class FrmMain
         TabStageControl.Location = New Point(0, 0)
         TabStageControl.Name = "TabStageControl"
         TabStageControl.SelectedIndex = 0
-        TabStageControl.Size = New Size(1498, 171)
+        TabStageControl.Size = New Size(1671, 171)
         TabStageControl.TabIndex = 11
         ' 
         ' TabPage2
@@ -1173,7 +1167,7 @@ Partial Class FrmMain
         TabPage2.Location = New Point(4, 24)
         TabPage2.Name = "TabPage2"
         TabPage2.Padding = New Padding(3)
-        TabPage2.Size = New Size(1490, 143)
+        TabPage2.Size = New Size(1663, 143)
         TabPage2.TabIndex = 1
         TabPage2.Text = "Design"
         ' 
@@ -1182,7 +1176,7 @@ Partial Class FrmMain
         PanelTracks.Dock = DockStyle.Fill
         PanelTracks.Location = New Point(3, 3)
         PanelTracks.Name = "PanelTracks"
-        PanelTracks.Size = New Size(1484, 137)
+        PanelTracks.Size = New Size(1657, 137)
         PanelTracks.TabIndex = 0
         ' 
         ' TabPage1
@@ -1190,12 +1184,13 @@ Partial Class FrmMain
         TabPage1.BackColor = Color.FromArgb(CByte(64), CByte(64), CByte(64))
         TabPage1.Controls.Add(gbEffectSettings)
         TabPage1.Controls.Add(GroupBox13)
+        TabPage1.Controls.Add(GroupBox12)
         TabPage1.Controls.Add(gbEffectsStartPosition)
         TabPage1.Controls.Add(gbEffectDirection)
         TabPage1.Location = New Point(4, 24)
         TabPage1.Name = "TabPage1"
         TabPage1.Padding = New Padding(3)
-        TabPage1.Size = New Size(1490, 143)
+        TabPage1.Size = New Size(1663, 143)
         TabPage1.TabIndex = 0
         TabPage1.Text = "Custom"
         ' 
@@ -1451,6 +1446,30 @@ Partial Class FrmMain
         EffectColor5.Text = "Button5"
         EffectColor5.UseVisualStyleBackColor = True
         ' 
+        ' GroupBox12
+        ' 
+        GroupBox12.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        GroupBox12.Controls.Add(tvGroupsSelected)
+        GroupBox12.ForeColor = SystemColors.ButtonFace
+        GroupBox12.Location = New Point(1266, 6)
+        GroupBox12.Name = "GroupBox12"
+        GroupBox12.Size = New Size(390, 129)
+        GroupBox12.TabIndex = 6
+        GroupBox12.TabStop = False
+        GroupBox12.Text = "Selected groups"
+        ' 
+        ' tvGroupsSelected
+        ' 
+        tvGroupsSelected.BackColor = Color.FromArgb(CByte(64), CByte(64), CByte(64))
+        tvGroupsSelected.BorderStyle = BorderStyle.None
+        tvGroupsSelected.CheckBoxes = True
+        tvGroupsSelected.Dock = DockStyle.Fill
+        tvGroupsSelected.ForeColor = SystemColors.ButtonFace
+        tvGroupsSelected.Location = New Point(3, 19)
+        tvGroupsSelected.Name = "tvGroupsSelected"
+        tvGroupsSelected.Size = New Size(384, 107)
+        tvGroupsSelected.TabIndex = 5
+        ' 
         ' gbEffectsStartPosition
         ' 
         gbEffectsStartPosition.Controls.Add(EffectStartPositionBottomRight)
@@ -1650,7 +1669,7 @@ Partial Class FrmMain
         btnApplyCustomEffect.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
         btnApplyCustomEffect.Image = My.Resources.Resources.iconChecked
         btnApplyCustomEffect.ImageAlign = ContentAlignment.MiddleLeft
-        btnApplyCustomEffect.Location = New Point(187, 48)
+        btnApplyCustomEffect.Location = New Point(14, 48)
         btnApplyCustomEffect.Name = "btnApplyCustomEffect"
         btnApplyCustomEffect.Size = New Size(138, 23)
         btnApplyCustomEffect.TabIndex = 4
@@ -1662,42 +1681,19 @@ Partial Class FrmMain
         btnResetEffect.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
         btnResetEffect.Image = My.Resources.Resources.iconCancel
         btnResetEffect.ImageAlign = ContentAlignment.MiddleLeft
-        btnResetEffect.Location = New Point(187, 78)
+        btnResetEffect.Location = New Point(14, 78)
         btnResetEffect.Name = "btnResetEffect"
         btnResetEffect.Size = New Size(138, 23)
         btnResetEffect.TabIndex = 10
         btnResetEffect.Text = "Reset effect"
         btnResetEffect.UseVisualStyleBackColor = True
         ' 
-        ' GroupBox12
-        ' 
-        GroupBox12.Controls.Add(tvGroupsSelected)
-        GroupBox12.ForeColor = SystemColors.ButtonFace
-        GroupBox12.Location = New Point(5, 15)
-        GroupBox12.Name = "GroupBox12"
-        GroupBox12.Size = New Size(167, 149)
-        GroupBox12.TabIndex = 6
-        GroupBox12.TabStop = False
-        GroupBox12.Text = "Selected groups"
-        ' 
-        ' tvGroupsSelected
-        ' 
-        tvGroupsSelected.BackColor = Color.FromArgb(CByte(64), CByte(64), CByte(64))
-        tvGroupsSelected.BorderStyle = BorderStyle.None
-        tvGroupsSelected.CheckBoxes = True
-        tvGroupsSelected.Dock = DockStyle.Fill
-        tvGroupsSelected.ForeColor = SystemColors.ButtonFace
-        tvGroupsSelected.Location = New Point(3, 19)
-        tvGroupsSelected.Name = "tvGroupsSelected"
-        tvGroupsSelected.Size = New Size(161, 127)
-        tvGroupsSelected.TabIndex = 5
-        ' 
         ' btnStopEffectPreview
         ' 
         btnStopEffectPreview.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
         btnStopEffectPreview.Image = My.Resources.Resources.iconPause
         btnStopEffectPreview.ImageAlign = ContentAlignment.MiddleLeft
-        btnStopEffectPreview.Location = New Point(187, 137)
+        btnStopEffectPreview.Location = New Point(14, 137)
         btnStopEffectPreview.Name = "btnStopEffectPreview"
         btnStopEffectPreview.Size = New Size(138, 23)
         btnStopEffectPreview.TabIndex = 8
@@ -1709,7 +1705,7 @@ Partial Class FrmMain
         btnStartEffectPreview.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
         btnStartEffectPreview.Image = My.Resources.Resources.iconPlay
         btnStartEffectPreview.ImageAlign = ContentAlignment.MiddleLeft
-        btnStartEffectPreview.Location = New Point(187, 108)
+        btnStartEffectPreview.Location = New Point(14, 108)
         btnStartEffectPreview.Name = "btnStartEffectPreview"
         btnStartEffectPreview.Size = New Size(138, 23)
         btnStartEffectPreview.TabIndex = 7
@@ -1765,13 +1761,13 @@ Partial Class FrmMain
         ' btnZoom10
         ' 
         btnZoom10.Name = "btnZoom10"
-        btnZoom10.Size = New Size(180, 22)
+        btnZoom10.Size = New Size(140, 22)
         btnZoom10.Text = "10 seconden"
         ' 
         ' btnZoom30
         ' 
         btnZoom30.Name = "btnZoom30"
-        btnZoom30.Size = New Size(180, 22)
+        btnZoom30.Size = New Size(140, 22)
         btnZoom30.Text = "30 seconden"
         ' 
         ' btnZoom60
@@ -1780,14 +1776,65 @@ Partial Class FrmMain
         btnZoom60.CheckOnClick = True
         btnZoom60.CheckState = CheckState.Checked
         btnZoom60.Name = "btnZoom60"
-        btnZoom60.Size = New Size(180, 22)
+        btnZoom60.Size = New Size(140, 22)
         btnZoom60.Text = "60 seconden"
         ' 
         ' btnZoom90
         ' 
         btnZoom90.Name = "btnZoom90"
-        btnZoom90.Size = New Size(180, 22)
+        btnZoom90.Size = New Size(140, 22)
         btnZoom90.Text = "90 seconden"
+        ' 
+        ' ToolStripSeparator6
+        ' 
+        ToolStripSeparator6.Name = "ToolStripSeparator6"
+        ToolStripSeparator6.Size = New Size(6, 25)
+        ' 
+        ' BtnAddTrack
+        ' 
+        BtnAddTrack.DisplayStyle = ToolStripItemDisplayStyle.Image
+        BtnAddTrack.Image = CType(resources.GetObject("BtnAddTrack.Image"), Image)
+        BtnAddTrack.ImageTransparentColor = Color.Magenta
+        BtnAddTrack.Name = "BtnAddTrack"
+        BtnAddTrack.Size = New Size(23, 22)
+        BtnAddTrack.Text = "Add track"
+        ' 
+        ' BtnRemoveTrack
+        ' 
+        BtnRemoveTrack.DisplayStyle = ToolStripItemDisplayStyle.Image
+        BtnRemoveTrack.Image = CType(resources.GetObject("BtnRemoveTrack.Image"), Image)
+        BtnRemoveTrack.ImageTransparentColor = Color.Magenta
+        BtnRemoveTrack.Name = "BtnRemoveTrack"
+        BtnRemoveTrack.Size = New Size(23, 22)
+        BtnRemoveTrack.Text = "Remove track"
+        ' 
+        ' ToolStripSeparator8
+        ' 
+        ToolStripSeparator8.Name = "ToolStripSeparator8"
+        ToolStripSeparator8.Size = New Size(6, 25)
+        ' 
+        ' btnAddShape
+        ' 
+        btnAddShape.DisplayStyle = ToolStripItemDisplayStyle.Image
+        btnAddShape.Image = CType(resources.GetObject("btnAddShape.Image"), Image)
+        btnAddShape.ImageTransparentColor = Color.Magenta
+        btnAddShape.Name = "btnAddShape"
+        btnAddShape.Size = New Size(23, 22)
+        btnAddShape.Text = "AddShape"
+        ' 
+        ' btnRemoveShape
+        ' 
+        btnRemoveShape.DisplayStyle = ToolStripItemDisplayStyle.Image
+        btnRemoveShape.Image = CType(resources.GetObject("btnRemoveShape.Image"), Image)
+        btnRemoveShape.ImageTransparentColor = Color.Magenta
+        btnRemoveShape.Name = "btnRemoveShape"
+        btnRemoveShape.Size = New Size(23, 22)
+        btnRemoveShape.Text = "Remove shape"
+        ' 
+        ' ToolStripSeparator7
+        ' 
+        ToolStripSeparator7.Name = "ToolStripSeparator7"
+        ToolStripSeparator7.Size = New Size(6, 25)
         ' 
         ' TabTables
         ' 
@@ -2973,7 +3020,7 @@ Partial Class FrmMain
         ToolStrip_Form.BackColor = Color.LightGray
         ToolStrip_Form.Dock = DockStyle.Bottom
         ToolStrip_Form.GripStyle = ToolStripGripStyle.Hidden
-        ToolStrip_Form.Items.AddRange(New ToolStripItem() {btnSaveShow, ToolStripLabel1, btnLoad})
+        ToolStrip_Form.Items.AddRange(New ToolStripItem() {btnSaveShow, ToolStripLabel1, btnLoadAll})
         ToolStrip_Form.Location = New Point(0, 957)
         ToolStrip_Form.Name = "ToolStrip_Form"
         ToolStrip_Form.Size = New Size(1844, 25)
@@ -2995,39 +3042,14 @@ Partial Class FrmMain
         ToolStripLabel1.Name = "ToolStripLabel1"
         ToolStripLabel1.Size = New Size(0, 22)
         ' 
-        ' btnLoad
-        ' 
-        btnLoad.DisplayStyle = ToolStripItemDisplayStyle.Text
-        btnLoad.DropDownItems.AddRange(New ToolStripItem() {SegmentsStageToolStripMenuItem, btnLoadEffectPalettes, btnLoadShow, btnLoadAll})
-        btnLoad.Image = CType(resources.GetObject("btnLoad.Image"), Image)
-        btnLoad.ImageTransparentColor = Color.Magenta
-        btnLoad.Name = "btnLoad"
-        btnLoad.Size = New Size(46, 22)
-        btnLoad.Text = "Load"
-        ' 
-        ' SegmentsStageToolStripMenuItem
-        ' 
-        SegmentsStageToolStripMenuItem.Name = "SegmentsStageToolStripMenuItem"
-        SegmentsStageToolStripMenuItem.Size = New Size(166, 22)
-        SegmentsStageToolStripMenuItem.Text = "Segments & Stage"
-        ' 
-        ' btnLoadEffectPalettes
-        ' 
-        btnLoadEffectPalettes.Name = "btnLoadEffectPalettes"
-        btnLoadEffectPalettes.Size = New Size(166, 22)
-        btnLoadEffectPalettes.Text = "Effects && Palettes"
-        ' 
-        ' btnLoadShow
-        ' 
-        btnLoadShow.Name = "btnLoadShow"
-        btnLoadShow.Size = New Size(166, 22)
-        btnLoadShow.Text = "Show"
-        ' 
         ' btnLoadAll
         ' 
+        btnLoadAll.DisplayStyle = ToolStripItemDisplayStyle.Text
+        btnLoadAll.Image = CType(resources.GetObject("btnLoadAll.Image"), Image)
+        btnLoadAll.ImageTransparentColor = Color.Magenta
         btnLoadAll.Name = "btnLoadAll"
-        btnLoadAll.Size = New Size(166, 22)
-        btnLoadAll.Text = "All"
+        btnLoadAll.Size = New Size(37, 22)
+        btnLoadAll.Text = "Load"
         ' 
         ' TimerEverySecond
         ' 
@@ -3095,57 +3117,6 @@ Partial Class FrmMain
         stageTimer.Enabled = True
         stageTimer.Interval = 500
         ' 
-        ' BtnAddTrack
-        ' 
-        BtnAddTrack.DisplayStyle = ToolStripItemDisplayStyle.Image
-        BtnAddTrack.Image = CType(resources.GetObject("BtnAddTrack.Image"), Image)
-        BtnAddTrack.ImageTransparentColor = Color.Magenta
-        BtnAddTrack.Name = "BtnAddTrack"
-        BtnAddTrack.Size = New Size(23, 22)
-        BtnAddTrack.Text = "Add track"
-        ' 
-        ' BtnRemoveTrack
-        ' 
-        BtnRemoveTrack.DisplayStyle = ToolStripItemDisplayStyle.Image
-        BtnRemoveTrack.Image = CType(resources.GetObject("BtnRemoveTrack.Image"), Image)
-        BtnRemoveTrack.ImageTransparentColor = Color.Magenta
-        BtnRemoveTrack.Name = "BtnRemoveTrack"
-        BtnRemoveTrack.Size = New Size(23, 22)
-        BtnRemoveTrack.Text = "Remove track"
-        ' 
-        ' btnAddShape
-        ' 
-        btnAddShape.DisplayStyle = ToolStripItemDisplayStyle.Image
-        btnAddShape.Image = CType(resources.GetObject("btnAddShape.Image"), Image)
-        btnAddShape.ImageTransparentColor = Color.Magenta
-        btnAddShape.Name = "btnAddShape"
-        btnAddShape.Size = New Size(23, 22)
-        btnAddShape.Text = "AddShape"
-        ' 
-        ' btnRemoveShape
-        ' 
-        btnRemoveShape.DisplayStyle = ToolStripItemDisplayStyle.Image
-        btnRemoveShape.Image = CType(resources.GetObject("btnRemoveShape.Image"), Image)
-        btnRemoveShape.ImageTransparentColor = Color.Magenta
-        btnRemoveShape.Name = "btnRemoveShape"
-        btnRemoveShape.Size = New Size(23, 22)
-        btnRemoveShape.Text = "Remove shape"
-        ' 
-        ' ToolStripSeparator6
-        ' 
-        ToolStripSeparator6.Name = "ToolStripSeparator6"
-        ToolStripSeparator6.Size = New Size(6, 25)
-        ' 
-        ' ToolStripSeparator7
-        ' 
-        ToolStripSeparator7.Name = "ToolStripSeparator7"
-        ToolStripSeparator7.Size = New Size(6, 25)
-        ' 
-        ' ToolStripSeparator8
-        ' 
-        ToolStripSeparator8.Name = "ToolStripSeparator8"
-        ToolStripSeparator8.Size = New Size(6, 25)
-        ' 
         ' FrmMain
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -3157,7 +3128,11 @@ Partial Class FrmMain
         Controls.Add(ToolStrip_Form)
         Controls.Add(TabControl)
         Controls.Add(PictureBox1)
+        FormBorderStyle = FormBorderStyle.Fixed3D
+        Icon = CType(resources.GetObject("$this.Icon"), Icon)
+        MaximizeBox = False
         Name = "FrmMain"
+        SizeGripStyle = SizeGripStyle.Hide
         Text = "KLT Show viewer"
         CType(DG_Devices, ComponentModel.ISupportInitialize).EndInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).EndInit()
@@ -3208,11 +3183,11 @@ Partial Class FrmMain
         CType(tbEffectIntensity, ComponentModel.ISupportInitialize).EndInit()
         CType(tbEffectSpeed, ComponentModel.ISupportInitialize).EndInit()
         GroupBox13.ResumeLayout(False)
+        GroupBox12.ResumeLayout(False)
         gbEffectsStartPosition.ResumeLayout(False)
         gbEffectsStartPosition.PerformLayout()
         gbEffectDirection.ResumeLayout(False)
         gbEffectDirection.PerformLayout()
-        GroupBox12.ResumeLayout(False)
         CType(pb_Stage, ComponentModel.ISupportInitialize).EndInit()
         ToolStripSegments.ResumeLayout(False)
         ToolStripSegments.PerformLayout()
@@ -3412,10 +3387,6 @@ Partial Class FrmMain
     Friend WithEvents btnPingDevice As ToolStripButton
     Friend WithEvents btnAddDevice As ToolStripButton
     Friend WithEvents btnDeleteDevice As ToolStripButton
-    Friend WithEvents btnLoad As ToolStripDropDownButton
-    Friend WithEvents btnLoadEffectPalettes As ToolStripMenuItem
-    Friend WithEvents btnLoadShow As ToolStripMenuItem
-    Friend WithEvents btnLoadAll As ToolStripMenuItem
     Friend WithEvents settings_EffectsPath As TextBox
     Friend WithEvents Label11 As Label
     Friend WithEvents settings_PalettesPath As TextBox
@@ -3425,7 +3396,6 @@ Partial Class FrmMain
     Friend WithEvents Label12 As Label
     Friend WithEvents btnTestExistanceEffects As ToolStripButton
     Friend WithEvents TabStage As TabPage
-    Friend WithEvents SegmentsStageToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents btnGenerateStage As ToolStripButton
     Friend WithEvents pb_Stage As PictureBox
     Friend WithEvents ToolStripSegments As ToolStrip
@@ -3481,8 +3451,6 @@ Partial Class FrmMain
     Friend WithEvents btnDevicesRefreshIPs As ToolStripButton
     Friend WithEvents ToolStripSeparator4 As ToolStripSeparator
     Friend WithEvents btnGroupsAutoSplit As ToolStripButton
-    Friend WithEvents GroupBox12 As GroupBox
-    Friend WithEvents tvGroupsSelected As TreeView
     Friend WithEvents tbEffectBrightnessBaseline As TrackBar
     Friend WithEvents Label17 As Label
     Friend WithEvents tbEffectFPS As TrackBar
@@ -3582,5 +3550,8 @@ Partial Class FrmMain
     Friend WithEvents btnAddShape As ToolStripButton
     Friend WithEvents btnRemoveShape As ToolStripButton
     Friend WithEvents ToolStripSeparator7 As ToolStripSeparator
+    Friend WithEvents btnLoadAll As ToolStripButton
+    Friend WithEvents GroupBox12 As GroupBox
+    Friend WithEvents tvGroupsSelected As TreeView
 
 End Class

@@ -17,6 +17,7 @@ Public Module Stage
     Public DrawSelectedMarker As Boolean = False
     Public SelectedLSIndex As Integer = -1
 
+
     ' Structuur om LED-eigenschappen en positie bij te houden
     Public Structure LedInfo
         Public DeviceNaam As String       ' WLED-instance naam
@@ -35,14 +36,16 @@ Public Module Stage
     ''' </summary>
     Public Sub GenereerLedLijst(
             dgDevices As DataGridView,
+            dgGroups As DataGridView,
             pbStage As PictureBox,
             podiumBreedteCm As Integer,
             podiumHoogteinCm As Integer)
 
         pbStage.Refresh()
         Application.DoEvents()
-        LedLijst.Clear()
 
+
+        LedLijst.Clear()
         Dim ledsPerMeter = My.Settings.LedsPerMeter
         Dim stepMm = 1000.0F / ledsPerMeter
 
@@ -58,6 +61,23 @@ Public Module Stage
         Dim axisX = mL
         Dim axisY = mT + drawH
 
+        If (dgGroups.Rows.Count = 0 Or dgDevices.Rows.Count = 0) Then
+            Exit Sub
+        End If
+
+        ' 1) Bouw alvast een tijdelijke lijst van alle groepen
+        Dim groepen As New List(Of (fixture As String, id As Integer, startIdx As Integer, stopIdx As Integer))
+        For Each grRow As DataGridViewRow In FrmMain.DG_Groups.Rows
+            If grRow.IsNewRow Then Continue For
+            Dim fix = CStr(grRow.Cells("colGroupFixture").Value)
+            Dim gid = CInt(grRow.Cells("colGroupId").Value)
+            ' in de grid staan 1-based LED-nummers, maak zero-based
+            Dim startLed = CInt(grRow.Cells("colGroupStartLedNr").Value) - 1
+            Dim stopLed = CInt(grRow.Cells("colGroupStopLedNr").Value) - 1
+            groepen.Add((fix, gid, startLed, stopLed))
+        Next
+
+        ' 2) Loop alle devices en bouw LedLijst
         For Each row As DataGridViewRow In dgDevices.Rows
             If row.IsNewRow Then Continue For
             Dim deviceNaam = CStr(row.Cells("colInstance").Value)
@@ -65,7 +85,8 @@ Public Module Stage
             If String.IsNullOrEmpty(deviceNaam) OrElse String.IsNullOrEmpty(rawLayout) Then Continue For
 
             Dim segments = ValidateLayoutString(rawLayout).Split(","c)
-            Dim currXmm As Double = 0, currYmm As Double = 0
+            Dim currXmm As Double = 0
+            Dim currYmm As Double = 0
             Dim deviceIndex As Integer = 0
 
             For Each seg In segments
@@ -95,16 +116,30 @@ Public Module Stage
                 End Select
 
                 For i = 1 To count
+                    ' pixel-coördinaten
                     Dim xpx = axisX + CInt(Math.Round(currXmm * pxPerMm))
                     Dim ypx = axisY - CInt(Math.Round(currYmm * pxPerMm))
+
+                    ' bepaal groepsIDs voor deze led
+                    Dim gids As New List(Of Integer)
+                    For Each g In groepen
+                        If g.fixture = deviceNaam AndAlso
+                           deviceIndex >= g.startIdx AndAlso deviceIndex <= g.stopIdx Then
+                            gids.Add(g.id)
+                        End If
+                    Next
+
+                    ' voeg toe aan LedLijst
                     LedLijst.Add(New LedInfo With {
                         .DeviceNaam = deviceNaam,
                         .IndexInDevice = deviceIndex,
                         .Xmm = currXmm,
                         .Ymm = currYmm,
                         .Xpx = xpx,
-                        .Ypx = ypx
+                        .Ypx = ypx,
+                        .GroupId = String.Join(",", gids)
                     })
+
                     deviceIndex += 1
                     currXmm += dx
                     currYmm += dy
@@ -141,7 +176,8 @@ Public Module Stage
         Next
 
         ' Maak bitmap en teken
-        Dim w = pbStage.ClientSize.Width, h = pbStage.ClientSize.Height
+        Dim w = pbStage.ClientSize.Width
+        Dim h = pbStage.ClientSize.Height
         Using bmp As New Bitmap(w, h, PixelFormat.Format24bppRgb)
             Using g = Graphics.FromImage(bmp)
                 g.Clear(Color.Black)
@@ -155,6 +191,8 @@ Public Module Stage
             If DrawSelectedMarker AndAlso SelectedLSIndex >= 0 Then
                 Using g = Graphics.FromImage(bmp)
                     g.SmoothingMode = SmoothingMode.AntiAlias
+
+                    ' Lees de positie en kleur uit DG_LightSources
                     Dim lsRow = FrmMain.DG_LightSources.Rows(SelectedLSIndex)
                     Dim xMm = CSng(lsRow.Cells("colLSPositionX").Value)
                     Dim yMm = CSng(lsRow.Cells("colLSPositionY").Value)
@@ -164,28 +202,80 @@ Public Module Stage
 
                     ' Marker-icoon (gevuld 50% in kleur1 + gele outline)
                     Dim c1 = CType(lsRow.Cells("colLSColor1").Tag, Color)
-                    Dim fillBrush As New SolidBrush(Color.FromArgb(128, c1))
-                    Dim outlinePen As New Pen(Color.Yellow, 2)
-                    Dim sizePx = 12
-                    Dim markerRect = New Rectangle(xPx - sizePx \ 2, yPx - sizePx \ 2, sizePx, sizePx)
 
-                    g.FillEllipse(fillBrush, markerRect)
-                    g.DrawEllipse(outlinePen, markerRect)
+                    Using fillBrush As New SolidBrush(Color.FromArgb(128, c1))
+                        ' Gele outline
+                        Using outlinePen As New Pen(Color.Yellow, 2)
 
-                    ' Richtingspijl
-                    Dim dir = CStr(lsRow.Cells("colLSDirection").Value)
-                    Dim arrow = DirectionVector(dir, sizePx)
-                    arrow = New Point(arrow.X + xPx, arrow.Y + yPx)
-                    Using penArr As New Pen(Color.Yellow, 2)
-                        g.DrawLine(penArr, xPx, yPx, arrow.X, arrow.Y)
+                            Dim sizePx = 12
+                            Dim rect = New Rectangle(
+                                xPx - sizePx \ 2,
+                                yPx - sizePx \ 2,
+                                sizePx,
+                                sizePx)
+
+                            ' Een cirkel- of vierkant- of driehoek-fill volgens shape
+                            Select Case CStr(lsRow.Cells("colLSShape").Value)
+                                Case "Circle"
+                                    g.FillEllipse(fillBrush, rect)
+                                    g.DrawEllipse(outlinePen, rect)
+                                Case "Square"
+                                    g.FillRectangle(fillBrush, rect)
+                                    g.DrawRectangle(outlinePen, rect)
+                                Case "Cone"
+                                    ' Bouw driehoek (apex = markerpunt)
+                                    Dim dir = CStr(lsRow.Cells("colLSDirection").Value)
+                                    Dim height = sizePx
+                                    Dim baseW = 2 * height * Math.Tan(Math.PI / 6)
+                                    Dim halfBase = baseW / 2
+                                    ' hoek in radian
+                                    Dim ang As Double = 0
+                                    Select Case dir
+                                        Case "Up" : ang = Math.PI / 2
+                                        Case "Down" : ang = 3 * Math.PI / 2
+                                        Case "Left" : ang = Math.PI
+                                        Case "Right" : ang = 0
+                                        Case "Left-Up" : ang = 3 * Math.PI / 4
+                                        Case "Right-Up" : ang = Math.PI / 4
+                                        Case "Left-Down" : ang = 5 * Math.PI / 4
+                                        Case "Right-Down" : ang = 7 * Math.PI / 4
+                                    End Select
+                                    Dim apex = New PointF(xPx, yPx)
+                                    Dim bx = xPx + CInt(Math.Cos(ang) * height)
+                                    Dim by = yPx - CInt(Math.Sin(ang) * height)
+                                    Dim perp = ang + Math.PI / 2
+                                    Dim p1 = New PointF(
+                                        bx + CInt(halfBase * Math.Cos(perp)),
+                                        by - CInt(halfBase * Math.Sin(perp)))
+                                    Dim p2 = New PointF(
+                                        bx - CInt(halfBase * Math.Cos(perp)),
+                                        by + CInt(halfBase * Math.Sin(perp)))
+                                    Dim tri = {apex, p1, p2}
+                                    g.FillPolygon(fillBrush, tri)
+                                    g.DrawPolygon(outlinePen, tri)
+                            End Select
+                        End Using
+                    End Using
+
+                    ' 5) Altijd een vol gele cirkel van 5px centreren op markerpunt
+                    Using yellowBrush As New SolidBrush(Color.Yellow)
+                        g.FillEllipse(
+                            yellowBrush,
+                            xPx - 2,
+                            yPx - 2,
+                            5,
+                            5)
                     End Using
                 End Using
             End If
 
+            ' 6) Toon bitmap in PictureBox
             pbStage.Image?.Dispose()
             pbStage.Image = CType(bmp.Clone(), Bitmap)
         End Using
+
         pbStage.Invalidate()
+
     End Sub
 
 
@@ -195,7 +285,8 @@ Public Module Stage
     ''' </summary>
     Private Sub DrawAxes(bmp As Bitmap, bwCm As Integer, bhCm As Integer, font As Font)
         Dim wPx = bmp.Width, hPx = bmp.Height
-        Dim mL = MarginLeft, mR = 20, mT = MarginTop, mB = 40
+        Dim mL = MarginLeft, mR = 20
+        Dim mT = MarginTop, mB = 40
         Dim drawW = wPx - mL - mR, drawH = hPx - mT - mB
         Dim bwMm = bwCm * 10, bhMm = bhCm * 10
         Dim pxPerMm = Math.Min(drawW / bwMm, drawH / bhMm)

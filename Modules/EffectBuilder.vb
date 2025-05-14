@@ -12,6 +12,8 @@ Module EffectBuilder
     ' Marker-drag state
     Private markerDragType As String = ""
     Private markerMouseOffset As Integer = 0
+    Private markerIsDragging As Boolean = False
+    Private skipNextClick As Boolean = False
 
     ' Panel en gekoppelde grids
     Private WithEvents _panel As Panel
@@ -48,28 +50,32 @@ Module EffectBuilder
 
     ''' In je EffectBuilder-module:
     Public Sub Initialize(panel As Panel, dgTracks As DataGridView, dgLightSources As DataGridView, Optional zoomSeconds As Integer = 30)
+        _panel = panel
+        _dgTracks = dgTracks
+        _dgLightSources = dgLightSources
+        _zoomSeconds = zoomSeconds
 
         RecalcScale()
 
-        panel.Dock = DockStyle.Fill
-        panel.AutoScroll = True
+        _panel.Dock = DockStyle.Fill
+        _panel.AutoScroll = True
         UpdateScrollRange()
 
         ' Haal oude handlers weg
-        RemoveHandler panel.Paint, AddressOf OnPanelPaint
-        RemoveHandler panel.MouseClick, AddressOf OnPanelClick
-        RemoveHandler panel.MouseDown, AddressOf OnPanelMouseDown
-        RemoveHandler panel.MouseMove, AddressOf OnPanelMouseMove
-        RemoveHandler panel.MouseUp, AddressOf OnPanelMouseUp
-        RemoveHandler panel.Scroll, AddressOf OnPanelScroll
+        RemoveHandler _panel.Paint, AddressOf OnPanelPaint
+        RemoveHandler _panel.MouseClick, AddressOf OnPanelClick
+        RemoveHandler _panel.MouseDown, AddressOf OnPanelMouseDown
+        RemoveHandler _panel.MouseMove, AddressOf OnPanelMouseMove
+        RemoveHandler _panel.MouseUp, AddressOf OnPanelMouseUp
+        RemoveHandler _panel.Scroll, AddressOf OnPanelScroll
 
         ' Voeg de nieuwe handlers toe
-        AddHandler panel.Paint, AddressOf OnPanelPaint
-        AddHandler panel.MouseClick, AddressOf OnPanelClick
-        AddHandler panel.MouseDown, AddressOf OnPanelMouseDown
-        AddHandler panel.MouseMove, AddressOf OnPanelMouseMove
-        AddHandler panel.MouseUp, AddressOf OnPanelMouseUp
-        AddHandler panel.Scroll, AddressOf OnPanelScroll
+        AddHandler _panel.Paint, AddressOf OnPanelPaint
+        AddHandler _panel.MouseClick, AddressOf OnPanelClick
+        AddHandler _panel.MouseDown, AddressOf OnPanelMouseDown
+        AddHandler _panel.MouseMove, AddressOf OnPanelMouseMove
+        AddHandler _panel.MouseUp, AddressOf OnPanelMouseUp
+        AddHandler _panel.Scroll, AddressOf OnPanelScroll
 
         panel.Cursor = Cursors.Default
         panel.Invalidate()
@@ -80,32 +86,31 @@ Module EffectBuilder
     Public Sub OnLightSourceClicked(trackId As Integer, lsRowIndex As Integer)
         On Error Resume Next
 
-        ' 1) Selecteer eerst de juiste track in DG_Tracks
-        For Each row As DataGridViewRow In FrmMain.DG_Tracks.Rows
+        ' 1) Selecteer de juiste track in DG_Tracks
+        For Each row As DataGridViewRow In _dgTracks.Rows
             If Not row.IsNewRow AndAlso CInt(row.Cells("colTrackId").Value) = trackId Then
-                FrmMain.DG_Tracks.ClearSelection()
+                _dgTracks.ClearSelection()
                 row.Selected = True
                 Exit For
             End If
         Next
 
         ' 2) Selecteer de LightSource-rij in DG_LightSources
-        FrmMain.DG_LightSources.ClearSelection()
-        If lsRowIndex >= 0 AndAlso lsRowIndex < FrmMain.DG_LightSources.Rows.Count Then
-            FrmMain.DG_LightSources.Rows(lsRowIndex).Selected = True
+        _dgLightSources.ClearSelection()
+        If lsRowIndex >= 0 AndAlso lsRowIndex < _dgLightSources.Rows.Count Then
+            _dgLightSources.Rows(lsRowIndex).Selected = True
         End If
 
-        ' 3) Bewaar selectie en toon marker op podium
-        Dim SelectedLSRow = lsRowIndex
+        ' 3) Toon marker op het podium
         Stage.SelectedLSIndex = lsRowIndex
         Stage.DrawSelectedMarker = True
         FrmMain.pb_Stage.Invalidate()
 
-        ' 4) Open je detail-formulier
-        Dim lsRow = FrmMain.DG_LightSources.Rows(lsRowIndex)
+        ' 4) Haal de DataGridViewRow op en maak detailForm
+        Dim lsRow = _dgLightSources.Rows(lsRowIndex)
         Dim detailForm As New DetailLightSource()
 
-        ' 5) Vul alle velden in het formulier
+        ' 5) Vul alle velden in detailForm
         With detailForm
             .txtStartMoment.Text = lsRow.Cells("colLSStartMoment").Value.ToString()
             .txtDuration.Text = lsRow.Cells("colLSDuration").Value.ToString()
@@ -116,7 +121,7 @@ Module EffectBuilder
             .cmbDirection.SelectedItem = lsRow.Cells("colLSDirection").Value
             .chkBlend.Checked = CBool(lsRow.Cells("colLSBlend").Value)
 
-            ' Kleuren: ARGB-int omzetten naar Color
+            ' Kleuren
             .btnC1.BackColor = Color.FromArgb(CInt(lsRow.Cells("colLSColor1").Value))
             .btnC2.BackColor = Color.FromArgb(CInt(lsRow.Cells("colLSColor2").Value))
             .btnC3.BackColor = Color.FromArgb(CInt(lsRow.Cells("colLSColor3").Value))
@@ -127,31 +132,48 @@ Module EffectBuilder
             .tbBrightnessBaseline.Value = CInt(lsRow.Cells("colLSBrightnessBaseline").Value)
             .tbBrightnessEffect.Value = CInt(lsRow.Cells("colLSBrightnessEffect").Value)
 
-            ' Groepen: lees huidige ID-lijst uit grid
-            Dim selGroupIds = CStr(lsRow.Cells("colLSGroups").Value) _
-            .Split(","c) _
-            .Select(Function(s) s.Trim()) _
-            .Where(Function(s) s <> "") _
-            .ToList()
+            ' —————————————————————————————————————————————————————————
+            ' 6) Groepen: clone & vink nodes aan
+            ' —————————————————————————————————————————————————————————
 
-            ' Vink in de TreeView die groeps-nodes aan
-            For Each node As TreeNode In FrmMain.tvGroupsSelected.Nodes
-                ' Hier gaan we ervan uit dat node.Tag = GroupId (String of Integer)
-                Dim nodeId = CStr(node.Tag)
-                node.Checked = selGroupIds.Contains(nodeId)
+            ' a) Clone de hoofd-TreeView
+            .tvGroupsSelected.BeginUpdate()
+            .tvGroupsSelected.Nodes.Clear()
+            For Each rootNode As TreeNode In FrmMain.tvGroupsSelected.Nodes
+                .tvGroupsSelected.Nodes.Add(DirectCast(rootNode.Clone(), TreeNode))
+            Next
+            .tvGroupsSelected.EndUpdate()
+
+            ' b) Lees opgeslagen groep-IDs (CSV in colLSGroups)
+            Dim selGroupIds As New List(Of String)
+            If Not IsDBNull(lsRow.Cells("colLSGroups").Value) Then
+                selGroupIds = CStr(lsRow.Cells("colLSGroups").Value) _
+                .Split(","c) _
+                .Select(Function(s) s.Trim()) _
+                .Where(Function(s) s <> "") _
+                .ToList()
+            End If
+
+            ' c) Vink de gekopieerde nodes aan
+            For Each node As TreeNode In .tvGroupsSelected.Nodes
+                If selGroupIds.Contains(node.Tag?.ToString()) Then
+                    node.Checked = True
+                End If
+                ' (Optioneel) vink ook alle kinderen mee
+                CheckAllChildNodes(node, node.Checked)
             Next
         End With
 
-        ' 6) Toon dialog en sla wijzigingen op bij OK
+        ' 7) Toon dialog en sla wijzigingen op bij OK
         If detailForm.ShowDialog() = DialogResult.OK Then
-            ' Schrijf alle waarden terug naar de grid
+            ' a) Update alle LightSource velden
             lsRow.Cells("colLSStartMoment").Value = CDec(detailForm.txtStartMoment.Text)
             lsRow.Cells("colLSDuration").Value = CDec(detailForm.txtDuration.Text)
             lsRow.Cells("colLSPositionX").Value = CDec(detailForm.txtPositionX.Text)
             lsRow.Cells("colLSPositionY").Value = CDec(detailForm.txtPositionY.Text)
             lsRow.Cells("colLSSize").Value = CDec(detailForm.txtSize.Text)
-            lsRow.Cells("colLSShape").Value = CStr(detailForm.cmbShape.SelectedItem)
-            lsRow.Cells("colLSDirection").Value = CStr(detailForm.cmbDirection.SelectedItem)
+            lsRow.Cells("colLSShape").Value = detailForm.cmbShape.SelectedItem.ToString()
+            lsRow.Cells("colLSDirection").Value = detailForm.cmbDirection.SelectedItem.ToString()
             lsRow.Cells("colLSBlend").Value = detailForm.chkBlend.Checked
 
             lsRow.Cells("colLSColor1").Value = detailForm.btnC1.BackColor.ToArgb()
@@ -160,20 +182,34 @@ Module EffectBuilder
             lsRow.Cells("colLSColor4").Value = detailForm.btnC4.BackColor.ToArgb()
             lsRow.Cells("colLSColor5").Value = detailForm.btnC5.BackColor.ToArgb()
 
-            lsRow.Cells("colLSEffect").Value = CStr(detailForm.cmbEffect.SelectedItem)
+            If (detailForm.cmbEffect.SelectedItem Is Nothing) Then
+                lsRow.Cells("colLSEffect").Value = ""
+            Else
+                lsRow.Cells("colLSEffect").Value = detailForm.cmbEffect.SelectedItem.ToString()
+            End If
             lsRow.Cells("colLSBrightnessBaseline").Value = detailForm.tbBrightnessBaseline.Value
-            lsRow.Cells("colLSBrightnessEffect").Value = detailForm.tbBrightnessEffect.Value
+                lsRow.Cells("colLSBrightnessEffect").Value = detailForm.tbBrightnessEffect.Value
 
-            ' Schrijf nieuwe groep-ID-lijst (gekoppeld aan node.Tag) terug
-            Dim newGroupIds As New List(Of String)
-            For Each node As TreeNode In detailForm.tvGroupsSelected.Nodes
-                If node.Checked Then newGroupIds.Add(CStr(node.Tag))
-            Next
-            lsRow.Cells("colLSGroups").Value = String.Join(",", newGroupIds)
+                ' b) Sla nieuwe groep-IDs op
+                Dim newGroupIds As New List(Of String)
+                For Each node As TreeNode In detailForm.tvGroupsSelected.Nodes
+                    If node.Checked Then newGroupIds.Add(node.Tag.ToString())
+                Next
+                lsRow.Cells("colLSGroups").Value = String.Join(",", newGroupIds)
 
-            ' Vernieuw timeline
-            RefreshTimeline()
-        End If
+                ' c) Vernieuw de tijdlijn
+                RefreshTimeline()
+            End If
+    End Sub
+
+    ''' <summary>
+    ''' Helper om alle child-nodes (recursief) dezelfde Checked-status te geven.
+    ''' </summary>
+    Private Sub CheckAllChildNodes(node As TreeNode, isChecked As Boolean)
+        For Each child As TreeNode In node.Nodes
+            child.Checked = isChecked
+            CheckAllChildNodes(child, isChecked)
+        Next
     End Sub
 
     ''' In je FrmMain (of waar je de events afgehandeld hebt):
@@ -390,25 +426,94 @@ Module EffectBuilder
 
     ' Hertekent de hele timeline (tracks, blocks, markers, etc.)
     Private Sub OnPanelPaint(sender As Object, e As PaintEventArgs)
+        On Error Resume Next
 
-        Dim g = e.Graphics
-        g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
-        g.Clear(FrmMain.PanelTracks.BackColor)
+        Dim g As Graphics = e.Graphics
+        g.SmoothingMode = SmoothingMode.AntiAlias
+        g.Clear(_panel.BackColor)
         If _dgTracks Is Nothing OrElse _dgLightSources Is Nothing Then Return
 
-        Dim xOffset = FrmMain.PanelTracks.AutoScrollPosition.X
-        Dim yOffset = FrmMain.PanelTracks.AutoScrollPosition.Y
+        Dim xOffset = _panel.AutoScrollPosition.X
+        Dim yOffset = _panel.AutoScrollPosition.Y
 
+        ' 1) Teken as en zoom-knoppen
         DrawTimelineAxis(g, xOffset, yOffset)
         DrawZoomButtons(g, xOffset, yOffset)
 
-        ' <-- hier je bestaande loop om tracks & light-sources te tekenen -->
+        ' 2) Track- en LightSource-balkjes
+        Dim fontLarge = New Font(SystemFonts.DefaultFont.FontFamily, 12, FontStyle.Bold)
+        Dim fontSmall = New Font(SystemFonts.DefaultFont.FontFamily, 8, FontStyle.Regular)
 
+        For i = 0 To _dgTracks.Rows.Count - 1
+            Dim rowT = _dgTracks.Rows(i)
+            If rowT.IsNewRow Then Continue For
+
+            Dim trackId = CInt(rowT.Cells("colTrackId").Value)
+            Dim trackName = CStr(rowT.Cells("colTrackName").Value)
+            Dim active = If(IsDBNull(rowT.Cells("colTrackActive").Value), False, CBool(rowT.Cells("colTrackActive").Value))
+
+            ' bepaal vertical positie
+            Dim yTop = yOffset + TimelineHeight + TrackMargin + i * (RowHeight + TrackMargin)
+            Dim trackRect = New Rectangle(0, yTop, _panel.ClientSize.Width, RowHeight)
+            Dim bgColor = If(active, Color.Black, Color.FromArgb(30, 30, 30))
+
+            Using bg As New SolidBrush(bgColor)
+                g.FillRectangle(bg, trackRect)
+            End Using
+
+            Dim textBrush = If(active, Brushes.White, Brushes.Gray)
+            g.DrawString(trackId.ToString(), fontLarge, textBrush, 4, yTop + 2)
+            g.DrawString(trackName, fontSmall, textBrush, 4, yTop + 2 + fontLarge.Height)
+
+            ' draw each LightSource in deze track
+            For j = 0 To _dgLightSources.Rows.Count - 1
+                Dim rowLS = _dgLightSources.Rows(j)
+                If rowLS.IsNewRow OrElse CInt(rowLS.Cells("colLSTrackId").Value) <> trackId Then Continue For
+
+                Dim startSec = CSng(rowLS.Cells("colLSStartMoment").Value)
+                Dim durSec = CSng(rowLS.Cells("colLSDuration").Value)
+                Dim col1 = CType(rowLS.Cells("colLSColor1").Tag, Color)
+                Dim col2 = CType(rowLS.Cells("colLSColor2").Tag, Color)
+                Dim shape = CStr(rowLS.Cells("colLSShape").Value)
+
+                Dim xPx = xOffset + LeftMargin + CInt(startSec * _zoomScale)
+                Dim wPx = Math.Max(HandleWidth, CInt(durSec * _zoomScale))
+                Dim lsRect = New Rectangle(xPx, yTop + 4, wPx, RowHeight - 8)
+
+                ' gradient-fill
+                Using br As New LinearGradientBrush(lsRect, col1, col2, LinearGradientMode.Horizontal)
+                    g.FillRectangle(br, lsRect)
+                End Using
+                g.DrawRectangle(Pens.White, lsRect)
+
+                ' resize-grip (rechts) en move-grip (links)
+                Using gripL As New SolidBrush(Color.Green)
+                    g.FillRectangle(gripL, New Rectangle(lsRect.Left, lsRect.Top, HandleWidth, lsRect.Height))
+                End Using
+                Using gripR As New SolidBrush(Color.Red)
+                    g.FillRectangle(gripR, New Rectangle(lsRect.Right - HandleWidth, lsRect.Top, HandleWidth, lsRect.Height))
+                End Using
+
+                ' shape-icoon in het midden van de balk
+                DrawShapeIcon(g, shape, lsRect)
+            Next
+        Next
+
+        fontLarge.Dispose()
+        fontSmall.Dispose()
+
+        ' 3) Preview-markers (start / end / current)
         DrawPreviewMarkers(g, xOffset, yOffset)
     End Sub
 
     ' Handelt klikken op de panel (zoom-knoppen of selectie/markers) af
     Private Sub OnPanelClick(sender As Object, e As MouseEventArgs)
+        ' 1) Als we net een marker gesleept hebben, negeer deze click
+        If skipNextClick Then
+            skipNextClick = False
+            Return
+        End If
+
         Dim pt = e.Location
         If minusRect.Contains(pt) Then
             _maxSeconds = Math.Max(10, _maxSeconds - 10)
@@ -439,30 +544,80 @@ Module EffectBuilder
 
     ' Start van een drag/resize op een LightSource
     Private Sub OnPanelMouseDown(sender As Object, e As MouseEventArgs)
+        Dim xOffset = _panel.AutoScrollPosition.X
+
+        ' Reset slepen-flag
+        markerIsDragging = False
+
+        ' 1) Begin eventueel marker-drag
+        If e.Button = MouseButtons.Left Then
+            Dim mxStart = xOffset + LeftMargin + CInt(PreviewMarkerStart * _zoomScale)
+            Dim mxEnd = xOffset + LeftMargin + CInt(PreviewMarkerEnd * _zoomScale)
+            Dim mxCur = xOffset + LeftMargin + CInt(PreviewMarkerCurrent * _zoomScale)
+            If Math.Abs(e.X - mxStart) <= 5 Then
+                markerDragType = "Start"
+                markerMouseOffset = e.X - mxStart
+                Return
+            ElseIf Math.Abs(e.X - mxEnd) <= 5 Then
+                markerDragType = "End"
+                markerMouseOffset = e.X - mxEnd
+                Return
+            ElseIf Math.Abs(e.X - mxCur) <= 5 Then
+                markerDragType = "Current"
+                markerMouseOffset = e.X - mxCur
+                Return
+            End If
+        End If
+
+        ' 2) Anders LightSource-drag
         HandleMouseEvent(e.X, e.Y, isDown:=True)
     End Sub
 
     ' Tijdens muis-beweging: sleep markers of LightSources
     Private Sub OnPanelMouseMove(sender As Object, e As MouseEventArgs)
-        ' Sleep Preview-marker?
+        ' 1) Marker slepen
         If markerDragType <> "" AndAlso e.Button = MouseButtons.Left Then
-            ' … jouw marker-verplaats-code …
-            RefreshTimeline() : Return
+            markerIsDragging = True
+            Dim xOffset = _panel.AutoScrollPosition.X
+            Dim rawSec = (e.X - markerMouseOffset - xOffset - LeftMargin) / _zoomScale
+            Dim sec = Math.Max(0, Math.Min(_maxSeconds, rawSec))
+            Select Case markerDragType
+                Case "Start" : PreviewMarkerStart = sec
+                Case "End" : PreviewMarkerEnd = sec
+                Case "Current" : PreviewMarkerCurrent = sec
+            End Select
+            _panel.Invalidate()
+            Return
         End If
 
-        ' Sleep LightSource?
+        ' 2) LightSource slepen
         If draggingLSRowIdx >= 0 Then
-            ' … jouw LightSource drag/resize code …
+            Dim dx = e.X - dragStartX
+            Dim dSec = dx / _zoomScale
+            Dim rowLS = _dgLightSources.Rows(draggingLSRowIdx)
+            If dragMode = "Move" Then
+                rowLS.Cells("colLSStartMoment").Value = Math.Max(0, origStartSec + dSec)
+            Else
+                rowLS.Cells("colLSDuration").Value = Math.Max(0.1F, origDurSec + dSec)
+            End If
             _panel.Invalidate()
         End If
     End Sub
-
     ' Einde van drag-operatie
     Private Sub OnPanelMouseUp(sender As Object, e As MouseEventArgs)
+        ' Als we een marker aan het slepen waren, skip de volgende Click
+        If markerDragType <> "" OrElse markerIsDragging Then
+            skipNextClick = True
+        End If
+
+        ' Reset alle drag-flags
         draggingLSRowIdx = -1
         dragMode = ""
         markerDragType = ""
+        markerIsDragging = False
     End Sub
+
+
 
     ' Bij scroll (vertical of horizontal) de timeline verversen
     Private Sub OnPanelScroll(sender As Object, e As ScrollEventArgs)
@@ -525,6 +680,43 @@ Module EffectBuilder
                  Brushes.White,
                  plusRect.Location)
     End Sub
+
+    ''' <summary>
+    ''' Tekent in het midden van een LightSource-balkje een icoon voor de shape.
+    ''' </summary>
+    Private Sub DrawShapeIcon(g As Graphics, shape As String, rect As Rectangle)
+        ' bepaal halve grootte en centrum
+        Dim size = Math.Min(rect.Width, rect.Height) \ 2
+        Dim cx = rect.Left + rect.Width \ 2
+        Dim cy = rect.Top + rect.Height \ 2
+        Dim r = size \ 2
+
+        Select Case shape
+            Case "Circle"
+                ' cirkel
+                g.DrawEllipse(Pens.White, cx - r, cy - r, size, size)
+
+            Case "Square"
+                ' vierkant
+                g.DrawRectangle(Pens.White, cx - r, cy - r, size, size)
+
+            Case "Triangle"
+                ' gelijkzijdige driehoek, punt omhoog
+                Dim pts = {
+                New Point(cx, cy - r),
+                New Point(cx - r, cy + r),
+                New Point(cx + r, cy + r)
+            }
+                g.DrawPolygon(Pens.White, pts)
+
+            Case Else
+                ' fallback: vierkant
+                g.DrawRectangle(Pens.White, cx - r, cy - r, size, size)
+        End Select
+    End Sub
+
+
+
 
     ''' <summary>
     ''' Teken de drie preview-markers: start (groen), end (rood) en current (lichtblauwe pijl).

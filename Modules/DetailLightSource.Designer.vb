@@ -55,6 +55,7 @@ Partial Class DetailLightSource
         tbBrightnessBaseline = New TrackBar()
         tvGroupsSelected = New TreeView()
         Label14 = New Label()
+        btnCancel = New Button()
         GroupBox1.SuspendLayout()
         CType(tbBrightnessEffect, ComponentModel.ISupportInitialize).BeginInit()
         CType(tbBrightnessBaseline, ComponentModel.ISupportInitialize).BeginInit()
@@ -62,13 +63,14 @@ Partial Class DetailLightSource
         ' 
         ' btnOK
         ' 
+        btnOK.BackColor = Color.DarkGreen
         btnOK.ForeColor = Color.Black
-        btnOK.Location = New Point(349, 367)
+        btnOK.Location = New Point(322, 367)
         btnOK.Name = "btnOK"
-        btnOK.Size = New Size(75, 23)
+        btnOK.Size = New Size(102, 23)
         btnOK.TabIndex = 0
         btnOK.Text = "OK"
-        btnOK.UseVisualStyleBackColor = True
+        btnOK.UseVisualStyleBackColor = False
         ' 
         ' txtStartMoment
         ' 
@@ -329,6 +331,9 @@ Partial Class DetailLightSource
         ' tvGroupsSelected
         ' 
         tvGroupsSelected.BackColor = Color.DimGray
+        tvGroupsSelected.BorderStyle = BorderStyle.None
+        tvGroupsSelected.CheckBoxes = True
+        tvGroupsSelected.ForeColor = SystemColors.Menu
         tvGroupsSelected.Location = New Point(241, 32)
         tvGroupsSelected.Name = "tvGroupsSelected"
         tvGroupsSelected.Size = New Size(181, 329)
@@ -343,12 +348,27 @@ Partial Class DetailLightSource
         Label14.TabIndex = 30
         Label14.Text = "Apply to"
         ' 
+        ' btnCancel
+        ' 
+        btnCancel.BackColor = Color.DarkRed
+        btnCancel.ForeColor = Color.Black
+        btnCancel.Location = New Point(241, 367)
+        btnCancel.Name = "btnCancel"
+        btnCancel.Size = New Size(75, 23)
+        btnCancel.TabIndex = 31
+        btnCancel.Text = "Cancel"
+        btnCancel.UseVisualStyleBackColor = False
+        ' 
         ' DetailLightSource
         ' 
+        AcceptButton = btnOK
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.Black
+        CancelButton = btnCancel
         ClientSize = New Size(431, 398)
+        ControlBox = False
+        Controls.Add(btnCancel)
         Controls.Add(Label14)
         Controls.Add(tvGroupsSelected)
         Controls.Add(GroupBox1)
@@ -379,6 +399,7 @@ Partial Class DetailLightSource
         Controls.Add(txtStartMoment)
         Controls.Add(btnOK)
         ForeColor = Color.White
+        FormBorderStyle = FormBorderStyle.SizableToolWindow
         MaximizeBox = False
         MdiChildrenMinimizedAnchorBottom = False
         MinimizeBox = False
@@ -387,6 +408,7 @@ Partial Class DetailLightSource
         ShowIcon = False
         ShowInTaskbar = False
         SizeGripStyle = SizeGripStyle.Hide
+        StartPosition = FormStartPosition.CenterScreen
         Text = "Details"
         GroupBox1.ResumeLayout(False)
         GroupBox1.PerformLayout()
@@ -429,4 +451,5 @@ Partial Class DetailLightSource
     Friend WithEvents tbBrightnessBaseline As TrackBar
     Friend WithEvents tvGroupsSelected As TreeView
     Friend WithEvents Label14 As Label
+    Friend WithEvents btnCancel As Button
 End Class

@@ -273,7 +273,7 @@ Module SaveLoad
         CheckWLEDOnlineStatus(FrmMain.DG_Devices)
         PopulateFixtureDropdown_InGroups(FrmMain.DG_Devices, FrmMain.DG_Groups)
         PopulateTreeView(FrmMain.DG_Groups, FrmMain.tvGroupsSelected)
-        GenereerLedLijst(FrmMain.DG_Devices, FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+        GenereerLedLijst(FrmMain.DG_Devices, FrmMain.DG_Groups, FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
         TekenPodium(FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
 
         FrmMain.stageTimer.Enabled = True
