@@ -25,7 +25,7 @@
             <colAllFrames></colAllFrames>
             <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
-            <colGroupLayout>Y0,X0,R3</colGroupLayout>
+            <colGroupLayout>Y100,X500,U3</colGroupLayout>
         </Row>
         <Row>
             <colGroupId>2</colGroupId>
@@ -38,13 +38,13 @@
             <colAllFrames></colAllFrames>
             <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
-            <colGroupLayout>Y0,X0,R3</colGroupLayout>
+            <colGroupLayout>Y100,X500,U3</colGroupLayout>
         </Row>
         <Row>
             <colGroupId>3</colGroupId>
             <colGroupParentId>0</colGroupParentId>
-            <colGroupName>WLED56</colGroupName>
-            <colGroupFixture>WLED56</colGroupFixture>
+            <colGroupName>WLED-46</colGroupName>
+            <colGroupFixture>WLED-46</colGroupFixture>
             <colGroupStartLedNr>1</colGroupStartLedNr>
             <colGroupStopLedNr>428</colGroupStopLedNr>
             <colGroupOrder>0</colGroupOrder>
@@ -56,8 +56,8 @@
         <Row>
             <colGroupId>4</colGroupId>
             <colGroupParentId>3</colGroupParentId>
-            <colGroupName>WLED56-Group1</colGroupName>
-            <colGroupFixture>WLED56</colGroupFixture>
+            <colGroupName>WLED-46-Group1</colGroupName>
+            <colGroupFixture>WLED-46</colGroupFixture>
             <colGroupStartLedNr>1</colGroupStartLedNr>
             <colGroupStopLedNr>140</colGroupStopLedNr>
             <colGroupOrder>1</colGroupOrder>
@@ -69,8 +69,8 @@
         <Row>
             <colGroupId>5</colGroupId>
             <colGroupParentId>3</colGroupParentId>
-            <colGroupName>WLED56-Group2</colGroupName>
-            <colGroupFixture>WLED56</colGroupFixture>
+            <colGroupName>WLED-46-Group2</colGroupName>
+            <colGroupFixture>WLED-46</colGroupFixture>
             <colGroupStartLedNr>141</colGroupStartLedNr>
             <colGroupStopLedNr>284</colGroupStopLedNr>
             <colGroupOrder>2</colGroupOrder>
@@ -82,8 +82,8 @@
         <Row>
             <colGroupId>6</colGroupId>
             <colGroupParentId>3</colGroupParentId>
-            <colGroupName>WLED56-Group3</colGroupName>
-            <colGroupFixture>WLED56</colGroupFixture>
+            <colGroupName>WLED-46-Group3</colGroupName>
+            <colGroupFixture>WLED-46</colGroupFixture>
             <colGroupStartLedNr>285</colGroupStartLedNr>
             <colGroupStopLedNr>428</colGroupStopLedNr>
             <colGroupOrder>3</colGroupOrder>
@@ -95,8 +95,8 @@
         <Row>
             <colGroupId>7</colGroupId>
             <colGroupParentId>0</colGroupParentId>
-            <colGroupName>WLED-44</colGroupName>
-            <colGroupFixture>WLED-44</colGroupFixture>
+            <colGroupName>WLED-47</colGroupName>
+            <colGroupFixture>WLED-47</colGroupFixture>
             <colGroupStartLedNr>1</colGroupStartLedNr>
             <colGroupStopLedNr>428</colGroupStopLedNr>
             <colGroupOrder>0</colGroupOrder>
@@ -108,8 +108,8 @@
         <Row>
             <colGroupId>8</colGroupId>
             <colGroupParentId>7</colGroupParentId>
-            <colGroupName>WLED-44-Group1</colGroupName>
-            <colGroupFixture>WLED-44</colGroupFixture>
+            <colGroupName>WLED-47-Group1</colGroupName>
+            <colGroupFixture>WLED-47</colGroupFixture>
             <colGroupStartLedNr>1</colGroupStartLedNr>
             <colGroupStopLedNr>140</colGroupStopLedNr>
             <colGroupOrder>1</colGroupOrder>
@@ -121,8 +121,8 @@
         <Row>
             <colGroupId>9</colGroupId>
             <colGroupParentId>7</colGroupParentId>
-            <colGroupName>WLED-44-Group2</colGroupName>
-            <colGroupFixture>WLED-44</colGroupFixture>
+            <colGroupName>WLED-47-Group2</colGroupName>
+            <colGroupFixture>WLED-47</colGroupFixture>
             <colGroupStartLedNr>141</colGroupStartLedNr>
             <colGroupStopLedNr>284</colGroupStopLedNr>
             <colGroupOrder>2</colGroupOrder>
@@ -134,8 +134,8 @@
         <Row>
             <colGroupId>10</colGroupId>
             <colGroupParentId>7</colGroupParentId>
-            <colGroupName>WLED-44-Group3</colGroupName>
-            <colGroupFixture>WLED-44</colGroupFixture>
+            <colGroupName>WLED-47-Group3</colGroupName>
+            <colGroupFixture>WLED-47</colGroupFixture>
             <colGroupStartLedNr>285</colGroupStartLedNr>
             <colGroupStopLedNr>428</colGroupStopLedNr>
             <colGroupOrder>3</colGroupOrder>

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DataGridData>
+    <Structure>
+        <Column Name="colTrackId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colTrackName" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="Fill" />
+        <Column Name="colTrackActive" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
+    </Structure>
+    <Data>
+        <Row>
+            <colTrackId>1</colTrackId>
+            <colTrackName>Track 1</colTrackName>
+            <colTrackActive></colTrackActive>
+        </Row>
+        <Row>
+            <colTrackId>2</colTrackId>
+            <colTrackName>Track 2</colTrackName>
+            <colTrackActive></colTrackActive>
+        </Row>
+    </Data>
+</DataGridData>

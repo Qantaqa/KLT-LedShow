@@ -229,98 +229,46 @@ Module SaveLoad
         SaveDataGridViewToXml(FrmMain.DG_Paletten, Folder + "\Paletten.xml")
         SaveDataGridViewToXml(FrmMain.DG_Show, Folder + "\Show.xml")
 
+        SaveDataGridViewToXml(FrmMain.DG_LightSources, Folder + "\Lights.xml")
+        SaveDataGridViewToXml(FrmMain.DG_MyEffects, Folder + "\MyEffects.xml")
+        SaveDataGridViewToXml(FrmMain.DG_MyEffectsFrames, Folder + "\Frames.xml")
+        SaveDataGridViewToXml(FrmMain.DG_Tracks, Folder + "\Tracks.xml")
+
         MessageBox.Show("All data has been saved.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
     End Sub
 
     Public Sub LoadAll()
         FrmMain.stageTimer.Enabled = False
-        Dim progressPopUpForm As Form
-        Dim progressBar As ProgressBar
-        Dim progressText As Label
 
         Dim Folder As String = My.Settings.DatabaseFolder
 
         ' Maak een nieuw formulier voor de voortgang te kunnen tonen
-        progressPopUpForm = New Form()
-        progressPopUpForm.Text = "Loading..."
-        progressPopUpForm.StartPosition = FormStartPosition.CenterScreen
-        progressPopUpForm.Size = New Size(300, 150)
-        progressPopUpForm.ControlBox = False
-        progressBar = New ProgressBar()
-        progressBar.Location = New Point(10, 10)
-        progressBar.Size = New Size(250, 20)
-        progressBar.Maximum = 254
-        progressBar.MarqueeAnimationSpeed = 100
-        progressBar.Minimum = 0
-        progressBar.Value = 0
-        progressBar.Step = 1
-        progressBar.Maximum = 15
-        progressBar.Style = ProgressBarStyle.Blocks
-        progressPopUpForm.Controls.Add(progressBar)
-
-        progressText = New Label()
-        progressText.Location = New Point(10, 40)
-        progressText.Size = New Size(280, 20)
-
-        progressPopUpForm.Controls.Add(progressText)
-
-        progressPopUpForm.Show()
-
-
-        progressBar.Value = 1
-        progressText.Text = "Loading WLED devices..."
         LoadJSonToWLEDDevices(wledDevices, Folder + "\Devices.json")
 
-        progressText.Text = "Loading devices..."
-        progressBar.Value = progressBar.Value + 1
         LoadXmlToDataGridView(FrmMain.DG_Devices, Folder + "\Devices.xml", False)
-
-        progressText.Text = "Loading groups..."
-        progressBar.Value = progressBar.Value + 1
         LoadXmlToDataGridView(FrmMain.DG_Groups, Folder + "\Groups.xml", False)
-
-        progressText.Text = "Loading effects..."
-        progressBar.Value = progressBar.Value + 1
         LoadXmlToDataGridView(FrmMain.DG_Effecten, Folder + "\Effects.xml", True)
-
-        progressText.Text = "Loading palettes..."
-        progressBar.Value = progressBar.Value + 1
         LoadXmlToDataGridView(FrmMain.DG_Paletten, Folder + "\Paletten.xml", True)
-
-        progressText.Text = "Loading show..."
-        progressBar.Value = progressBar.Value + 1
         LoadXmlToDataGridView(FrmMain.DG_Show, Folder + "\Show.xml", False)
 
+        LoadXmlToDataGridView(FrmMain.DG_Tracks, Folder + "\Tracks.xml", False)
+        LoadXmlToDataGridView(FrmMain.DG_MyEffects, Folder + "\MyEffects.xml", False)
+        LoadXmlToDataGridView(FrmMain.DG_MyEffectsFrames, Folder + "\Frames.xml", False)
+        LoadXmlToDataGridView(FrmMain.DG_LightSources, Folder + "\Lights.xml", False)
 
 
-        progressText.Text = "Update fixure pulldown..."
-        progressBar.Value = progressBar.Value + 1
         UpdateFixuresPulldown_ForShow(FrmMain.DG_Show)
-
-
-
 
 
         If (FrmMain.DG_Show.RowCount > 0) Then
             FrmMain.DG_Show.CurrentCell = FrmMain.DG_Show.Rows(0).Cells(0)
         End If
-        progressText.Text = "Update effecten in show..."
-        progressBar.Value = progressBar.Value + 1
         UpdateEffectenPulldown_ForCurrentFixure(FrmMain.DG_Show)
-
-        progressText.Text = "Update palettes in show..."
-        progressBar.Value = progressBar.Value + 1
         UpdatePalettePulldown_ForCurrentFixure(FrmMain.DG_Show)
 
 
-        progressText.Text = "Drawing palettes..."
-        progressBar.Value = progressBar.Value + 1
         DG_Palette_LoadImages(FrmMain.DG_Paletten)
-
-        progressText.Text = "Finishing up..."
-        progressBar.Value = 15
-        progressPopUpForm.Close()
 
         CheckWLEDOnlineStatus(FrmMain.DG_Devices)
         PopulateFixtureDropdown_InGroups(FrmMain.DG_Devices, FrmMain.DG_Groups)

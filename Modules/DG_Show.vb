@@ -34,9 +34,9 @@ Module DG_Show
 
 
     ' Deze variabelen zijn nu op moduleniveau gedefinieerd
-    Public Event AddNewRowBeforeClicked(ByVal sender As System.Object, ByVal e As System.EventArgs)
-    Public Event AddNewRowAfterClicked(ByVal sender As System.Object, ByVal e As System.EventArgs)
-    Public Event RemoveCurrentRowClicked(ByVal sender As System.Object, ByVal e As System.EventArgs)
+    'Public Event AddNewRowBeforeClicked(ByVal sender As System.Object, ByVal e As System.EventArgs)
+    'Public Event AddNewRowAfterClicked(ByVal sender As System.Object, ByVal e As System.EventArgs)
+    'Public Event RemoveCurrentRowClicked(ByVal sender As System.Object, ByVal e As System.EventArgs)
 
 
 

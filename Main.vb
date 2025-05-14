@@ -9,6 +9,7 @@ Public Class FrmMain
     Public CurrentGroupId As Integer = 0
     Public CurrentDeviceId As Integer = 0
     Private laatsteDDPHash As Integer = 0
+    Public ZoomFactor As Integer = 60
 
 
     ' Importeer de functie voor het ophalen van Frame delays
@@ -106,7 +107,14 @@ Public Class FrmMain
             CurrentGroupId = -1
             CurrentDeviceId = -1
 
-            'StartDDPStream()
+
+            Dim ZoomFactor As Double = 60
+
+            EffectBuilder.Initialize(PanelTracks, DG_Tracks, DG_LightSources, ZoomFactor)
+            AddHandler EffectBuilder.TrackClicked, AddressOf EffectBuilder.OnTrackClicked
+            AddHandler EffectBuilder.LightSourceClicked, AddressOf EffectBuilder.OnLightSourceClicked
+
+
 
         Catch ex As Exception
             MessageBox.Show($"Fout tijdens laden van form: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -578,5 +586,131 @@ Public Class FrmMain
     Private Sub btnResetEffect_Click(sender As Object, e As EventArgs) Handles btnResetEffect.Click
         ResetGroupsEffects()
         ClearGroupsToBlack()
+    End Sub
+
+    Private Sub btnTablesAddRowBefore_Click(sender As Object, e As EventArgs) Handles btnTablesAddRowBefore.Click
+        Dim currentRowIndex As Integer = 0
+        Dim ThisDGV As DataGridView
+
+        Select Case TabControlTables.SelectedIndex
+            Case 0
+                ThisDGV = DG_Tracks
+            Case 1
+                ThisDGV = DG_MyEffects
+            Case 2
+                ThisDGV = DG_LightSources
+            Case 3
+                ThisDGV = DG_MyEffectsFrames
+            Case Else
+                Return
+        End Select
+
+        If ThisDGV.Rows.Count > 0 Then
+            currentRowIndex = ThisDGV.CurrentCell.RowIndex
+        End If
+        ThisDGV.Rows.Insert(currentRowIndex, 1) 'Voegt een nieuwe rij in op de gespecificeerde index
+
+        'Stel de focus op de nieuwe rij
+        ThisDGV.CurrentCell = ThisDGV.Rows(currentRowIndex).Cells(0)
+    End Sub
+
+    Private Sub btnTablesAddRowAfter_Click(sender As Object, e As EventArgs) Handles btnTablesAddRowAfter.Click
+        Dim currentRowIndex As Integer = 0
+        Dim ThisDGV As DataGridView
+
+        Select Case TabControlTables.SelectedIndex
+            Case 0
+                ThisDGV = DG_Tracks
+            Case 1
+                ThisDGV = DG_MyEffects
+            Case 2
+                ThisDGV = DG_LightSources
+            Case 3
+                ThisDGV = DG_MyEffectsFrames
+            Case Else
+                Return
+        End Select
+
+        If ThisDGV.Rows.Count > 0 Then
+            currentRowIndex = ThisDGV.CurrentCell.RowIndex
+            ThisDGV.Rows.Insert(currentRowIndex + 1, 1) 'Voegt een nieuwe rij in na de huidige rij
+        Else
+            ThisDGV.Rows.Insert(0, 1) 'Voegt een nieuwe rij in op de gespecificeerde index
+            currentRowIndex = -1
+        End If
+
+
+        'Stel de focus op de nieuwe rij
+        ThisDGV.CurrentCell = ThisDGV.Rows(currentRowIndex + 1).Cells(0)
+    End Sub
+
+    Private Sub btnTablesDeleteSingleRow_Click(sender As Object, e As EventArgs) Handles btnTablesDeleteSingleRow.Click
+        Dim ThisDGV As DataGridView
+
+        Select Case TabControlTables.SelectedIndex
+            Case 0
+                ThisDGV = DG_Tracks
+            Case 1
+                ThisDGV = DG_MyEffects
+            Case 2
+                ThisDGV = DG_LightSources
+            Case 3
+                ThisDGV = DG_MyEffectsFrames
+            Case Else
+                Return
+        End Select
+
+
+        If (ThisDGV.RowCount > 0) Then
+            'Voeg hier de logica toe om de huidige rij te verwijderen
+            Dim currentRowIndex As Integer = ThisDGV.CurrentCell.RowIndex
+            If ThisDGV.Rows.Count > 0 Then
+                ThisDGV.Rows.RemoveAt(currentRowIndex)
+            End If
+        End If
+    End Sub
+
+    Private Sub btnZoom10_Click(sender As Object, e As EventArgs) Handles btnZoom10.Click
+        ZoomFactor = 10
+        btnZoom10.Checked = True
+        btnZoom30.Checked = False
+        btnZoom60.Checked = False
+        btnZoom90.Checked = False
+
+        EffectBuilder.SetZoom(ZoomFactor)
+    End Sub
+
+    Private Sub btnZoom30_Click(sender As Object, e As EventArgs) Handles btnZoom30.Click
+        ZoomFactor = 30
+        btnZoom10.Checked = False
+        btnZoom30.Checked = True
+        btnZoom60.Checked = False
+        btnZoom90.Checked = False
+
+        EffectBuilder.SetZoom(ZoomFactor)
+    End Sub
+
+    Private Sub btnZoom60_Click(sender As Object, e As EventArgs) Handles btnZoom60.Click
+        ZoomFactor = 60
+        btnZoom10.Checked = False
+        btnZoom30.Checked = False
+        btnZoom60.Checked = True
+        btnZoom90.Checked = False
+
+        EffectBuilder.SetZoom(ZoomFactor)
+    End Sub
+
+    Private Sub btnZoom90_Click(sender As Object, e As EventArgs) Handles btnZoom90.Click
+        ZoomFactor = 90
+        btnZoom10.Checked = False
+        btnZoom30.Checked = False
+        btnZoom60.Checked = False
+        btnZoom90.Checked = True
+
+        EffectBuilder.SetZoom(ZoomFactor)
+    End Sub
+
+    Private Sub DG_Tracks_RowValidated(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Tracks.RowValidated
+        EffectBuilder.RefreshTimeline()
     End Sub
 End Class

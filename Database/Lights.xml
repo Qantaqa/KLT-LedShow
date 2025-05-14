@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DataGridData>
+    <Structure>
+        <Column Name="colLSTrackId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSStartMoment" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSDuration" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSPositionX" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSPositionY" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSSize" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSShape" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSBlend" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSDirection" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSColor1" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSColor2" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSColor3" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSColor4" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSColor5" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSBrightnessBaseline" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSBrightnessEffect" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSEffect" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSGroups" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+    </Structure>
+    <Data>
+        <Row>
+            <colLSTrackId>1</colLSTrackId>
+            <colLSStartMoment>10</colLSStartMoment>
+            <colLSDuration>5</colLSDuration>
+            <colLSPositionX>100</colLSPositionX>
+            <colLSPositionY>100</colLSPositionY>
+            <colLSSize>50</colLSSize>
+            <colLSShape>Circle</colLSShape>
+            <colLSBlend>false</colLSBlend>
+            <colLSDirection>UP</colLSDirection>
+            <colLSColor1></colLSColor1>
+            <colLSColor2></colLSColor2>
+            <colLSColor3></colLSColor3>
+            <colLSColor4></colLSColor4>
+            <colLSColor5></colLSColor5>
+            <colLSBrightnessBaseline></colLSBrightnessBaseline>
+            <colLSBrightnessEffect></colLSBrightnessEffect>
+            <colLSEffect></colLSEffect>
+            <colLSGroups></colLSGroups>
+        </Row>
+        <Row>
+            <colLSTrackId>2</colLSTrackId>
+            <colLSStartMoment>20</colLSStartMoment>
+            <colLSDuration>5</colLSDuration>
+            <colLSPositionX>900</colLSPositionX>
+            <colLSPositionY>100</colLSPositionY>
+            <colLSSize>50</colLSSize>
+            <colLSShape>Circle</colLSShape>
+            <colLSBlend>false</colLSBlend>
+            <colLSDirection>UP</colLSDirection>
+            <colLSColor1></colLSColor1>
+            <colLSColor2></colLSColor2>
+            <colLSColor3></colLSColor3>
+            <colLSColor4></colLSColor4>
+            <colLSColor5></colLSColor5>
+            <colLSBrightnessBaseline></colLSBrightnessBaseline>
+            <colLSBrightnessEffect></colLSBrightnessEffect>
+            <colLSEffect></colLSEffect>
+            <colLSGroups></colLSGroups>
+        </Row>
+    </Data>
+</DataGridData>
