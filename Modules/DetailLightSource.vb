@@ -1,9 +1,45 @@
 ﻿Public Class DetailLightSource
+    Public Property SelectedGroupIds As List(Of String)
 
     ' OK-button sluit het formulier met DialogResult.OK
     Private Sub btnOK_Click(sender As Object, e As EventArgs) Handles btnOK.Click
+        SelectedGroupIds = New List(Of String)
+        For Each node As TreeNode In tvGroupsSelected.Nodes
+            CollectCheckedNodes(node, SelectedGroupIds)
+        Next
+
         Me.DialogResult = DialogResult.OK
         Me.Close()
+    End Sub
+
+    Public Sub CheckAndMarkNodes(nodes As TreeNodeCollection, selGroupIds As List(Of String))
+        For Each node As TreeNode In nodes
+            If node.Tag IsNot Nothing AndAlso selGroupIds.Contains(node.Tag.ToString()) Then
+                node.Checked = True
+            End If
+            ' recursief in alle subnodes
+            If node.Nodes.Count > 0 Then
+                CheckAndMarkNodes(node.Nodes, selGroupIds)
+            End If
+        Next
+    End Sub
+
+
+
+
+
+
+
+
+
+
+    Private Sub CollectCheckedNodes(node As TreeNode, list As List(Of String))
+        If node.Checked Then
+            list.Add(node.Tag?.ToString())
+        End If
+        For Each child As TreeNode In node.Nodes
+            CollectCheckedNodes(child, list)
+        Next
     End Sub
 
     Private Sub btnCancel_Click(sender As Object, e As EventArgs) Handles btnCancel.Click
@@ -50,5 +86,7 @@
         End Using
     End Sub
 
-
+    Private Sub DetailLightSource_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+        tvGroupsSelected.ExpandAll()
+    End Sub
 End Class

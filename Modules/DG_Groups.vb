@@ -186,7 +186,7 @@ Module DG_Groups
     '*********************************************************************************************
     Public Sub PopulateTreeView(ByVal dgGroups As DataGridView, ByVal tvGroups As TreeView)
 
-
+        tvGroups.BeginUpdate()
         tvGroups.Nodes.Clear()
         ' Dictionary om groupId naar TreeNode te mappen
         Dim nodeMap As New Dictionary(Of Integer, TreeNode)()
@@ -195,9 +195,13 @@ Module DG_Groups
             Dim id As Integer = Convert.ToInt32(row.Cells("colGroupId").Value)
             Dim parentId As Integer = Convert.ToInt32(row.Cells("colGroupParentId").Value)
             Dim name As String = Convert.ToString(row.Cells("colGroupName").Value)
-            ' Maak node
-            Dim node As New TreeNode(name) With {.Name = id.ToString()}
+
+            Dim node As New TreeNode(name) With {
+                    .Name = id.ToString(),
+                    .Tag = id
+            }
             nodeMap(id) = node
+
             ' Voeg toe aan boom
             If parentId = 0 Then
                 tvGroups.Nodes.Add(node)
@@ -206,6 +210,7 @@ Module DG_Groups
             End If
         Next
         tvGroups.ExpandAll()
+        tvGroups.EndUpdate()
     End Sub
 
 

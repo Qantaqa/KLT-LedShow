@@ -5,5 +5,21 @@
         <Column Name="colMF_FixtureID" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
         <Column Name="colMF_Frames" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="Fill" />
     </Structure>
-    <Data />
+    <Data>
+        <Row>
+            <colMF_MEID>1</colMF_MEID>
+            <colMF_FixtureID>WLED-23</colMF_FixtureID>
+            <colMF_Frames>System.Collections.Generic.List`1[System.Byte[]]</colMF_Frames>
+        </Row>
+        <Row>
+            <colMF_MEID>1</colMF_MEID>
+            <colMF_FixtureID>WLED-46</colMF_FixtureID>
+            <colMF_Frames>System.Collections.Generic.List`1[System.Byte[]]</colMF_Frames>
+        </Row>
+        <Row>
+            <colMF_MEID>1</colMF_MEID>
+            <colMF_FixtureID>WLED-47</colMF_FixtureID>
+            <colMF_Frames>System.Collections.Generic.List`1[System.Byte[]]</colMF_Frames>
+        </Row>
+    </Data>
 </DataGridData>

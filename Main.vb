@@ -113,6 +113,8 @@ Public Class FrmMain
             EffectBuilder.Initialize(PanelTracks, DG_Tracks, DG_LightSources, ZoomFactor)
             AddHandler EffectBuilder.TrackClicked, AddressOf EffectBuilder.OnTrackClicked
             AddHandler EffectBuilder.LightSourceClicked, AddressOf EffectBuilder.OnLightSourceClicked
+            AddHandler pb_Stage.MouseClick, AddressOf Stage.OnStageClick
+
 
             SetZoom(ZoomFactor)
 
@@ -436,7 +438,14 @@ Public Class FrmMain
     End Sub
 
     Private Sub btnApplyCustomEffect_Click(sender As Object, e As EventArgs) Handles btnApplyCustomEffect.Click
-        HandleApplyCustomEffectClick()
+        If TabStageControl.SelectedTab.TabIndex = 1 Then
+            ' Effect builder
+            EffectDesigner_Compile()
+        Else
+            ' Custom effects.
+            HandleApplyCustomEffectClick()
+        End If
+
     End Sub
 
 

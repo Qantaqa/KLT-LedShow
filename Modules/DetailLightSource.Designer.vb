@@ -56,6 +56,7 @@ Partial Class DetailLightSource
         tvGroupsSelected = New TreeView()
         Label14 = New Label()
         btnCancel = New Button()
+        Label15 = New Label()
         GroupBox1.SuspendLayout()
         CType(tbBrightnessEffect, ComponentModel.ISupportInitialize).BeginInit()
         CType(tbBrightnessBaseline, ComponentModel.ISupportInitialize).BeginInit()
@@ -109,9 +110,9 @@ Partial Class DetailLightSource
         Label3.AutoSize = True
         Label3.Location = New Point(12, 64)
         Label3.Name = "Label3"
-        Label3.Size = New Size(50, 15)
+        Label3.Size = New Size(75, 15)
         Label3.TabIndex = 6
-        Label3.Text = "Position"
+        Label3.Text = "Position (x,y)"
         ' 
         ' txtPositionX
         ' 
@@ -122,9 +123,9 @@ Partial Class DetailLightSource
         ' 
         ' txtPositionY
         ' 
-        txtPositionY.Location = New Point(148, 61)
+        txtPositionY.Location = New Point(147, 61)
         txtPositionY.Name = "txtPositionY"
-        txtPositionY.Size = New Size(37, 23)
+        txtPositionY.Size = New Size(38, 23)
         txtPositionY.TabIndex = 7
         ' 
         ' Label4
@@ -148,9 +149,9 @@ Partial Class DetailLightSource
         Label5.AutoSize = True
         Label5.Location = New Point(191, 91)
         Label5.Name = "Label5"
-        Label5.Size = New Size(19, 15)
+        Label5.Size = New Size(24, 15)
         Label5.TabIndex = 10
-        Label5.Text = "px"
+        Label5.Text = "cm"
         ' 
         ' Label6
         ' 
@@ -336,7 +337,7 @@ Partial Class DetailLightSource
         tvGroupsSelected.ForeColor = SystemColors.Menu
         tvGroupsSelected.Location = New Point(241, 32)
         tvGroupsSelected.Name = "tvGroupsSelected"
-        tvGroupsSelected.Size = New Size(181, 329)
+        tvGroupsSelected.Size = New Size(178, 325)
         tvGroupsSelected.TabIndex = 29
         ' 
         ' Label14
@@ -359,6 +360,15 @@ Partial Class DetailLightSource
         btnCancel.Text = "Cancel"
         btnCancel.UseVisualStyleBackColor = False
         ' 
+        ' Label15
+        ' 
+        Label15.AutoSize = True
+        Label15.Location = New Point(191, 64)
+        Label15.Name = "Label15"
+        Label15.Size = New Size(24, 15)
+        Label15.TabIndex = 32
+        Label15.Text = "cm"
+        ' 
         ' DetailLightSource
         ' 
         AcceptButton = btnOK
@@ -368,6 +378,7 @@ Partial Class DetailLightSource
         CancelButton = btnCancel
         ClientSize = New Size(431, 398)
         ControlBox = False
+        Controls.Add(Label15)
         Controls.Add(btnCancel)
         Controls.Add(Label14)
         Controls.Add(tvGroupsSelected)
@@ -452,4 +463,5 @@ Partial Class DetailLightSource
     Friend WithEvents tvGroupsSelected As TreeView
     Friend WithEvents Label14 As Label
     Friend WithEvents btnCancel As Button
+    Friend WithEvents Label15 As Label
 End Class

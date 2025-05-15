@@ -136,12 +136,16 @@ Module EffectBuilder
             ' 6) Groepen: clone & vink nodes aan
             ' —————————————————————————————————————————————————————————
 
-            ' a) Clone de hoofd-TreeView
+            ' a) Clone de hoofd-TreeView inclusief Tag
             .tvGroupsSelected.BeginUpdate()
             .tvGroupsSelected.Nodes.Clear()
             For Each rootNode As TreeNode In FrmMain.tvGroupsSelected.Nodes
-                .tvGroupsSelected.Nodes.Add(DirectCast(rootNode.Clone(), TreeNode))
+                Dim clone As TreeNode = DirectCast(rootNode.Clone(), TreeNode)
+                clone.Tag = rootNode.Tag   ' **zorg dat Tag wordt meegekopieerd**
+                ' voor alle child-nodes geldt hetzelfde, maar Clone() kopieert Children+Tags
+                .tvGroupsSelected.Nodes.Add(clone)
             Next
+            .tvGroupsSelected.ExpandAll()
             .tvGroupsSelected.EndUpdate()
 
             ' b) Lees opgeslagen groep-IDs (CSV in colLSGroups)
@@ -154,14 +158,11 @@ Module EffectBuilder
                 .ToList()
             End If
 
-            ' c) Vink de gekopieerde nodes aan
-            For Each node As TreeNode In .tvGroupsSelected.Nodes
-                If selGroupIds.Contains(node.Tag?.ToString()) Then
-                    node.Checked = True
-                End If
-                ' (Optioneel) vink ook alle kinderen mee
-                CheckAllChildNodes(node, node.Checked)
-            Next
+            ' c) Recursief alle nodes controleren
+            .tvGroupsSelected.BeginUpdate()
+            DetailLightSource.CheckAndMarkNodes(.tvGroupsSelected.Nodes, selGroupIds)
+            .tvGroupsSelected.ExpandAll()
+            .tvGroupsSelected.EndUpdate()
         End With
 
         ' 7) Toon dialog en sla wijzigingen op bij OK
@@ -188,18 +189,11 @@ Module EffectBuilder
                 lsRow.Cells("colLSEffect").Value = detailForm.cmbEffect.SelectedItem.ToString()
             End If
             lsRow.Cells("colLSBrightnessBaseline").Value = detailForm.tbBrightnessBaseline.Value
-                lsRow.Cells("colLSBrightnessEffect").Value = detailForm.tbBrightnessEffect.Value
+            lsRow.Cells("colLSBrightnessEffect").Value = detailForm.tbBrightnessEffect.Value
 
-                ' b) Sla nieuwe groep-IDs op
-                Dim newGroupIds As New List(Of String)
-                For Each node As TreeNode In detailForm.tvGroupsSelected.Nodes
-                    If node.Checked Then newGroupIds.Add(node.Tag.ToString())
-                Next
-                lsRow.Cells("colLSGroups").Value = String.Join(",", newGroupIds)
-
-                ' c) Vernieuw de tijdlijn
-                RefreshTimeline()
-            End If
+            lsRow.Cells("colLSGroups").Value = String.Join(",", detailForm.SelectedGroupIds)
+        End If
+        RefreshTimeline()
     End Sub
 
     ''' <summary>
@@ -273,7 +267,8 @@ Module EffectBuilder
         Next
         maxEnd = Math.Min(maxEnd, 90)
 
-        Dim fps = 5, totalFrames = CInt(Math.Ceiling(maxEnd * fps))
+        Dim fps = 5
+        Dim totalFrames = CInt(Math.Ceiling(maxEnd * fps))
 
         ' Digi de device-led counts
         Dim deviceCounts = New Dictionary(Of String, Integer)
@@ -322,8 +317,10 @@ Module EffectBuilder
                             .ToList()
 
                 ' LS-center in mm (UI offset al afgetrokken bij instellen)
-                Dim lsXmm = CDbl(lsRow.Cells("colLSPositionX").Value)
-                Dim lsYmm = CDbl(lsRow.Cells("colLSPositionY").Value)
+                Dim lsXcm = CDbl(lsRow.Cells("colLSPositionX").Value)
+                Dim lsXmm = lsXcm * 10
+                Dim lsYCm = CDbl(lsRow.Cells("colLSPositionY").Value)
+                Dim lsYmm = lsYCm * 10
 
                 ' Pas toe op elke LED
                 For Each info In LedLijst
@@ -331,8 +328,8 @@ Module EffectBuilder
                     Dim infoGroups = If(
                     String.IsNullOrEmpty(info.GroupId),
                     New List(Of Integer),
-                    info.GroupId.Split(","c).Select(Function(s) CInt(s.Trim())).ToList()
-                )
+                         info.GroupId.Split(","c).Select(Function(s) CInt(s.Trim())).ToList()
+                       )
 
                     ' 1) overlap qua groep?
                     If Not infoGroups.Any(Function(g) groupList.Contains(g)) Then Continue For
@@ -344,7 +341,8 @@ Module EffectBuilder
                     ' 3) shape-test (bv. cirkel)
                     Dim inShape As Boolean = False
                     Dim shape = CStr(lsRow.Cells("colLSShape").Value)
-                    Dim sizeMm = CDbl(lsRow.Cells("colLSSize").Value)
+                    Dim sizeCm = CDbl(lsRow.Cells("colLSSize").Value)
+                    Dim sizeMm = sizeCm * 10
                     Select Case shape
                         Case "Circle"
                             inShape = (dxMm * dxMm + dyMm * dyMm) <= sizeMm * sizeMm
@@ -480,13 +478,17 @@ Module EffectBuilder
                 Dim wPx = Math.Max(HandleWidth, CInt(durSec * _zoomScale))
                 Dim lsRect = New Rectangle(xPx, yTop + 4, wPx, RowHeight - 8)
 
-                ' gradient-fill
+                ' 1) vul de gradient
                 Using br As New LinearGradientBrush(lsRect, col1, col2, LinearGradientMode.Horizontal)
                     g.FillRectangle(br, lsRect)
                 End Using
-                g.DrawRectangle(Pens.White, lsRect)
 
-                ' resize-grip (rechts) en move-grip (links)
+                ' 2) kies pen-kleur op basis van selectie-status
+                Dim isSelected As Boolean = _dgLightSources.Rows(j).Selected
+                Dim borderPen As Pen = If(isSelected, Pens.Yellow, Pens.White)
+                g.DrawRectangle(borderPen, lsRect)
+
+                ' 3) grips blijven hetzelfde
                 Using gripL As New SolidBrush(Color.Green)
                     g.FillRectangle(gripL, New Rectangle(lsRect.Left, lsRect.Top, HandleWidth, lsRect.Height))
                 End Using
@@ -494,7 +496,7 @@ Module EffectBuilder
                     g.FillRectangle(gripR, New Rectangle(lsRect.Right - HandleWidth, lsRect.Top, HandleWidth, lsRect.Height))
                 End Using
 
-                ' shape-icoon in het midden van de balk
+                ' 4) en tenslotte je shape-icoon
                 DrawShapeIcon(g, shape, lsRect)
             Next
         Next
@@ -508,39 +510,98 @@ Module EffectBuilder
 
     ' Handelt klikken op de panel (zoom-knoppen of selectie/markers) af
     Private Sub OnPanelClick(sender As Object, e As MouseEventArgs)
-        ' 1) Als we net een marker gesleept hebben, negeer deze click
+        ' 1) Als we net een marker gesleept hebben, de click negeren
         If skipNextClick Then
             skipNextClick = False
             Return
         End If
 
-        Dim pt = e.Location
+        ' 2) Zoom-knoppen?
+        Dim pt As Point = e.Location
         If minusRect.Contains(pt) Then
             _maxSeconds = Math.Max(10, _maxSeconds - 10)
-            RefreshTimeline() : Return
+            RefreshTimeline()
+            Return
         ElseIf plusRect.Contains(pt) Then
             _maxSeconds += 10
-            RefreshTimeline() : Return
-        End If
-
-        HandleMouseEvent(e.X, e.Y, isClick:=True)
-
-        ' Timeline-area: maak of sleep preview-markers
-        Dim ty = FrmMain.PanelTracks.AutoScrollPosition.Y + TimelineHeight
-        If e.Y < ty Then
-            If e.Button = MouseButtons.Left Then
-                ' bepaal sec, zet of sleep Start/End/Current
-                Dim sec = (e.X - FrmMain.PanelTracks.AutoScrollPosition.X - LeftMargin) / _zoomScale
-                ' … jouw marker-logica …
-                RefreshTimeline()
-            ElseIf e.Button = MouseButtons.Right Then
-                ' reset marker
-                ' … jouw reset-logica …
-                RefreshTimeline()
-            End If
+            RefreshTimeline()
             Return
         End If
+
+        ' 3) Eerst LightSource of Track clicks (zorg dat detail-scherm niet opent bij marker-drag)
+        HandleMouseEvent(e.X, e.Y, isClick:=True)
+
+        ' 4) Timeline-gebied (boven de track-bars): plaats of sleep preview-markers
+        Dim xOffset = _panel.AutoScrollPosition.X
+        Dim yOffset = _panel.AutoScrollPosition.Y
+        Dim ty = yOffset + TimelineHeight
+        If e.Y < ty Then
+            Dim sec As Double = (e.X - xOffset - LeftMargin) / _zoomScale
+
+            If e.Button = MouseButtons.Left Then
+                ' a) Klik of begin drag op bestaande marker?
+                Dim xS = xOffset + LeftMargin + CInt(PreviewMarkerStart * _zoomScale)
+                Dim xE = xOffset + LeftMargin + CInt(PreviewMarkerEnd * _zoomScale)
+                Dim xC = xOffset + LeftMargin + CInt(PreviewMarkerCurrent * _zoomScale)
+                Const tol = 5
+
+                If Math.Abs(e.X - xS) < tol Then
+                    ' Start-marker slepen
+                    markerDragType = "Start"
+                    markerMouseOffset = e.X - xS
+                ElseIf Math.Abs(e.X - xE) < tol Then
+                    ' End-marker slepen
+                    markerDragType = "End"
+                    markerMouseOffset = e.X - xE
+                ElseIf Math.Abs(e.X - xC) < tol Then
+                    ' Current-marker slepen
+                    markerDragType = "Current"
+                    markerMouseOffset = e.X - xC
+                Else
+                    ' nieuw plaatsen: eerst Start, daarna End, anders Current
+                    If PreviewMarkerStart <= 0 Then
+                        PreviewMarkerStart = Math.Max(0, Math.Min(_maxSeconds, sec))
+                    ElseIf PreviewMarkerEnd >= _maxSeconds Then
+                        PreviewMarkerEnd = Math.Max(0, Math.Min(_maxSeconds, sec))
+                    Else
+                        PreviewMarkerCurrent = Math.Max(0, Math.Min(_maxSeconds, sec))
+                    End If
+                    ' omdat we hier echt op de as klikken: meteen preview sturen
+                    RefreshTimeline()
+                    SendPreviewFrame()
+                    Return
+                End If
+
+            ElseIf e.Button = MouseButtons.Right Then
+                ' resetten van markers
+                Dim xS = xOffset + LeftMargin + CInt(PreviewMarkerStart * _zoomScale)
+                Dim xE = xOffset + LeftMargin + CInt(PreviewMarkerEnd * _zoomScale)
+                Dim xC = xOffset + LeftMargin + CInt(PreviewMarkerCurrent * _zoomScale)
+                Const tol = 5
+
+                If Math.Abs(e.X - xS) < tol Then PreviewMarkerStart = 0
+                If Math.Abs(e.X - xE) < tol Then PreviewMarkerEnd = _maxSeconds
+                If Math.Abs(e.X - xC) < tol Then PreviewMarkerCurrent = 0
+
+                RefreshTimeline()
+                SendPreviewFrame()
+                Return
+            End If
+
+            ' Als we tot hier komen: we zijn begonnen met slepen
+            skipNextClick = True
+            RefreshTimeline()
+            Return
+        End If
+
+        ' 5) Als we hier zijn geweest zonder in de timeline te klikken,
+        '    dan is het een klik op lege track-ruimte of op een LightSource.
+        '    Die worden al afgehandeld in HandleMouseEvent / RaiseEvent.
     End Sub
+
+
+
+
 
     ' Start van een drag/resize op een LightSource
     Private Sub OnPanelMouseDown(sender As Object, e As MouseEventArgs)
@@ -605,12 +666,19 @@ Module EffectBuilder
     End Sub
     ' Einde van drag-operatie
     Private Sub OnPanelMouseUp(sender As Object, e As MouseEventArgs)
+        ' Als we net een Current-marker gesleept hebben,
+        ' stuur dan meteen de preview
+        If markerDragType = "Current" OrElse markerIsDragging Then
+            SendPreviewFrame()
+        End If
+
         ' Als we een marker aan het slepen waren, skip de volgende Click
         If markerDragType <> "" OrElse markerIsDragging Then
             skipNextClick = True
         End If
 
-        ' Reset alle drag-flags
+
+        ' reset alle drag-flags
         draggingLSRowIdx = -1
         dragMode = ""
         markerDragType = ""
@@ -700,7 +768,7 @@ Module EffectBuilder
                 ' vierkant
                 g.DrawRectangle(Pens.White, cx - r, cy - r, size, size)
 
-            Case "Triangle"
+            Case "Cone"
                 ' gelijkzijdige driehoek, punt omhoog
                 Dim pts = {
                 New Point(cx, cy - r),
@@ -806,4 +874,45 @@ Module EffectBuilder
         RecalcScale()
         RefreshTimeline()
     End Sub
+
+
+    Public Sub SendPreviewFrame()
+        ' 1) Bepaal welke effect-id actief is
+        Dim meGrid = FrmMain.DG_MyEffects
+        If meGrid.CurrentRow Is Nothing Then Return
+        Dim effectId = CInt(meGrid.CurrentRow.Cells("colMEID").Value)
+
+        ' 2) Bepaal het frame-index op basis van PreviewMarkerCurrent en fps
+        Const fps As Integer = 5
+        Dim frameIdx = CInt(Math.Floor(PreviewMarkerCurrent * fps))
+
+        ' 3) Loop alle voor dit effect gegenereerde rijen in DG_MyEffectsFrames
+        For Each row As DataGridViewRow In FrmMain.DG_MyEffectsFrames.Rows
+            If row.IsNewRow Then Continue For
+            If CInt(row.Cells("colMF_MEID").Value) <> effectId Then Continue For
+
+            Dim fixture = CStr(row.Cells("colMF_FixtureID").Value)
+            Dim frames = TryCast(row.Cells("colMF_Frames").Value, List(Of Byte()))
+            If frames Is Nothing OrElse frameIdx < 0 OrElse frameIdx >= frames.Count Then Continue For
+
+            ' 4) Haal het juiste frame-buffer
+            Dim buf = frames(frameIdx)
+
+            ' 5) Zoek in DG_Devices naar dezelfde fixture en stuur
+            For Each devRow As DataGridViewRow In FrmMain.DG_Devices.Rows
+                If devRow.IsNewRow Then Continue For
+                If CStr(devRow.Cells("colInstance").Value) <> fixture Then Continue For
+
+                ' Vul DDP-data in en stuur
+                devRow.Cells("colDDPData").Value = buf
+                devRow.Cells("colDataProvider").Value = "Effects"
+                devRow.Cells("colDDPOffset").Value = 0
+
+                Dim ip = CStr(devRow.Cells("colIPAddress").Value)
+                DDP.SendDDP(ip, buf)
+                Exit For
+            Next
+        Next
+    End Sub
+
 End Module

@@ -4,6 +4,7 @@ Imports System.Drawing.Imaging
 Imports System.Windows.Forms
 Imports System.Drawing.Drawing2D
 Imports System.Runtime.InteropServices
+Imports System
 
 ''' <summary>
 ''' Module om de LED-layout en effectvisualisatie op het podium weer te geven.
@@ -160,8 +161,8 @@ Public Module Stage
             podiumBreedteCm As Integer,
             podiumHoogteinCm As Integer)
 
-        ' Bouw kleurmap per device
-        Dim colorMap As New Dictionary(Of String, List(Of Color))
+        ' 1) Bouw een kleurmap per device
+        Dim colorMap As New Dictionary(Of String, List(Of Color))()
         For Each r As DataGridViewRow In FrmMain.DG_Devices.Rows
             If r.IsNewRow Then Continue For
             Dim inst = CStr(r.Cells("colInstance").Value)
@@ -175,7 +176,7 @@ Public Module Stage
             colorMap(inst) = lst
         Next
 
-        ' Maak bitmap en teken
+        ' 2) Maak een bitmap waarin we alles tekenen
         Dim w = pbStage.ClientSize.Width
         Dim h = pbStage.ClientSize.Height
         Using bmp As New Bitmap(w, h, PixelFormat.Format24bppRgb)
@@ -183,101 +184,117 @@ Public Module Stage
                 g.Clear(Color.Black)
             End Using
 
+            ' 3) Teken de onderdelen
             DrawAxes(bmp, podiumBreedteCm, podiumHoogteinCm, pbStage.Font)
             DrawBaselinePixels(bmp)
             DrawEffectPixels(bmp, colorMap)
 
-            ' Geselecteerde LightSource marker
+            ' 4) Indien gewenst: marker voor geselecteerde LightSource
             If DrawSelectedMarker AndAlso SelectedLSIndex >= 0 Then
                 Using g = Graphics.FromImage(bmp)
                     g.SmoothingMode = SmoothingMode.AntiAlias
 
-                    ' Lees de positie en kleur uit DG_LightSources
                     Dim lsRow = FrmMain.DG_LightSources.Rows(SelectedLSIndex)
-                    Dim xMm = CSng(lsRow.Cells("colLSPositionX").Value)
-                    Dim yMm = CSng(lsRow.Cells("colLSPositionY").Value)
+                    Dim xCm = CDbl(lsRow.Cells("colLSPositionX").Value)     ' in cm
+                    Dim xMm = xCm * 10                                      ' in mm
+                    Dim yCm = CDbl(lsRow.Cells("colLSPositionY").Value)     ' in cm
+                    Dim yMM = yCm * 10                                      ' in mm
                     Dim pxPerMm = GetMmPerPixel(pbStage)
                     Dim xPx = MarginLeft + CInt(xMm * pxPerMm)
-                    Dim yPx = MarginTop + DrawHeight - CInt(yMm * pxPerMm)
+                    Dim yPx = MarginTop + DrawHeight - CInt(yMM * pxPerMm)
 
-                    ' Marker-icoon (gevuld 50% in kleur1 + gele outline)
+                    ' **NIET MEER**: sizePx = 12  
+                    Dim sizeCm = CDbl(lsRow.Cells("colLSSize").Value)       ' in cm
+                    Dim sizeMm = sizeCm * 10                                ' in mm
+                    Dim sizePx = CInt(sizeMm * pxPerMm)                     ' nu écht 1 mm → px
+
+                    Dim shape = CStr(lsRow.Cells("colLSShape").Value)
+                    Dim dir = CStr(lsRow.Cells("colLSDirection").Value)
                     Dim c1 = CType(lsRow.Cells("colLSColor1").Tag, Color)
 
-                    Using fillBrush As New SolidBrush(Color.FromArgb(128, c1))
-                        ' Gele outline
-                        Using outlinePen As New Pen(Color.Yellow, 2)
-
-                            Dim sizePx = 12
-                            Dim rect = New Rectangle(
-                                xPx - sizePx \ 2,
-                                yPx - sizePx \ 2,
-                                sizePx,
-                                sizePx)
-
-                            ' Een cirkel- of vierkant- of driehoek-fill volgens shape
-                            Select Case CStr(lsRow.Cells("colLSShape").Value)
-                                Case "Circle"
-                                    g.FillEllipse(fillBrush, rect)
-                                    g.DrawEllipse(outlinePen, rect)
-                                Case "Square"
-                                    g.FillRectangle(fillBrush, rect)
-                                    g.DrawRectangle(outlinePen, rect)
-                                Case "Cone"
-                                    ' Bouw driehoek (apex = markerpunt)
-                                    Dim dir = CStr(lsRow.Cells("colLSDirection").Value)
-                                    Dim height = sizePx
-                                    Dim baseW = 2 * height * Math.Tan(Math.PI / 6)
-                                    Dim halfBase = baseW / 2
-                                    ' hoek in radian
-                                    Dim ang As Double = 0
-                                    Select Case dir
-                                        Case "Up" : ang = Math.PI / 2
-                                        Case "Down" : ang = 3 * Math.PI / 2
-                                        Case "Left" : ang = Math.PI
-                                        Case "Right" : ang = 0
-                                        Case "Left-Up" : ang = 3 * Math.PI / 4
-                                        Case "Right-Up" : ang = Math.PI / 4
-                                        Case "Left-Down" : ang = 5 * Math.PI / 4
-                                        Case "Right-Down" : ang = 7 * Math.PI / 4
-                                    End Select
-                                    Dim apex = New PointF(xPx, yPx)
-                                    Dim bx = xPx + CInt(Math.Cos(ang) * height)
-                                    Dim by = yPx - CInt(Math.Sin(ang) * height)
-                                    Dim perp = ang + Math.PI / 2
-                                    Dim p1 = New PointF(
-                                        bx + CInt(halfBase * Math.Cos(perp)),
-                                        by - CInt(halfBase * Math.Sin(perp)))
-                                    Dim p2 = New PointF(
-                                        bx - CInt(halfBase * Math.Cos(perp)),
-                                        by + CInt(halfBase * Math.Sin(perp)))
-                                    Dim tri = {apex, p1, p2}
-                                    g.FillPolygon(fillBrush, tri)
-                                    g.DrawPolygon(outlinePen, tri)
-                            End Select
+                    Using fillBrush = New SolidBrush(Color.FromArgb(128, c1))
+                        Using outlinePen = New Pen(Color.Yellow, 2)
+                            DrawShapes(g, shape, xPx, yPx, sizePx, fillBrush, outlinePen, dir)
                         End Using
                     End Using
 
-                    ' 5) Altijd een vol gele cirkel van 5px centreren op markerpunt
-                    Using yellowBrush As New SolidBrush(Color.Yellow)
-                        g.FillEllipse(
-                            yellowBrush,
-                            xPx - 2,
-                            yPx - 2,
-                            5,
-                            5)
-                    End Using
+
                 End Using
             End If
 
-            ' 6) Toon bitmap in PictureBox
+            ' 5) Toon resultaat in PictureBox
             pbStage.Image?.Dispose()
             pbStage.Image = CType(bmp.Clone(), Bitmap)
         End Using
 
         pbStage.Invalidate()
-
     End Sub
 
+    ''' <summary>
+    ''' Teken in het beeld de “shape” (Circle, Square of Cone) 
+    ''' op (xPx,yPx) met afmeting sizePx, met een gevulde brush en outline pen.
+    ''' Voor de cone wordt de richting uit dir gebruikt.
+    ''' </summary>
+    Private Sub DrawShapes(
+        g As Graphics,
+        shape As String,
+        xPx As Integer,
+        yPx As Integer,
+        sizePx As Integer,
+        fillBrush As Brush,
+        outlinePen As Pen,
+        dir As String)
+
+        Select Case shape
+            Case "Circle"
+                Dim r = sizePx \ 2
+                Dim rectC = New Rectangle(xPx - r, yPx - r, sizePx, sizePx)
+                g.FillEllipse(fillBrush, rectC)
+                g.DrawEllipse(outlinePen, rectC)
+
+            Case "Square"
+                Dim r = sizePx \ 2
+                Dim rectS = New Rectangle(xPx - r, yPx - r, sizePx, sizePx)
+                g.FillRectangle(fillBrush, rectS)
+                g.DrawRectangle(outlinePen, rectS)
+
+            Case "Cone"
+                ' apex-based cone met hoogte = sizePx
+                Dim height = sizePx
+                Dim halfBase = height * Math.Tan(Math.PI / 6)
+                Dim ang As Double = 0
+                Select Case dir
+                    Case "Up" : ang = Math.PI / 2
+                    Case "Down" : ang = 3 * Math.PI / 2
+                    Case "Left" : ang = Math.PI
+                    Case "Right" : ang = 0
+                    Case "Left-Up" : ang = 3 * Math.PI / 4
+                    Case "Right-Up" : ang = Math.PI / 4
+                    Case "Left-Down" : ang = 5 * Math.PI / 4
+                    Case "Right-Down" : ang = 7 * Math.PI / 4
+                End Select
+                Dim apex = New PointF(xPx, yPx)
+                Dim bx = xPx + CInt(Math.Cos(ang) * height)
+                Dim by = yPx - CInt(Math.Sin(ang) * height)
+                Dim perp = ang + Math.PI / 2
+                Dim p1 = New PointF(bx + CInt(halfBase * Math.Cos(perp)), by - CInt(halfBase * Math.Sin(perp)))
+                Dim p2 = New PointF(bx - CInt(halfBase * Math.Cos(perp)), by + CInt(halfBase * Math.Sin(perp)))
+                g.FillPolygon(fillBrush, {apex, p1, p2})
+                g.DrawPolygon(outlinePen, {apex, p1, p2})
+
+            Case Else
+                ' fallback vierkant
+                Dim r = sizePx \ 2
+                Dim rectF = New Rectangle(xPx - r, yPx - r, sizePx, sizePx)
+                g.FillRectangle(fillBrush, rectF)
+                g.DrawRectangle(outlinePen, rectF)
+        End Select
+
+        ' altijd een klein geel stipje in het midden
+        Using yellowBrush As New SolidBrush(Color.Yellow)
+            g.FillEllipse(yellowBrush, xPx - 2, yPx - 2, 5, 5)
+        End Using
+    End Sub
 
 
     ''' <summary>
@@ -413,9 +430,7 @@ Public Module Stage
         Return pb.ClientSize.Width - MarginLeft - 20
     End Function
 
-    ''' <summary>
     ''' Richtingsvector voor marker/pijl
-    ''' </summary>
     Public Function DirectionVector(dir As String, length As Integer) As Point
         Select Case dir
             Case "Up" : Return New Point(0, -length)
@@ -429,4 +444,44 @@ Public Module Stage
             Case Else : Return Point.Empty
         End Select
     End Function
+
+
+    ''' Maakt het mogelijk om door op het podium te klikken
+    ''' de positie van de geselecteerde LightSource bij te werken (in cm, afgerond).
+    Public Sub OnStageClick(sender As Object, e As MouseEventArgs)
+        ' Alleen als er een LS geselecteerd is
+        If Not Stage.DrawSelectedMarker OrElse Stage.SelectedLSIndex < 0 Then
+            Return
+        End If
+
+        ' Bereken mm-per-pixel
+        Dim pxPerMm = Stage.GetMmPerPixel(FrmMain.pb_Stage)
+        Dim mleft = Stage.MarginLeft
+        Dim mtop = Stage.MarginTop
+        Dim drawH = Stage.DrawHeight
+
+        ' Muisklik omzetten naar mm
+        Dim xMm = (e.X - mleft) / pxPerMm
+        Dim yMm = (drawH - (e.Y - mtop)) / pxPerMm
+
+        ' Omschakelen naar cm en afronden
+        Dim xCm = CInt(Math.Round(xMm / 10.0))
+        Dim yCm = CInt(Math.Round(yMm / 10.0))
+
+        ' Clamp binnen podium-afmetingen
+        Dim Breedte As Integer = My.Settings.PodiumBreedte
+        Dim Hoogte As Integer = My.Settings.PodiumHoogte
+        xCm = Math.Max(0, Math.Min(Breedte, xCm))
+        yCm = Math.Max(0, Math.Min(Hoogte, yCm))
+
+        ' Schrijf terug naar de DataGridView (in cm)
+        Dim row = FrmMain.DG_LightSources.Rows(Stage.SelectedLSIndex)
+        row.Cells("colLSPositionX").Value = xCm
+        row.Cells("colLSPositionY").Value = yCm
+
+        ' Herteken podium & timeline
+        Stage.TekenPodium(FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+        EffectBuilder.RefreshTimeline()
+    End Sub
+
 End Module
