@@ -23,15 +23,15 @@
     <Data>
         <Row>
             <colLSTrackId>1</colLSTrackId>
-            <colLSStartMoment>10</colLSStartMoment>
-            <colLSDuration>5</colLSDuration>
-            <colLSPositionX>100</colLSPositionX>
-            <colLSPositionY>100</colLSPositionY>
-            <colLSSize>50</colLSSize>
-            <colLSShape>Circle</colLSShape>
+            <colLSStartMoment>5</colLSStartMoment>
+            <colLSDuration>50</colLSDuration>
+            <colLSPositionX>500</colLSPositionX>
+            <colLSPositionY>200</colLSPositionY>
+            <colLSSize>1100</colLSSize>
+            <colLSShape>Square</colLSShape>
             <colLSBlend>False</colLSBlend>
             <colLSDirection>Up</colLSDirection>
-            <colLSColor1>-16777216</colLSColor1>
+            <colLSColor1>-16777088</colLSColor1>
             <colLSColor2>-16777216</colLSColor2>
             <colLSColor3>-16777216</colLSColor3>
             <colLSColor4>-16777216</colLSColor4>
@@ -45,9 +45,9 @@
             <colLSTrackId>2</colLSTrackId>
             <colLSStartMoment>20</colLSStartMoment>
             <colLSDuration>20</colLSDuration>
-            <colLSPositionX>900</colLSPositionX>
-            <colLSPositionY>100</colLSPositionY>
-            <colLSSize>50</colLSSize>
+            <colLSPositionX>497</colLSPositionX>
+            <colLSPositionY>81</colLSPositionY>
+            <colLSSize>150</colLSSize>
             <colLSShape>Circle</colLSShape>
             <colLSBlend>False</colLSBlend>
             <colLSDirection>Up</colLSDirection>
@@ -56,8 +56,8 @@
             <colLSColor3>-16777152</colLSColor3>
             <colLSColor4>-8388480</colLSColor4>
             <colLSColor5>-65408</colLSColor5>
-            <colLSBrightnessBaseline>10</colLSBrightnessBaseline>
-            <colLSBrightnessEffect>9</colLSBrightnessEffect>
+            <colLSBrightnessBaseline>2</colLSBrightnessBaseline>
+            <colLSBrightnessEffect>0</colLSBrightnessEffect>
             <colLSEffect></colLSEffect>
             <colLSGroups>2,4,5,6,8,9,10</colLSGroups>
         </Row>

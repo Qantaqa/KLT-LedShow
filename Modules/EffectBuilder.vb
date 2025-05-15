@@ -232,6 +232,7 @@ Module EffectBuilder
         Dim offsetXmm = Stage.MarginLeft * mmPerPx
         Dim offsetYmm = Stage.MarginTop * mmPerPx
 
+
         ' Reference naar grids
         Dim meGrid = FrmMain.DG_MyEffects
         Dim framesGrid = FrmMain.DG_MyEffectsFrames
@@ -297,6 +298,7 @@ Module EffectBuilder
                 If lsRow.IsNewRow OrElse lsRow.Cells("colLSTrackId").Value = "" Then Continue For
 
                 Dim trackId = CInt(lsRow.Cells("colLSTrackId").Value)
+                Dim direction = lsRow.Cells("colLSDirection").Value.ToString()
                 Dim trRow = FrmMain.DG_Tracks.Rows _
                         .Cast(Of DataGridViewRow)() _
                         .FirstOrDefault(Function(r) Not r.IsNewRow AndAlso CInt(r.Cells("colTrackId").Value) = trackId)
@@ -342,7 +344,7 @@ Module EffectBuilder
                     Dim inShape As Boolean = False
                     Dim shape = CStr(lsRow.Cells("colLSShape").Value)
                     Dim sizeCm = CDbl(lsRow.Cells("colLSSize").Value)
-                    Dim sizeMm = sizeCm * 10
+                    Dim sizeMm = (sizeCm * 10) / 2
                     Select Case shape
                         Case "Circle"
                             inShape = (dxMm * dxMm + dyMm * dyMm) <= sizeMm * sizeMm
@@ -350,7 +352,7 @@ Module EffectBuilder
                             Dim half = sizeMm
                             inShape = (Math.Abs(dxMm) <= half AndAlso Math.Abs(dyMm) <= half)
                         Case "Cone"
-                            Dim v = Stage.DirectionVector(Dir, 1)
+                            Dim v = Stage.DirectionVector(direction, 1)
                             Dim len = Math.Sqrt(v.X * v.X + v.Y * v.Y)
                             If len > 0 Then
                                 Dim ux = v.X / len, uy = -v.Y / len

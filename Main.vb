@@ -4,6 +4,8 @@ Imports System.Runtime.InteropServices
 Imports Newtonsoft.Json
 
 Public Class FrmMain
+    Private lastDDPTick As DateTime = Now
+
     'Private LedKleuren As New List(Of Color)
     Dim LastOfflineDevices As Integer = 0       'Nummer van offline apparaten
     Public CurrentGroupId As Integer = 0
@@ -505,6 +507,7 @@ Public Class FrmMain
     End Sub
 
     Private Sub ddpTimer_Tick_1(sender As Object, e As EventArgs) Handles ddpTimer.Tick
+        lastDDPTick = DateTime.Now
         HandleDDPTimer_Tick()
     End Sub
 
@@ -553,7 +556,16 @@ Public Class FrmMain
 
     Private Sub stageTimer_Tick(sender As Object, e As EventArgs) Handles stageTimer.Tick
         Try
+            ' Bereken hoe lang geleden de laatste DDP werd verstuurd
+            Dim sinceDDP = DateTime.Now - lastDDPTick
 
+            ' Als DDP langer dan 1800ms geleden is, sla stage update over
+            If sinceDDP.TotalMilliseconds > 1800 Then
+                Debug.WriteLine("⚠️ stageTimer tick geskipt: DDP loopt achter")
+                Return
+            End If
+
+            ' Normale update
             Stage.TekenPodium(pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
 
         Catch ex As Exception

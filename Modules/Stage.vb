@@ -380,7 +380,11 @@ Public Module Stage
             Dim inst = led.DeviceNaam, idxLed = led.IndexInDevice
             If colorMap.ContainsKey(inst) AndAlso idxLed < colorMap(inst).Count Then
                 Dim col = colorMap(inst)(idxLed)
-                If col.R + col.G + col.B >= threshold Then
+                Dim R As Integer = col.R
+                Dim G As Integer = col.G
+                Dim B As Integer = col.B
+
+                If R + G + B >= threshold Then
                     For dx = 0 To size - 1
                         For dy = 0 To size - 1
                             Dim idx = (led.Ypx + dy) * stride + (led.Xpx + dx) * 3
