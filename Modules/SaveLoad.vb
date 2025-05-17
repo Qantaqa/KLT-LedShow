@@ -234,7 +234,7 @@ Module SaveLoad
         SaveDataGridViewToXml(FrmMain.DG_MyEffectsFrames, Folder + "\Frames.xml")
         SaveDataGridViewToXml(FrmMain.DG_Tracks, Folder + "\Tracks.xml")
 
-        MessageBox.Show("All data has been saved.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        ToonFlashBericht("All data has been saved.", 1)
 
     End Sub
 
@@ -275,7 +275,7 @@ Module SaveLoad
         PopulateTreeView(FrmMain.DG_Groups, FrmMain.tvGroupsSelected)
         GenereerLedLijst(FrmMain.DG_Devices, FrmMain.DG_Groups, FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
         TekenPodium(FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
-
+        VulEffectCombo()
         FrmMain.stageTimer.Enabled = True
     End Sub
 

@@ -89,4 +89,6 @@
     Private Sub DetailLightSource_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         tvGroupsSelected.ExpandAll()
     End Sub
+
+
 End Class

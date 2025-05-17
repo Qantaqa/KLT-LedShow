@@ -2,18 +2,27 @@
 <DataGridData>
     <Structure>
         <Column Name="colTrackId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colTrackMeId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
         <Column Name="colTrackName" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="Fill" />
         <Column Name="colTrackActive" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
     </Structure>
     <Data>
         <Row>
             <colTrackId>1</colTrackId>
+            <colTrackMeId>1</colTrackMeId>
             <colTrackName>Track 1</colTrackName>
             <colTrackActive>True</colTrackActive>
         </Row>
         <Row>
             <colTrackId>2</colTrackId>
+            <colTrackMeId>1</colTrackMeId>
             <colTrackName>Track 2</colTrackName>
+            <colTrackActive>True</colTrackActive>
+        </Row>
+        <Row>
+            <colTrackId>3</colTrackId>
+            <colTrackMeId>1</colTrackMeId>
+            <colTrackName>Track 3</colTrackName>
             <colTrackActive>True</colTrackActive>
         </Row>
     </Data>

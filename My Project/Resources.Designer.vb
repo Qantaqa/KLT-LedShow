@@ -123,6 +123,26 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property iconCheckbox_checked() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("iconCheckbox_checked", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property iconCheckbox_checked2() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("iconCheckbox_checked2", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property iconChecked() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("iconChecked", resourceCulture)
@@ -146,6 +166,26 @@ Namespace My.Resources
         Friend ReadOnly Property iconDMXslider() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("iconDMXslider", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property iconEffectAdd() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("iconEffectAdd", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property iconEffectDelete() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("iconEffectDelete", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
@@ -306,6 +346,16 @@ Namespace My.Resources
         Friend ReadOnly Property iconPlay() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("iconPlay", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property iconPlayPause() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("iconPlayPause", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

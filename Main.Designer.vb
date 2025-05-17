@@ -157,7 +157,7 @@ Partial Class FrmMain
         btnStartEffectPreview = New Button()
         pb_Stage = New PictureBox()
         ToolStripSegments = New ToolStrip()
-        btnUpdateStage = New ToolStripButton()
+        btnResetFrames = New ToolStripButton()
         ToolStripSeparator1 = New ToolStripSeparator()
         BtnZoomPulldown = New ToolStripDropDownButton()
         btnZoom10 = New ToolStripMenuItem()
@@ -165,12 +165,25 @@ Partial Class FrmMain
         btnZoom60 = New ToolStripMenuItem()
         btnZoom90 = New ToolStripMenuItem()
         ToolStripSeparator6 = New ToolStripSeparator()
+        ToolStripLabel3 = New ToolStripLabel()
+        cbSelectedEffect = New ToolStripComboBox()
+        btnEffectAdd = New ToolStripButton()
+        btnEffectDelete = New ToolStripButton()
+        ToolStripSeparator7 = New ToolStripSeparator()
+        ToolStripLabel2 = New ToolStripLabel()
         BtnAddTrack = New ToolStripButton()
         BtnRemoveTrack = New ToolStripButton()
         ToolStripSeparator8 = New ToolStripSeparator()
+        ToolStripLabel4 = New ToolStripLabel()
         btnAddShape = New ToolStripButton()
         btnRemoveShape = New ToolStripButton()
-        ToolStripSeparator7 = New ToolStripSeparator()
+        ToolStripSeparator9 = New ToolStripSeparator()
+        ToolStripLabel5 = New ToolStripLabel()
+        lblPreviewFromPosition = New ToolStripTextBox()
+        ToolStripLabel6 = New ToolStripLabel()
+        lblPreviewToPosition = New ToolStripTextBox()
+        btnRepeat = New ToolStripButton()
+        btnPreviewPlayPause = New ToolStripButton()
         TabTables = New TabPage()
         ToolStripTables = New ToolStrip()
         btnTablesAddRowBefore = New ToolStripButton()
@@ -180,20 +193,23 @@ Partial Class FrmMain
         btnDeleteAllTables = New ToolStripButton()
         ToolStripSeparator5 = New ToolStripSeparator()
         TabControlTables = New TabControl()
-        TabTracks = New TabPage()
-        DG_Tracks = New DataGridView()
-        colTrackId = New DataGridViewTextBoxColumn()
-        colTrackName = New DataGridViewTextBoxColumn()
-        colTrackActive = New DataGridViewCheckBoxColumn()
         TabMyEffects = New TabPage()
         DG_MyEffects = New DataGridView()
         colMEID = New DataGridViewTextBoxColumn()
         colMEName = New DataGridViewTextBoxColumn()
         colMEDescription = New DataGridViewTextBoxColumn()
         colMEDDPData = New DataGridViewTextBoxColumn()
+        TabTracks = New TabPage()
+        DG_Tracks = New DataGridView()
+        colTrackId = New DataGridViewTextBoxColumn()
+        colTrackMeId = New DataGridViewTextBoxColumn()
+        colTrackName = New DataGridViewTextBoxColumn()
+        colTrackActive = New DataGridViewCheckBoxColumn()
         TabLightSources = New TabPage()
         DG_LightSources = New DataGridView()
+        colLSId = New DataGridViewTextBoxColumn()
         colLSTrackId = New DataGridViewTextBoxColumn()
+        colLSMyEffectId = New DataGridViewTextBoxColumn()
         colLSStartMoment = New DataGridViewTextBoxColumn()
         colLSDuration = New DataGridViewTextBoxColumn()
         colLSPositionX = New DataGridViewTextBoxColumn()
@@ -367,10 +383,10 @@ Partial Class FrmMain
         TabTables.SuspendLayout()
         ToolStripTables.SuspendLayout()
         TabControlTables.SuspendLayout()
-        TabTracks.SuspendLayout()
-        CType(DG_Tracks, ComponentModel.ISupportInitialize).BeginInit()
         TabMyEffects.SuspendLayout()
         CType(DG_MyEffects, ComponentModel.ISupportInitialize).BeginInit()
+        TabTracks.SuspendLayout()
+        CType(DG_Tracks, ComponentModel.ISupportInitialize).BeginInit()
         TabLightSources.SuspendLayout()
         CType(DG_LightSources, ComponentModel.ISupportInitialize).BeginInit()
         TabFrames.SuspendLayout()
@@ -1726,22 +1742,21 @@ Partial Class FrmMain
         ' 
         ToolStripSegments.BackColor = Color.MidnightBlue
         ToolStripSegments.GripStyle = ToolStripGripStyle.Hidden
-        ToolStripSegments.Items.AddRange(New ToolStripItem() {btnUpdateStage, ToolStripSeparator1, BtnZoomPulldown, ToolStripSeparator6, BtnAddTrack, BtnRemoveTrack, ToolStripSeparator8, btnAddShape, btnRemoveShape, ToolStripSeparator7})
+        ToolStripSegments.Items.AddRange(New ToolStripItem() {btnResetFrames, ToolStripSeparator1, BtnZoomPulldown, ToolStripSeparator6, ToolStripLabel3, cbSelectedEffect, btnEffectAdd, btnEffectDelete, ToolStripSeparator7, ToolStripLabel2, BtnAddTrack, BtnRemoveTrack, ToolStripSeparator8, ToolStripLabel4, btnAddShape, btnRemoveShape, ToolStripSeparator9, ToolStripLabel5, lblPreviewFromPosition, ToolStripLabel6, lblPreviewToPosition, btnRepeat, btnPreviewPlayPause})
         ToolStripSegments.Location = New Point(3, 3)
         ToolStripSegments.Name = "ToolStripSegments"
         ToolStripSegments.Size = New Size(1830, 25)
         ToolStripSegments.TabIndex = 1
         ToolStripSegments.Text = "ToolStripSegments"
         ' 
-        ' btnUpdateStage
+        ' btnResetFrames
         ' 
-        btnUpdateStage.DisplayStyle = ToolStripItemDisplayStyle.Text
-        btnUpdateStage.ForeColor = SystemColors.AppWorkspace
-        btnUpdateStage.Image = CType(resources.GetObject("btnUpdateStage.Image"), Image)
-        btnUpdateStage.ImageTransparentColor = Color.Magenta
-        btnUpdateStage.Name = "btnUpdateStage"
-        btnUpdateStage.Size = New Size(81, 22)
-        btnUpdateStage.Text = "Redraw stage"
+        btnResetFrames.DisplayStyle = ToolStripItemDisplayStyle.Image
+        btnResetFrames.Image = CType(resources.GetObject("btnResetFrames.Image"), Image)
+        btnResetFrames.ImageTransparentColor = Color.Black
+        btnResetFrames.Name = "btnResetFrames"
+        btnResetFrames.Size = New Size(23, 22)
+        btnResetFrames.Text = "Reset"
         ' 
         ' ToolStripSeparator1
         ' 
@@ -1790,6 +1805,50 @@ Partial Class FrmMain
         ToolStripSeparator6.Name = "ToolStripSeparator6"
         ToolStripSeparator6.Size = New Size(6, 25)
         ' 
+        ' ToolStripLabel3
+        ' 
+        ToolStripLabel3.DisplayStyle = ToolStripItemDisplayStyle.Text
+        ToolStripLabel3.ForeColor = SystemColors.ActiveCaption
+        ToolStripLabel3.Name = "ToolStripLabel3"
+        ToolStripLabel3.Size = New Size(40, 22)
+        ToolStripLabel3.Text = "Effect:"
+        ' 
+        ' cbSelectedEffect
+        ' 
+        cbSelectedEffect.Name = "cbSelectedEffect"
+        cbSelectedEffect.Size = New Size(121, 25)
+        cbSelectedEffect.Sorted = True
+        ' 
+        ' btnEffectAdd
+        ' 
+        btnEffectAdd.DisplayStyle = ToolStripItemDisplayStyle.Image
+        btnEffectAdd.Image = My.Resources.Resources.iconEffectAdd
+        btnEffectAdd.ImageTransparentColor = Color.Magenta
+        btnEffectAdd.Name = "btnEffectAdd"
+        btnEffectAdd.Size = New Size(23, 22)
+        btnEffectAdd.Text = "ToolStripButton3"
+        ' 
+        ' btnEffectDelete
+        ' 
+        btnEffectDelete.DisplayStyle = ToolStripItemDisplayStyle.Image
+        btnEffectDelete.Image = My.Resources.Resources.iconEffectDelete
+        btnEffectDelete.ImageTransparentColor = Color.Magenta
+        btnEffectDelete.Name = "btnEffectDelete"
+        btnEffectDelete.Size = New Size(23, 22)
+        btnEffectDelete.Text = "ToolStripButton4"
+        ' 
+        ' ToolStripSeparator7
+        ' 
+        ToolStripSeparator7.Name = "ToolStripSeparator7"
+        ToolStripSeparator7.Size = New Size(6, 25)
+        ' 
+        ' ToolStripLabel2
+        ' 
+        ToolStripLabel2.ForeColor = SystemColors.ActiveCaption
+        ToolStripLabel2.Name = "ToolStripLabel2"
+        ToolStripLabel2.Size = New Size(38, 22)
+        ToolStripLabel2.Text = "Track:"
+        ' 
         ' BtnAddTrack
         ' 
         BtnAddTrack.DisplayStyle = ToolStripItemDisplayStyle.Image
@@ -1813,6 +1872,14 @@ Partial Class FrmMain
         ToolStripSeparator8.Name = "ToolStripSeparator8"
         ToolStripSeparator8.Size = New Size(6, 25)
         ' 
+        ' ToolStripLabel4
+        ' 
+        ToolStripLabel4.DisplayStyle = ToolStripItemDisplayStyle.Text
+        ToolStripLabel4.ForeColor = SystemColors.ActiveCaption
+        ToolStripLabel4.Name = "ToolStripLabel4"
+        ToolStripLabel4.Size = New Size(42, 22)
+        ToolStripLabel4.Text = "Shape:"
+        ' 
         ' btnAddShape
         ' 
         btnAddShape.DisplayStyle = ToolStripItemDisplayStyle.Image
@@ -1831,10 +1898,52 @@ Partial Class FrmMain
         btnRemoveShape.Size = New Size(23, 22)
         btnRemoveShape.Text = "Remove shape"
         ' 
-        ' ToolStripSeparator7
+        ' ToolStripSeparator9
         ' 
-        ToolStripSeparator7.Name = "ToolStripSeparator7"
-        ToolStripSeparator7.Size = New Size(6, 25)
+        ToolStripSeparator9.Name = "ToolStripSeparator9"
+        ToolStripSeparator9.Size = New Size(6, 25)
+        ' 
+        ' ToolStripLabel5
+        ' 
+        ToolStripLabel5.ForeColor = SystemColors.ActiveCaption
+        ToolStripLabel5.Name = "ToolStripLabel5"
+        ToolStripLabel5.Size = New Size(54, 22)
+        ToolStripLabel5.Text = "Preview: "
+        ' 
+        ' lblPreviewFromPosition
+        ' 
+        lblPreviewFromPosition.Name = "lblPreviewFromPosition"
+        lblPreviewFromPosition.Size = New Size(50, 25)
+        ' 
+        ' ToolStripLabel6
+        ' 
+        ToolStripLabel6.ForeColor = SystemColors.ActiveCaption
+        ToolStripLabel6.Name = "ToolStripLabel6"
+        ToolStripLabel6.Size = New Size(20, 22)
+        ToolStripLabel6.Text = "To"
+        ' 
+        ' lblPreviewToPosition
+        ' 
+        lblPreviewToPosition.Name = "lblPreviewToPosition"
+        lblPreviewToPosition.Size = New Size(50, 25)
+        ' 
+        ' btnRepeat
+        ' 
+        btnRepeat.ForeColor = SystemColors.ActiveCaption
+        btnRepeat.Image = My.Resources.Resources.iconCheckbox_checked
+        btnRepeat.ImageTransparentColor = Color.Magenta
+        btnRepeat.Name = "btnRepeat"
+        btnRepeat.Size = New Size(63, 22)
+        btnRepeat.Text = "Repeat"
+        ' 
+        ' btnPreviewPlayPause
+        ' 
+        btnPreviewPlayPause.DisplayStyle = ToolStripItemDisplayStyle.Image
+        btnPreviewPlayPause.Image = My.Resources.Resources.iconPause
+        btnPreviewPlayPause.ImageTransparentColor = Color.Magenta
+        btnPreviewPlayPause.Name = "btnPreviewPlayPause"
+        btnPreviewPlayPause.Size = New Size(23, 22)
+        btnPreviewPlayPause.Text = "Play/Pause"
         ' 
         ' TabTables
         ' 
@@ -1909,8 +2018,8 @@ Partial Class FrmMain
         ' 
         ' TabControlTables
         ' 
-        TabControlTables.Controls.Add(TabTracks)
         TabControlTables.Controls.Add(TabMyEffects)
+        TabControlTables.Controls.Add(TabTracks)
         TabControlTables.Controls.Add(TabLightSources)
         TabControlTables.Controls.Add(TabFrames)
         TabControlTables.Dock = DockStyle.Bottom
@@ -1919,45 +2028,6 @@ Partial Class FrmMain
         TabControlTables.SelectedIndex = 0
         TabControlTables.Size = New Size(1836, 817)
         TabControlTables.TabIndex = 0
-        ' 
-        ' TabTracks
-        ' 
-        TabTracks.Controls.Add(DG_Tracks)
-        TabTracks.Location = New Point(4, 24)
-        TabTracks.Name = "TabTracks"
-        TabTracks.Padding = New Padding(3)
-        TabTracks.Size = New Size(1828, 789)
-        TabTracks.TabIndex = 1
-        TabTracks.Text = "Tracks"
-        TabTracks.UseVisualStyleBackColor = True
-        ' 
-        ' DG_Tracks
-        ' 
-        DG_Tracks.AllowUserToAddRows = False
-        DG_Tracks.AllowUserToDeleteRows = False
-        DG_Tracks.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DG_Tracks.Columns.AddRange(New DataGridViewColumn() {colTrackId, colTrackName, colTrackActive})
-        DG_Tracks.Dock = DockStyle.Fill
-        DG_Tracks.Location = New Point(3, 3)
-        DG_Tracks.Name = "DG_Tracks"
-        DG_Tracks.Size = New Size(1822, 783)
-        DG_Tracks.TabIndex = 0
-        ' 
-        ' colTrackId
-        ' 
-        colTrackId.HeaderText = "ID"
-        colTrackId.Name = "colTrackId"
-        ' 
-        ' colTrackName
-        ' 
-        colTrackName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-        colTrackName.HeaderText = "Track naam"
-        colTrackName.Name = "colTrackName"
-        ' 
-        ' colTrackActive
-        ' 
-        colTrackActive.HeaderText = "Active"
-        colTrackActive.Name = "colTrackActive"
         ' 
         ' TabMyEffects
         ' 
@@ -1983,23 +2053,72 @@ Partial Class FrmMain
         ' 
         ' colMEID
         ' 
-        colMEID.HeaderText = "colMEID"
+        colMEID.HeaderText = "EffectId"
         colMEID.Name = "colMEID"
+        colMEID.Width = 50
         ' 
         ' colMEName
         ' 
-        colMEName.HeaderText = "colMEName"
+        colMEName.HeaderText = "Effectname"
         colMEName.Name = "colMEName"
+        colMEName.Width = 200
         ' 
         ' colMEDescription
         ' 
-        colMEDescription.HeaderText = "colMEDescription"
+        colMEDescription.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colMEDescription.HeaderText = "Description"
         colMEDescription.Name = "colMEDescription"
         ' 
         ' colMEDDPData
         ' 
-        colMEDDPData.HeaderText = "colMEDDPData"
+        colMEDDPData.HeaderText = "DDPData"
         colMEDDPData.Name = "colMEDDPData"
+        ' 
+        ' TabTracks
+        ' 
+        TabTracks.Controls.Add(DG_Tracks)
+        TabTracks.Location = New Point(4, 24)
+        TabTracks.Name = "TabTracks"
+        TabTracks.Padding = New Padding(3)
+        TabTracks.Size = New Size(1828, 789)
+        TabTracks.TabIndex = 1
+        TabTracks.Text = "Tracks"
+        TabTracks.UseVisualStyleBackColor = True
+        ' 
+        ' DG_Tracks
+        ' 
+        DG_Tracks.AllowUserToAddRows = False
+        DG_Tracks.AllowUserToDeleteRows = False
+        DG_Tracks.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DG_Tracks.Columns.AddRange(New DataGridViewColumn() {colTrackId, colTrackMeId, colTrackName, colTrackActive})
+        DG_Tracks.Dock = DockStyle.Fill
+        DG_Tracks.Location = New Point(3, 3)
+        DG_Tracks.Name = "DG_Tracks"
+        DG_Tracks.Size = New Size(1822, 783)
+        DG_Tracks.TabIndex = 0
+        ' 
+        ' colTrackId
+        ' 
+        colTrackId.HeaderText = "TrackID"
+        colTrackId.Name = "colTrackId"
+        colTrackId.Width = 50
+        ' 
+        ' colTrackMeId
+        ' 
+        colTrackMeId.HeaderText = "EffectID"
+        colTrackMeId.Name = "colTrackMeId"
+        colTrackMeId.Width = 50
+        ' 
+        ' colTrackName
+        ' 
+        colTrackName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colTrackName.HeaderText = "Track naam"
+        colTrackName.Name = "colTrackName"
+        ' 
+        ' colTrackActive
+        ' 
+        colTrackActive.HeaderText = "Active"
+        colTrackActive.Name = "colTrackActive"
         ' 
         ' TabLightSources
         ' 
@@ -2017,17 +2136,27 @@ Partial Class FrmMain
         DG_LightSources.AllowUserToAddRows = False
         DG_LightSources.AllowUserToDeleteRows = False
         DG_LightSources.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DG_LightSources.Columns.AddRange(New DataGridViewColumn() {colLSTrackId, colLSStartMoment, colLSDuration, colLSPositionX, colLSPositionY, colLSSize, colLSShape, colLSBlend, colLSDirection, colLSColor1, colLSColor2, colLSColor3, colLSColor4, colLSColor5, colLSBrightnessBaseline, colLSBrightnessEffect, colLSEffect, colLSGroups})
+        DG_LightSources.Columns.AddRange(New DataGridViewColumn() {colLSId, colLSTrackId, colLSMyEffectId, colLSStartMoment, colLSDuration, colLSPositionX, colLSPositionY, colLSSize, colLSShape, colLSBlend, colLSDirection, colLSColor1, colLSColor2, colLSColor3, colLSColor4, colLSColor5, colLSBrightnessBaseline, colLSBrightnessEffect, colLSEffect, colLSGroups})
         DG_LightSources.Dock = DockStyle.Fill
         DG_LightSources.Location = New Point(3, 3)
         DG_LightSources.Name = "DG_LightSources"
         DG_LightSources.Size = New Size(1822, 783)
         DG_LightSources.TabIndex = 0
         ' 
+        ' colLSId
+        ' 
+        colLSId.HeaderText = "colLSId"
+        colLSId.Name = "colLSId"
+        ' 
         ' colLSTrackId
         ' 
         colLSTrackId.HeaderText = "colLSTrackId"
         colLSTrackId.Name = "colLSTrackId"
+        ' 
+        ' colLSMyEffectId
+        ' 
+        colLSMyEffectId.HeaderText = "colLSMyEffectId"
+        colLSMyEffectId.Name = "colLSMyEffectId"
         ' 
         ' colLSStartMoment
         ' 
@@ -3029,6 +3158,7 @@ Partial Class FrmMain
         ' 
         ' btnSaveShow
         ' 
+        btnSaveShow.Alignment = ToolStripItemAlignment.Right
         btnSaveShow.DisplayStyle = ToolStripItemDisplayStyle.Text
         btnSaveShow.Image = CType(resources.GetObject("btnSaveShow.Image"), Image)
         btnSaveShow.ImageTransparentColor = Color.Magenta
@@ -3196,10 +3326,10 @@ Partial Class FrmMain
         ToolStripTables.ResumeLayout(False)
         ToolStripTables.PerformLayout()
         TabControlTables.ResumeLayout(False)
-        TabTracks.ResumeLayout(False)
-        CType(DG_Tracks, ComponentModel.ISupportInitialize).EndInit()
         TabMyEffects.ResumeLayout(False)
         CType(DG_MyEffects, ComponentModel.ISupportInitialize).EndInit()
+        TabTracks.ResumeLayout(False)
+        CType(DG_Tracks, ComponentModel.ISupportInitialize).EndInit()
         TabLightSources.ResumeLayout(False)
         CType(DG_LightSources, ComponentModel.ISupportInitialize).EndInit()
         TabFrames.ResumeLayout(False)
@@ -3399,7 +3529,6 @@ Partial Class FrmMain
     Friend WithEvents btnGenerateStage As ToolStripButton
     Friend WithEvents pb_Stage As PictureBox
     Friend WithEvents ToolStripSegments As ToolStrip
-    Friend WithEvents btnUpdateStage As ToolStripButton
     Friend WithEvents TabGroups As TabPage
     Friend WithEvents DG_Groups As DataGridView
     Friend WithEvents RichTextBox4 As RichTextBox
@@ -3496,36 +3625,11 @@ Partial Class FrmMain
     Friend WithEvents TabMyEffects As TabPage
     Friend WithEvents DG_LightSources As DataGridView
     Friend WithEvents DG_MyEffectsFrames As DataGridView
-    Friend WithEvents colLSTrackId As DataGridViewTextBoxColumn
-    Friend WithEvents colLSStartMoment As DataGridViewTextBoxColumn
-    Friend WithEvents colLSDuration As DataGridViewTextBoxColumn
-    Friend WithEvents colLSPositionX As DataGridViewTextBoxColumn
-    Friend WithEvents colLSPositionY As DataGridViewTextBoxColumn
-    Friend WithEvents colLSSize As DataGridViewTextBoxColumn
-    Friend WithEvents colLSShape As DataGridViewTextBoxColumn
-    Friend WithEvents colLSBlend As DataGridViewTextBoxColumn
-    Friend WithEvents colLSDirection As DataGridViewTextBoxColumn
-    Friend WithEvents colLSColor1 As DataGridViewTextBoxColumn
-    Friend WithEvents colLSColor2 As DataGridViewTextBoxColumn
-    Friend WithEvents colLSColor3 As DataGridViewTextBoxColumn
-    Friend WithEvents colLSColor4 As DataGridViewTextBoxColumn
-    Friend WithEvents colLSColor5 As DataGridViewTextBoxColumn
-    Friend WithEvents colLSBrightnessBaseline As DataGridViewTextBoxColumn
-    Friend WithEvents colLSBrightnessEffect As DataGridViewTextBoxColumn
-    Friend WithEvents colLSEffect As DataGridViewTextBoxColumn
-    Friend WithEvents colLSGroups As DataGridViewTextBoxColumn
     Friend WithEvents colMF_MEID As DataGridViewTextBoxColumn
     Friend WithEvents colMF_FixtureID As DataGridViewTextBoxColumn
     Friend WithEvents colMF_Frames As DataGridViewTextBoxColumn
     Friend WithEvents DG_MyEffects As DataGridView
-    Friend WithEvents colMEID As DataGridViewTextBoxColumn
-    Friend WithEvents colMEName As DataGridViewTextBoxColumn
-    Friend WithEvents colMEDescription As DataGridViewTextBoxColumn
-    Friend WithEvents colMEDDPData As DataGridViewTextBoxColumn
     Friend WithEvents DG_Tracks As DataGridView
-    Friend WithEvents colTrackId As DataGridViewTextBoxColumn
-    Friend WithEvents colTrackName As DataGridViewTextBoxColumn
-    Friend WithEvents colTrackActive As DataGridViewCheckBoxColumn
     Friend WithEvents TabStageControl As TabControl
     Friend WithEvents TabPage1 As TabPage
     Friend WithEvents TabPage2 As TabPage
@@ -3553,5 +3657,46 @@ Partial Class FrmMain
     Friend WithEvents btnLoadAll As ToolStripButton
     Friend WithEvents GroupBox12 As GroupBox
     Friend WithEvents tvGroupsSelected As TreeView
+    Friend WithEvents btnResetFrames As ToolStripButton
+    Friend WithEvents ToolStripLabel3 As ToolStripLabel
+    Friend WithEvents cbSelectedEffect As ToolStripComboBox
+    Friend WithEvents ToolStripLabel4 As ToolStripLabel
+    Friend WithEvents btnEffectAdd As ToolStripButton
+    Friend WithEvents btnEffectDelete As ToolStripButton
+    Friend WithEvents ToolStripSeparator9 As ToolStripSeparator
+    Friend WithEvents colLSId As DataGridViewTextBoxColumn
+    Friend WithEvents colLSTrackId As DataGridViewTextBoxColumn
+    Friend WithEvents colLSMyEffectId As DataGridViewTextBoxColumn
+    Friend WithEvents colLSStartMoment As DataGridViewTextBoxColumn
+    Friend WithEvents colLSDuration As DataGridViewTextBoxColumn
+    Friend WithEvents colLSPositionX As DataGridViewTextBoxColumn
+    Friend WithEvents colLSPositionY As DataGridViewTextBoxColumn
+    Friend WithEvents colLSSize As DataGridViewTextBoxColumn
+    Friend WithEvents colLSShape As DataGridViewTextBoxColumn
+    Friend WithEvents colLSBlend As DataGridViewTextBoxColumn
+    Friend WithEvents colLSDirection As DataGridViewTextBoxColumn
+    Friend WithEvents colLSColor1 As DataGridViewTextBoxColumn
+    Friend WithEvents colLSColor2 As DataGridViewTextBoxColumn
+    Friend WithEvents colLSColor3 As DataGridViewTextBoxColumn
+    Friend WithEvents colLSColor4 As DataGridViewTextBoxColumn
+    Friend WithEvents colLSColor5 As DataGridViewTextBoxColumn
+    Friend WithEvents colLSBrightnessBaseline As DataGridViewTextBoxColumn
+    Friend WithEvents colLSBrightnessEffect As DataGridViewTextBoxColumn
+    Friend WithEvents colLSEffect As DataGridViewTextBoxColumn
+    Friend WithEvents colLSGroups As DataGridViewTextBoxColumn
+    Friend WithEvents colMEID As DataGridViewTextBoxColumn
+    Friend WithEvents colMEName As DataGridViewTextBoxColumn
+    Friend WithEvents colMEDescription As DataGridViewTextBoxColumn
+    Friend WithEvents colMEDDPData As DataGridViewTextBoxColumn
+    Friend WithEvents colTrackId As DataGridViewTextBoxColumn
+    Friend WithEvents colTrackMeId As DataGridViewTextBoxColumn
+    Friend WithEvents colTrackName As DataGridViewTextBoxColumn
+    Friend WithEvents colTrackActive As DataGridViewCheckBoxColumn
+    Friend WithEvents ToolStripLabel5 As ToolStripLabel
+    Friend WithEvents lblPreviewFromPosition As ToolStripTextBox
+    Friend WithEvents ToolStripLabel6 As ToolStripLabel
+    Friend WithEvents lblPreviewToPosition As ToolStripTextBox
+    Friend WithEvents btnPreviewPlayPause As ToolStripButton
+    Friend WithEvents btnRepeat As ToolStripButton
 
 End Class

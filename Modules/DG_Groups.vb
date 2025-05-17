@@ -59,6 +59,8 @@ Module DG_Groups
     ' Splitst de apparaten in groepen op basis van hun lay-out en voegt ze toe aan de groepen DataGridView.
     '*********************************************************************************************
     Public Sub SplitIntoGroups(ByVal dgDevices As DataGridView, ByVal dgGroups As DataGridView)
+        PopulateFixtureDropdown_InGroups(dgDevices, dgGroups)
+
         dgGroups.Rows.Clear()
         Dim globalId As Integer = 1
 

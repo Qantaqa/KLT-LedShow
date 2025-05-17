@@ -37,18 +37,48 @@
             <colMF_Frames></colMF_Frames>
         </Row>
         <Row>
+            <colMF_MEID></colMF_MEID>
+            <colMF_FixtureID></colMF_FixtureID>
+            <colMF_Frames></colMF_Frames>
+        </Row>
+        <Row>
+            <colMF_MEID></colMF_MEID>
+            <colMF_FixtureID></colMF_FixtureID>
+            <colMF_Frames></colMF_Frames>
+        </Row>
+        <Row>
+            <colMF_MEID></colMF_MEID>
+            <colMF_FixtureID></colMF_FixtureID>
+            <colMF_Frames></colMF_Frames>
+        </Row>
+        <Row>
+            <colMF_MEID></colMF_MEID>
+            <colMF_FixtureID></colMF_FixtureID>
+            <colMF_Frames></colMF_Frames>
+        </Row>
+        <Row>
             <colMF_MEID>1</colMF_MEID>
-            <colMF_FixtureID>WLED-23</colMF_FixtureID>
+            <colMF_FixtureID>CENTER</colMF_FixtureID>
             <colMF_Frames>System.Collections.Generic.List`1[System.Byte[]]</colMF_Frames>
         </Row>
         <Row>
             <colMF_MEID>1</colMF_MEID>
-            <colMF_FixtureID>WLED-46</colMF_FixtureID>
+            <colMF_FixtureID>BEUK_LI</colMF_FixtureID>
             <colMF_Frames>System.Collections.Generic.List`1[System.Byte[]]</colMF_Frames>
         </Row>
         <Row>
             <colMF_MEID>1</colMF_MEID>
-            <colMF_FixtureID>WLED-47</colMF_FixtureID>
+            <colMF_FixtureID>BEUK_RE</colMF_FixtureID>
+            <colMF_Frames>System.Collections.Generic.List`1[System.Byte[]]</colMF_Frames>
+        </Row>
+        <Row>
+            <colMF_MEID>1</colMF_MEID>
+            <colMF_FixtureID>TRAP_LI</colMF_FixtureID>
+            <colMF_Frames>System.Collections.Generic.List`1[System.Byte[]]</colMF_Frames>
+        </Row>
+        <Row>
+            <colMF_MEID>1</colMF_MEID>
+            <colMF_FixtureID>TRAP_RE</colMF_FixtureID>
             <colMF_Frames>System.Collections.Generic.List`1[System.Byte[]]</colMF_Frames>
         </Row>
     </Data>

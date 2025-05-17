@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DataGridData>
     <Structure>
+        <Column Name="colLSId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
         <Column Name="colLSTrackId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colLSMyEffectId" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
         <Column Name="colLSStartMoment" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
         <Column Name="colLSDuration" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
         <Column Name="colLSPositionX" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
@@ -22,44 +24,114 @@
     </Structure>
     <Data>
         <Row>
+            <colLSId>1</colLSId>
             <colLSTrackId>1</colLSTrackId>
-            <colLSStartMoment>5</colLSStartMoment>
-            <colLSDuration>50</colLSDuration>
-            <colLSPositionX>500</colLSPositionX>
-            <colLSPositionY>200</colLSPositionY>
+            <colLSMyEffectId>1</colLSMyEffectId>
+            <colLSStartMoment>0</colLSStartMoment>
+            <colLSDuration>30</colLSDuration>
+            <colLSPositionX>498</colLSPositionX>
+            <colLSPositionY>86</colLSPositionY>
             <colLSSize>1100</colLSSize>
             <colLSShape>Square</colLSShape>
             <colLSBlend>False</colLSBlend>
             <colLSDirection>Up</colLSDirection>
-            <colLSColor1>-16777088</colLSColor1>
-            <colLSColor2>-16777216</colLSColor2>
-            <colLSColor3>-16777216</colLSColor3>
-            <colLSColor4>-16777216</colLSColor4>
-            <colLSColor5>-16777216</colLSColor5>
+            <colLSColor1>-16776961</colLSColor1>
+            <colLSColor2>0</colLSColor2>
+            <colLSColor3>0</colLSColor3>
+            <colLSColor4>0</colLSColor4>
+            <colLSColor5>0</colLSColor5>
             <colLSBrightnessBaseline>10</colLSBrightnessBaseline>
-            <colLSBrightnessEffect>1</colLSBrightnessEffect>
+            <colLSBrightnessEffect>10</colLSBrightnessEffect>
             <colLSEffect></colLSEffect>
-            <colLSGroups>2,4,5,6,8,9,10</colLSGroups>
+            <colLSGroups>3,4,5,6,7,8</colLSGroups>
         </Row>
         <Row>
+            <colLSId>2</colLSId>
             <colLSTrackId>2</colLSTrackId>
-            <colLSStartMoment>20</colLSStartMoment>
-            <colLSDuration>20</colLSDuration>
-            <colLSPositionX>497</colLSPositionX>
-            <colLSPositionY>81</colLSPositionY>
-            <colLSSize>150</colLSSize>
+            <colLSMyEffectId>1</colLSMyEffectId>
+            <colLSStartMoment>5</colLSStartMoment>
+            <colLSDuration>15</colLSDuration>
+            <colLSPositionX>356</colLSPositionX>
+            <colLSPositionY>182</colLSPositionY>
+            <colLSSize>300</colLSSize>
             <colLSShape>Circle</colLSShape>
             <colLSBlend>False</colLSBlend>
             <colLSDirection>Up</colLSDirection>
             <colLSColor1>-16711936</colLSColor1>
-            <colLSColor2>-16776961</colLSColor2>
-            <colLSColor3>-16777152</colLSColor3>
-            <colLSColor4>-8388480</colLSColor4>
-            <colLSColor5>-65408</colLSColor5>
-            <colLSBrightnessBaseline>2</colLSBrightnessBaseline>
-            <colLSBrightnessEffect>0</colLSBrightnessEffect>
+            <colLSColor2>0</colLSColor2>
+            <colLSColor3>0</colLSColor3>
+            <colLSColor4>0</colLSColor4>
+            <colLSColor5>0</colLSColor5>
+            <colLSBrightnessBaseline>10</colLSBrightnessBaseline>
+            <colLSBrightnessEffect>10</colLSBrightnessEffect>
             <colLSEffect></colLSEffect>
-            <colLSGroups>2,4,5,6,8,9,10</colLSGroups>
+            <colLSGroups>9,10,11,12</colLSGroups>
+        </Row>
+        <Row>
+            <colLSId>3</colLSId>
+            <colLSTrackId>3</colLSTrackId>
+            <colLSMyEffectId>1</colLSMyEffectId>
+            <colLSStartMoment>10</colLSStartMoment>
+            <colLSDuration>10</colLSDuration>
+            <colLSPositionX>588</colLSPositionX>
+            <colLSPositionY>226</colLSPositionY>
+            <colLSSize>300</colLSSize>
+            <colLSShape>Circle</colLSShape>
+            <colLSBlend>False</colLSBlend>
+            <colLSDirection>Up</colLSDirection>
+            <colLSColor1>-65281</colLSColor1>
+            <colLSColor2>0</colLSColor2>
+            <colLSColor3>0</colLSColor3>
+            <colLSColor4>0</colLSColor4>
+            <colLSColor5>0</colLSColor5>
+            <colLSBrightnessBaseline>10</colLSBrightnessBaseline>
+            <colLSBrightnessEffect>10</colLSBrightnessEffect>
+            <colLSEffect>Up</colLSEffect>
+            <colLSGroups>9,10,11,12</colLSGroups>
+        </Row>
+        <Row>
+            <colLSId>4</colLSId>
+            <colLSTrackId>3</colLSTrackId>
+            <colLSMyEffectId>1</colLSMyEffectId>
+            <colLSStartMoment>19,96368</colLSStartMoment>
+            <colLSDuration>10</colLSDuration>
+            <colLSPositionX>494</colLSPositionX>
+            <colLSPositionY>325</colLSPositionY>
+            <colLSSize>300</colLSSize>
+            <colLSShape>Square</colLSShape>
+            <colLSBlend>True</colLSBlend>
+            <colLSDirection>Up</colLSDirection>
+            <colLSColor1>-65536</colLSColor1>
+            <colLSColor2>0</colLSColor2>
+            <colLSColor3>0</colLSColor3>
+            <colLSColor4>0</colLSColor4>
+            <colLSColor5>0</colLSColor5>
+            <colLSBrightnessBaseline>10</colLSBrightnessBaseline>
+            <colLSBrightnessEffect>10</colLSBrightnessEffect>
+            <colLSEffect>LeftUp</colLSEffect>
+            <colLSGroups>9,10,11,12</colLSGroups>
+        </Row>
+        <Row>
+            <colLSId>5</colLSId>
+            <colLSTrackId>2</colLSTrackId>
+            <colLSMyEffectId>1</colLSMyEffectId>
+            <colLSStartMoment>21,03632</colLSStartMoment>
+            <colLSDuration>5</colLSDuration>
+            <colLSPositionX>507</colLSPositionX>
+            <colLSPositionY>132</colLSPositionY>
+            <colLSSize>300</colLSSize>
+            <colLSShape>Circle</colLSShape>
+            <colLSBlend>True</colLSBlend>
+            <colLSDirection>Up</colLSDirection>
+            <colLSColor1>-256</colLSColor1>
+            <colLSColor2>0</colLSColor2>
+            <colLSColor3>0</colLSColor3>
+            <colLSColor4>0</colLSColor4>
+            <colLSColor5>0</colLSColor5>
+            <colLSBrightnessBaseline>5</colLSBrightnessBaseline>
+            <colLSBrightnessEffect>5</colLSBrightnessEffect>
+            <colLSEffect></colLSEffect>
+            <colLSGroups>1,2,9,10,11,12</colLSGroups>
         </Row>
     </Data>
 </DataGridData>

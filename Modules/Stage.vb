@@ -5,6 +5,7 @@ Imports System.Windows.Forms
 Imports System.Drawing.Drawing2D
 Imports System.Runtime.InteropServices
 Imports System
+Imports System.Text.RegularExpressions
 
 ''' <summary>
 ''' Module om de LED-layout en effectvisualisatie op het podium weer te geven.
@@ -35,16 +36,32 @@ Public Module Stage
     ''' Bouwt LedLijst op basis van layout-strings in DG_Devices.
     ''' Berekent mm- en px-coördinaten.
     ''' </summary>
+    Public Function ExpandLayoutString(rawLayout As String) As String
+        ' Zorgt voor expanderen van bijv. 12(U15,R15) => U15,R15 U15,R15 ... 12x
+        Dim regex As New Regex("(\d+)\(([^\)]+)\)")
+        Dim output = rawLayout
+
+        ' Meerdere matches mogelijk per regel
+        While regex.IsMatch(output)
+            output = regex.Replace(output, Function(m)
+                                               Dim count = Integer.Parse(m.Groups(1).Value)
+                                               Dim content = m.Groups(2).Value.Trim()
+                                               Return String.Join(",", Enumerable.Repeat(content, count))
+                                           End Function)
+        End While
+
+        Return output
+    End Function
+
     Public Sub GenereerLedLijst(
-            dgDevices As DataGridView,
-            dgGroups As DataGridView,
-            pbStage As PictureBox,
-            podiumBreedteCm As Integer,
-            podiumHoogteinCm As Integer)
+        dgDevices As DataGridView,
+        dgGroups As DataGridView,
+        pbStage As PictureBox,
+        podiumBreedteCm As Integer,
+        podiumHoogteinCm As Integer)
 
         pbStage.Refresh()
         Application.DoEvents()
-
 
         LedLijst.Clear()
         Dim ledsPerMeter = My.Settings.LedsPerMeter
@@ -62,43 +79,66 @@ Public Module Stage
         Dim axisX = mL
         Dim axisY = mT + drawH
 
-        If (dgGroups.Rows.Count = 0 Or dgDevices.Rows.Count = 0) Then
-            Exit Sub
-        End If
+        If (dgGroups.Rows.Count = 0 Or dgDevices.Rows.Count = 0) Then Exit Sub
 
-        ' 1) Bouw alvast een tijdelijke lijst van alle groepen
+        ' 1) Bouw groepinformatie op
         Dim groepen As New List(Of (fixture As String, id As Integer, startIdx As Integer, stopIdx As Integer))
         For Each grRow As DataGridViewRow In FrmMain.DG_Groups.Rows
             If grRow.IsNewRow Then Continue For
             Dim fix = CStr(grRow.Cells("colGroupFixture").Value)
             Dim gid = CInt(grRow.Cells("colGroupId").Value)
-            ' in de grid staan 1-based LED-nummers, maak zero-based
             Dim startLed = CInt(grRow.Cells("colGroupStartLedNr").Value) - 1
             Dim stopLed = CInt(grRow.Cells("colGroupStopLedNr").Value) - 1
             groepen.Add((fix, gid, startLed, stopLed))
         Next
 
-        ' 2) Loop alle devices en bouw LedLijst
+        ' 2) Loop devices en genereer ledlijst
         For Each row As DataGridViewRow In dgDevices.Rows
             If row.IsNewRow Then Continue For
             Dim deviceNaam = CStr(row.Cells("colInstance").Value)
             Dim rawLayout = CStr(row.Cells("colLayout").Value)
             If String.IsNullOrEmpty(deviceNaam) OrElse String.IsNullOrEmpty(rawLayout) Then Continue For
 
-            Dim segments = ValidateLayoutString(rawLayout).Split(","c)
+            Dim expandedLayout = ExpandLayoutString(ValidateLayoutString(rawLayout))
+            Dim segments = expandedLayout.Split(","c)
             Dim currXmm As Double = 0
             Dim currYmm As Double = 0
             Dim deviceIndex As Integer = 0
 
             For Each seg In segments
                 Dim s = seg.Trim().ToUpper()
+
+                ' Verwerk X-absoluut of X-relatief
                 If s.StartsWith("X") Then
-                    Dim cm As Double
-                    If Double.TryParse(s.Substring(1), cm) Then currXmm = cm * 10
+                    Dim rest = s.Substring(1)
+                    If rest.StartsWith("+") OrElse rest.StartsWith("-") Then
+                        Dim deltaCm As Double
+                        If Double.TryParse(rest, deltaCm) Then
+                            currXmm += deltaCm * 10
+                        End If
+                    Else
+                        Dim cm As Double
+                        If Double.TryParse(rest, cm) Then
+                            currXmm = cm * 10
+                        End If
+                    End If
                     Continue For
-                ElseIf s.StartsWith("Y") Then
-                    Dim cmY As Double
-                    If Double.TryParse(s.Substring(1), cmY) Then currYmm = cmY * 10
+                End If
+
+                ' Verwerk Y-absoluut of Y-relatief
+                If s.StartsWith("Y") Then
+                    Dim rest = s.Substring(1)
+                    If rest.StartsWith("+") OrElse rest.StartsWith("-") Then
+                        Dim deltaCm As Double
+                        If Double.TryParse(rest, deltaCm) Then
+                            currYmm += deltaCm * 10
+                        End If
+                    Else
+                        Dim cmY As Double
+                        If Double.TryParse(rest, cmY) Then
+                            currYmm = cmY * 10
+                        End If
+                    End If
                     Continue For
                 End If
 
@@ -117,29 +157,25 @@ Public Module Stage
                 End Select
 
                 For i = 1 To count
-                    ' pixel-coördinaten
                     Dim xpx = axisX + CInt(Math.Round(currXmm * pxPerMm))
                     Dim ypx = axisY - CInt(Math.Round(currYmm * pxPerMm))
 
-                    ' bepaal groepsIDs voor deze led
                     Dim gids As New List(Of Integer)
                     For Each g In groepen
-                        If g.fixture = deviceNaam AndAlso
-                           deviceIndex >= g.startIdx AndAlso deviceIndex <= g.stopIdx Then
+                        If g.fixture = deviceNaam AndAlso deviceIndex >= g.startIdx AndAlso deviceIndex <= g.stopIdx Then
                             gids.Add(g.id)
                         End If
                     Next
 
-                    ' voeg toe aan LedLijst
                     LedLijst.Add(New LedInfo With {
-                        .DeviceNaam = deviceNaam,
-                        .IndexInDevice = deviceIndex,
-                        .Xmm = currXmm,
-                        .Ymm = currYmm,
-                        .Xpx = xpx,
-                        .Ypx = ypx,
-                        .GroupId = String.Join(",", gids)
-                    })
+                    .DeviceNaam = deviceNaam,
+                    .IndexInDevice = deviceIndex,
+                    .Xmm = currXmm,
+                    .Ymm = currYmm,
+                    .Xpx = xpx,
+                    .Ypx = ypx,
+                    .GroupId = String.Join(",", gids)
+                })
 
                     deviceIndex += 1
                     currXmm += dx
@@ -147,10 +183,10 @@ Public Module Stage
                 Next
             Next
 
-            ' Update aantal leds in grid
             row.Cells("colLedCount").Value = deviceIndex
         Next
     End Sub
+
 
     ''' <summary>
     ''' Tekent podium in PictureBox: achtergrond, assen, baseline en effect-pixels.
@@ -172,8 +208,9 @@ Public Module Stage
                 For i = 0 To data.Length \ 3 - 1
                     lst.Add(Color.FromArgb(data(i * 3), data(i * 3 + 1), data(i * 3 + 2)))
                 Next
+                colorMap(inst) = lst
             End If
-            colorMap(inst) = lst
+
         Next
 
         ' 2) Maak een bitmap waarin we alles tekenen
@@ -194,23 +231,29 @@ Public Module Stage
                 Using g = Graphics.FromImage(bmp)
                     g.SmoothingMode = SmoothingMode.AntiAlias
 
+                    If SelectedLSIndex > FrmMain.DG_LightSources.Rows().Count Then
+                        SelectedLSIndex = Math.Max(FrmMain.DG_LightSources.Rows().Count - 1, 0)
+                    End If
                     Dim lsRow = FrmMain.DG_LightSources.Rows(SelectedLSIndex)
-                    Dim xCm = CDbl(lsRow.Cells("colLSPositionX").Value)     ' in cm
-                    Dim xMm = xCm * 10                                      ' in mm
-                    Dim yCm = CDbl(lsRow.Cells("colLSPositionY").Value)     ' in cm
-                    Dim yMM = yCm * 10                                      ' in mm
-                    Dim pxPerMm = GetMmPerPixel(pbStage)
-                    Dim xPx = MarginLeft + CInt(xMm * pxPerMm)
-                    Dim yPx = MarginTop + DrawHeight - CInt(yMM * pxPerMm)
+                    Dim xMm = (CDbl(lsRow.Cells("colLSPositionX").Value)) * 10      ' X Positie van shape op podium in mm
+                    Dim yMm = (CDbl(lsRow.Cells("colLSPositionY").Value)) * 10      ' Y Positie van shape op podium in mm
 
-                    ' **NIET MEER**: sizePx = 12  
-                    Dim sizeCm = CDbl(lsRow.Cells("colLSSize").Value)       ' in cm
-                    Dim sizeMm = sizeCm * 10                                ' in mm
-                    Dim sizePx = CInt(sizeMm * pxPerMm)                     ' nu écht 1 mm → px
+                    Dim Scale = DetermineScaleOfScreen(pbStage)                     ' Bepaal de schaal voor positie op het scherm
+                    Dim xPx = MarginLeft + CInt(xMm * Scale)                        ' Bepaal x positie op het scherm
+                    Dim yPx = MarginTop + DrawHeight - CInt(yMm * Scale)            ' Bepaal y positie op het scherm
+
+
+                    Dim sizeMm = CDbl(lsRow.Cells("colLSSize").Value) * 10          ' Hoe groot is de shape in mm
+                    Dim sizePx = CInt(sizeMm * Scale)                               ' Hoe groot is de shape voor het scherm
 
                     Dim shape = CStr(lsRow.Cells("colLSShape").Value)
                     Dim dir = CStr(lsRow.Cells("colLSDirection").Value)
                     Dim c1 = CType(lsRow.Cells("colLSColor1").Tag, Color)
+                    Dim c2 = CType(lsRow.Cells("colLSColor2").Tag, Color)
+                    Dim c3 = CType(lsRow.Cells("colLSColor3").Tag, Color)
+                    Dim c4 = CType(lsRow.Cells("colLSColor4").Tag, Color)
+                    Dim c5 = CType(lsRow.Cells("colLSColor5").Tag, Color)
+
 
                     Using fillBrush = New SolidBrush(Color.FromArgb(128, c1))
                         Using outlinePen = New Pen(Color.Yellow, 2)
@@ -235,7 +278,66 @@ Public Module Stage
     ''' op (xPx,yPx) met afmeting sizePx, met een gevulde brush en outline pen.
     ''' Voor de cone wordt de richting uit dir gebruikt.
     ''' </summary>
-    Private Sub DrawShapes(
+    Public Sub DrawShapes(
+    g As Graphics,
+    shape As String,
+    xPx As Integer,
+    yPx As Integer,
+    sizePx As Integer,
+    fillBrush As Brush,
+    outlinePen As Pen,
+    dir As String)
+
+        Select Case shape
+            Case "Circle"
+                Dim r = sizePx \ 2
+                Dim rectC = New Rectangle(xPx - r, yPx - r, sizePx, sizePx)
+                'g.FillEllipse(fillBrush, rectC)
+                g.DrawEllipse(outlinePen, rectC)
+
+
+            Case "Square"
+                Dim r = sizePx \ 2
+                Dim rectS = New Rectangle(xPx - r, yPx - r, sizePx, sizePx)
+                g.FillRectangle(fillBrush, rectS)
+                g.DrawRectangle(outlinePen, rectS)
+
+            Case "Cone"
+                Dim height = sizePx
+                Dim halfBase = height * Math.Tan(Math.PI / 6)
+                Dim ang As Double = 0
+                Select Case dir
+                    Case "Up" : ang = Math.PI / 2
+                    Case "Down" : ang = 3 * Math.PI / 2
+                    Case "Left" : ang = Math.PI
+                    Case "Right" : ang = 0
+                    Case "Left-Up" : ang = 3 * Math.PI / 4
+                    Case "Right-Up" : ang = Math.PI / 4
+                    Case "Left-Down" : ang = 5 * Math.PI / 4
+                    Case "Right-Down" : ang = 7 * Math.PI / 4
+                End Select
+                Dim apex = New PointF(xPx, yPx)
+                Dim bx = xPx + CInt(Math.Cos(ang) * height)
+                Dim by = yPx - CInt(Math.Sin(ang) * height)
+                Dim perp = ang + Math.PI / 2
+                Dim p1 = New PointF(bx + CInt(halfBase * Math.Cos(perp)), by - CInt(halfBase * Math.Sin(perp)))
+                Dim p2 = New PointF(bx - CInt(halfBase * Math.Cos(perp)), by + CInt(halfBase * Math.Sin(perp)))
+                g.FillPolygon(fillBrush, {apex, p1, p2})
+                g.DrawPolygon(outlinePen, {apex, p1, p2})
+
+            Case Else
+                Dim r = sizePx \ 2
+                Dim rectF = New Rectangle(xPx - r, yPx - r, sizePx, sizePx)
+                g.FillRectangle(fillBrush, rectF)
+                g.DrawRectangle(outlinePen, rectF)
+        End Select
+
+        Using yellowBrush As New SolidBrush(Color.Yellow)
+            g.FillEllipse(yellowBrush, xPx - 2, yPx - 2, 5, 5)
+        End Using
+    End Sub
+
+    Private Sub DrawShapes_OLD(
         g As Graphics,
         shape As String,
         xPx As Integer,
@@ -348,15 +450,23 @@ Public Module Stage
         Const size As Integer = 2
         Dim gray = Color.FromArgb(40, 40, 40)
         Dim bmpData = bmp.LockBits(New Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat)
-        Dim stride = bmpData.Stride, ptr = bmpData.Scan0
+        Dim stride = bmpData.Stride
+        Dim ptr = bmpData.Scan0
         Dim total = CLng(stride) * bmp.Height
         Dim raw(CInt(total) - 1) As Byte
         Marshal.Copy(ptr, raw, 0, raw.Length)
         For Each led In LedLijst
             For dx = 0 To size - 1
                 For dy = 0 To size - 1
-                    Dim idx = (led.Ypx + dy) * stride + (led.Xpx + dx) * 3
-                    raw(idx) = gray.B : raw(idx + 1) = gray.G : raw(idx + 2) = gray.R
+                    Dim px = led.Xpx + dx
+                    Dim py = led.Ypx + dy
+
+                    If px >= 0 AndAlso px < bmp.Width AndAlso py >= 0 AndAlso py < bmp.Height Then
+                        Dim idx As Integer = py * stride + px * 3
+                        raw(idx) = gray.B
+                        raw(idx + 1) = gray.G
+                        raw(idx + 2) = gray.R
+                    End If
                 Next
             Next
         Next
@@ -387,8 +497,14 @@ Public Module Stage
                 If R + G + B >= threshold Then
                     For dx = 0 To size - 1
                         For dy = 0 To size - 1
-                            Dim idx = (led.Ypx + dy) * stride + (led.Xpx + dx) * 3
-                            raw(idx) = col.B : raw(idx + 1) = col.G : raw(idx + 2) = col.R
+                            Dim px = led.Xpx + dx
+                            Dim py = led.Ypx + dy
+                            If px >= 0 AndAlso px < bmp.Width AndAlso py >= 0 AndAlso py < bmp.Height Then
+                                Dim idx = py * stride + px * 3
+                                raw(idx) = col.B
+                                raw(idx + 1) = col.G
+                                raw(idx + 2) = col.R
+                            End If
                         Next
                     Next
                 End If
@@ -402,7 +518,7 @@ Public Module Stage
     ''' Cleanup layout-string
     ''' </summary>
     Public Function ValidateLayoutString(layoutString As String) As String
-        Dim allowed = "UDLRXY", digits = "0123456789"
+        Dim allowed = "UDLRXY()+-", digits = "0123456789"
         Return String.Concat(layoutString.ToUpper().Where(Function(c) allowed.Contains(c) OrElse digits.Contains(c) OrElse c = ","c))
     End Function
 
@@ -425,9 +541,14 @@ Public Module Stage
     ''' <summary>
     ''' Bereken mm-per-pixel
     ''' </summary>
-    Public Function GetMmPerPixel(pb As PictureBox) As Double
-        Dim bwMm = My.Settings.PodiumBreedte * 10
-        Return (pb.ClientSize.Width - MarginLeft - 20) / bwMm
+    Public Function DetermineScaleOfScreen(pb As PictureBox) As Double
+        Dim wMm = My.Settings.PodiumBreedte * 10
+        Dim hMm = My.Settings.PodiumHoogte * 10
+        Dim ratioX = (pb.ClientSize.Width - MarginLeft - 20) / wMm
+        Dim ratioY = (pb.ClientSize.Height - MarginTop - 20) / hMm
+
+        Return Math.Min(ratioX, ratioY)
+
     End Function
 
     Private Function DrawWidthPx(pb As PictureBox) As Double
@@ -459,7 +580,7 @@ Public Module Stage
         End If
 
         ' Bereken mm-per-pixel
-        Dim pxPerMm = Stage.GetMmPerPixel(FrmMain.pb_Stage)
+        Dim pxPerMm = Stage.DetermineScaleOfScreen(FrmMain.pb_Stage)
         Dim mleft = Stage.MarginLeft
         Dim mtop = Stage.MarginTop
         Dim drawH = Stage.DrawHeight

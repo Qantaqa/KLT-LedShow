@@ -1,4 +1,5 @@
-﻿Imports System.IO
+﻿Imports System.Diagnostics.Metrics
+Imports System.IO
 Imports System.Net
 Imports System.Runtime.InteropServices
 Imports Newtonsoft.Json
@@ -78,6 +79,9 @@ Public Class FrmMain
             tbEffectBrightnessBaseline.Value = My.Settings.CustomEffectBrightness
             tbEffectBrightnessEffect.Value = My.Settings.CustomEffectBrightnessEffect
             tbEffectDispersion.Value = My.Settings.CustomEffectDispersion
+
+            lblPreviewFromPosition.Text = 0
+            lblPreviewToPosition.Text = 90
 
             Dim tip As New ToolTip()
             tip.SetToolTip(tbEffectSpeed, "Snelheid van het effect. Hoe hoger, hoe sneller de animatie verloopt (range 1-100%).")
@@ -329,10 +333,6 @@ Public Class FrmMain
         'ClearGroupsToBlack()
     End Sub
 
-    Private Sub btnLoadShow_Click(sender As Object, e As EventArgs)
-        LoadShow()
-    End Sub
-
     Private Sub btnLoadEffectPalettes_Click(sender As Object, e As EventArgs)
         LoadEffectPalettes()
     End Sub
@@ -351,8 +351,8 @@ Public Class FrmMain
     End Sub
 
 
-    Private Sub btnUpdateStage_Click(sender As Object, e As EventArgs) Handles btnUpdateStage.Click
-        TekenPodium(pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+    Private Sub btnUpdateStage_Click(sender As Object, e As EventArgs)
+
     End Sub
 
     Private Sub DG_Devices_CellValidated(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Devices.CellValidated
@@ -442,7 +442,7 @@ Public Class FrmMain
     Private Sub btnApplyCustomEffect_Click(sender As Object, e As EventArgs) Handles btnApplyCustomEffect.Click
         If TabStageControl.SelectedTab.TabIndex = 1 Then
             ' Effect builder
-            EffectDesigner_Compile()
+            Compile_EffectDesigner()
         Else
             ' Custom effects.
             HandleApplyCustomEffectClick()
@@ -723,4 +723,73 @@ Public Class FrmMain
     Private Sub btnLoadAll_Click_1(sender As Object, e As EventArgs) Handles btnLoadAll.Click
         LoadAll()
     End Sub
+
+    Private Sub btnResetFrames_Click(sender As Object, e As EventArgs) Handles btnResetFrames.Click
+        SplitContainerStage.SplitterDistance = 171
+        TekenPodium(pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+    End Sub
+
+    Private Sub cbSelectedEffect_Click(sender As Object, e As EventArgs) Handles cbSelectedEffect.Click
+        Dim selectedName As String = cbSelectedEffect.Text
+        If String.IsNullOrWhiteSpace(selectedName) Then Exit Sub
+
+        For Each row As DataGridViewRow In DG_MyEffects.Rows
+            If row.IsNewRow Then Continue For
+            If CStr(row.Cells("colMEName").Value) = selectedName Then
+                row.Selected = True
+                DG_MyEffects.CurrentCell = row.Cells("colMEName")
+                Exit For
+            End If
+        Next
+    End Sub
+
+    Private Sub BtnAddTrack_Click(sender As Object, e As EventArgs) Handles BtnAddTrack.Click
+        AddTrack()
+    End Sub
+
+
+    Private Sub BtnRemoveTrack_Click(sender As Object, e As EventArgs) Handles BtnRemoveTrack.Click
+        RemoveTrack()
+    End Sub
+
+
+    Private Sub btnAddShape_Click(sender As Object, e As EventArgs) Handles btnAddShape.Click
+        AddShape()
+    End Sub
+
+    Private Sub btnRemoveShape_Click(sender As Object, e As EventArgs) Handles btnRemoveShape.Click
+        RemoveShape()
+    End Sub
+
+    Private Sub btnEffectAdd_Click(sender As Object, e As EventArgs) Handles btnEffectAdd.Click
+        AddEffect()
+    End Sub
+
+    Private Sub btnEffectDelete_Click(sender As Object, e As EventArgs) Handles btnEffectDelete.Click
+        RemoveEffect()
+    End Sub
+
+    Private Sub btnRepeat_Click(sender As Object, e As EventArgs) Handles btnRepeat.Click
+        If (btnRepeat.Checked) Then
+            btnRepeat.Image = My.Resources.iconCheckbox_checked2
+            btnRepeat.Checked = False
+        Else
+            btnRepeat.Image = My.Resources.iconCheckbox_checked
+            btnRepeat.Checked = True
+        End If
+    End Sub
+
+    Private Sub btnPreviewPlayPause_Click(sender As Object, e As EventArgs) Handles btnPreviewPlayPause.Click
+
+        If btnPreviewPlayPause.Checked Then
+            btnPreviewPlayPause.Image = My.Resources.iconPause
+            btnPreviewPlayPause.Checked = False
+            ' Add code to pause preview
+        Else
+            btnPreviewPlayPause.Image = My.Resources.iconPlay
+            btnPreviewPlayPause.Checked = True
+            ' Add code to start preview
+        End If
+    End Sub
+
 End Class
