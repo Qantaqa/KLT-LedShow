@@ -230,45 +230,40 @@ Module EffectBuilder
 
 
     Public Sub Compile_EffectDesigner()
-        ' 1) Bereken mm-offset door de UI margins (in px) om te rekenen naar mm
-        Dim mmPerPx = Stage.DetermineScaleOfScreen(FrmMain.pb_Stage)
-        Dim offsetXmm = Stage.MarginLeft * mmPerPx
-        Dim offsetYmm = Stage.MarginTop * mmPerPx
-
-
-        ' Reference naar grids
-        Dim meGrid = FrmMain.DG_MyEffects
-        Dim framesGrid = FrmMain.DG_MyEffectsFrames
-
-        If meGrid.CurrentRow Is Nothing Then
+        ' Controleer eerst of er een effect geselecteerd in de DG_MyEffects table, zo niet skippen met een melding
+        If FrmMain.DG_MyEffects.CurrentRow Is Nothing Then
             Dim selectedName As String = FrmMain.cbSelectedEffect.Text
             If String.IsNullOrWhiteSpace(selectedName) Then Exit Sub
 
-            For Each row As DataGridViewRow In FrmMain.DG_MyEffects.Rows
-                If row.IsNewRow Then Continue For
-                If CStr(row.Cells("colMEName").Value) = selectedName Then
-                    row.Selected = True
-                    FrmMain.DG_MyEffects.CurrentCell = row.Cells("colMEName")
+            ' Zoek de bijbehorende rij in DG_MyEffects en selecteer deze
+            For Each MErow As DataGridViewRow In FrmMain.DG_MyEffects.Rows
+                If MErow.IsNewRow Then Continue For
+                If CStr(MErow.Cells("colMEName").Value) = selectedName Then
+                    MErow.Selected = True
+                    FrmMain.DG_MyEffects.CurrentCell = MErow.Cells("colMEName")
                     Exit For
                 End If
             Next
 
-            If meGrid.CurrentRow Is Nothing Then
-                MessageBox.Show("Selecteer eerst een effect in DG_MyEffect.", "Geen effect", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            ' Als er nog steeds geen rij is geselecteerd, geef een melding
+            If FrmMain.DG_MyEffects.CurrentRow Is Nothing Then
+                ToonFlashBericht("Selecteer eerst een effect.", 2)
                 Return
             End If
         End If
-        Dim effectId = CInt(meGrid.CurrentRow.Cells("colMEID").Value)
+
+        ' Sla het effectid op
+        Dim effectId = CInt(FrmMain.DG_MyEffects.CurrentRow.Cells("colMEID").Value)
 
 
-            ' Verwijder oude frames
-            For i As Integer = framesGrid.Rows.Count - 1 To 0 Step -1
-            If CInt(framesGrid.Rows(i).Cells("colMF_MEID").Value) = effectId Then
-                framesGrid.Rows.RemoveAt(i)
+        ' Verwijder oude frames van vorige compile op dit effect.
+        For i As Integer = FrmMain.DG_MyEffectsFrames.Rows.Count - 1 To 0 Step -1
+            If CInt(FrmMain.DG_MyEffectsFrames.Rows(i).Cells("colMF_MEID").Value) = effectId Then
+                FrmMain.DG_MyEffectsFrames.Rows.RemoveAt(i)
             End If
         Next
 
-        ' Bepaal maxEnd
+        ' Bepaal maxEnd van de actieven LightSources, is nodig om het aantal frames te kunnen bepalen
         Dim maxEnd As Double = 0
         For Each lsRow As DataGridViewRow In FrmMain.DG_LightSources.Rows
             If lsRow.IsNewRow Then Continue For
@@ -286,91 +281,130 @@ Module EffectBuilder
         Next
         maxEnd = Math.Min(maxEnd, 90)
 
+        ' Bepaal het aantal frames dat we gaan maken, gebaseerd op 200ms per frame zijn dit 5 frames per seconde (fps)
         Dim fps = 5
         Dim totalFrames = CInt(Math.Ceiling(maxEnd * fps))
 
-        ' Digi de device-led counts
+
+        ' Bereken mm-offset door de UI margins (in px) om te rekenen naar mm
+        Dim mmPerPx = Stage.DetermineScaleOfScreen(FrmMain.pb_Stage)
+        Dim offsetXmm = Stage.MarginLeft * mmPerPx
+        Dim offsetYmm = Stage.MarginTop * mmPerPx
+
+
+
+        ' Bepaal het aantal devices dat door dit effect gebruikt moeten worden, dit zal resulteren in aantal records in de resultList, waarin per device 
+        ' de frames worden opgeslagen. 
         Dim deviceCounts = New Dictionary(Of String, Integer)
-        For Each info In LedLijst
-            deviceCounts(info.DeviceNaam) = Math.Max(deviceCounts.GetValueOrDefault(info.DeviceNaam, 0), info.IndexInDevice + 1)
+        For Each led In LedLijst
+            deviceCounts(led.DeviceNaam) = Math.Max(deviceCounts.GetValueOrDefault(led.DeviceNaam, 0), led.IndexInDevice + 1)
         Next
 
-        ' Initialiseér deviceFrames
-        Dim deviceFrames = New Dictionary(Of String, List(Of Byte()))()
+        ' En maak een lijstje aan, waar we het resultaat in op gaan slaan
+        Dim resultList = New Dictionary(Of String, List(Of Byte()))()
         For Each dev In deviceCounts.Keys
-            deviceFrames(dev) = New List(Of Byte())()
+            resultList(dev) = New List(Of Byte())()
         Next
 
-        ' Frame-loop
-        For frameIdx = 0 To totalFrames - 1
-            Dim t = frameIdx / fps
 
-            ' Maak buffers
+        ' We weten hoeveel frames we moeten maken, dus we kunnen nu de buffers aanmaken. Doorloop frame per frame
+        For frameIndex = 0 To totalFrames - 1
+
+            ' Bepaal de tijdspositie van dit frame in seconden
+            Dim framePosition = frameIndex / fps
+
+
+            ' Reserveer ruimte voor buffer per device, per LED hebben we 3 bytes nodig (RGB)
             Dim buffers = New Dictionary(Of String, Byte())
-            For Each dev In deviceCounts.Keys
-                buffers(dev) = New Byte(deviceCounts(dev) * 3 - 1) {}
+            For Each device In deviceCounts.Keys
+                buffers(device) = New Byte(deviceCounts(device) * 3 - 1) {}
             Next
 
-            ' LightSources
-            For Each lsRow As DataGridViewRow In FrmMain.DG_LightSources.Rows
-                If lsRow.IsNewRow OrElse lsRow.Cells("colLSTrackId").Value.ToString = "" Then Continue For
 
-                Dim trackId = CInt(lsRow.Cells("colLSTrackId").Value)
-                Dim direction = lsRow.Cells("colLSDirection").Value.ToString()
+            ' Doorloop alle shapes (lightsources) en bepaal of ze actief zijn op dit moment
+            For Each shapeLightsource As DataGridViewRow In FrmMain.DG_LightSources.Rows
+
+                ' Als deze rij niet actief is of leeg is, skippen
+                If shapeLightsource.IsNewRow Then Continue For
+                If shapeLightsource.Cells("colLSTrackId").Value.ToString = "" Then Continue For
+
+                ' Bepaal trackID van deze shape
+                Dim trackId = CInt(shapeLightsource.Cells("colLSTrackId").Value)
+
+
+                ' Bepaal of track op  waarop deze shape staat op actief staat, zo niet overslaan.
                 Dim trRow = FrmMain.DG_Tracks.Rows _
                         .Cast(Of DataGridViewRow)() _
                         .FirstOrDefault(Function(r) Not r.IsNewRow AndAlso CInt(r.Cells("colTrackId").Value) = trackId)
                 If trRow Is Nothing OrElse Not CBool(trRow.Cells("colTrackActive").Value) Then Continue For
 
-                Dim startSec = CDbl(lsRow.Cells("colLSStartMoment").Value)
-                Dim durSec = CDbl(lsRow.Cells("colLSDuration").Value)
-                If t < startSec OrElse t > startSec + durSec Then Continue For
 
-                Dim c1 = Color.FromArgb(CInt(lsRow.Cells("colLSColor1").Value))
-                Dim blend = CBool(lsRow.Cells("colLSBlend").Value)
+                ' Bepaal het start moment en de duur van deze shape, en of deze binnen de tijdsperiode van dit frame valt
+                Dim startSec = CDbl(shapeLightsource.Cells("colLSStartMoment").Value)
+                Dim durSec = CDbl(shapeLightsource.Cells("colLSDuration").Value)
+                If framePosition < startSec OrElse framePosition > startSec + durSec Then Continue For
 
-                ' Groepslijst van LS
-                Dim groupList = CStr(lsRow.Cells("colLSGroups").Value) _
+
+                ' *************************************************************************************************
+                ' Vanaf dit punt is de shape bekend en actief, ook de track is actief en de tijdspositie is goed. 
+                ' We kunnen nu de shape-parameters uitlezen en bepalen welke led's in de shape vallen. Daarna kunnen
+                ' we de kleuren in de buffers zetten en een subgroep aanmaken.
+                ' *************************************************************************************************
+
+                ' Haal informatie van de shape op, zoals kleuren, richting, grootte en blenden van de kleuren, etc
+                Dim c1 = Color.FromArgb(CInt(shapeLightsource.Cells("colLSColor1").Value))
+                Dim c2 = Color.FromArgb(CInt(shapeLightsource.Cells("colLSColor2").Value))
+                Dim c3 = Color.FromArgb(CInt(shapeLightsource.Cells("colLSColor3").Value))
+                Dim c4 = Color.FromArgb(CInt(shapeLightsource.Cells("colLSColor4").Value))
+                Dim c5 = Color.FromArgb(CInt(shapeLightsource.Cells("colLSColor5").Value))
+                Dim blend = CBool(shapeLightsource.Cells("colLSBlend").Value)
+                Dim direction = shapeLightsource.Cells("colLSDirection").Value.ToString()
+                Dim shapeEffect = shapeLightsource.Cells("colLSEffect").Value.ToString()
+                Dim shapePosXmm = CDbl(shapeLightsource.Cells("colLSPositionX").Value) * 10
+                Dim shapePosYmm = CDbl(shapeLightsource.Cells("colLSPositionY").Value) * 10
+
+                ' Haal ook even de CSV lijst van groepen van de shape op, en split deze in een lijst
+                Dim shapeGroups = CStr(shapeLightsource.Cells("colLSGroups").Value) _
                             .Split(","c) _
                             .Where(Function(s) Not String.IsNullOrWhiteSpace(s)) _
                             .Select(Function(s) CInt(s.Trim())) _
                             .ToList()
 
-                ' LS-center in mm (UI offset al afgetrokken bij instellen)
-                Dim lsXcm = CDbl(lsRow.Cells("colLSPositionX").Value)
-                Dim lsXmm = lsXcm * 10
-                Dim lsYCm = CDbl(lsRow.Cells("colLSPositionY").Value)
-                Dim lsYmm = lsYCm * 10
 
-                ' Pas toe op elke LED
-                For Each info In LedLijst
-                    ' Led-groepen
-                    Dim infoGroups = If(
-                    String.IsNullOrEmpty(info.GroupId),
-                    New List(Of Integer),
-                         info.GroupId.Split(","c).Select(Function(s) CInt(s.Trim())).ToList()
-                       )
 
-                    ' 1) overlap qua groep?
-                    If Not infoGroups.Any(Function(g) groupList.Contains(g)) Then Continue For
+                ' Doorloop alle LED, om te bepalen of deze led aangeraakt wordt door deze shape en in de groep zit
+                For Each individualLed In LedLijst
 
-                    ' 2) offset-meerekening in mm-space
-                    Dim dxMm = (info.Xmm - offsetXmm) - (lsXmm - offsetXmm)
-                    Dim dyMm = (info.Ymm - offsetYmm) - (lsYmm - offsetYmm)
 
-                    ' 3) shape-test (bv. cirkel)
+                    ' Bepaal de groepen van de led, en kijk of deze in de shape-groepen zit, zo niet volgende led
+                    Dim individualLedGroups = If(
+                        String.IsNullOrEmpty(individualLed.GroupId),
+                        New List(Of Integer),
+                            individualLed.GroupId.Split(","c).Select(Function(s) CInt(s.Trim())).ToList()
+                    )
+                    If Not individualLedGroups.Any(Function(g) shapeGroups.Contains(g)) Then Continue For
+
+
+                    ' Bepaal de positie de shape, grootte (en richting in geval van cone)
                     Dim inShape As Boolean = False
-                    Dim shape = CStr(lsRow.Cells("colLSShape").Value)
-                    Dim sizeCm = CDbl(lsRow.Cells("colLSSize").Value)
-                    Dim sizeMm = (sizeCm * 10) / 2
-                    Select Case shape
+                    Dim sizeMm = (CDbl(shapeLightsource.Cells("colLSSize").Value) * 10) / 2
+                    Dim dxMm = (individualLed.Xmm - offsetXmm) - (shapePosXmm - offsetXmm)
+                    Dim dyMm = (individualLed.Ymm - offsetYmm) - (shapePosYmm - offsetYmm)
+
+                    ' Bepaal of de led in de shape valt, afhankelijk van de shape
+                    Select Case CStr(shapeLightsource.Cells("colLSShape").Value)
                         Case "Circle"
+                            ' Cirkelvormige shape, X en Y zijn altijd het middelpunt, inshape als afstand <= radius van de cirkel
                             inShape = (dxMm * dxMm + dyMm * dyMm) <= sizeMm * sizeMm
+
                         Case "Square"
-                            Dim half = sizeMm
-                            inShape = (Math.Abs(dxMm) <= half AndAlso Math.Abs(dyMm) <= half)
+                            ' Vierkante shape, X en Y zijn altijd het middelpunt, inshape als afstand <= grootte van het vierkant
+                            inShape = (Math.Abs(dxMm) <= sizeMm AndAlso Math.Abs(dyMm) <= sizeMm)
+
                         Case "Cone"
+                            ' Een cone is wat moeilijker. We gaan uit dat x,y hoek is met scherpte punt en houden dan rekening met de richting 
                             Dim v = Stage.DirectionVector(direction, 1)
+
                             Dim len = Math.Sqrt(v.X * v.X + v.Y * v.Y)
                             If len > 0 Then
                                 Dim ux = v.X / len, uy = -v.Y / len
@@ -378,44 +412,65 @@ Module EffectBuilder
                                 If dist > 0 Then
                                     Dim proj = dxMm * ux + dyMm * uy
                                     Dim cosHalf = Math.Cos(Math.PI / 6)
-                                    If proj > 0 AndAlso proj <= sizeMm AndAlso proj / dist >= cosHalf Then inShape = True
+                                    If proj > 0 AndAlso proj <= sizeMm AndAlso proj / dist >= cosHalf Then
+                                        inShape = True
+                                    End If
                                 End If
                             End If
                     End Select
+                    ' Als de led niet in de shape valt, dan verder met de volgende led
                     If Not inShape Then Continue For
 
-                    ' 4) kleuren inbuffer
-                    Dim buf = buffers(info.DeviceNaam)
-                    Dim idx = info.IndexInDevice * 3
-                    If blend Then
-                        Dim sumR = CInt(buf(idx)) + c1.R : If sumR > 255 Then sumR = 255
-                        Dim sumG = CInt(buf(idx + 1)) + c1.G : If sumG > 255 Then sumG = 255
-                        Dim sumB = CInt(buf(idx + 2)) + c1.B : If sumB > 255 Then sumB = 255
-                        buf(idx) = CByte(sumR)
-                        buf(idx + 1) = CByte(sumG)
-                        buf(idx + 2) = CByte(sumB)
-                    Else
-                        buf(idx) = CByte(c1.R)
-                        buf(idx + 1) = CByte(c1.G)
-                        buf(idx + 2) = CByte(c1.B)
-                    End If
+                    ' *************************************************************************************************
+                    ' Vanaf dit punt weten we dat deze led binnen de shape valt. We kunnen dus de kleuren in het buffer
+                    ' zetten.
+                    ' *************************************************************************************************
+
+                    Dim buf = buffers(individualLed.DeviceNaam)
+                    Dim idx = individualLed.IndexInDevice * 3
+
+                    Select Case shapeEffect
+                        Case "Twinkle"
+                            ' ****************************************
+                            ' TWINKLE EFFECT
+                            ' ****************************************
+
+                        Case Else
+                            ' ****************************************
+                            ' SOLID KLEUR, GEEN EFFECT
+                            ' ****************************************
+
+                            ' Bepaal de kleur die we in de buffer moeten zetten, afhankelijk of we de kleuren moeten blenden of niet
+                            If blend Then
+                                Dim sumR = CInt(buf(idx)) + c1.R : If sumR > 255 Then sumR = 255
+                                Dim sumG = CInt(buf(idx + 1)) + c1.G : If sumG > 255 Then sumG = 255
+                                Dim sumB = CInt(buf(idx + 2)) + c1.B : If sumB > 255 Then sumB = 255
+                                buf(idx) = CByte(sumR)
+                                buf(idx + 1) = CByte(sumG)
+                                buf(idx + 2) = CByte(sumB)
+                            Else
+                                buf(idx) = CByte(c1.R)
+                                buf(idx + 1) = CByte(c1.G)
+                                buf(idx + 2) = CByte(c1.B)
+                            End If
+                    End Select
                 Next
             Next
 
             ' Sla buffers op
-            For Each dev In deviceFrames.Keys
-                deviceFrames(dev).Add(buffers(dev))
+            For Each frame In resultList.Keys
+                resultList(frame).Add(buffers(frame))
             Next
         Next
 
         ' Wegschrijven naar DG_MyEffectsFrames
-        For Each kvp In deviceFrames
-            Dim devName = kvp.Key
-            Dim framesList = kvp.Value
-            Dim rowIdx = framesGrid.Rows.Add()
-            With framesGrid.Rows(rowIdx)
+        For Each thisResult In resultList
+            Dim fixureId = thisResult.Key
+            Dim framesList = thisResult.Value
+            Dim rowIdx = FrmMain.DG_MyEffectsFrames.Rows.Add()
+            With FrmMain.DG_MyEffectsFrames.Rows(rowIdx)
                 .Cells("colMF_MEID").Value = effectId
-                .Cells("colMF_FixtureID").Value = devName
+                .Cells("colMF_FixtureID").Value = fixureId
                 .Cells("colMF_Frames").Value = framesList
             End With
         Next
@@ -1238,5 +1293,18 @@ Module EffectBuilder
         TekenPodium(FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
         RefreshTimeline()
     End Sub
+
+
+    Public Function GetTimelineXPosition(seconds As Double) As Integer
+        Dim panel = FrmMain.PanelTracks
+        Dim totalWidth = panel.ClientSize.Width
+        Dim scrollOffsetX = panel.AutoScrollPosition.X
+
+        ' Bereken schaal (pixels per seconde)
+        Dim pxPerSec As Double = totalWidth / _maxSeconds
+
+        ' Bereken positie inclusief scroll
+        Return CInt(seconds * pxPerSec + scrollOffsetX)
+    End Function
 
 End Module

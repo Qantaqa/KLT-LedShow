@@ -148,7 +148,76 @@ Module DDP
     ' HandleDDPTimer_Tick
     ' Verzendt alle buffers die in DG_Devices staan (DMX, Show of Effects).
     ' ****************************************************************************************
+    ' Toevoegen aan HandleDDPTimer_Tick of elders in timerlogica:
     Public Sub HandleDDPTimer_Tick()
+        ' 1) Beweeg PreviewMarker indien play actief is
+        If FrmMain.btnPreviewPlayPause.Checked Then
+            Dim current = PreviewMarkerCurrent
+            Dim fromVal = Val(FrmMain.lblPreviewFromPosition.Text)
+            Dim toVal = Val(FrmMain.lblPreviewToPosition.Text)
+
+            ' Verhoog markerpositie
+            current += 0.2
+
+            If current > toVal Then
+                If FrmMain.btnRepeat.Checked Then
+                    current = fromVal ' Herstart bij begin
+                Else
+                    FrmMain.btnPreviewPlayPause.Checked = False ' Stop afspelen
+                    Exit Sub ' Geen verdere actie
+                End If
+            End If
+
+            PreviewMarkerCurrent = current
+            SendPreviewFrame()
+
+            ' Bepaal rechthoek rond oude positie (voor clean refresh)
+            Dim markerX = GetTimelineXPosition(PreviewMarkerCurrent)
+            Dim markerWidth = 4 ' of wat je markerbreedte is
+            Dim markerRect As New Rectangle(markerX - 2, 0, markerWidth + 4, 10)
+
+            FrmMain.PanelTracks.Invalidate(markerRect)
+
+        End If
+
+        ' 2) Verstuur DDP zoals gebruikelijk
+        For Each devRow As DataGridViewRow In FrmMain.DG_Devices.Rows
+            Try
+                If devRow.IsNewRow Then Continue For
+
+                Dim enabled = Convert.ToBoolean(devRow.Cells("colEnabled").Value)
+                If Not enabled Then Continue For
+
+                Dim provider = CStr(devRow.Cells("colDataProvider").Value)
+                If Not {"Effects", "DMX", "Show"}.Contains(provider) Then Continue For
+
+                Dim ip = CStr(devRow.Cells("colIPAddress").Value)
+                If String.IsNullOrWhiteSpace(ip) Then
+                    Debug.WriteLine("DDP: IP-adres ontbreekt.")
+                    Continue For
+                End If
+
+                Dim buf As Byte() = TryCast(devRow.Cells("colDDPData").Value, Byte())
+                If buf Is Nothing OrElse buf.Length = 0 Then
+                    Debug.WriteLine($"DDP: Geen geldige data voor device op {ip}")
+                    Continue For
+                End If
+
+                Dim offset As Integer = 0
+                If devRow.Cells("colDDPOffset").Value IsNot Nothing Then
+                    Integer.TryParse(devRow.Cells("colDDPOffset").Value.ToString(), offset)
+                End If
+
+                SendDDP(ip, buf, offset)
+
+            Catch ex As Exception
+                Dim ip = If(devRow.Cells("colIPAddress")?.Value, "[onbekend]")
+                Debug.WriteLine($"Fout bij DDP-versturen naar {ip}: {ex.Message}")
+            End Try
+        Next
+    End Sub
+
+    Public Sub HandleDDPTimer_Tick_OLD()
         For Each devRow As DataGridViewRow In FrmMain.DG_Devices.Rows
             Try
                 If devRow.IsNewRow Then Continue For

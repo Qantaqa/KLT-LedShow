@@ -79,6 +79,124 @@ Module DG_Groups
             dgGroups.Rows.Add(parentId, 0, fixtureName, fixtureName, 1, totalLeds, 0, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, rawLayout)
             globalId += 1
 
+            ' Herhalingsblokken eerst uitpakken zodat we juiste groepen maken
+            Dim expandedLayout As String = ExpandRepeats(rawLayout)
+
+            ' Layout opsplitsen
+            Dim segments = ValidateLayoutString(expandedLayout).Split(","c).
+            Select(Function(s) s.Trim().ToUpper()).
+            Where(Function(s) s.Length > 0).ToList()
+
+            Dim currentStart As Integer = 1
+            Dim groupStart As Integer = -1
+            Dim groupLayout As New List(Of String)
+            Dim orderInFixture As Integer = 1
+
+            ' Laatst bekende X/Y
+            Dim lastX As String = Nothing
+            Dim lastY As String = Nothing
+
+            For Each seg In segments
+                Dim isX = seg.StartsWith("X")
+                Dim isY = seg.StartsWith("Y")
+                Dim isReset = isX OrElse isY
+                Dim num = 0
+
+                If Not isReset Then
+                    Integer.TryParse(New String(seg.Where(AddressOf Char.IsDigit).ToArray()), num)
+                End If
+
+                If isReset Then
+                    ' Sla X/Y op voor later gebruik
+                    If isX Then lastX = seg
+                    If isY Then lastY = seg
+
+                    ' Sluit actieve groep af
+                    If groupStart > 0 AndAlso groupLayout.Count > 0 Then
+                        Dim finalLayout = New List(Of String)(groupLayout)
+                        ' Injecteer ontbrekende X/Y
+                        If Not finalLayout.Any(Function(s) s.StartsWith("X")) AndAlso lastX IsNot Nothing Then finalLayout.Insert(0, lastX)
+                        If Not finalLayout.Any(Function(s) s.StartsWith("Y")) AndAlso lastY IsNot Nothing Then
+                            Dim insertAt = If(finalLayout.Count > 0 AndAlso finalLayout(0).StartsWith("X"), 1, 0)
+                            finalLayout.Insert(insertAt, lastY)
+                        End If
+
+                        Dim grpName = $"{fixtureName}-Group{orderInFixture}"
+                        dgGroups.Rows.Add(globalId, parentId, grpName, fixtureName, groupStart, currentStart - 1, orderInFixture, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, String.Join(",", finalLayout))
+                        globalId += 1
+                        orderInFixture += 1
+                        groupLayout.Clear()
+                        groupStart = -1
+                    End If
+
+                    groupLayout.Add(seg)
+                Else
+                    If groupStart < 0 Then groupStart = currentStart
+                    groupLayout.Add(seg)
+                    currentStart += num
+                End If
+            Next
+
+            ' Sluit laatste groep
+            If groupStart > 0 AndAlso groupLayout.Count > 0 Then
+                Dim finalLayout = New List(Of String)(groupLayout)
+                If Not finalLayout.Any(Function(s) s.StartsWith("X")) AndAlso lastX IsNot Nothing Then finalLayout.Insert(0, lastX)
+                If Not finalLayout.Any(Function(s) s.StartsWith("Y")) AndAlso lastY IsNot Nothing Then
+                    Dim insertAt = If(finalLayout.Count > 0 AndAlso finalLayout(0).StartsWith("X"), 1, 0)
+                    finalLayout.Insert(insertAt, lastY)
+                End If
+
+                Dim grpName = $"{fixtureName}-Group{orderInFixture}"
+                dgGroups.Rows.Add(globalId, parentId, grpName, fixtureName, groupStart, currentStart - 1, orderInFixture, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, String.Join(",", finalLayout))
+                globalId += 1
+            End If
+        Next
+    End Sub
+
+    Private Function ExpandRepeats(layout As String) As String
+        Dim pattern As String = "(\d+)\(([^\)]+)\)"
+        Dim result As String = layout
+        Dim match = System.Text.RegularExpressions.Regex.Match(layout, pattern)
+
+        While match.Success
+            Dim count As Integer = Integer.Parse(match.Groups(1).Value)
+            Dim content As String = match.Groups(2).Value
+
+            Dim expandedParts As New List(Of String)
+            For i As Integer = 1 To count
+                expandedParts.Add(content)
+            Next
+
+            result = result.Replace(match.Value, String.Join(",", expandedParts))
+            match = System.Text.RegularExpressions.Regex.Match(result, pattern)
+        End While
+
+        Return result
+    End Function
+
+
+
+    Public Sub SplitIntoGroups_OLD(ByVal dgDevices As DataGridView, ByVal dgGroups As DataGridView)
+        PopulateFixtureDropdown_InGroups(dgDevices, dgGroups)
+
+        dgGroups.Rows.Clear()
+        Dim globalId As Integer = 1
+
+        For Each devRow As DataGridViewRow In dgDevices.Rows
+            If devRow.IsNewRow Then Continue For
+
+            Dim fixtureName = Convert.ToString(devRow.Cells("colInstance").Value)
+            Dim rawLayout = Convert.ToString(devRow.Cells("colLayout").Value)
+            If String.IsNullOrWhiteSpace(fixtureName) OrElse String.IsNullOrWhiteSpace(rawLayout) Then Continue For
+
+            Dim totalLeds As Integer = 1
+            Integer.TryParse(Convert.ToString(devRow.Cells("colLedCount").Value), totalLeds)
+
+            ' Voeg parentgroep toe
+            Dim parentId = globalId
+            dgGroups.Rows.Add(parentId, 0, fixtureName, fixtureName, 1, totalLeds, 0, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, rawLayout)
+            globalId += 1
+
             ' Layout opsplitsen
             Dim segments = ValidateLayoutString(rawLayout).Split(","c).
             Select(Function(s) s.Trim().ToUpper()).
@@ -214,7 +332,5 @@ Module DG_Groups
         tvGroups.ExpandAll()
         tvGroups.EndUpdate()
     End Sub
-
-
 
 End Module

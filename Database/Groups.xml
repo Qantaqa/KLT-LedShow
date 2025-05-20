@@ -25,7 +25,7 @@
             <colAllFrames></colAllFrames>
             <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
-            <colGroupLayout>Y0,X0,R3</colGroupLayout>
+            <colGroupLayout>X500,Y10,U3</colGroupLayout>
         </Row>
         <Row>
             <colGroupId>2</colGroupId>
@@ -38,7 +38,7 @@
             <colAllFrames></colAllFrames>
             <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
-            <colGroupLayout>Y0,X0,R3</colGroupLayout>
+            <colGroupLayout>X500,Y10,U3</colGroupLayout>
         </Row>
         <Row>
             <colGroupId>3</colGroupId>
@@ -72,15 +72,41 @@
             <colGroupName>BEUK_LI-Group2</colGroupName>
             <colGroupFixture>BEUK_LI</colGroupFixture>
             <colGroupStartLedNr>141</colGroupStartLedNr>
-            <colGroupStopLedNr>584</colGroupStopLedNr>
+            <colGroupStopLedNr>284</colGroupStopLedNr>
             <colGroupOrder>2</colGroupOrder>
             <colAllFrames></colAllFrames>
             <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
-            <colGroupLayout>X10,Y80,3(U48,R24,D48,L24</colGroupLayout>
+            <colGroupLayout>X10,Y80,U48,R24,D48,L24</colGroupLayout>
         </Row>
         <Row>
             <colGroupId>6</colGroupId>
+            <colGroupParentId>3</colGroupParentId>
+            <colGroupName>BEUK_LI-Group3</colGroupName>
+            <colGroupFixture>BEUK_LI</colGroupFixture>
+            <colGroupStartLedNr>285</colGroupStartLedNr>
+            <colGroupStopLedNr>428</colGroupStopLedNr>
+            <colGroupOrder>3</colGroupOrder>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>X10,Y+100,U48,R24,D48,L24</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>7</colGroupId>
+            <colGroupParentId>3</colGroupParentId>
+            <colGroupName>BEUK_LI-Group4</colGroupName>
+            <colGroupFixture>BEUK_LI</colGroupFixture>
+            <colGroupStartLedNr>429</colGroupStartLedNr>
+            <colGroupStopLedNr>572</colGroupStopLedNr>
+            <colGroupOrder>4</colGroupOrder>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>X10,Y+100,U48,R24,D48,L24</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>8</colGroupId>
             <colGroupParentId>0</colGroupParentId>
             <colGroupName>BEUK_RE</colGroupName>
             <colGroupFixture>BEUK_RE</colGroupFixture>
@@ -93,8 +119,8 @@
             <colGroupLayout>X990,Y20,U24,L41,DL10,D17,R48,Y80,3(U48,L24,D48,R24,Y+100)</colGroupLayout>
         </Row>
         <Row>
-            <colGroupId>7</colGroupId>
-            <colGroupParentId>6</colGroupParentId>
+            <colGroupId>9</colGroupId>
+            <colGroupParentId>8</colGroupParentId>
             <colGroupName>BEUK_RE-Group1</colGroupName>
             <colGroupFixture>BEUK_RE</colGroupFixture>
             <colGroupStartLedNr>1</colGroupStartLedNr>
@@ -106,20 +132,46 @@
             <colGroupLayout>X990,Y20,U24,L41,DL10,D17,R48</colGroupLayout>
         </Row>
         <Row>
-            <colGroupId>8</colGroupId>
-            <colGroupParentId>6</colGroupParentId>
+            <colGroupId>10</colGroupId>
+            <colGroupParentId>8</colGroupParentId>
             <colGroupName>BEUK_RE-Group2</colGroupName>
             <colGroupFixture>BEUK_RE</colGroupFixture>
             <colGroupStartLedNr>141</colGroupStartLedNr>
-            <colGroupStopLedNr>584</colGroupStopLedNr>
+            <colGroupStopLedNr>284</colGroupStopLedNr>
             <colGroupOrder>2</colGroupOrder>
             <colAllFrames></colAllFrames>
             <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
-            <colGroupLayout>X990,Y80,3(U48,L24,D48,R24</colGroupLayout>
+            <colGroupLayout>X990,Y80,U48,L24,D48,R24</colGroupLayout>
         </Row>
         <Row>
-            <colGroupId>9</colGroupId>
+            <colGroupId>11</colGroupId>
+            <colGroupParentId>8</colGroupParentId>
+            <colGroupName>BEUK_RE-Group3</colGroupName>
+            <colGroupFixture>BEUK_RE</colGroupFixture>
+            <colGroupStartLedNr>285</colGroupStartLedNr>
+            <colGroupStopLedNr>428</colGroupStopLedNr>
+            <colGroupOrder>3</colGroupOrder>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>X990,Y+100,U48,L24,D48,R24</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>12</colGroupId>
+            <colGroupParentId>8</colGroupParentId>
+            <colGroupName>BEUK_RE-Group4</colGroupName>
+            <colGroupFixture>BEUK_RE</colGroupFixture>
+            <colGroupStartLedNr>429</colGroupStartLedNr>
+            <colGroupStopLedNr>572</colGroupStopLedNr>
+            <colGroupOrder>4</colGroupOrder>
+            <colAllFrames></colAllFrames>
+            <colActiveFrame></colActiveFrame>
+            <colGroupRepeat>True</colGroupRepeat>
+            <colGroupLayout>X990,Y+100,U48,L24,D48,R24</colGroupLayout>
+        </Row>
+        <Row>
+            <colGroupId>13</colGroupId>
             <colGroupParentId>0</colGroupParentId>
             <colGroupName>TRAP_LI</colGroupName>
             <colGroupFixture>TRAP_LI</colGroupFixture>
@@ -132,20 +184,20 @@
             <colGroupLayout>X150,Y100,15(U10,R10),R50,D150,L200</colGroupLayout>
         </Row>
         <Row>
-            <colGroupId>10</colGroupId>
-            <colGroupParentId>9</colGroupParentId>
+            <colGroupId>14</colGroupId>
+            <colGroupParentId>13</colGroupParentId>
             <colGroupName>TRAP_LI-Group1</colGroupName>
             <colGroupFixture>TRAP_LI</colGroupFixture>
             <colGroupStartLedNr>1</colGroupStartLedNr>
-            <colGroupStopLedNr>1920</colGroupStopLedNr>
+            <colGroupStopLedNr>700</colGroupStopLedNr>
             <colGroupOrder>1</colGroupOrder>
             <colAllFrames></colAllFrames>
             <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
-            <colGroupLayout>X150,Y100,15(U10,R10),R50,D150,L200</colGroupLayout>
+            <colGroupLayout>X150,Y100,U10,R10,U10,R10,U10,R10,U10,R10,U10,R10,U10,R10,U10,R10,U10,R10,U10,R10,U10,R10,U10,R10,U10,R10,U10,R10,U10,R10,U10,R10,R50,D150,L200</colGroupLayout>
         </Row>
         <Row>
-            <colGroupId>11</colGroupId>
+            <colGroupId>15</colGroupId>
             <colGroupParentId>0</colGroupParentId>
             <colGroupName>TRAP_RE</colGroupName>
             <colGroupFixture>TRAP_RE</colGroupFixture>
@@ -158,17 +210,17 @@
             <colGroupLayout>X850,Y100,15(U10,L10),L50,D150,R200</colGroupLayout>
         </Row>
         <Row>
-            <colGroupId>12</colGroupId>
-            <colGroupParentId>11</colGroupParentId>
+            <colGroupId>16</colGroupId>
+            <colGroupParentId>15</colGroupParentId>
             <colGroupName>TRAP_RE-Group1</colGroupName>
             <colGroupFixture>TRAP_RE</colGroupFixture>
             <colGroupStartLedNr>1</colGroupStartLedNr>
-            <colGroupStopLedNr>1920</colGroupStopLedNr>
+            <colGroupStopLedNr>700</colGroupStopLedNr>
             <colGroupOrder>1</colGroupOrder>
             <colAllFrames></colAllFrames>
             <colActiveFrame></colActiveFrame>
             <colGroupRepeat>True</colGroupRepeat>
-            <colGroupLayout>X850,Y100,15(U10,L10),L50,D150,R200</colGroupLayout>
+            <colGroupLayout>X850,Y100,U10,L10,U10,L10,U10,L10,U10,L10,U10,L10,U10,L10,U10,L10,U10,L10,U10,L10,U10,L10,U10,L10,U10,L10,U10,L10,U10,L10,U10,L10,L50,D150,R200</colGroupLayout>
         </Row>
     </Data>
 </DataGridData>

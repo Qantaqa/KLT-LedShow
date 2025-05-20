@@ -512,6 +512,8 @@ Public Class FrmMain
     End Sub
 
     Private Sub btnStartEffectPreview_Click(sender As Object, e As EventArgs) Handles btnStartEffectPreview.Click
+
+
         ' Start voor alle groepen die frames hebben
         For Each row As DataGridViewRow In DG_Groups.Rows.Cast(Of DataGridViewRow)()
             If Not row.IsNewRow Then
@@ -780,6 +782,7 @@ Public Class FrmMain
     End Sub
 
     Private Sub btnPreviewPlayPause_Click(sender As Object, e As EventArgs) Handles btnPreviewPlayPause.Click
+        PreviewMarkerCurrent = lblPreviewFromPosition.Text
 
         If btnPreviewPlayPause.Checked Then
             btnPreviewPlayPause.Image = My.Resources.iconPause

@@ -207,26 +207,6 @@ Partial Class FrmMain
         colTrackActive = New DataGridViewCheckBoxColumn()
         TabLightSources = New TabPage()
         DG_LightSources = New DataGridView()
-        colLSId = New DataGridViewTextBoxColumn()
-        colLSTrackId = New DataGridViewTextBoxColumn()
-        colLSMyEffectId = New DataGridViewTextBoxColumn()
-        colLSStartMoment = New DataGridViewTextBoxColumn()
-        colLSDuration = New DataGridViewTextBoxColumn()
-        colLSPositionX = New DataGridViewTextBoxColumn()
-        colLSPositionY = New DataGridViewTextBoxColumn()
-        colLSSize = New DataGridViewTextBoxColumn()
-        colLSShape = New DataGridViewTextBoxColumn()
-        colLSBlend = New DataGridViewTextBoxColumn()
-        colLSDirection = New DataGridViewTextBoxColumn()
-        colLSColor1 = New DataGridViewTextBoxColumn()
-        colLSColor2 = New DataGridViewTextBoxColumn()
-        colLSColor3 = New DataGridViewTextBoxColumn()
-        colLSColor4 = New DataGridViewTextBoxColumn()
-        colLSColor5 = New DataGridViewTextBoxColumn()
-        colLSBrightnessBaseline = New DataGridViewTextBoxColumn()
-        colLSBrightnessEffect = New DataGridViewTextBoxColumn()
-        colLSEffect = New DataGridViewTextBoxColumn()
-        colLSGroups = New DataGridViewTextBoxColumn()
         TabFrames = New TabPage()
         DG_MyEffectsFrames = New DataGridView()
         colMF_MEID = New DataGridViewTextBoxColumn()
@@ -331,6 +311,26 @@ Partial Class FrmMain
         TimerPingDevices = New Timer(components)
         ddpTimer = New Timer(components)
         stageTimer = New Timer(components)
+        colLSId = New DataGridViewTextBoxColumn()
+        colLSTrackId = New DataGridViewTextBoxColumn()
+        colLSMyEffectId = New DataGridViewTextBoxColumn()
+        colLSStartMoment = New DataGridViewTextBoxColumn()
+        colLSDuration = New DataGridViewTextBoxColumn()
+        colLSPositionX = New DataGridViewTextBoxColumn()
+        colLSPositionY = New DataGridViewTextBoxColumn()
+        colLSSize = New DataGridViewTextBoxColumn()
+        colLSShape = New DataGridViewTextBoxColumn()
+        colLSBlend = New DataGridViewTextBoxColumn()
+        colLSDirection = New DataGridViewTextBoxColumn()
+        colLSColor1 = New DataGridViewTextBoxColumn()
+        colLSColor2 = New DataGridViewTextBoxColumn()
+        colLSColor3 = New DataGridViewTextBoxColumn()
+        colLSColor4 = New DataGridViewTextBoxColumn()
+        colLSColor5 = New DataGridViewTextBoxColumn()
+        colLSBrightnessBaseline = New DataGridViewTextBoxColumn()
+        colLSBrightnessEffect = New DataGridViewTextBoxColumn()
+        colLSEffect = New DataGridViewTextBoxColumn()
+        colLSGroups = New DataGridViewTextBoxColumn()
         CType(DG_Devices, ComponentModel.ISupportInitialize).BeginInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).BeginInit()
         TabControl.SuspendLayout()
@@ -2143,106 +2143,6 @@ Partial Class FrmMain
         DG_LightSources.Size = New Size(1822, 783)
         DG_LightSources.TabIndex = 0
         ' 
-        ' colLSId
-        ' 
-        colLSId.HeaderText = "colLSId"
-        colLSId.Name = "colLSId"
-        ' 
-        ' colLSTrackId
-        ' 
-        colLSTrackId.HeaderText = "colLSTrackId"
-        colLSTrackId.Name = "colLSTrackId"
-        ' 
-        ' colLSMyEffectId
-        ' 
-        colLSMyEffectId.HeaderText = "colLSMyEffectId"
-        colLSMyEffectId.Name = "colLSMyEffectId"
-        ' 
-        ' colLSStartMoment
-        ' 
-        colLSStartMoment.HeaderText = "colLSStartMoment"
-        colLSStartMoment.Name = "colLSStartMoment"
-        ' 
-        ' colLSDuration
-        ' 
-        colLSDuration.HeaderText = "colLSDuration"
-        colLSDuration.Name = "colLSDuration"
-        ' 
-        ' colLSPositionX
-        ' 
-        colLSPositionX.HeaderText = "colLSPositionX"
-        colLSPositionX.Name = "colLSPositionX"
-        ' 
-        ' colLSPositionY
-        ' 
-        colLSPositionY.HeaderText = "colLSPositionY"
-        colLSPositionY.Name = "colLSPositionY"
-        ' 
-        ' colLSSize
-        ' 
-        colLSSize.HeaderText = "colLSSize"
-        colLSSize.Name = "colLSSize"
-        ' 
-        ' colLSShape
-        ' 
-        colLSShape.HeaderText = "colLSShape"
-        colLSShape.Name = "colLSShape"
-        ' 
-        ' colLSBlend
-        ' 
-        colLSBlend.HeaderText = "colLSBlend"
-        colLSBlend.Name = "colLSBlend"
-        ' 
-        ' colLSDirection
-        ' 
-        colLSDirection.HeaderText = "colLSDirection"
-        colLSDirection.Name = "colLSDirection"
-        ' 
-        ' colLSColor1
-        ' 
-        colLSColor1.HeaderText = "colLSColor1"
-        colLSColor1.Name = "colLSColor1"
-        ' 
-        ' colLSColor2
-        ' 
-        colLSColor2.HeaderText = "colLSColor2"
-        colLSColor2.Name = "colLSColor2"
-        ' 
-        ' colLSColor3
-        ' 
-        colLSColor3.HeaderText = "colLSColor3"
-        colLSColor3.Name = "colLSColor3"
-        ' 
-        ' colLSColor4
-        ' 
-        colLSColor4.HeaderText = "colLSColor4"
-        colLSColor4.Name = "colLSColor4"
-        ' 
-        ' colLSColor5
-        ' 
-        colLSColor5.HeaderText = "colLSColor5"
-        colLSColor5.Name = "colLSColor5"
-        ' 
-        ' colLSBrightnessBaseline
-        ' 
-        colLSBrightnessBaseline.HeaderText = "colLSBrightnessBaseline"
-        colLSBrightnessBaseline.Name = "colLSBrightnessBaseline"
-        ' 
-        ' colLSBrightnessEffect
-        ' 
-        colLSBrightnessEffect.HeaderText = "colLSBrightnessEffect"
-        colLSBrightnessEffect.Name = "colLSBrightnessEffect"
-        ' 
-        ' colLSEffect
-        ' 
-        colLSEffect.HeaderText = "colLSEffect"
-        colLSEffect.Name = "colLSEffect"
-        ' 
-        ' colLSGroups
-        ' 
-        colLSGroups.HeaderText = "colLSGroups"
-        colLSGroups.Name = "colLSGroups"
-        ' 
         ' TabFrames
         ' 
         TabFrames.Controls.Add(DG_MyEffectsFrames)
@@ -3247,6 +3147,106 @@ Partial Class FrmMain
         stageTimer.Enabled = True
         stageTimer.Interval = 500
         ' 
+        ' colLSId
+        ' 
+        colLSId.HeaderText = "colLSId"
+        colLSId.Name = "colLSId"
+        ' 
+        ' colLSTrackId
+        ' 
+        colLSTrackId.HeaderText = "colLSTrackId"
+        colLSTrackId.Name = "colLSTrackId"
+        ' 
+        ' colLSMyEffectId
+        ' 
+        colLSMyEffectId.HeaderText = "colLSMyEffectId"
+        colLSMyEffectId.Name = "colLSMyEffectId"
+        ' 
+        ' colLSStartMoment
+        ' 
+        colLSStartMoment.HeaderText = "colLSStartMoment"
+        colLSStartMoment.Name = "colLSStartMoment"
+        ' 
+        ' colLSDuration
+        ' 
+        colLSDuration.HeaderText = "colLSDuration"
+        colLSDuration.Name = "colLSDuration"
+        ' 
+        ' colLSPositionX
+        ' 
+        colLSPositionX.HeaderText = "colLSPositionX"
+        colLSPositionX.Name = "colLSPositionX"
+        ' 
+        ' colLSPositionY
+        ' 
+        colLSPositionY.HeaderText = "colLSPositionY"
+        colLSPositionY.Name = "colLSPositionY"
+        ' 
+        ' colLSSize
+        ' 
+        colLSSize.HeaderText = "colLSSize"
+        colLSSize.Name = "colLSSize"
+        ' 
+        ' colLSShape
+        ' 
+        colLSShape.HeaderText = "colLSShape"
+        colLSShape.Name = "colLSShape"
+        ' 
+        ' colLSBlend
+        ' 
+        colLSBlend.HeaderText = "colLSBlend"
+        colLSBlend.Name = "colLSBlend"
+        ' 
+        ' colLSDirection
+        ' 
+        colLSDirection.HeaderText = "colLSDirection"
+        colLSDirection.Name = "colLSDirection"
+        ' 
+        ' colLSColor1
+        ' 
+        colLSColor1.HeaderText = "colLSColor1"
+        colLSColor1.Name = "colLSColor1"
+        ' 
+        ' colLSColor2
+        ' 
+        colLSColor2.HeaderText = "colLSColor2"
+        colLSColor2.Name = "colLSColor2"
+        ' 
+        ' colLSColor3
+        ' 
+        colLSColor3.HeaderText = "colLSColor3"
+        colLSColor3.Name = "colLSColor3"
+        ' 
+        ' colLSColor4
+        ' 
+        colLSColor4.HeaderText = "colLSColor4"
+        colLSColor4.Name = "colLSColor4"
+        ' 
+        ' colLSColor5
+        ' 
+        colLSColor5.HeaderText = "colLSColor5"
+        colLSColor5.Name = "colLSColor5"
+        ' 
+        ' colLSBrightnessBaseline
+        ' 
+        colLSBrightnessBaseline.HeaderText = "colLSBrightnessBaseline"
+        colLSBrightnessBaseline.Name = "colLSBrightnessBaseline"
+        ' 
+        ' colLSBrightnessEffect
+        ' 
+        colLSBrightnessEffect.HeaderText = "colLSBrightnessEffect"
+        colLSBrightnessEffect.Name = "colLSBrightnessEffect"
+        ' 
+        ' colLSEffect
+        ' 
+        colLSEffect.HeaderText = "colLSEffect"
+        colLSEffect.Name = "colLSEffect"
+        ' 
+        ' colLSGroups
+        ' 
+        colLSGroups.HeaderText = "colLSGroups"
+        colLSGroups.Name = "colLSGroups"
+        ' 
         ' FrmMain
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -3664,6 +3664,20 @@ Partial Class FrmMain
     Friend WithEvents btnEffectAdd As ToolStripButton
     Friend WithEvents btnEffectDelete As ToolStripButton
     Friend WithEvents ToolStripSeparator9 As ToolStripSeparator
+    Friend WithEvents colMEID As DataGridViewTextBoxColumn
+    Friend WithEvents colMEName As DataGridViewTextBoxColumn
+    Friend WithEvents colMEDescription As DataGridViewTextBoxColumn
+    Friend WithEvents colMEDDPData As DataGridViewTextBoxColumn
+    Friend WithEvents colTrackId As DataGridViewTextBoxColumn
+    Friend WithEvents colTrackMeId As DataGridViewTextBoxColumn
+    Friend WithEvents colTrackName As DataGridViewTextBoxColumn
+    Friend WithEvents colTrackActive As DataGridViewCheckBoxColumn
+    Friend WithEvents ToolStripLabel5 As ToolStripLabel
+    Friend WithEvents lblPreviewFromPosition As ToolStripTextBox
+    Friend WithEvents ToolStripLabel6 As ToolStripLabel
+    Friend WithEvents lblPreviewToPosition As ToolStripTextBox
+    Friend WithEvents btnPreviewPlayPause As ToolStripButton
+    Friend WithEvents btnRepeat As ToolStripButton
     Friend WithEvents colLSId As DataGridViewTextBoxColumn
     Friend WithEvents colLSTrackId As DataGridViewTextBoxColumn
     Friend WithEvents colLSMyEffectId As DataGridViewTextBoxColumn
@@ -3684,19 +3698,5 @@ Partial Class FrmMain
     Friend WithEvents colLSBrightnessEffect As DataGridViewTextBoxColumn
     Friend WithEvents colLSEffect As DataGridViewTextBoxColumn
     Friend WithEvents colLSGroups As DataGridViewTextBoxColumn
-    Friend WithEvents colMEID As DataGridViewTextBoxColumn
-    Friend WithEvents colMEName As DataGridViewTextBoxColumn
-    Friend WithEvents colMEDescription As DataGridViewTextBoxColumn
-    Friend WithEvents colMEDDPData As DataGridViewTextBoxColumn
-    Friend WithEvents colTrackId As DataGridViewTextBoxColumn
-    Friend WithEvents colTrackMeId As DataGridViewTextBoxColumn
-    Friend WithEvents colTrackName As DataGridViewTextBoxColumn
-    Friend WithEvents colTrackActive As DataGridViewCheckBoxColumn
-    Friend WithEvents ToolStripLabel5 As ToolStripLabel
-    Friend WithEvents lblPreviewFromPosition As ToolStripTextBox
-    Friend WithEvents ToolStripLabel6 As ToolStripLabel
-    Friend WithEvents lblPreviewToPosition As ToolStripTextBox
-    Friend WithEvents btnPreviewPlayPause As ToolStripButton
-    Friend WithEvents btnRepeat As ToolStripButton
 
 End Class
