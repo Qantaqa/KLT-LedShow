@@ -1,4 +1,5 @@
-﻿Imports Newtonsoft.Json
+﻿Imports Microsoft.VisualBasic.Devices
+Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
 Imports System.Net
 Imports System.Net.Http
@@ -6,6 +7,7 @@ Imports System.Net.NetworkInformation
 Imports System.Threading
 Imports System.Threading.Tasks
 Imports System.Windows.Forms
+Imports System.Windows.Forms.VisualStyles
 
 ' ------------------------------------------
 ' Form voor voortgang tijdens netwerkscans
@@ -20,13 +22,13 @@ Public Class frmScanStatus
     Public lblStatus As New Label() With {
         .Dock = DockStyle.Top,
         .Height = 30,
-        .TextAlign = ContentAlignment.MiddleCenter,
+        .TextAlign = ContentAlignment.Center,
         .Text = "Start scan..."
     }
     Public lblFound As New Label() With {
         .Dock = DockStyle.Top,
         .Height = 30,
-        .TextAlign = ContentAlignment.MiddleCenter,
+        .TextAlign = ContentAlignment.Center,
         .Text = "Gevonden: 0"
     }
 
@@ -61,13 +63,14 @@ End Class
 ' Network Scanning Module
 ' -----------------------------
 Module Network
-    Private ReadOnly client As New HttpClient()
+
     Private Const PerIpTimeoutMs As Integer = 300
 
     ''' <summary>
     ''' Volledige netwerkscan: zoekt WLED devices, vult alle kolommen inclusief naam, IP, leds en layout.
     ''' </summary>
     Public Async Function ScanNetworkForWLEDDevices(dg As DataGridView) As Task
+
         Dim ipRange = My.Settings.IPRange
         Dim parts = ipRange.Split("/"c)
         Dim baseIp = parts(0)
@@ -77,7 +80,10 @@ Module Network
         Dim baseInt As UInteger = CUInt(baseBytes(0)) << 24 Or CUInt(baseBytes(1)) << 16 Or CUInt(baseBytes(2)) << 8 Or CUInt(baseBytes(3))
         Dim total As Integer = CInt(Math.Pow(2, 32 - subnetBits))
 
+        Dim client As New HttpClient()
+
         client.Timeout = TimeSpan.FromMilliseconds(PerIpTimeoutMs)
+
 
         Using popup As New frmScanStatus(total)
             popup.Show(dg.FindForm())
@@ -99,27 +105,52 @@ Module Network
                 Try
                     Dim res = Await client.GetAsync($"http://{ipStr}/json")
                     If res.IsSuccessStatusCode Then
+                        ' We got a valid WLED response, retrieve the JSON data
+
                         Dim body = Await res.Content.ReadAsStringAsync()
                         Dim json = JObject.Parse(body)
                         Dim name = json("info")("name").ToString()
                         Dim ledCount = If(json("info")("leds")("count")?.ToObject(Of Integer)(), 0)
                         Dim segCount = If(json("state")("seg")?.Count(), 0)
+                        Dim effectString As String = JsonToCommaSeparatedString(json("effects").ToString)
+                        Dim paletteString As String = JsonToCommaSeparatedString(json("palettes").ToString)
 
                         ' UI-thread update
                         dg.Invoke(Sub()
+
                                       Dim existing = dg.Rows.Cast(Of DataGridViewRow)() _
                                           .FirstOrDefault(Function(r) Convert.ToString(r.Cells("colInstance").Value) = name)
+
+                                      ' Build the colSegments string
+                                      Dim segments = json("state")("seg")
+                                      Dim segStrings As New List(Of String)
+                                      For Each seg In segments
+                                          Dim startVal = seg("start")?.ToObject(Of Integer)()
+                                          Dim stopVal = seg("stop")?.ToObject(Of Integer)()
+                                          If startVal IsNot Nothing AndAlso stopVal IsNot Nothing Then
+                                              segStrings.Add($"({startVal}-{stopVal})")
+                                          End If
+                                      Next
+                                      Dim segSummary = String.Join("", segStrings)
+
                                       If existing Is Nothing Then
                                           Dim idx = dg.Rows.Add()
                                           Dim row = dg.Rows(idx)
                                           row.Cells("colInstance").Value = name
                                           row.Cells("colIPAddress").Value = ipStr
                                           row.Cells("colLedCount").Value = ledCount
+                                          row.Cells("colSegments").Value = segSummary
                                           row.Cells("colEnabled").Value = True
                                           row.Cells("colOnline").Value = My.Resources.iconRedBullet1
-                                          row.Cells("colLayout").Value = GenerateDefaultLayout(ledCount)
+                                          row.Cells("colLayout").Value = GenerateDefaultLayout(ledCount, segCount, segSummary)
+                                          row.Cells("colEffects").Value = effectString
+                                          row.Cells("colPalettes").Value = paletteString
                                       Else
                                           existing.Cells("colIPAddress").Value = ipStr
+                                          existing.Cells("colSegments").Value = segSummary
+                                          existing.Cells("colEffects").Value = effectString
+                                          existing.Cells("colPalettes").Value = paletteString
+                                          existing.Cells("colLayout").Value = GenerateDefaultLayout(ledCount, segCount, segSummary)
                                       End If
                                   End Sub)
 
@@ -134,6 +165,21 @@ Module Network
         End Using
     End Function
 
+    ' Converts a JSON array of effects to a single comma-separated string.
+    Private Function JsonToCommaSeparatedString(JsonString As String) As String
+        Dim MyList As IEnumerable(Of String)
+        Try
+            Dim cleanJson = JsonString.Replace(vbCrLf, "").Replace(vbTab, "")
+            MyList = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of String))(cleanJson)
+        Catch
+            Dim trimmed = JsonString.Trim("["c, "]"c, " "c, vbCr, vbLf)
+            MyList = trimmed.Split({","}, StringSplitOptions.RemoveEmptyEntries).
+            Select(Function(s) s.Trim().Trim(""""c))
+        End Try
+        Return String.Join(",", MyList)
+    End Function
+
+
     ''' <summary>
     ''' Alleen IP-update scan: voor bestaande DG rows update IP-kolom op basis van instance-naam.
     ''' </summary>
@@ -146,6 +192,8 @@ Module Network
         Dim baseBytes = IPAddress.Parse(baseIp).GetAddressBytes()
         Dim baseInt As UInteger = CUInt(baseBytes(0)) << 24 Or CUInt(baseBytes(1)) << 16 Or CUInt(baseBytes(2)) << 8 Or CUInt(baseBytes(3))
         Dim total As Integer = CInt(Math.Pow(2, 32 - subnetBits))
+
+        Dim client As New HttpClient()
 
         client.Timeout = TimeSpan.FromMilliseconds(PerIpTimeoutMs)
 
@@ -196,7 +244,33 @@ Module Network
     ''' <summary>
     ''' Generieke layout generator voor nieuw gevonden WLED devices.
     ''' </summary>
-    Private Function GenerateDefaultLayout(ledCount As Integer) As String
-        Return $"Y0,X0,R{ledCount}"
+    Private Function GenerateDefaultLayout(ledCount As Integer, segmentsCount As Integer, segmentSummary As String) As String
+        ' Start at Y10,X10
+        Dim layout As New List(Of String)
+        layout.Add("Y10")
+        layout.Add("X10")
+
+        If String.IsNullOrWhiteSpace(segmentSummary) Then
+            layout.Add($"R{ledCount}")
+            Return String.Join(",", layout)
+        End If
+
+        ' Parse segments: (start-stop)(start-stop)...
+        Dim segMatches = System.Text.RegularExpressions.Regex.Matches(segmentSummary, "\((\d+)-(\d+)\)")
+        Dim y As Integer = 10
+
+        For i As Integer = 0 To segMatches.Count - 1
+            Dim startVal = Integer.Parse(segMatches(i).Groups(1).Value)
+            Dim stopVal = Integer.Parse(segMatches(i).Groups(2).Value)
+            Dim segLen = stopVal - startVal ' The stop led is not included in the segment.
+
+            If i > 0 Then
+                y += 10
+                layout.Add($"Y+10")
+            End If
+            layout.Add($"R{segLen}")
+        Next
+
+        Return String.Join(",", layout)
     End Function
 End Module

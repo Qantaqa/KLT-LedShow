@@ -81,7 +81,7 @@ Module SaveLoad
                 Dim structureNode As XmlNode = doc.SelectSingleNode("DataGridData/Structure")
                 If structureNode IsNot Nothing Then
                     For Each columnNode As XmlNode In structureNode.ChildNodes
-                        Dim columnName As String = columnNode.Attributes("Name").Value.Replace("_", " ") ' Replace underscores with spaces
+                        Dim columnName As String = columnNode.Attributes("Name").Value
                         Dim columnType As String = columnNode.Attributes("Type").Value
 
                         ' Create the column based on the type
@@ -120,7 +120,7 @@ Module SaveLoad
                 For Each rowNode As XmlNode In dataNode.ChildNodes
                     Dim rowValues As New List(Of Object)()
                     For Each cellNode As XmlNode In rowNode.ChildNodes
-                        Dim columnName As String = cellNode.Name.Replace("_", " ") ' Replace underscores with spaces
+                        Dim columnName As String = cellNode.Name
                         Dim cellValue As String = cellNode.InnerText ' Translate hex value back to string
 
                         If dataGridView.Columns.Contains(columnName) Then

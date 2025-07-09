@@ -35,9 +35,9 @@ Module DG_Groups
     Public Sub GroupAddRowBefore(ByVal dgv As DataGridView)
         If dgv.CurrentCell IsNot Nothing Then
             Dim currentIndex = dgv.CurrentCell.RowIndex
-            dgv.Rows.Insert(currentIndex, "", "", 1, 1, 0) ' Voeg een nieuwe rij in op de huidige index.
+            dgv.Rows.Insert(currentIndex, "", "", "", 1, 1, 0) ' Voeg een nieuwe rij in op de huidige index.
         Else
-            dgv.Rows.Add("", "", 1, 1, 0) ' Voeg een nieuwe rij toe aan het einde als er geen rij is geselecteerd.
+            dgv.Rows.Add("", "", "", 1, 1, 0) ' Voeg een nieuwe rij toe aan het einde als er geen rij is geselecteerd.
         End If
     End Sub
 
@@ -76,7 +76,7 @@ Module DG_Groups
 
             ' Voeg parentgroep toe
             Dim parentId = globalId
-            dgGroups.Rows.Add(parentId, 0, fixtureName, fixtureName, 1, totalLeds, 0, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, rawLayout)
+            dgGroups.Rows.Add(parentId, 0, fixtureName, fixtureName, Nothing, 1, totalLeds, 0, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, rawLayout)
             globalId += 1
 
             ' Herhalingsblokken eerst uitpakken zodat we juiste groepen maken
@@ -92,11 +92,14 @@ Module DG_Groups
             Dim groupLayout As New List(Of String)
             Dim orderInFixture As Integer = 1
 
+
             ' Laatst bekende X/Y
             Dim lastX As String = Nothing
             Dim lastY As String = Nothing
 
+
             For Each seg In segments
+
                 Dim isX = seg.StartsWith("X")
                 Dim isY = seg.StartsWith("Y")
                 Dim isReset = isX OrElse isY
@@ -122,9 +125,11 @@ Module DG_Groups
                         End If
 
                         Dim grpName = $"{fixtureName}-Group{orderInFixture}"
-                        dgGroups.Rows.Add(globalId, parentId, grpName, fixtureName, groupStart, currentStart - 1, orderInFixture, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, String.Join(",", finalLayout))
+
+                        dgGroups.Rows.Add(globalId, parentId, grpName, fixtureName, orderInFixture - 1, groupStart, currentStart - 1, orderInFixture, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, String.Join(",", finalLayout))
                         globalId += 1
                         orderInFixture += 1
+
                         groupLayout.Clear()
                         groupStart = -1
                     End If
@@ -135,6 +140,7 @@ Module DG_Groups
                     groupLayout.Add(seg)
                     currentStart += num
                 End If
+
             Next
 
             ' Sluit laatste groep
@@ -147,7 +153,7 @@ Module DG_Groups
                 End If
 
                 Dim grpName = $"{fixtureName}-Group{orderInFixture}"
-                dgGroups.Rows.Add(globalId, parentId, grpName, fixtureName, groupStart, currentStart - 1, orderInFixture, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, String.Join(",", finalLayout))
+                dgGroups.Rows.Add(globalId, parentId, grpName, fixtureName, orderInFixture - 1, groupStart, currentStart - 1, orderInFixture, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, String.Join(",", finalLayout))
                 globalId += 1
             End If
         Next
@@ -176,97 +182,6 @@ Module DG_Groups
 
 
 
-    Public Sub SplitIntoGroups_OLD(ByVal dgDevices As DataGridView, ByVal dgGroups As DataGridView)
-        PopulateFixtureDropdown_InGroups(dgDevices, dgGroups)
-
-        dgGroups.Rows.Clear()
-        Dim globalId As Integer = 1
-
-        For Each devRow As DataGridViewRow In dgDevices.Rows
-            If devRow.IsNewRow Then Continue For
-
-            Dim fixtureName = Convert.ToString(devRow.Cells("colInstance").Value)
-            Dim rawLayout = Convert.ToString(devRow.Cells("colLayout").Value)
-            If String.IsNullOrWhiteSpace(fixtureName) OrElse String.IsNullOrWhiteSpace(rawLayout) Then Continue For
-
-            Dim totalLeds As Integer = 1
-            Integer.TryParse(Convert.ToString(devRow.Cells("colLedCount").Value), totalLeds)
-
-            ' Voeg parentgroep toe
-            Dim parentId = globalId
-            dgGroups.Rows.Add(parentId, 0, fixtureName, fixtureName, 1, totalLeds, 0, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, rawLayout)
-            globalId += 1
-
-            ' Layout opsplitsen
-            Dim segments = ValidateLayoutString(rawLayout).Split(","c).
-            Select(Function(s) s.Trim().ToUpper()).
-            Where(Function(s) s.Length > 0).ToList()
-
-            Dim currentStart As Integer = 1
-            Dim groupStart As Integer = -1
-            Dim groupLayout As New List(Of String)
-            Dim orderInFixture As Integer = 1
-
-            ' Laatst bekende X/Y
-            Dim lastX As String = Nothing
-            Dim lastY As String = Nothing
-
-            For Each seg In segments
-                Dim isX = seg.StartsWith("X")
-                Dim isY = seg.StartsWith("Y")
-                Dim isReset = isX OrElse isY
-                Dim num = 0
-
-                If Not isReset Then
-                    Integer.TryParse(New String(seg.Where(AddressOf Char.IsDigit).ToArray()), num)
-                End If
-
-                If isReset Then
-                    ' Sla X/Y op voor later gebruik
-                    If isX Then lastX = seg
-                    If isY Then lastY = seg
-
-                    ' Sluit actieve groep af
-                    If groupStart > 0 AndAlso groupLayout.Count > 0 Then
-                        Dim finalLayout = New List(Of String)(groupLayout)
-                        ' Injecteer ontbrekende X/Y
-                        If Not finalLayout.Any(Function(s) s.StartsWith("X")) AndAlso lastX IsNot Nothing Then finalLayout.Insert(0, lastX)
-                        If Not finalLayout.Any(Function(s) s.StartsWith("Y")) AndAlso lastY IsNot Nothing Then
-                            Dim insertAt = If(finalLayout.Count > 0 AndAlso finalLayout(0).StartsWith("X"), 1, 0)
-                            finalLayout.Insert(insertAt, lastY)
-                        End If
-
-                        Dim grpName = $"{fixtureName}-Group{orderInFixture}"
-                        dgGroups.Rows.Add(globalId, parentId, grpName, fixtureName, groupStart, currentStart - 1, orderInFixture, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, String.Join(",", finalLayout))
-                        globalId += 1
-                        orderInFixture += 1
-                        groupLayout.Clear()
-                        groupStart = -1
-                    End If
-
-                    groupLayout.Add(seg)
-                Else
-                    If groupStart < 0 Then groupStart = currentStart
-                    groupLayout.Add(seg)
-                    currentStart += num
-                End If
-            Next
-
-            ' Sluit laatste groep
-            If groupStart > 0 AndAlso groupLayout.Count > 0 Then
-                Dim finalLayout = New List(Of String)(groupLayout)
-                If Not finalLayout.Any(Function(s) s.StartsWith("X")) AndAlso lastX IsNot Nothing Then finalLayout.Insert(0, lastX)
-                If Not finalLayout.Any(Function(s) s.StartsWith("Y")) AndAlso lastY IsNot Nothing Then
-                    Dim insertAt = If(finalLayout.Count > 0 AndAlso finalLayout(0).StartsWith("X"), 1, 0)
-                    finalLayout.Insert(insertAt, lastY)
-                End If
-
-                Dim grpName = $"{fixtureName}-Group{orderInFixture}"
-                dgGroups.Rows.Add(globalId, parentId, grpName, fixtureName, groupStart, currentStart - 1, orderInFixture, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, String.Join(",", finalLayout))
-                globalId += 1
-            End If
-        Next
-    End Sub
 
 
     '*********************************************************************************************

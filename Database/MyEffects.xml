@@ -6,12 +6,5 @@
         <Column Name="colMEDescription" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="Fill" />
         <Column Name="colMEDDPData" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
     </Structure>
-    <Data>
-        <Row>
-            <colMEID>1</colMEID>
-            <colMEName>Effect 1</colMEName>
-            <colMEDescription>Basis effect</colMEDescription>
-            <colMEDDPData></colMEDDPData>
-        </Row>
-    </Data>
+    <Data />
 </DataGridData>

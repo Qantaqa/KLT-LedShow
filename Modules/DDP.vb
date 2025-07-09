@@ -169,6 +169,9 @@ Module DDP
             End If
 
             PreviewMarkerCurrent = current
+            FrmMain.pbPreview.Maximum = toVal
+            FrmMain.pbPreview.Value = current
+
             SendPreviewFrame()
 
             ' Bepaal rechthoek rond oude positie (voor clean refresh)

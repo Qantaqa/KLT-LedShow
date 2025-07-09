@@ -218,7 +218,11 @@ Public Class FrmMain
 
     Private Sub btnScanNetworkForWLed_Click(sender As Object, e As EventArgs) Handles btnScanNetworkForWLed.Click
         ScanNetworkForWLEDDevices(DG_Devices)
+        Update_DGEffecten_BasedOnDevices()
+        Update_DGPalettes_BasedOnDevices()
     End Sub
+
+
 
     Private Sub btnProjectFolder_Click(sender As Object, e As EventArgs) Handles btnProjectFolder.Click
         If OpenFileDialog1.ShowDialog() = DialogResult.OK Then
@@ -508,7 +512,7 @@ Public Class FrmMain
 
     Private Sub ddpTimer_Tick_1(sender As Object, e As EventArgs) Handles ddpTimer.Tick
         lastDDPTick = DateTime.Now
-        HandleDDPTimer_Tick()
+        'HandleDDPTimer_Tick()
     End Sub
 
     Private Sub btnStartEffectPreview_Click(sender As Object, e As EventArgs) Handles btnStartEffectPreview.Click
@@ -795,4 +799,11 @@ Public Class FrmMain
         End If
     End Sub
 
+    Private Sub btnRebuildDGEffects_Click(sender As Object, e As EventArgs) Handles btnRebuildDGEffects.Click
+        Update_DGEffecten_BasedOnDevices()
+    End Sub
+
+    Private Sub btnRebuildDGPalettes_Click(sender As Object, e As EventArgs) Handles btnRebuildDGPalettes.Click
+        Update_DGPalettes_BasedOnDevices()
+    End Sub
 End Class

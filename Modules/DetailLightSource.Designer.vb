@@ -45,28 +45,60 @@ Partial Class DetailLightSource
         btnC4 = New Button()
         btnC3 = New Button()
         btnC2 = New Button()
-        Label10 = New Label()
         Label11 = New Label()
         cmbEffect = New ComboBox()
-        GroupBox1 = New GroupBox()
-        Label13 = New Label()
         tbBrightnessEffect = New TrackBar()
-        Label12 = New Label()
-        tbBrightnessBaseline = New TrackBar()
         tvGroupsSelected = New TreeView()
         Label14 = New Label()
         btnCancel = New Button()
         Label15 = New Label()
-        GroupBox1.SuspendLayout()
+        gbEffectsStartPosition = New GroupBox()
+        EffectStartPositionBottomRight = New RadioButton()
+        EffectStartPositionBottom = New RadioButton()
+        EffectStartPositionBottomLeft = New RadioButton()
+        EffectStartPositionRight = New RadioButton()
+        EffectStartPositionCenter = New RadioButton()
+        EffectStartPositionLeft = New RadioButton()
+        EffectStartPositionTopRight = New RadioButton()
+        EffectStartPositionTop = New RadioButton()
+        EffectStartPositionTopLeft = New RadioButton()
+        gbEffectDirection = New GroupBox()
+        EffectDirectionDownRight = New RadioButton()
+        EffectDirectionDown = New RadioButton()
+        EffectDirectionDownLeft = New RadioButton()
+        EffectDirectionRight = New RadioButton()
+        EffectDirectionLeft = New RadioButton()
+        EffectDirectionUpRight = New RadioButton()
+        EffectDirectionUp = New RadioButton()
+        EffectDirectionUpLeft = New RadioButton()
+        GroupBox2 = New GroupBox()
+        tbEffectSpeed = New TrackBar()
+        TBEffectIntensity = New TrackBar()
+        TBEffectDispersion = New TrackBar()
+        Label10 = New Label()
+        Label16 = New Label()
+        Label17 = New Label()
+        tbBrightnessBaseline = New TrackBar()
+        Label12 = New Label()
+        Label13 = New Label()
+        Label18 = New Label()
+        Panel1 = New Panel()
         CType(tbBrightnessEffect, ComponentModel.ISupportInitialize).BeginInit()
+        gbEffectsStartPosition.SuspendLayout()
+        gbEffectDirection.SuspendLayout()
+        GroupBox2.SuspendLayout()
+        CType(tbEffectSpeed, ComponentModel.ISupportInitialize).BeginInit()
+        CType(TBEffectIntensity, ComponentModel.ISupportInitialize).BeginInit()
+        CType(TBEffectDispersion, ComponentModel.ISupportInitialize).BeginInit()
         CType(tbBrightnessBaseline, ComponentModel.ISupportInitialize).BeginInit()
+        Panel1.SuspendLayout()
         SuspendLayout()
         ' 
         ' btnOK
         ' 
         btnOK.BackColor = Color.DarkGreen
         btnOK.ForeColor = Color.Black
-        btnOK.Location = New Point(322, 367)
+        btnOK.Location = New Point(459, 377)
         btnOK.Name = "btnOK"
         btnOK.Size = New Size(102, 23)
         btnOK.TabIndex = 0
@@ -210,7 +242,7 @@ Partial Class DetailLightSource
         ' chkBlend
         ' 
         chkBlend.AutoSize = True
-        chkBlend.Location = New Point(95, 201)
+        chkBlend.Location = New Point(6, 104)
         chkBlend.Name = "chkBlend"
         chkBlend.Size = New Size(56, 19)
         chkBlend.TabIndex = 17
@@ -219,7 +251,7 @@ Partial Class DetailLightSource
         ' 
         ' btnC1
         ' 
-        btnC1.Location = New Point(95, 175)
+        btnC1.Location = New Point(6, 22)
         btnC1.Name = "btnC1"
         btnC1.Size = New Size(20, 20)
         btnC1.TabIndex = 18
@@ -227,7 +259,7 @@ Partial Class DetailLightSource
         ' 
         ' btnC5
         ' 
-        btnC5.Location = New Point(199, 175)
+        btnC5.Location = New Point(51, 48)
         btnC5.Name = "btnC5"
         btnC5.Size = New Size(20, 20)
         btnC5.TabIndex = 19
@@ -235,7 +267,7 @@ Partial Class DetailLightSource
         ' 
         ' btnC4
         ' 
-        btnC4.Location = New Point(173, 175)
+        btnC4.Location = New Point(6, 48)
         btnC4.Name = "btnC4"
         btnC4.Size = New Size(20, 20)
         btnC4.TabIndex = 20
@@ -243,7 +275,7 @@ Partial Class DetailLightSource
         ' 
         ' btnC3
         ' 
-        btnC3.Location = New Point(147, 175)
+        btnC3.Location = New Point(96, 22)
         btnC3.Name = "btnC3"
         btnC3.Size = New Size(20, 20)
         btnC3.TabIndex = 21
@@ -251,25 +283,16 @@ Partial Class DetailLightSource
         ' 
         ' btnC2
         ' 
-        btnC2.Location = New Point(121, 175)
+        btnC2.Location = New Point(51, 22)
         btnC2.Name = "btnC2"
         btnC2.Size = New Size(20, 20)
         btnC2.TabIndex = 22
         btnC2.UseVisualStyleBackColor = True
         ' 
-        ' Label10
-        ' 
-        Label10.AutoSize = True
-        Label10.Location = New Point(12, 182)
-        Label10.Name = "Label10"
-        Label10.Size = New Size(41, 15)
-        Label10.TabIndex = 23
-        Label10.Text = "Colors"
-        ' 
         ' Label11
         ' 
         Label11.AutoSize = True
-        Label11.Location = New Point(12, 229)
+        Label11.Location = New Point(12, 178)
         Label11.Name = "Label11"
         Label11.Size = New Size(37, 15)
         Label11.TabIndex = 25
@@ -279,55 +302,20 @@ Partial Class DetailLightSource
         ' 
         cmbEffect.FormattingEnabled = True
         cmbEffect.Items.AddRange(New Object() {"Twinkle - Willekeurig fonkelen van LEDs (sterren, romantiek, rust).", "Flicker - Onregelmatig knipperende lampen, perfect voor stroomstoringen", "FadePulse - Zachte op- en afbouw in helderheid, bruikbaar voor ademend licht of rustmomenten.", "FloodFill - Geleidelijke LED-opvulling van onder naar boven (bijv. water dat stijgt).", "TiltedFlood - Schuin vollopen water, met verloop (voor het hellende schi", "WaterWave  Horizontale golfbeweging met zacht verloop.", "DripEffect - Druppelachtig langzaam vollopen, beetje als lekkage, met fade-ins.", "RisingTwinkle  - Zoals Twinkle, maar pas zichtbaar vanaf bepaald waterniveau.", "SunsetFade - Warm verloop van geel/oranje/rood met afnemende intensiteit. Ideaal voor scènes als Wat een bijzondere eeuw.", "Nightfall - Langzame overgang naar diepblauw met twinkling stars.", "DawnBreak - Omgekeerde van sunset: opkomend licht in koude pastelkleuren.", "AlarmFlash - Flitsend patroon ", "Sirenwave -  doorlopende golf (zoals politielicht, maar subtieler).", "ShortCircuit -  Simulatie van kortsluiting: snel, heftig flikkerend licht, gevolgd door duisternis.", "ImpactFlash - Eén intense witte flits met naschokken van licht, als botsing.", "Heathbeat - Langzame pulse ", "GhostFade - Langzaam verschijnend/wisselend licht — zielen aan dek of herinneringen", "Frozen - Ijzige, knipperende blauw-witte koude gloed.", "EchoFade - Stappen-achtig uitvagend licht, alsof het geheugen verdwijnt.", "LastBreath - Licht dooft in drie pulsen — ideaal als slot of bij individuele sterfscènes."})
-        cmbEffect.Location = New Point(95, 226)
+        cmbEffect.Location = New Point(95, 175)
         cmbEffect.Name = "cmbEffect"
         cmbEffect.Size = New Size(124, 23)
         cmbEffect.TabIndex = 24
         ' 
-        ' GroupBox1
-        ' 
-        GroupBox1.Controls.Add(Label13)
-        GroupBox1.Controls.Add(tbBrightnessEffect)
-        GroupBox1.Controls.Add(Label12)
-        GroupBox1.Controls.Add(tbBrightnessBaseline)
-        GroupBox1.Location = New Point(6, 255)
-        GroupBox1.Name = "GroupBox1"
-        GroupBox1.Size = New Size(213, 102)
-        GroupBox1.TabIndex = 28
-        GroupBox1.TabStop = False
-        GroupBox1.Text = "Brightness"
-        ' 
-        ' Label13
-        ' 
-        Label13.AutoSize = True
-        Label13.Location = New Point(12, 61)
-        Label13.Name = "Label13"
-        Label13.Size = New Size(42, 15)
-        Label13.TabIndex = 31
-        Label13.Text = "Effects"
-        ' 
         ' tbBrightnessEffect
         ' 
-        tbBrightnessEffect.Location = New Point(84, 61)
+        tbBrightnessEffect.LargeChange = 10
+        tbBrightnessEffect.Location = New Point(79, 44)
+        tbBrightnessEffect.Maximum = 100
         tbBrightnessEffect.Name = "tbBrightnessEffect"
-        tbBrightnessEffect.Size = New Size(104, 45)
+        tbBrightnessEffect.Size = New Size(124, 45)
         tbBrightnessEffect.TabIndex = 30
-        ' 
-        ' Label12
-        ' 
-        Label12.AutoSize = True
-        Label12.Location = New Point(12, 28)
-        Label12.Name = "Label12"
-        Label12.Size = New Size(50, 15)
-        Label12.TabIndex = 29
-        Label12.Text = "Baseline"
-        ' 
-        ' tbBrightnessBaseline
-        ' 
-        tbBrightnessBaseline.Location = New Point(84, 28)
-        tbBrightnessBaseline.Name = "tbBrightnessBaseline"
-        tbBrightnessBaseline.Size = New Size(104, 45)
-        tbBrightnessBaseline.TabIndex = 28
+        tbBrightnessEffect.TickFrequency = 10
         ' 
         ' tvGroupsSelected
         ' 
@@ -335,7 +323,7 @@ Partial Class DetailLightSource
         tvGroupsSelected.BorderStyle = BorderStyle.None
         tvGroupsSelected.CheckBoxes = True
         tvGroupsSelected.ForeColor = SystemColors.Menu
-        tvGroupsSelected.Location = New Point(241, 32)
+        tvGroupsSelected.Location = New Point(380, 36)
         tvGroupsSelected.Name = "tvGroupsSelected"
         tvGroupsSelected.Size = New Size(178, 325)
         tvGroupsSelected.TabIndex = 29
@@ -343,7 +331,7 @@ Partial Class DetailLightSource
         ' Label14
         ' 
         Label14.AutoSize = True
-        Label14.Location = New Point(241, 9)
+        Label14.Location = New Point(380, 13)
         Label14.Name = "Label14"
         Label14.Size = New Size(52, 15)
         Label14.TabIndex = 30
@@ -353,7 +341,7 @@ Partial Class DetailLightSource
         ' 
         btnCancel.BackColor = Color.DarkRed
         btnCancel.ForeColor = Color.Black
-        btnCancel.Location = New Point(241, 367)
+        btnCancel.Location = New Point(378, 377)
         btnCancel.Name = "btnCancel"
         btnCancel.Size = New Size(75, 23)
         btnCancel.TabIndex = 31
@@ -369,6 +357,322 @@ Partial Class DetailLightSource
         Label15.TabIndex = 32
         Label15.Text = "cm"
         ' 
+        ' gbEffectsStartPosition
+        ' 
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionBottomRight)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionBottom)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionBottomLeft)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionRight)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionCenter)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionLeft)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionTopRight)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionTop)
+        gbEffectsStartPosition.Controls.Add(EffectStartPositionTopLeft)
+        gbEffectsStartPosition.ForeColor = SystemColors.Control
+        gbEffectsStartPosition.Location = New Point(240, 276)
+        gbEffectsStartPosition.Name = "gbEffectsStartPosition"
+        gbEffectsStartPosition.Size = New Size(122, 129)
+        gbEffectsStartPosition.TabIndex = 33
+        gbEffectsStartPosition.TabStop = False
+        gbEffectsStartPosition.Text = "Start position"
+        ' 
+        ' EffectStartPositionBottomRight
+        ' 
+        EffectStartPositionBottomRight.AutoSize = True
+        EffectStartPositionBottomRight.Location = New Point(82, 97)
+        EffectStartPositionBottomRight.Name = "EffectStartPositionBottomRight"
+        EffectStartPositionBottomRight.Size = New Size(14, 13)
+        EffectStartPositionBottomRight.TabIndex = 9
+        EffectStartPositionBottomRight.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionBottom
+        ' 
+        EffectStartPositionBottom.AutoSize = True
+        EffectStartPositionBottom.Location = New Point(53, 96)
+        EffectStartPositionBottom.Name = "EffectStartPositionBottom"
+        EffectStartPositionBottom.Size = New Size(14, 13)
+        EffectStartPositionBottom.TabIndex = 8
+        EffectStartPositionBottom.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionBottomLeft
+        ' 
+        EffectStartPositionBottomLeft.AutoSize = True
+        EffectStartPositionBottomLeft.Location = New Point(24, 96)
+        EffectStartPositionBottomLeft.Name = "EffectStartPositionBottomLeft"
+        EffectStartPositionBottomLeft.Size = New Size(14, 13)
+        EffectStartPositionBottomLeft.TabIndex = 7
+        EffectStartPositionBottomLeft.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionRight
+        ' 
+        EffectStartPositionRight.AutoSize = True
+        EffectStartPositionRight.Location = New Point(82, 65)
+        EffectStartPositionRight.Name = "EffectStartPositionRight"
+        EffectStartPositionRight.Size = New Size(14, 13)
+        EffectStartPositionRight.TabIndex = 6
+        EffectStartPositionRight.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionCenter
+        ' 
+        EffectStartPositionCenter.AutoSize = True
+        EffectStartPositionCenter.Checked = True
+        EffectStartPositionCenter.Location = New Point(53, 64)
+        EffectStartPositionCenter.Name = "EffectStartPositionCenter"
+        EffectStartPositionCenter.Size = New Size(14, 13)
+        EffectStartPositionCenter.TabIndex = 5
+        EffectStartPositionCenter.TabStop = True
+        EffectStartPositionCenter.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionLeft
+        ' 
+        EffectStartPositionLeft.AutoSize = True
+        EffectStartPositionLeft.Location = New Point(24, 64)
+        EffectStartPositionLeft.Name = "EffectStartPositionLeft"
+        EffectStartPositionLeft.Size = New Size(14, 13)
+        EffectStartPositionLeft.TabIndex = 4
+        EffectStartPositionLeft.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionTopRight
+        ' 
+        EffectStartPositionTopRight.AutoSize = True
+        EffectStartPositionTopRight.Location = New Point(82, 36)
+        EffectStartPositionTopRight.Name = "EffectStartPositionTopRight"
+        EffectStartPositionTopRight.Size = New Size(14, 13)
+        EffectStartPositionTopRight.TabIndex = 3
+        EffectStartPositionTopRight.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionTop
+        ' 
+        EffectStartPositionTop.AutoSize = True
+        EffectStartPositionTop.Location = New Point(53, 35)
+        EffectStartPositionTop.Name = "EffectStartPositionTop"
+        EffectStartPositionTop.Size = New Size(14, 13)
+        EffectStartPositionTop.TabIndex = 2
+        EffectStartPositionTop.UseVisualStyleBackColor = True
+        ' 
+        ' EffectStartPositionTopLeft
+        ' 
+        EffectStartPositionTopLeft.AutoSize = True
+        EffectStartPositionTopLeft.Location = New Point(24, 35)
+        EffectStartPositionTopLeft.Name = "EffectStartPositionTopLeft"
+        EffectStartPositionTopLeft.Size = New Size(14, 13)
+        EffectStartPositionTopLeft.TabIndex = 1
+        EffectStartPositionTopLeft.UseVisualStyleBackColor = True
+        ' 
+        ' gbEffectDirection
+        ' 
+        gbEffectDirection.Controls.Add(EffectDirectionDownRight)
+        gbEffectDirection.Controls.Add(EffectDirectionDown)
+        gbEffectDirection.Controls.Add(EffectDirectionDownLeft)
+        gbEffectDirection.Controls.Add(EffectDirectionRight)
+        gbEffectDirection.Controls.Add(EffectDirectionLeft)
+        gbEffectDirection.Controls.Add(EffectDirectionUpRight)
+        gbEffectDirection.Controls.Add(EffectDirectionUp)
+        gbEffectDirection.Controls.Add(EffectDirectionUpLeft)
+        gbEffectDirection.ForeColor = SystemColors.Control
+        gbEffectDirection.Location = New Point(240, 141)
+        gbEffectDirection.Name = "gbEffectDirection"
+        gbEffectDirection.Size = New Size(122, 129)
+        gbEffectDirection.TabIndex = 34
+        gbEffectDirection.TabStop = False
+        gbEffectDirection.Text = "Direction"
+        ' 
+        ' EffectDirectionDownRight
+        ' 
+        EffectDirectionDownRight.AutoSize = True
+        EffectDirectionDownRight.Location = New Point(82, 97)
+        EffectDirectionDownRight.Name = "EffectDirectionDownRight"
+        EffectDirectionDownRight.Size = New Size(14, 13)
+        EffectDirectionDownRight.TabIndex = 9
+        EffectDirectionDownRight.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionDown
+        ' 
+        EffectDirectionDown.AutoSize = True
+        EffectDirectionDown.Location = New Point(53, 96)
+        EffectDirectionDown.Name = "EffectDirectionDown"
+        EffectDirectionDown.Size = New Size(14, 13)
+        EffectDirectionDown.TabIndex = 8
+        EffectDirectionDown.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionDownLeft
+        ' 
+        EffectDirectionDownLeft.AutoSize = True
+        EffectDirectionDownLeft.Location = New Point(24, 96)
+        EffectDirectionDownLeft.Name = "EffectDirectionDownLeft"
+        EffectDirectionDownLeft.Size = New Size(14, 13)
+        EffectDirectionDownLeft.TabIndex = 7
+        EffectDirectionDownLeft.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionRight
+        ' 
+        EffectDirectionRight.AutoSize = True
+        EffectDirectionRight.Location = New Point(82, 65)
+        EffectDirectionRight.Name = "EffectDirectionRight"
+        EffectDirectionRight.Size = New Size(14, 13)
+        EffectDirectionRight.TabIndex = 6
+        EffectDirectionRight.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionLeft
+        ' 
+        EffectDirectionLeft.AutoSize = True
+        EffectDirectionLeft.Location = New Point(24, 64)
+        EffectDirectionLeft.Name = "EffectDirectionLeft"
+        EffectDirectionLeft.Size = New Size(14, 13)
+        EffectDirectionLeft.TabIndex = 4
+        EffectDirectionLeft.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionUpRight
+        ' 
+        EffectDirectionUpRight.AutoSize = True
+        EffectDirectionUpRight.Location = New Point(82, 36)
+        EffectDirectionUpRight.Name = "EffectDirectionUpRight"
+        EffectDirectionUpRight.Size = New Size(14, 13)
+        EffectDirectionUpRight.TabIndex = 3
+        EffectDirectionUpRight.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionUp
+        ' 
+        EffectDirectionUp.AutoSize = True
+        EffectDirectionUp.Checked = True
+        EffectDirectionUp.Location = New Point(53, 35)
+        EffectDirectionUp.Name = "EffectDirectionUp"
+        EffectDirectionUp.Size = New Size(14, 13)
+        EffectDirectionUp.TabIndex = 2
+        EffectDirectionUp.TabStop = True
+        EffectDirectionUp.UseVisualStyleBackColor = True
+        ' 
+        ' EffectDirectionUpLeft
+        ' 
+        EffectDirectionUpLeft.AutoSize = True
+        EffectDirectionUpLeft.Location = New Point(24, 35)
+        EffectDirectionUpLeft.Name = "EffectDirectionUpLeft"
+        EffectDirectionUpLeft.Size = New Size(14, 13)
+        EffectDirectionUpLeft.TabIndex = 1
+        EffectDirectionUpLeft.UseVisualStyleBackColor = True
+        ' 
+        ' GroupBox2
+        ' 
+        GroupBox2.Controls.Add(btnC1)
+        GroupBox2.Controls.Add(btnC2)
+        GroupBox2.Controls.Add(btnC3)
+        GroupBox2.Controls.Add(btnC4)
+        GroupBox2.Controls.Add(btnC5)
+        GroupBox2.Controls.Add(chkBlend)
+        GroupBox2.ForeColor = SystemColors.Control
+        GroupBox2.Location = New Point(240, 6)
+        GroupBox2.Name = "GroupBox2"
+        GroupBox2.Size = New Size(122, 129)
+        GroupBox2.TabIndex = 34
+        GroupBox2.TabStop = False
+        GroupBox2.Text = "Colors"
+        ' 
+        ' tbEffectSpeed
+        ' 
+        tbEffectSpeed.LargeChange = 10
+        tbEffectSpeed.Location = New Point(89, 315)
+        tbEffectSpeed.Maximum = 100
+        tbEffectSpeed.Name = "tbEffectSpeed"
+        tbEffectSpeed.Size = New Size(124, 45)
+        tbEffectSpeed.TabIndex = 32
+        tbEffectSpeed.TickFrequency = 10
+        ' 
+        ' TBEffectIntensity
+        ' 
+        TBEffectIntensity.LargeChange = 10
+        TBEffectIntensity.Location = New Point(89, 346)
+        TBEffectIntensity.Maximum = 100
+        TBEffectIntensity.Name = "TBEffectIntensity"
+        TBEffectIntensity.Size = New Size(124, 45)
+        TBEffectIntensity.TabIndex = 35
+        TBEffectIntensity.TickFrequency = 10
+        ' 
+        ' TBEffectDispersion
+        ' 
+        TBEffectDispersion.LargeChange = 10
+        TBEffectDispersion.Location = New Point(88, 376)
+        TBEffectDispersion.Maximum = 100
+        TBEffectDispersion.Name = "TBEffectDispersion"
+        TBEffectDispersion.Size = New Size(124, 45)
+        TBEffectDispersion.TabIndex = 37
+        TBEffectDispersion.TickFrequency = 10
+        ' 
+        ' Label10
+        ' 
+        Label10.AutoSize = True
+        Label10.Location = New Point(17, 320)
+        Label10.Name = "Label10"
+        Label10.Size = New Size(39, 15)
+        Label10.TabIndex = 38
+        Label10.Text = "Speed"
+        ' 
+        ' Label16
+        ' 
+        Label16.AutoSize = True
+        Label16.Location = New Point(17, 346)
+        Label16.Name = "Label16"
+        Label16.Size = New Size(52, 15)
+        Label16.TabIndex = 39
+        Label16.Text = "Intensity"
+        ' 
+        ' Label17
+        ' 
+        Label17.AutoSize = True
+        Label17.Location = New Point(17, 376)
+        Label17.Name = "Label17"
+        Label17.Size = New Size(62, 15)
+        Label17.TabIndex = 40
+        Label17.Text = "Dispersion"
+        ' 
+        ' tbBrightnessBaseline
+        ' 
+        tbBrightnessBaseline.LargeChange = 10
+        tbBrightnessBaseline.Location = New Point(79, 17)
+        tbBrightnessBaseline.Maximum = 100
+        tbBrightnessBaseline.Name = "tbBrightnessBaseline"
+        tbBrightnessBaseline.Size = New Size(124, 45)
+        tbBrightnessBaseline.TabIndex = 28
+        tbBrightnessBaseline.TickFrequency = 10
+        ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Location = New Point(19, 20)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(50, 15)
+        Label12.TabIndex = 29
+        Label12.Text = "Baseline"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Location = New Point(19, 45)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(42, 15)
+        Label13.TabIndex = 31
+        Label13.Text = "Effects"
+        ' 
+        ' Label18
+        ' 
+        Label18.AutoSize = True
+        Label18.Location = New Point(5, -3)
+        Label18.Name = "Label18"
+        Label18.Size = New Size(62, 15)
+        Label18.TabIndex = 41
+        Label18.Text = "Brightness"
+        ' 
+        ' Panel1
+        ' 
+        Panel1.Controls.Add(Label18)
+        Panel1.Controls.Add(tbBrightnessEffect)
+        Panel1.Controls.Add(tbBrightnessBaseline)
+        Panel1.Controls.Add(Label12)
+        Panel1.Controls.Add(Label13)
+        Panel1.Location = New Point(12, 217)
+        Panel1.Name = "Panel1"
+        Panel1.Size = New Size(207, 84)
+        Panel1.TabIndex = 42
+        ' 
         ' DetailLightSource
         ' 
         AcceptButton = btnOK
@@ -376,22 +680,24 @@ Partial Class DetailLightSource
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.Black
         CancelButton = btnCancel
-        ClientSize = New Size(431, 398)
+        ClientSize = New Size(573, 415)
         ControlBox = False
+        Controls.Add(Panel1)
+        Controls.Add(Label17)
+        Controls.Add(Label16)
+        Controls.Add(Label10)
+        Controls.Add(TBEffectDispersion)
+        Controls.Add(TBEffectIntensity)
+        Controls.Add(tbEffectSpeed)
+        Controls.Add(GroupBox2)
+        Controls.Add(gbEffectsStartPosition)
+        Controls.Add(gbEffectDirection)
         Controls.Add(Label15)
         Controls.Add(btnCancel)
         Controls.Add(Label14)
         Controls.Add(tvGroupsSelected)
-        Controls.Add(GroupBox1)
         Controls.Add(Label11)
         Controls.Add(cmbEffect)
-        Controls.Add(Label10)
-        Controls.Add(btnC2)
-        Controls.Add(btnC3)
-        Controls.Add(btnC4)
-        Controls.Add(btnC5)
-        Controls.Add(btnC1)
-        Controls.Add(chkBlend)
         Controls.Add(Label9)
         Controls.Add(cmbDirection)
         Controls.Add(Label8)
@@ -421,10 +727,19 @@ Partial Class DetailLightSource
         SizeGripStyle = SizeGripStyle.Hide
         StartPosition = FormStartPosition.CenterScreen
         Text = "Details"
-        GroupBox1.ResumeLayout(False)
-        GroupBox1.PerformLayout()
         CType(tbBrightnessEffect, ComponentModel.ISupportInitialize).EndInit()
+        gbEffectsStartPosition.ResumeLayout(False)
+        gbEffectsStartPosition.PerformLayout()
+        gbEffectDirection.ResumeLayout(False)
+        gbEffectDirection.PerformLayout()
+        GroupBox2.ResumeLayout(False)
+        GroupBox2.PerformLayout()
+        CType(tbEffectSpeed, ComponentModel.ISupportInitialize).EndInit()
+        CType(TBEffectIntensity, ComponentModel.ISupportInitialize).EndInit()
+        CType(TBEffectDispersion, ComponentModel.ISupportInitialize).EndInit()
         CType(tbBrightnessBaseline, ComponentModel.ISupportInitialize).EndInit()
+        Panel1.ResumeLayout(False)
+        Panel1.PerformLayout()
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -452,16 +767,42 @@ Partial Class DetailLightSource
     Friend WithEvents btnC4 As Button
     Friend WithEvents btnC3 As Button
     Friend WithEvents btnC2 As Button
-    Friend WithEvents Label10 As Label
     Friend WithEvents Label11 As Label
     Friend WithEvents cmbEffect As ComboBox
-    Friend WithEvents GroupBox1 As GroupBox
-    Friend WithEvents Label13 As Label
     Friend WithEvents tbBrightnessEffect As TrackBar
-    Friend WithEvents Label12 As Label
-    Friend WithEvents tbBrightnessBaseline As TrackBar
     Friend WithEvents tvGroupsSelected As TreeView
     Friend WithEvents Label14 As Label
     Friend WithEvents btnCancel As Button
     Friend WithEvents Label15 As Label
+    Friend WithEvents gbEffectsStartPosition As GroupBox
+    Friend WithEvents EffectStartPositionBottomRight As RadioButton
+    Friend WithEvents EffectStartPositionBottom As RadioButton
+    Friend WithEvents EffectStartPositionBottomLeft As RadioButton
+    Friend WithEvents EffectStartPositionRight As RadioButton
+    Friend WithEvents EffectStartPositionCenter As RadioButton
+    Friend WithEvents EffectStartPositionLeft As RadioButton
+    Friend WithEvents EffectStartPositionTopRight As RadioButton
+    Friend WithEvents EffectStartPositionTop As RadioButton
+    Friend WithEvents EffectStartPositionTopLeft As RadioButton
+    Friend WithEvents gbEffectDirection As GroupBox
+    Friend WithEvents EffectDirectionDownRight As RadioButton
+    Friend WithEvents EffectDirectionDown As RadioButton
+    Friend WithEvents EffectDirectionDownLeft As RadioButton
+    Friend WithEvents EffectDirectionRight As RadioButton
+    Friend WithEvents EffectDirectionLeft As RadioButton
+    Friend WithEvents EffectDirectionUpRight As RadioButton
+    Friend WithEvents EffectDirectionUp As RadioButton
+    Friend WithEvents EffectDirectionUpLeft As RadioButton
+    Friend WithEvents GroupBox2 As GroupBox
+    Friend WithEvents tbEffectSpeed As TrackBar
+    Friend WithEvents TBEffectIntensity As TrackBar
+    Friend WithEvents TBEffectDispersion As TrackBar
+    Friend WithEvents Label10 As Label
+    Friend WithEvents Label16 As Label
+    Friend WithEvents Label17 As Label
+    Friend WithEvents tbBrightnessBaseline As TrackBar
+    Friend WithEvents Label12 As Label
+    Friend WithEvents Label13 As Label
+    Friend WithEvents Label18 As Label
+    Friend WithEvents Panel1 As Panel
 End Class

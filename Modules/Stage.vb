@@ -53,12 +53,13 @@ Public Module Stage
         Return output
     End Function
 
-    Public Sub GenereerLedLijst(
-        dgDevices As DataGridView,
+    Public Sub GenereerLedLijst(dgDevices As DataGridView,
         dgGroups As DataGridView,
         pbStage As PictureBox,
         podiumBreedteCm As Integer,
         podiumHoogteinCm As Integer)
+
+
 
         pbStage.Refresh()
         Application.DoEvents()

@@ -1,5 +1,6 @@
 ﻿Imports System.Drawing
 Imports System.Drawing.Drawing2D
+Imports System.Runtime.Intrinsics.Arm
 Imports System.Windows.Forms
 
 
@@ -44,6 +45,15 @@ Module EffectBuilder
     ' Events om uit MainForm af te handelen
     Public Event LightSourceClicked(trackId As Integer, lsRowIndex As Integer)
     Public Event TrackClicked(trackId As Integer)
+
+    Private Class ShapeInstance
+        Public Property HitLEDs As List(Of LedInfo)
+        Public Property Color As Color
+        Public Property Blend As Boolean
+        Public Property Params As EffectParams
+        Public Property EffectName As String
+
+    End Class
 
 
     ''' In je EffectBuilder-module:
@@ -120,6 +130,30 @@ Module EffectBuilder
             .cmbShape.SelectedItem = lsRow.Cells("colLSShape").Value
             .cmbDirection.SelectedItem = lsRow.Cells("colLSDirection").Value
             .chkBlend.Checked = CBool(lsRow.Cells("colLSBlend").Value)
+            .tbEffectSpeed.Value = CInt(lsRow.Cells("colLSEffectSpeed").Value)
+            .TBEffectIntensity.Value = CInt(lsRow.Cells("colLSEffectIntensity").Value)
+            .TBEffectDispersion.Value = CInt(lsRow.Cells("colLSEffectDispersion").Value)
+
+
+            Select Case lsRow.Cells("colLSEffectDirection").Value.ToString().ToUpper()
+                Case "UPLEFT"
+                    .EffectDirectionUpLeft.Checked = True
+                Case "UP"
+                    .EffectDirectionUp.Checked = True
+                Case "UPRIGHT"
+                    .EffectDirectionUpRight.Checked = True
+                Case "RIGHT"
+                    .EffectDirectionRight.Checked = True
+                Case "DOWNRIGHT"
+                    .EffectDirectionDownRight.Checked = True
+                Case "DOWN"
+                    .EffectDirectionDown.Checked = True
+                Case "DOWNLEFT"
+                    .EffectDirectionDownLeft.Checked = True
+                Case "LEFT"
+                    .EffectDirectionLeft.Checked = True
+            End Select
+
 
             ' Kleuren
             .btnC1.BackColor = Color.FromArgb(CInt(lsRow.Cells("colLSColor1").Value))
@@ -160,6 +194,9 @@ Module EffectBuilder
             DetailLightSource.CheckAndMarkNodes(.tvGroupsSelected.Nodes, selGroupIds)
             .tvGroupsSelected.ExpandAll()
             .tvGroupsSelected.EndUpdate()
+
+
+
         End With
 
         ' 7) Toon dialog en sla wijzigingen op bij OK
@@ -229,7 +266,10 @@ Module EffectBuilder
 
 
 
+
     Public Sub Compile_EffectDesigner()
+
+
         ' Controleer eerst of er een effect geselecteerd in de DG_MyEffects table, zo niet skippen met een melding
         If FrmMain.DG_MyEffects.CurrentRow Is Nothing Then
             Dim selectedName As String = FrmMain.cbSelectedEffect.Text
@@ -307,6 +347,11 @@ Module EffectBuilder
         Next
 
 
+
+
+
+
+
         ' We weten hoeveel frames we moeten maken, dus we kunnen nu de buffers aanmaken. Doorloop frame per frame
         For frameIndex = 0 To totalFrames - 1
 
@@ -320,6 +365,8 @@ Module EffectBuilder
                 buffers(device) = New Byte(deviceCounts(device) * 3 - 1) {}
             Next
 
+            ' Verzamel per shape welke leds geraakt worden
+            Dim activeShapes As New List(Of (ShapeRow As DataGridViewRow, Effect As String, Color As Color, Params As EffectParams, Blend As Boolean, HitLEDs As List(Of Integer)))
 
             ' Doorloop alle shapes (lightsources) en bepaal of ze actief zijn op dit moment
             For Each shapeLightsource As DataGridViewRow In FrmMain.DG_LightSources.Rows
@@ -330,7 +377,6 @@ Module EffectBuilder
 
                 ' Bepaal trackID van deze shape
                 Dim trackId = CInt(shapeLightsource.Cells("colLSTrackId").Value)
-
 
                 ' Bepaal of track op  waarop deze shape staat op actief staat, zo niet overslaan.
                 Dim trRow = FrmMain.DG_Tracks.Rows _
@@ -359,9 +405,24 @@ Module EffectBuilder
                 Dim c5 = Color.FromArgb(CInt(shapeLightsource.Cells("colLSColor5").Value))
                 Dim blend = CBool(shapeLightsource.Cells("colLSBlend").Value)
                 Dim direction = shapeLightsource.Cells("colLSDirection").Value.ToString()
-                Dim shapeEffect = shapeLightsource.Cells("colLSEffect").Value.ToString()
+                Dim shapeEffect = shapeLightsource.Cells("colLSEffect").Value.ToString().Split("-"c)(0).Trim()
                 Dim shapePosXmm = CDbl(shapeLightsource.Cells("colLSPositionX").Value) * 10
                 Dim shapePosYmm = CDbl(shapeLightsource.Cells("colLSPositionY").Value) * 10
+                Dim shapeType = shapeLightsource.Cells("colLSShape").Value.ToString()
+                Dim sizeMm = (CDbl(shapeLightsource.Cells("colLSSize").Value) * 10) / 2
+
+                Dim parameters As New EffectParams With {
+                    .EffectName = shapeEffect,
+                    .FPS = fps,
+                    .Duration = CInt(durSec * 1000),
+                    .Brightness_Baseline = CInt(shapeLightsource.Cells("colLSBrightnessBaseline").Value),
+                    .Brightness_Effect = CInt(shapeLightsource.Cells("colLSBrightnessEffect").Value),
+                    .Speed = CInt(shapeLightsource.Cells("colLSEffectSpeed").Value),
+                    .Intensity = CInt(shapeLightsource.Cells("colLSEffectIntensity").Value),
+                    .Dispersion = CInt(shapeLightsource.Cells("colLSEffectDispersion").Value),
+                    .Kleuren = {c1, c2, c3, c4, c5}
+                }
+
 
                 ' Haal ook even de CSV lijst van groepen van de shape op, en split deze in een lijst
                 Dim shapeGroups = CStr(shapeLightsource.Cells("colLSGroups").Value) _
@@ -371,40 +432,32 @@ Module EffectBuilder
                             .ToList()
 
 
-
-                ' Doorloop alle LED, om te bepalen of deze led aangeraakt wordt door deze shape en in de groep zit
-                For Each individualLed In LedLijst
-
-
-                    ' Bepaal de groepen van de led, en kijk of deze in de shape-groepen zit, zo niet volgende led
-                    Dim individualLedGroups = If(
-                        String.IsNullOrEmpty(individualLed.GroupId),
+                ' **********************************************************
+                ' DEEL 1: Dooploop alle leds en kijk of deze in de shape vallen, voeg ze dan toe aan 
+                ' een lijstje van hitLEDs
+                ' **********************************************************
+                Dim hitLeds As New List(Of Integer)
+                For Each led In LedLijst
+                    ' Check of LED in de juiste groep zit
+                    Dim ledGroups = If(
+                        String.IsNullOrEmpty(led.GroupId),
                         New List(Of Integer),
-                            individualLed.GroupId.Split(","c).Select(Function(s) CInt(s.Trim())).ToList()
+                        led.GroupId.Split(","c).Select(Function(s) CInt(s.Trim())).ToList()
                     )
-                    If Not individualLedGroups.Any(Function(g) shapeGroups.Contains(g)) Then Continue For
+                    If Not ledGroups.Any(Function(g) shapeGroups.Contains(g)) Then Continue For
 
-
-                    ' Bepaal de positie de shape, grootte (en richting in geval van cone)
+                    ' Bepaal of de led in de shape valt
+                    Dim dxMm = (led.Xmm - offsetXmm) - (shapePosXmm - offsetXmm)
+                    Dim dyMm = (led.Ymm - offsetYmm) - (shapePosYmm - offsetYmm)
                     Dim inShape As Boolean = False
-                    Dim sizeMm = (CDbl(shapeLightsource.Cells("colLSSize").Value) * 10) / 2
-                    Dim dxMm = (individualLed.Xmm - offsetXmm) - (shapePosXmm - offsetXmm)
-                    Dim dyMm = (individualLed.Ymm - offsetYmm) - (shapePosYmm - offsetYmm)
 
-                    ' Bepaal of de led in de shape valt, afhankelijk van de shape
-                    Select Case CStr(shapeLightsource.Cells("colLSShape").Value)
+                    Select Case shapeType
                         Case "Circle"
-                            ' Cirkelvormige shape, X en Y zijn altijd het middelpunt, inshape als afstand <= radius van de cirkel
                             inShape = (dxMm * dxMm + dyMm * dyMm) <= sizeMm * sizeMm
-
                         Case "Square"
-                            ' Vierkante shape, X en Y zijn altijd het middelpunt, inshape als afstand <= grootte van het vierkant
                             inShape = (Math.Abs(dxMm) <= sizeMm AndAlso Math.Abs(dyMm) <= sizeMm)
-
                         Case "Cone"
-                            ' Een cone is wat moeilijker. We gaan uit dat x,y hoek is met scherpte punt en houden dan rekening met de richting 
                             Dim v = Stage.DirectionVector(direction, 1)
-
                             Dim len = Math.Sqrt(v.X * v.X + v.Y * v.Y)
                             If len > 0 Then
                                 Dim ux = v.X / len, uy = -v.Y / len
@@ -418,43 +471,67 @@ Module EffectBuilder
                                 End If
                             End If
                     End Select
-                    ' Als de led niet in de shape valt, dan verder met de volgende led
-                    If Not inShape Then Continue For
 
-                    ' *************************************************************************************************
-                    ' Vanaf dit punt weten we dat deze led binnen de shape valt. We kunnen dus de kleuren in het buffer
-                    ' zetten.
-                    ' *************************************************************************************************
-
-                    Dim buf = buffers(individualLed.DeviceNaam)
-                    Dim idx = individualLed.IndexInDevice * 3
-
-                    Select Case shapeEffect
-                        Case "Twinkle"
-                            ' ****************************************
-                            ' TWINKLE EFFECT
-                            ' ****************************************
-
-                        Case Else
-                            ' ****************************************
-                            ' SOLID KLEUR, GEEN EFFECT
-                            ' ****************************************
-
-                            ' Bepaal de kleur die we in de buffer moeten zetten, afhankelijk of we de kleuren moeten blenden of niet
-                            If blend Then
-                                Dim sumR = CInt(buf(idx)) + c1.R : If sumR > 255 Then sumR = 255
-                                Dim sumG = CInt(buf(idx + 1)) + c1.G : If sumG > 255 Then sumG = 255
-                                Dim sumB = CInt(buf(idx + 2)) + c1.B : If sumB > 255 Then sumB = 255
-                                buf(idx) = CByte(sumR)
-                                buf(idx + 1) = CByte(sumG)
-                                buf(idx + 2) = CByte(sumB)
-                            Else
-                                buf(idx) = CByte(c1.R)
-                                buf(idx + 1) = CByte(c1.G)
-                                buf(idx + 2) = CByte(c1.B)
-                            End If
-                    End Select
+                    If inShape Then hitLeds.Add(led.IndexInDevice)
                 Next
+
+                If hitLeds.Count > 0 Then
+                    activeShapes.Add((shapeLightsource, shapeEffect, c1, parameters, blend, hitLeds))
+                End If
+            Next
+
+
+
+            ' *********************************************************************************
+            ' DEEL 2: Geef de leds in de shapes nu de juiste kleur en effect
+            ' *********************************************************************************
+            ' Doorloop alle leds en bepaal kleur per frame
+            For Each led In LedLijst
+                Dim idx = led.IndexInDevice * 3
+                Dim r As Byte = 0, g As Byte = 0, b As Byte = 0
+                Dim hasColor As Boolean = False
+
+                For Each shape In activeShapes
+                    If Not shape.HitLEDs.Contains(led.IndexInDevice) Then Continue For
+
+                    Dim rr As Byte = shape.Color.R
+                    Dim gg As Byte = shape.Color.G
+                    Dim bb As Byte = shape.Color.B
+
+
+                    If shape.Effect = "Twinkle" Then
+                        CustomEffects_Twinkle.CompileCustomEffect_Twinkle(
+                            rr, gg, bb,
+                            frameIndex,
+                            led.IndexInDevice,
+                            led.Xmm, led.Ymm,
+                            shape.HitLEDs,
+                            shape.Params,
+                            0
+                        )
+                    End If
+
+                    If shape.Blend And hasColor Then
+                        Dim tot_r As Integer = CInt(r) + CInt(rr)
+                        r = Math.Min(255, tot_r)
+
+                        Dim tot_g As Integer = CInt(g) + CInt(gg)
+                        g = Math.Min(255, tot_g)
+
+                        Dim tot_b As Integer = CInt(b) + CInt(bb)
+                        b = Math.Min(255, tot_b)
+                    Else
+                        r = rr : g = gg : b = bb
+                    End If
+                    hasColor = True
+                Next
+
+                If hasColor Then
+                    Dim buf = buffers(led.DeviceNaam)
+                    buf(idx) = r
+                    buf(idx + 1) = g
+                    buf(idx + 2) = b
+                End If
             Next
 
             ' Sla buffers op
@@ -475,8 +552,171 @@ Module EffectBuilder
             End With
         Next
 
-        ToonFlashBericht($"Compile klaar: {totalFrames} frames per device aangemaakt.", 3)
+        ToonFlashBericht($"Compile klaar {totalFrames} frames per device aangemaakt.", 3)
     End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+    '' Doorloop alle LED, om te bepalen of deze led aangeraakt wordt door deze shape en in de groep zit
+    'For Each individualLed In LedLijst
+
+
+    '            ' Bepaal de groepen van de led, en kijk of deze in de shape-groepen zit, zo niet volgende led
+    '            Dim individualLedGroups = If(
+    '                String.IsNullOrEmpty(individualLed.GroupId),
+    '                New List(Of Integer),
+    '                    individualLed.GroupId.Split(","c).Select(Function(s) CInt(s.Trim())).ToList()
+    '            )
+    '            If Not individualLedGroups.Any(Function(g) shapeGroups.Contains(g)) Then Continue For
+
+
+    '            ' Bepaal de positie de shape, grootte (en richting in geval van cone)
+    '            Dim inShape As Boolean = False
+
+    '            Dim dxMm = (individualLed.Xmm - offsetXmm) - (shapePosXmm - offsetXmm)
+    '            Dim dyMm = (individualLed.Ymm - offsetYmm) - (shapePosYmm - offsetYmm)
+
+    '            ' Bepaal of de led in de shape valt, afhankelijk van de shape
+    '            Select Case CStr(shapeLightsource.Cells("colLSShape").Value)
+    '                Case "Circle"
+    '                    ' Cirkelvormige shape, X en Y zijn altijd het middelpunt, inshape als afstand <= radius van de cirkel
+    '                    inShape = (dxMm * dxMm + dyMm * dyMm) <= sizeMm * sizeMm
+
+    '                Case "Square"
+    '                    ' Vierkante shape, X en Y zijn altijd het middelpunt, inshape als afstand <= grootte van het vierkant
+    '                    inShape = (Math.Abs(dxMm) <= sizeMm AndAlso Math.Abs(dyMm) <= sizeMm)
+
+    '                Case "Cone"
+    '                    ' Een cone is wat moeilijker. We gaan uit dat x,y hoek is met scherpte punt en houden dan rekening met de richting 
+    '                    Dim v = Stage.DirectionVector(direction, 1)
+
+    '                    Dim len = Math.Sqrt(v.X * v.X + v.Y * v.Y)
+    '                    If len > 0 Then
+    '                        Dim ux = v.X / len, uy = -v.Y / len
+    '                        Dim dist = Math.Sqrt(dxMm * dxMm + dyMm * dyMm)
+    '                        If dist > 0 Then
+    '                            Dim proj = dxMm * ux + dyMm * uy
+    '                            Dim cosHalf = Math.Cos(Math.PI / 6)
+    '                            If proj > 0 AndAlso proj <= sizeMm AndAlso proj / dist >= cosHalf Then
+    '                                inShape = True
+    '                            End If
+    '                        End If
+    '                    End If
+    '            End Select
+    '            ' Als de led niet in de shape valt, dan verder met de volgende led
+    '            If Not inShape Then Continue For
+
+    '            ' *************************************************************************************************
+    '            ' Vanaf dit punt weten we dat deze led binnen de shape valt. We kunnen dus de kleuren in het buffer
+    '            ' zetten.
+    '            ' *************************************************************************************************
+
+    '            Dim buf = buffers(individualLed.DeviceNaam)
+    '            Dim idx = individualLed.IndexInDevice * 3
+
+    '            Select Case shapeEffect
+    '                Case "Twinkle"
+    '                    ' Initieel RGB van kleur 1 (achtergrondkleur)
+    '                    Dim r As Byte = c1.R
+    '                    Dim g As Byte = c1.G
+    '                    Dim b As Byte = c1.B
+
+    '                    ' Bouw EffectParams op basis van shape-informatie
+    '                    Dim parameters As New EffectParams With {
+    '                        .EffectName = "Twinkle",
+    '                        .FPS = fps,
+    '                        .Duration = CInt(durSec * 1000),
+    '                        .Brightness_Baseline = CInt(shapeLightsource.Cells("colLSBrightnessBaseline").Value),
+    '                        .Brightness_Effect = CInt(shapeLightsource.Cells("colLSBrightnessEffect").Value),
+    '                        .Speed = CInt(shapeLightsource.Cells("colLSEffectSpeed").Value),
+    '                        .Intensity = CInt(shapeLightsource.Cells("colLSEffectIntensity").Value),
+    '                        .Dispersion = CInt(shapeLightsource.Cells("colLSEffectDispersion").Value)
+    '                    }
+
+
+    '                    ' Vul lichtbron in (vereist dat je deze ergens als LightSource-object construeert)
+    '                    Dim source As New LightSource With {
+    '                        .HitLEDs = New List(Of Integer) From {individualLed.IndexInDevice}
+    '                    }
+
+    '                    ' Aanroep naar Twinkle compiler
+    '                    CustomEffects_Twinkle.CompileCustomEffect_Twinkle(
+    '                        r, g, b,
+    '                        frameIndex,
+    '                        individualLed.IndexInDevice,
+    '                        individualLed.Xmm,
+    '                        individualLed.Ymm,
+    '                        source,
+    '                        parameters,
+    '                        0
+    '                    )
+
+    '                    ' Kleur in buffer zetten (rekening houden met blend)
+    '                    If Blend Then
+    '                        Dim sumR = CInt(buf(idx)) + r : If sumR > 255 Then sumR = 255
+    '                        Dim sumG = CInt(buf(idx + 1)) + g : If sumG > 255 Then sumG = 255
+    '                        Dim sumB = CInt(buf(idx + 2)) + b : If sumB > 255 Then sumB = 255
+    '                        buf(idx) = CByte(sumR)
+    '                        buf(idx + 1) = CByte(sumG)
+    '                        buf(idx + 2) = CByte(sumB)
+    '                    Else
+    '                        buf(idx) = r
+    '                        buf(idx + 1) = g
+    '                        buf(idx + 2) = b
+    '                    End If
+
+    '                Case Else
+    '                    ' ****************************************
+    '                    ' SOLID KLEUR, GEEN EFFECT
+    '                    ' ****************************************
+
+    '                    ' Bepaal de kleur die we in de buffer moeten zetten, afhankelijk of we de kleuren moeten blenden of niet
+    '                    If Blend Then
+    '                        Dim sumR = CInt(buf(idx)) + c1.R : If sumR > 255 Then sumR = 255
+    '                        Dim sumG = CInt(buf(idx + 1)) + c1.G : If sumG > 255 Then sumG = 255
+    '                        Dim sumB = CInt(buf(idx + 2)) + c1.B : If sumB > 255 Then sumB = 255
+    '                        buf(idx) = CByte(sumR)
+    '                        buf(idx + 1) = CByte(sumG)
+    '                        buf(idx + 2) = CByte(sumB)
+    '                    Else
+    '                        buf(idx) = CByte(c1.R)
+    '                        buf(idx + 1) = CByte(c1.G)
+    '                        buf(idx + 2) = CByte(c1.B)
+    '                    End If
+    '            End Select
+    '        Next
+    '    Next
+
+    '    ' Sla buffers op
+    '    For Each frame In resultList.Keys
+    '        resultList(frame).Add(Buffers(frame))
+    '    Next
+    '    Next
+
+    '    ' Wegschrijven naar DG_MyEffectsFrames
+    '    For Each thisResult In resultList
+    '        Dim fixureId = thisResult.Key
+    '        Dim framesList = thisResult.Value
+    '        Dim rowIdx = FrmMain.DG_MyEffectsFrames.Rows.Add()
+    '        With FrmMain.DG_MyEffectsFrames.Rows(rowIdx)
+    '            .Cells("colMF_MEID").Value = effectId
+    '            .Cells("colMF_FixtureID").Value = fixureId
+    '            .Cells("colMF_Frames").Value = framesList
+    '        End With
+    '    Next
+
+    '    ToonFlashBericht($"Compile klaar {totalFrames} frames per device aangemaakt.", 3)
+    'End Sub
 
     ' Herverschaalt de pixel-per-seconde factor
     Private Sub RecalcScale()
@@ -906,13 +1146,13 @@ Module EffectBuilder
         plusRect = New Rectangle(axisEndX + 32, cy, 24, 16)
 
         g.DrawRectangle(Pens.White, minusRect)
-        g.DrawString("-10s",
+        g.DrawString("-10S",
                  SystemFonts.DefaultFont,
                  Brushes.White,
                  minusRect.Location)
 
         g.DrawRectangle(Pens.White, plusRect)
-        g.DrawString("+10s",
+        g.DrawString("+10S",
                  SystemFonts.DefaultFont,
                  Brushes.White,
                  plusRect.Location)
@@ -1116,7 +1356,7 @@ Module EffectBuilder
         End If
 
         ' 2) Vraag naam en bepaal nieuw ID
-        Dim trackName = InputBox("Geef een naam voor de nieuwe track:", "Nieuwe Track")
+        Dim trackName = InputBox("Geef een naam voor de nieuwe track", "Nieuwe Track")
         If String.IsNullOrWhiteSpace(trackName) Then Exit Sub
 
         Dim nextId = 1

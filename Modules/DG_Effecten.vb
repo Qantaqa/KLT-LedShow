@@ -60,7 +60,7 @@ Module DG_Effecten
         If e.ColumnIndex <= 1 Then Exit Sub ' Zorg ervoor dat het niet de eerste kolom is
 
         Dim currentRow = DG_Effecten.Rows(e.RowIndex)
-        Dim effectNaam As String = TryCast(currentRow.Cells("Effect").Value, String)
+        Dim effectNaam As String = TryCast(currentRow.Cells("EffectName").Value, String)
         Dim wledNaam As String = TryCast(DG_Effecten.Columns(e.ColumnIndex).Name, String)
 
         If effectNaam Is Nothing OrElse wledNaam Is Nothing Then
@@ -82,20 +82,7 @@ Module DG_Effecten
         Next
 
         If wledIp <> "" Then
-            Dim effectId = -1
-            Dim wledData = wledDevices(wledIp)
-            Dim effecten = TryCast(wledData.Item2("effects"), JArray) ' Haal effecten op uit de JObject
-            If effecten IsNot Nothing Then
-                For i = 0 To effecten.Count - 1
-                    If effecten(i).ToString() = effectNaam Then
-                        effectId = i
-                        Debug.WriteLine($"Handle_DGEffecten_CellContentClick: Found effectId = {effectId}")
-                        ToonFlashBericht(wledNaam & " op segment 0 effect " & effectNaam & " toegepast.", 2)
-                        Exit For
-                    End If
-                Next
-            End If
-
+            Dim effectId = GetEffectIdFromName(effectNaam, DG_Effecten)
             If effectId <> -1 Then
                 Await SendEffectToWLed(wledIp, "1", effectId)
             Else
@@ -106,63 +93,79 @@ Module DG_Effecten
         End If
     End Sub
 
+    ' Public sub to fill DG_Effecten based on availableEffects in DG_Devices.
+    ' Effect IDs are retrieved via the WLED API using GetEffectIdFromName_API.
 
-    ' ****************************************************************************************  
-    '  Update de effectenpulldown in de DataGridView voor elk WLED-apparaat.
-    ' ****************************************************************************************
-    Public Sub Update_DGEffecten_BasedOnTuple()
-        If wledDevices.Count = 0 Then Return
-
-        Dim effectenLijst As New List(Of Tuple(Of Integer, String))()
-
-
-        For Each wledData In wledDevices.Values
-            Dim effectenJArray = TryCast(wledData.Item2("effects"), JArray)
-
-            If effectenJArray IsNot Nothing Then
-                For i As Integer = 0 To effectenJArray.Count - 1
-                    Dim effectNaam As String = effectenJArray(i).ToString()
-                    If Not effectenLijst.Any(Function(x) x.Item2 = effectNaam) Then
-                        effectenLijst.Add(New Tuple(Of Integer, String)(i, effectNaam))
-                    End If
-                Next
-            End If
-
-        Next
-
-        FrmMain.DG_Effecten.Columns.Clear()
-        FrmMain.DG_Effecten.Columns.Add("EffectId", "Effect ID")
-        FrmMain.DG_Effecten.Columns.Add("Effect", "Effect") ' Effect kolom
-
-
-        For Each ipAddress As String In wledDevices.Keys
-            Dim wledName As String = wledDevices(ipAddress).Item1
-            Dim effectCheckBoxColumn As New DataGridViewCheckBoxColumn()
-            effectCheckBoxColumn.Name = wledName
-            effectCheckBoxColumn.HeaderText = wledName
-            FrmMain.DG_Effecten.Columns.Add(effectCheckBoxColumn)
-
-        Next
-
+    Public Sub Update_DGEffecten_BasedOnDevices()
         FrmMain.DG_Effecten.Rows.Clear()
-        ' Voeg effecten toe
+        FrmMain.DG_Effecten.Columns.Clear()
 
-        For Each effectTuple As Tuple(Of Integer, String) In effectenLijst
-            Dim rowIndex As Integer = FrmMain.DG_Effecten.Rows.Add(effectTuple.Item1, effectTuple.Item2)
+        ' Add Effect Name and Effect ID columns
+        FrmMain.DG_Effecten.Columns.Add("EffectName", "Effect")
+        FrmMain.DG_Effecten.Columns.Add("EffectId", "ID")
 
-            For Each ipAddress As String In wledDevices.Keys
-                Dim wledName = wledDevices(ipAddress).Item1
-                Dim wledData = wledDevices(ipAddress).Item2
-                Dim effectenJArray = TryCast(wledData("effects"), JArray)
-                Dim checkBoxCell As DataGridViewCheckBoxCell = TryCast(FrmMain.DG_Effecten.Rows(rowIndex).Cells(wledName), DataGridViewCheckBoxCell)
-                checkBoxCell.Value = True
+        ' Gather all unique effects from all devices
+        Dim allEffects As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
+        Dim deviceNames As New List(Of String)
 
-                'End If
+        For Each devRow As DataGridViewRow In FrmMain.DG_Devices.Rows
+            If devRow.IsNewRow Then Continue For
+            Dim devName = Convert.ToString(devRow.Cells("colInstance").Value)
+            deviceNames.Add(devName)
+
+            Dim effectsJson = Convert.ToString(devRow.Cells("colEffects").Value)
+            If String.IsNullOrWhiteSpace(effectsJson) Then Continue For
+
+            Dim effectsList As List(Of String) = Effects_JsonToListOfString(effectsJson)
+            For Each eff In effectsList
+                allEffects.Add(eff)
             Next
         Next
 
-        FrmMain.DG_Effecten.Sort(FrmMain.DG_Effecten.Columns("Effect"), System.ComponentModel.ListSortDirection.Ascending)
+        ' Add a checkbox column for each device
+        For Each devName In deviceNames
+            Dim col As New DataGridViewCheckBoxColumn()
+            col.Name = devName
+            col.HeaderText = devName
+            FrmMain.DG_Effecten.Columns.Add(col)
+        Next
+
+        ' Fill the grid: one row per effect, with checkboxes for each device
+        For Each eff In allEffects
+            Dim rowIdx = FrmMain.DG_Effecten.Rows.Add()
+            FrmMain.DG_Effecten.Rows(rowIdx).Cells("EffectName").Value = eff
+            FrmMain.DG_Effecten.Rows(rowIdx).Cells("EffectId").Value = rowIdx
+
+            ' Set checkboxes for each device
+            For Each devName In deviceNames
+                Dim devRow = FrmMain.DG_Devices.Rows.Cast(Of DataGridViewRow)().
+                FirstOrDefault(Function(r) Not r.IsNewRow AndAlso Convert.ToString(r.Cells("colInstance").Value) = devName)
+                If devRow Is Nothing Then Continue For
+
+                Dim effectsJson = Convert.ToString(devRow.Cells("colEffects").Value)
+                Dim effectsList As List(Of String) = Effects_JsonToListOfString(effectsJson)
+                Dim hasEffect = effectsList.Any(Function(e) String.Equals(e, eff, StringComparison.OrdinalIgnoreCase))
+                FrmMain.DG_Effecten.Rows(rowIdx).Cells(devName).Value = hasEffect
+            Next
+        Next
+
+        ' Sort based on name
+        FrmMain.DG_Effecten.Sort(FrmMain.DG_Effecten.Columns("EffectName"), System.ComponentModel.ListSortDirection.Ascending)
+
     End Sub
+
+
+    Private Function Effects_JsonToListOfString(effectsJson As String) As List(Of String)
+        Try
+            Dim cleanJson = effectsJson.Replace(vbCrLf, "").Replace(vbTab, "")
+            Return Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of String))(cleanJson)
+        Catch
+            Dim trimmed = effectsJson.Trim("["c, "]"c, " "c, vbCr, vbLf)
+            Return trimmed.Split({","}, StringSplitOptions.RemoveEmptyEntries).
+            Select(Function(s) s.Trim().Trim(""""c)).ToList()
+        End Try
+    End Function
+
 
     ' *********************************************************
     ' Deze functie haalt de effectnaam op uit de effect ID
@@ -191,7 +194,7 @@ Module DG_Effecten
         ' Zoek de effectid in de DG_Effects DataGridView.
         For Each effectRow As DataGridViewRow In DG_Effects.Rows
             Dim effectIdCellValue = effectRow.Cells("EffectId").Value
-            Dim effectNameCellValue = effectRow.Cells("Effect").Value
+            Dim effectNameCellValue = effectRow.Cells("EffectName").Value
 
             If effectNameCellValue IsNot Nothing AndAlso effectNameCellValue.ToString() = SearchEffectName Then
                 ' Zorg ervoor dat je de juiste datatype vergelijkt.
@@ -227,7 +230,7 @@ Module DG_Effecten
         ' Loop door alle rijen in de DataGridView.
         For Each row As DataGridViewRow In DG_Effecten.Rows
             ' Haal de effectnaam op.
-            Dim effectName As String = TryCast(row.Cells("Effect").Value, String)
+            Dim effectName As String = TryCast(row.Cells("EffectName").Value, String)
             If Not String.IsNullOrEmpty(effectName) Then
                 ' Stel het pad naar de image samen.
                 Dim imagePath As String = Path.Combine(effectsImagePath, effectName.Replace(" ", "_") & ".gif")
