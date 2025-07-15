@@ -1,0 +1,698 @@
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+Partial Class DetailShow
+    Inherits System.Windows.Forms.Form
+
+    'Form overrides dispose to clean up the component list.
+    <System.Diagnostics.DebuggerNonUserCode()> _
+    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+        Try
+            If disposing AndAlso components IsNot Nothing Then
+                components.Dispose()
+            End If
+        Finally
+            MyBase.Dispose(disposing)
+        End Try
+    End Sub
+
+    'Required by the Windows Form Designer
+    Private components As System.ComponentModel.IContainer
+
+    'NOTE: The following procedure is required by the Windows Form Designer
+    'It can be modified using the Windows Form Designer.  
+    'Do not modify it using the code editor.
+    <System.Diagnostics.DebuggerStepThrough()> _
+    Private Sub InitializeComponent()
+        btnOK = New Button()
+        btnCancel = New Button()
+        GroupBox1 = New GroupBox()
+        cbAct = New ComboBox()
+        tbCue = New TextBox()
+        Label4 = New Label()
+        tbEvent = New TextBox()
+        Label3 = New Label()
+        tbScene = New TextBox()
+        Label2 = New Label()
+        Label1 = New Label()
+        GroupBox2 = New GroupBox()
+        Label13 = New Label()
+        tbTimer = New TextBox()
+        cbDevice = New ComboBox()
+        Label7 = New Label()
+        cbPalette = New ComboBox()
+        Label6 = New Label()
+        cbEffect = New ComboBox()
+        Label5 = New Label()
+        GroupBox3 = New GroupBox()
+        txtTransition = New TextBox()
+        txtSpeed = New TextBox()
+        txtIntensity = New TextBox()
+        txtBrightness = New TextBox()
+        btnColor3 = New Button()
+        btnColor2 = New Button()
+        btnColor1 = New Button()
+        cbBlend = New CheckBox()
+        cbSound = New CheckBox()
+        tbTransition = New TrackBar()
+        Label12 = New Label()
+        tbSpeed = New TrackBar()
+        Label11 = New Label()
+        tbIntensity = New TrackBar()
+        Label10 = New Label()
+        tbBrightness = New TrackBar()
+        Label9 = New Label()
+        cbPower = New CheckBox()
+        tbFilename = New TextBox()
+        TabControl1 = New TabControl()
+        TabPage1 = New TabPage()
+        btnCopy = New Button()
+        btnPaste = New Button()
+        pbPreviewPalette = New PictureBox()
+        pbPreviewEffect = New PictureBox()
+        TabPage2 = New TabPage()
+        Button1 = New Button()
+        Label8 = New Label()
+        cbRepeat = New CheckBox()
+        btnPreview = New Button()
+        cbAutoPreview = New CheckBox()
+        GroupBox1.SuspendLayout()
+        GroupBox2.SuspendLayout()
+        GroupBox3.SuspendLayout()
+        CType(tbTransition, ComponentModel.ISupportInitialize).BeginInit()
+        CType(tbSpeed, ComponentModel.ISupportInitialize).BeginInit()
+        CType(tbIntensity, ComponentModel.ISupportInitialize).BeginInit()
+        CType(tbBrightness, ComponentModel.ISupportInitialize).BeginInit()
+        TabControl1.SuspendLayout()
+        TabPage1.SuspendLayout()
+        CType(pbPreviewPalette, ComponentModel.ISupportInitialize).BeginInit()
+        CType(pbPreviewEffect, ComponentModel.ISupportInitialize).BeginInit()
+        TabPage2.SuspendLayout()
+        SuspendLayout()
+        ' 
+        ' btnOK
+        ' 
+        btnOK.ForeColor = SystemColors.Highlight
+        btnOK.Location = New Point(389, 578)
+        btnOK.Name = "btnOK"
+        btnOK.Size = New Size(75, 22)
+        btnOK.TabIndex = 0
+        btnOK.Text = "OK"
+        btnOK.UseVisualStyleBackColor = True
+        ' 
+        ' btnCancel
+        ' 
+        btnCancel.ForeColor = Color.Red
+        btnCancel.Location = New Point(12, 578)
+        btnCancel.Name = "btnCancel"
+        btnCancel.Size = New Size(108, 22)
+        btnCancel.TabIndex = 1
+        btnCancel.Text = "Cancel"
+        btnCancel.UseVisualStyleBackColor = True
+        ' 
+        ' GroupBox1
+        ' 
+        GroupBox1.Controls.Add(cbAct)
+        GroupBox1.Controls.Add(tbCue)
+        GroupBox1.Controls.Add(Label4)
+        GroupBox1.Controls.Add(tbEvent)
+        GroupBox1.Controls.Add(Label3)
+        GroupBox1.Controls.Add(tbScene)
+        GroupBox1.Controls.Add(Label2)
+        GroupBox1.Controls.Add(Label1)
+        GroupBox1.ForeColor = SystemColors.ControlLightLight
+        GroupBox1.Location = New Point(12, 12)
+        GroupBox1.Name = "GroupBox1"
+        GroupBox1.Size = New Size(462, 88)
+        GroupBox1.TabIndex = 2
+        GroupBox1.TabStop = False
+        GroupBox1.Text = "Trigger"
+        ' 
+        ' cbAct
+        ' 
+        cbAct.FormattingEnabled = True
+        cbAct.Items.AddRange(New Object() {"Pre-Show", "Act 1", "Pauze", "Act 2", "Act 3", "Post-Show"})
+        cbAct.Location = New Point(102, 25)
+        cbAct.Name = "cbAct"
+        cbAct.Size = New Size(92, 23)
+        cbAct.TabIndex = 8
+        ' 
+        ' tbCue
+        ' 
+        tbCue.Location = New Point(105, 52)
+        tbCue.Name = "tbCue"
+        tbCue.Size = New Size(318, 23)
+        tbCue.TabIndex = 7
+        ' 
+        ' Label4
+        ' 
+        Label4.AutoSize = True
+        Label4.Location = New Point(15, 55)
+        Label4.Name = "Label4"
+        Label4.Size = New Size(28, 15)
+        Label4.TabIndex = 6
+        Label4.Text = "Cue"
+        ' 
+        ' tbEvent
+        ' 
+        tbEvent.Location = New Point(361, 25)
+        tbEvent.Name = "tbEvent"
+        tbEvent.Size = New Size(62, 23)
+        tbEvent.TabIndex = 5
+        ' 
+        ' Label3
+        ' 
+        Label3.AutoSize = True
+        Label3.Location = New Point(312, 28)
+        Label3.Name = "Label3"
+        Label3.Size = New Size(36, 15)
+        Label3.TabIndex = 4
+        Label3.Text = "Event"
+        ' 
+        ' tbScene
+        ' 
+        tbScene.Location = New Point(244, 25)
+        tbScene.Name = "tbScene"
+        tbScene.Size = New Size(62, 23)
+        tbScene.TabIndex = 3
+        ' 
+        ' Label2
+        ' 
+        Label2.AutoSize = True
+        Label2.Location = New Point(200, 28)
+        Label2.Name = "Label2"
+        Label2.Size = New Size(38, 15)
+        Label2.TabIndex = 2
+        Label2.Text = "Scene"
+        ' 
+        ' Label1
+        ' 
+        Label1.AutoSize = True
+        Label1.Location = New Point(18, 28)
+        Label1.Name = "Label1"
+        Label1.Size = New Size(25, 15)
+        Label1.TabIndex = 0
+        Label1.Text = "Act"
+        ' 
+        ' GroupBox2
+        ' 
+        GroupBox2.Controls.Add(Label13)
+        GroupBox2.Controls.Add(tbTimer)
+        GroupBox2.Controls.Add(cbDevice)
+        GroupBox2.Controls.Add(Label7)
+        GroupBox2.ForeColor = SystemColors.ControlLightLight
+        GroupBox2.Location = New Point(12, 106)
+        GroupBox2.Name = "GroupBox2"
+        GroupBox2.Size = New Size(462, 76)
+        GroupBox2.TabIndex = 3
+        GroupBox2.TabStop = False
+        GroupBox2.Text = "Action"
+        ' 
+        ' Label13
+        ' 
+        Label13.AutoSize = True
+        Label13.Location = New Point(18, 44)
+        Label13.Name = "Label13"
+        Label13.Size = New Size(38, 15)
+        Label13.TabIndex = 7
+        Label13.Text = "Timer"
+        ' 
+        ' tbTimer
+        ' 
+        tbTimer.Location = New Point(105, 46)
+        tbTimer.Name = "tbTimer"
+        tbTimer.Size = New Size(49, 23)
+        tbTimer.TabIndex = 9
+        tbTimer.Text = "00:00:00"
+        ' 
+        ' cbDevice
+        ' 
+        cbDevice.FormattingEnabled = True
+        cbDevice.Location = New Point(105, 17)
+        cbDevice.Name = "cbDevice"
+        cbDevice.Size = New Size(318, 23)
+        cbDevice.TabIndex = 5
+        ' 
+        ' Label7
+        ' 
+        Label7.AutoSize = True
+        Label7.Location = New Point(16, 20)
+        Label7.Name = "Label7"
+        Label7.Size = New Size(42, 15)
+        Label7.TabIndex = 4
+        Label7.Text = "Device"
+        ' 
+        ' cbPalette
+        ' 
+        cbPalette.FormattingEnabled = True
+        cbPalette.Location = New Point(99, 81)
+        cbPalette.Name = "cbPalette"
+        cbPalette.Size = New Size(203, 23)
+        cbPalette.TabIndex = 3
+        ' 
+        ' Label6
+        ' 
+        Label6.AutoSize = True
+        Label6.Location = New Point(10, 84)
+        Label6.Name = "Label6"
+        Label6.Size = New Size(43, 15)
+        Label6.TabIndex = 2
+        Label6.Text = "Palette"
+        ' 
+        ' cbEffect
+        ' 
+        cbEffect.FormattingEnabled = True
+        cbEffect.Location = New Point(99, 53)
+        cbEffect.Name = "cbEffect"
+        cbEffect.Size = New Size(203, 23)
+        cbEffect.TabIndex = 1
+        ' 
+        ' Label5
+        ' 
+        Label5.AutoSize = True
+        Label5.Location = New Point(10, 56)
+        Label5.Name = "Label5"
+        Label5.Size = New Size(37, 15)
+        Label5.TabIndex = 0
+        Label5.Text = "Effect"
+        ' 
+        ' GroupBox3
+        ' 
+        GroupBox3.Controls.Add(txtTransition)
+        GroupBox3.Controls.Add(txtSpeed)
+        GroupBox3.Controls.Add(txtIntensity)
+        GroupBox3.Controls.Add(txtBrightness)
+        GroupBox3.Controls.Add(btnColor3)
+        GroupBox3.Controls.Add(btnColor2)
+        GroupBox3.Controls.Add(btnColor1)
+        GroupBox3.Controls.Add(cbBlend)
+        GroupBox3.Controls.Add(cbSound)
+        GroupBox3.Controls.Add(tbTransition)
+        GroupBox3.Controls.Add(Label12)
+        GroupBox3.Controls.Add(tbSpeed)
+        GroupBox3.Controls.Add(Label11)
+        GroupBox3.Controls.Add(tbIntensity)
+        GroupBox3.Controls.Add(Label10)
+        GroupBox3.Controls.Add(tbBrightness)
+        GroupBox3.Controls.Add(Label9)
+        GroupBox3.Controls.Add(cbPower)
+        GroupBox3.ForeColor = SystemColors.ControlLightLight
+        GroupBox3.Location = New Point(10, 110)
+        GroupBox3.Name = "GroupBox3"
+        GroupBox3.Size = New Size(438, 233)
+        GroupBox3.TabIndex = 4
+        GroupBox3.TabStop = False
+        GroupBox3.Text = "Settings"
+        ' 
+        ' txtTransition
+        ' 
+        txtTransition.Location = New Point(323, 152)
+        txtTransition.Name = "txtTransition"
+        txtTransition.Size = New Size(100, 23)
+        txtTransition.TabIndex = 19
+        ' 
+        ' txtSpeed
+        ' 
+        txtSpeed.Location = New Point(323, 118)
+        txtSpeed.Name = "txtSpeed"
+        txtSpeed.Size = New Size(100, 23)
+        txtSpeed.TabIndex = 18
+        ' 
+        ' txtIntensity
+        ' 
+        txtIntensity.Location = New Point(323, 84)
+        txtIntensity.Name = "txtIntensity"
+        txtIntensity.Size = New Size(100, 23)
+        txtIntensity.TabIndex = 17
+        ' 
+        ' txtBrightness
+        ' 
+        txtBrightness.Location = New Point(323, 52)
+        txtBrightness.Name = "txtBrightness"
+        txtBrightness.Size = New Size(100, 23)
+        txtBrightness.TabIndex = 16
+        ' 
+        ' btnColor3
+        ' 
+        btnColor3.Location = New Point(271, 200)
+        btnColor3.Name = "btnColor3"
+        btnColor3.Size = New Size(75, 23)
+        btnColor3.TabIndex = 15
+        btnColor3.Text = "Color 3"
+        btnColor3.UseVisualStyleBackColor = True
+        ' 
+        ' btnColor2
+        ' 
+        btnColor2.Location = New Point(190, 200)
+        btnColor2.Name = "btnColor2"
+        btnColor2.Size = New Size(75, 23)
+        btnColor2.TabIndex = 14
+        btnColor2.Text = "Color 2"
+        btnColor2.UseVisualStyleBackColor = True
+        ' 
+        ' btnColor1
+        ' 
+        btnColor1.Location = New Point(112, 200)
+        btnColor1.Name = "btnColor1"
+        btnColor1.Size = New Size(75, 23)
+        btnColor1.TabIndex = 13
+        btnColor1.Text = "Color 1"
+        btnColor1.UseVisualStyleBackColor = True
+        ' 
+        ' cbBlend
+        ' 
+        cbBlend.AutoSize = True
+        cbBlend.Location = New Point(332, 27)
+        cbBlend.Name = "cbBlend"
+        cbBlend.Size = New Size(56, 19)
+        cbBlend.TabIndex = 12
+        cbBlend.Text = "Blend"
+        cbBlend.UseVisualStyleBackColor = True
+        ' 
+        ' cbSound
+        ' 
+        cbSound.AutoSize = True
+        cbSound.Location = New Point(256, 27)
+        cbSound.Name = "cbSound"
+        cbSound.Size = New Size(60, 19)
+        cbSound.TabIndex = 11
+        cbSound.Text = "Sound"
+        cbSound.UseVisualStyleBackColor = True
+        ' 
+        ' tbTransition
+        ' 
+        tbTransition.LargeChange = 10
+        tbTransition.Location = New Point(105, 155)
+        tbTransition.Maximum = 255
+        tbTransition.Name = "tbTransition"
+        tbTransition.Size = New Size(187, 45)
+        tbTransition.TabIndex = 9
+        tbTransition.TickFrequency = 10
+        ' 
+        ' Label12
+        ' 
+        Label12.AutoSize = True
+        Label12.Location = New Point(14, 155)
+        Label12.Name = "Label12"
+        Label12.Size = New Size(59, 15)
+        Label12.TabIndex = 8
+        Label12.Text = "Transition"
+        ' 
+        ' tbSpeed
+        ' 
+        tbSpeed.LargeChange = 10
+        tbSpeed.Location = New Point(105, 121)
+        tbSpeed.Maximum = 255
+        tbSpeed.Name = "tbSpeed"
+        tbSpeed.Size = New Size(187, 45)
+        tbSpeed.TabIndex = 7
+        tbSpeed.TickFrequency = 10
+        ' 
+        ' Label11
+        ' 
+        Label11.AutoSize = True
+        Label11.Location = New Point(14, 121)
+        Label11.Name = "Label11"
+        Label11.Size = New Size(39, 15)
+        Label11.TabIndex = 6
+        Label11.Text = "Speed"
+        ' 
+        ' tbIntensity
+        ' 
+        tbIntensity.LargeChange = 10
+        tbIntensity.Location = New Point(105, 87)
+        tbIntensity.Maximum = 255
+        tbIntensity.Name = "tbIntensity"
+        tbIntensity.Size = New Size(187, 45)
+        tbIntensity.TabIndex = 5
+        tbIntensity.TickFrequency = 10
+        ' 
+        ' Label10
+        ' 
+        Label10.AutoSize = True
+        Label10.Location = New Point(12, 87)
+        Label10.Name = "Label10"
+        Label10.Size = New Size(52, 15)
+        Label10.TabIndex = 4
+        Label10.Text = "Intensity"
+        ' 
+        ' tbBrightness
+        ' 
+        tbBrightness.LargeChange = 10
+        tbBrightness.Location = New Point(105, 55)
+        tbBrightness.Maximum = 255
+        tbBrightness.Name = "tbBrightness"
+        tbBrightness.Size = New Size(187, 45)
+        tbBrightness.TabIndex = 3
+        tbBrightness.TickFrequency = 10
+        ' 
+        ' Label9
+        ' 
+        Label9.AutoSize = True
+        Label9.Location = New Point(12, 55)
+        Label9.Name = "Label9"
+        Label9.Size = New Size(62, 15)
+        Label9.TabIndex = 2
+        Label9.Text = "Brightness"
+        ' 
+        ' cbPower
+        ' 
+        cbPower.AutoSize = True
+        cbPower.Location = New Point(114, 27)
+        cbPower.Name = "cbPower"
+        cbPower.Size = New Size(59, 19)
+        cbPower.TabIndex = 1
+        cbPower.Text = "Power"
+        cbPower.UseVisualStyleBackColor = True
+        ' 
+        ' tbFilename
+        ' 
+        tbFilename.Location = New Point(101, 6)
+        tbFilename.Name = "tbFilename"
+        tbFilename.Size = New Size(318, 23)
+        tbFilename.TabIndex = 10
+        tbFilename.Text = "1"
+        ' 
+        ' TabControl1
+        ' 
+        TabControl1.Controls.Add(TabPage1)
+        TabControl1.Controls.Add(TabPage2)
+        TabControl1.Location = New Point(12, 188)
+        TabControl1.Name = "TabControl1"
+        TabControl1.SelectedIndex = 0
+        TabControl1.Size = New Size(462, 384)
+        TabControl1.TabIndex = 11
+        ' 
+        ' TabPage1
+        ' 
+        TabPage1.BackColor = Color.Black
+        TabPage1.Controls.Add(btnCopy)
+        TabPage1.Controls.Add(btnPaste)
+        TabPage1.Controls.Add(pbPreviewPalette)
+        TabPage1.Controls.Add(pbPreviewEffect)
+        TabPage1.Controls.Add(cbEffect)
+        TabPage1.Controls.Add(Label5)
+        TabPage1.Controls.Add(cbPalette)
+        TabPage1.Controls.Add(GroupBox3)
+        TabPage1.Controls.Add(Label6)
+        TabPage1.Location = New Point(4, 24)
+        TabPage1.Name = "TabPage1"
+        TabPage1.Padding = New Padding(3)
+        TabPage1.Size = New Size(454, 356)
+        TabPage1.TabIndex = 0
+        TabPage1.Text = "Lighteffect"
+        ' 
+        ' btnCopy
+        ' 
+        btnCopy.ForeColor = SystemColors.Highlight
+        btnCopy.Location = New Point(292, 6)
+        btnCopy.Name = "btnCopy"
+        btnCopy.Size = New Size(75, 23)
+        btnCopy.TabIndex = 21
+        btnCopy.Text = "Copy"
+        btnCopy.UseVisualStyleBackColor = True
+        ' 
+        ' btnPaste
+        ' 
+        btnPaste.ForeColor = SystemColors.Highlight
+        btnPaste.Location = New Point(373, 6)
+        btnPaste.Name = "btnPaste"
+        btnPaste.Size = New Size(75, 23)
+        btnPaste.TabIndex = 20
+        btnPaste.Text = "Paste"
+        btnPaste.UseVisualStyleBackColor = True
+        ' 
+        ' pbPreviewPalette
+        ' 
+        pbPreviewPalette.Location = New Point(308, 81)
+        pbPreviewPalette.Name = "pbPreviewPalette"
+        pbPreviewPalette.Size = New Size(140, 23)
+        pbPreviewPalette.SizeMode = PictureBoxSizeMode.StretchImage
+        pbPreviewPalette.TabIndex = 7
+        pbPreviewPalette.TabStop = False
+        ' 
+        ' pbPreviewEffect
+        ' 
+        pbPreviewEffect.Location = New Point(308, 52)
+        pbPreviewEffect.Name = "pbPreviewEffect"
+        pbPreviewEffect.Size = New Size(140, 23)
+        pbPreviewEffect.SizeMode = PictureBoxSizeMode.StretchImage
+        pbPreviewEffect.TabIndex = 5
+        pbPreviewEffect.TabStop = False
+        ' 
+        ' TabPage2
+        ' 
+        TabPage2.BackColor = Color.Black
+        TabPage2.Controls.Add(Button1)
+        TabPage2.Controls.Add(Label8)
+        TabPage2.Controls.Add(cbRepeat)
+        TabPage2.Controls.Add(tbFilename)
+        TabPage2.Location = New Point(4, 24)
+        TabPage2.Name = "TabPage2"
+        TabPage2.Padding = New Padding(3)
+        TabPage2.Size = New Size(454, 356)
+        TabPage2.TabIndex = 1
+        TabPage2.Text = "VideoEffect"
+        ' 
+        ' Button1
+        ' 
+        Button1.ForeColor = SystemColors.ActiveCaption
+        Button1.Location = New Point(425, 6)
+        Button1.Name = "Button1"
+        Button1.Size = New Size(26, 23)
+        Button1.TabIndex = 13
+        Button1.Text = "..."
+        Button1.UseVisualStyleBackColor = True
+        ' 
+        ' Label8
+        ' 
+        Label8.AutoSize = True
+        Label8.Location = New Point(11, 9)
+        Label8.Name = "Label8"
+        Label8.Size = New Size(55, 15)
+        Label8.TabIndex = 12
+        Label8.Text = "Filename"
+        ' 
+        ' cbRepeat
+        ' 
+        cbRepeat.AutoSize = True
+        cbRepeat.Location = New Point(98, 35)
+        cbRepeat.Name = "cbRepeat"
+        cbRepeat.Size = New Size(62, 19)
+        cbRepeat.TabIndex = 11
+        cbRepeat.Text = "Repeat"
+        cbRepeat.UseVisualStyleBackColor = True
+        ' 
+        ' btnPreview
+        ' 
+        btnPreview.ForeColor = SystemColors.Highlight
+        btnPreview.Location = New Point(308, 578)
+        btnPreview.Name = "btnPreview"
+        btnPreview.Size = New Size(75, 23)
+        btnPreview.TabIndex = 12
+        btnPreview.Text = "Preview"
+        btnPreview.UseVisualStyleBackColor = True
+        ' 
+        ' cbAutoPreview
+        ' 
+        cbAutoPreview.AutoSize = True
+        cbAutoPreview.Location = New Point(206, 578)
+        cbAutoPreview.Name = "cbAutoPreview"
+        cbAutoPreview.Size = New Size(96, 19)
+        cbAutoPreview.TabIndex = 13
+        cbAutoPreview.Text = "Auto Preview"
+        cbAutoPreview.UseVisualStyleBackColor = True
+        ' 
+        ' DetailShow
+        ' 
+        AcceptButton = btnOK
+        AutoScaleDimensions = New SizeF(7F, 15F)
+        AutoScaleMode = AutoScaleMode.Font
+        BackColor = Color.Black
+        CancelButton = btnCancel
+        ClientSize = New Size(491, 612)
+        ControlBox = False
+        Controls.Add(cbAutoPreview)
+        Controls.Add(btnPreview)
+        Controls.Add(TabControl1)
+        Controls.Add(GroupBox2)
+        Controls.Add(GroupBox1)
+        Controls.Add(btnCancel)
+        Controls.Add(btnOK)
+        ForeColor = SystemColors.ControlLightLight
+        MaximizeBox = False
+        MinimizeBox = False
+        Name = "DetailShow"
+        Text = "DetailShow"
+        GroupBox1.ResumeLayout(False)
+        GroupBox1.PerformLayout()
+        GroupBox2.ResumeLayout(False)
+        GroupBox2.PerformLayout()
+        GroupBox3.ResumeLayout(False)
+        GroupBox3.PerformLayout()
+        CType(tbTransition, ComponentModel.ISupportInitialize).EndInit()
+        CType(tbSpeed, ComponentModel.ISupportInitialize).EndInit()
+        CType(tbIntensity, ComponentModel.ISupportInitialize).EndInit()
+        CType(tbBrightness, ComponentModel.ISupportInitialize).EndInit()
+        TabControl1.ResumeLayout(False)
+        TabPage1.ResumeLayout(False)
+        TabPage1.PerformLayout()
+        CType(pbPreviewPalette, ComponentModel.ISupportInitialize).EndInit()
+        CType(pbPreviewEffect, ComponentModel.ISupportInitialize).EndInit()
+        TabPage2.ResumeLayout(False)
+        TabPage2.PerformLayout()
+        ResumeLayout(False)
+        PerformLayout()
+    End Sub
+
+    Friend WithEvents btnOK As Button
+    Friend WithEvents btnCancel As Button
+    Friend WithEvents GroupBox1 As GroupBox
+    Friend WithEvents tbEvent As TextBox
+    Friend WithEvents Label3 As Label
+    Friend WithEvents tbScene As TextBox
+    Friend WithEvents Label2 As Label
+    Friend WithEvents Label1 As Label
+    Friend WithEvents tbCue As TextBox
+    Friend WithEvents Label4 As Label
+    Friend WithEvents GroupBox2 As GroupBox
+    Friend WithEvents cbEffect As ComboBox
+    Friend WithEvents Label5 As Label
+    Friend WithEvents cbPalette As ComboBox
+    Friend WithEvents Label6 As Label
+    Friend WithEvents cbDevice As ComboBox
+    Friend WithEvents Label7 As Label
+    Friend WithEvents GroupBox3 As GroupBox
+    Friend WithEvents tbSpeed As TrackBar
+    Friend WithEvents Label11 As Label
+    Friend WithEvents tbIntensity As TrackBar
+    Friend WithEvents Label10 As Label
+    Friend WithEvents tbBrightness As TrackBar
+    Friend WithEvents Label9 As Label
+    Friend WithEvents cbPower As CheckBox
+    Friend WithEvents btnColor3 As Button
+    Friend WithEvents btnColor2 As Button
+    Friend WithEvents btnColor1 As Button
+    Friend WithEvents cbBlend As CheckBox
+    Friend WithEvents cbSound As CheckBox
+    Friend WithEvents tbTransition As TrackBar
+    Friend WithEvents Label12 As Label
+    Friend WithEvents cbAct As ComboBox
+    Friend WithEvents tbTimer As TextBox
+    Friend WithEvents tbFilename As TextBox
+    Friend WithEvents TabControl1 As TabControl
+    Friend WithEvents TabPage1 As TabPage
+    Friend WithEvents TabPage2 As TabPage
+    Friend WithEvents Label13 As Label
+    Friend WithEvents Button1 As Button
+    Friend WithEvents Label8 As Label
+    Friend WithEvents cbRepeat As CheckBox
+    Friend WithEvents btnPreview As Button
+    Friend WithEvents pbPreviewEffect As PictureBox
+    Friend WithEvents pbPreviewPalette As PictureBox
+    Friend WithEvents txtTransition As TextBox
+    Friend WithEvents txtSpeed As TextBox
+    Friend WithEvents txtIntensity As TextBox
+    Friend WithEvents txtBrightness As TextBox
+    Friend WithEvents btnCopy As Button
+    Friend WithEvents btnPaste As Button
+    Friend WithEvents cbAutoPreview As CheckBox
+End Class

@@ -92,11 +92,9 @@ Module DG_Groups
             Dim groupLayout As New List(Of String)
             Dim orderInFixture As Integer = 1
 
-
             ' Laatst bekende X/Y
             Dim lastX As String = Nothing
             Dim lastY As String = Nothing
-
 
             For Each seg In segments
 

@@ -8,7 +8,8 @@ Imports System.Windows.Forms.AxHost
 Imports Newtonsoft.Json.Linq
 Imports System.Drawing
 Imports System.Drawing.Imaging
-Imports System.Runtime.InteropServices ' Nodig voor Import
+Imports System.Runtime.InteropServices
+Imports AxWMPLib ' Nodig voor Import
 
 
 
@@ -62,14 +63,17 @@ Module DG_Show
             fixtureColumn.Items.Add("** Video **/ Output 3")
 
             ' Voeg de WLED devices en segmenten toe aan de dropdown list
-            For Each kvp In DG_Devices.wledDevices
-                Dim ipAddress As String = kvp.Key
-                Dim wledName As String = kvp.Value.Item1
-                Dim wledData As JObject = kvp.Value.Item2
-                If wledData IsNot Nothing AndAlso wledData("state") IsNot Nothing AndAlso wledData("state")("seg") IsNot Nothing Then
-                    Dim segmentCount = TryCast(wledData("state")("seg"), JArray).Count
-                    For i As Integer = 0 To segmentCount - 1
-                        fixtureColumn.Items.Add($"{wledName}/{i}") ' Bv: "WLED_Main/0", "WLED_Main/1", ...
+            For Each devRow As DataGridViewRow In FrmMain.DG_Devices.Rows
+                If devRow.IsNewRow Then Continue For
+
+                Dim wledName As String = Convert.ToString(devRow.Cells("colInstance").Value)
+                Dim segmentsValue As String = Convert.ToString(devRow.Cells("colSegments").Value)
+
+                If Not String.IsNullOrWhiteSpace(wledName) AndAlso Not String.IsNullOrWhiteSpace(segmentsValue) Then
+                    ' Zoek alle segmenten in de vorm (start-end)
+                    Dim matches = System.Text.RegularExpressions.Regex.Matches(segmentsValue, "\([^\)]+\)")
+                    For i As Integer = 0 To matches.Count - 1
+                        fixtureColumn.Items.Add($"{wledName}/{i}")
                     Next
                 End If
             Next
@@ -77,7 +81,9 @@ Module DG_Show
     End Sub
 
 
-
+    ' *********************************************************************************************
+    ' Deze sub werkt de overige waarden bij met default waarden van de wled, in geval de fixure is gewijzigd
+    ' *********************************************************************************************
     ' *********************************************************************************************
     ' Deze sub werkt de overige waarden bij met default waarden van de wled, in geval de fixure is gewijzigd
     ' *********************************************************************************************
@@ -85,80 +91,99 @@ Module DG_Show
         Dim currentRow = DG_Show.Rows(RowIndex)
 
         Dim selectedFixture = currentRow.Cells("colFixture").Value
-        If selectedFixture IsNot Nothing And selectedFixture.ToString.Substring(0, 2) <> "**" Then
-            Dim fixtureParts = selectedFixture.ToString().Split("/").ToArray()
+        If selectedFixture IsNot Nothing AndAlso selectedFixture.ToString().Substring(0, 2) <> "**" Then
+            Dim fixtureParts = selectedFixture.ToString().Split("/"c)
             If fixtureParts.Length = 2 Then
                 Dim wledName = fixtureParts(0)
                 Dim segmentIndex = Integer.Parse(fixtureParts(1))
-                Dim wledIp As String = ""
-                For Each kvp In DG_Devices.wledDevices
-                    If kvp.Value.Item1 = wledName Then
-                        wledIp = kvp.Key
+
+                ' Zoek de juiste device row in DG_Devices
+                Dim devRow As DataGridViewRow = Nothing
+                For Each row As DataGridViewRow In FrmMain.DG_Devices.Rows
+                    If row.IsNewRow Then Continue For
+                    If Convert.ToString(row.Cells("colInstance").Value) = wledName Then
+                        devRow = row
                         Exit For
                     End If
                 Next
 
-                If wledIp <> "" Then
+                If devRow IsNot Nothing Then
                     ' Aan/uit moet altijd dan naar aan
                     currentRow.Cells("colStateOnOff").Value = True
 
-                    ' Lees het segment uit, hierin zitten de kleuren, (fx) huidig effect, (sx) speed, (ix) Intensity, (pal) huidig pallet
-                    Dim wledData = DG_Devices.wledDevices(wledIp).Item2
-                    If wledData IsNot Nothing AndAlso wledData("state") IsNot Nothing AndAlso wledData("state")("seg") IsNot Nothing Then
-                        Dim segments = TryCast(wledData("state")("seg"), JArray)
-                        If segments IsNot Nothing AndAlso segments.Count > segmentIndex Then
-                            Dim segment = TryCast(segments(segmentIndex), JObject)
+                    ' Verwacht een JSON string met segmentdata in colSegmentsData
+                    Dim segmentsJson As String = TryCast(devRow.Cells("colSegmentsData").Value, String)
+                    If Not String.IsNullOrWhiteSpace(segmentsJson) Then
+                        Try
+                            Dim segments = Newtonsoft.Json.JsonConvert.DeserializeObject(Of JArray)(segmentsJson)
+                            If segments IsNot Nothing AndAlso segments.Count > segmentIndex Then
+                                Dim segment = TryCast(segments(segmentIndex), JObject)
 
-                            ' Speed
-                            currentRow.Cells("colSpeed").Value = segment("sx").Value(Of Integer)
-
-                            ' Intensity
-                            currentRow.Cells("colIntensity").Value = segment("ix").Value(Of Integer)
-
-                            ' Huidige effect en palette waarde
-                            currentRow.Cells("colEffectId").Value = segment("fx").Value(Of String)
-                            currentRow.Cells("colPaletteId").Value = segment("pal").Value(Of String)
-
-                            ' Kleur 1 2 en 3 van wled
-                            Dim colors = TryCast(segment("col"), JArray)
-                            If colors IsNot Nothing Then
-                                If colors.Count > 0 Then
-                                    currentRow.Cells("colColor1").Value = ColorTranslator.ToOle(Color.FromArgb(colors(0)(0).Value(Of Integer), colors(0)(1).Value(Of Integer), colors(0)(2).Value(Of Integer)))
-
+                                ' Speed
+                                If segment("sx") IsNot Nothing Then
+                                    currentRow.Cells("colSpeed").Value = segment("sx").Value(Of Integer)
                                 End If
-                                If colors.Count > 1 Then
-                                    currentRow.Cells("colColor2").Value = ColorTranslator.ToOle(Color.FromArgb(colors(1)(0).Value(Of Integer), colors(1)(1).Value(Of Integer), colors(1)(2).Value(Of Integer)))
 
+                                ' Intensity
+                                If segment("ix") IsNot Nothing Then
+                                    currentRow.Cells("colIntensity").Value = segment("ix").Value(Of Integer)
                                 End If
-                                If colors.Count > 2 Then
-                                    currentRow.Cells("colColor3").Value = ColorTranslator.ToOle(Color.FromArgb(colors(2)(0).Value(Of Integer), colors(2)(1).Value(Of Integer), colors(2)(2).Value(Of Integer)))
 
+                                ' Huidige effect en palette waarde
+                                If segment("fx") IsNot Nothing Then
+                                    currentRow.Cells("colEffectId").Value = segment("fx").ToString()
                                 End If
+                                If segment("pal") IsNot Nothing Then
+                                    currentRow.Cells("colPaletteId").Value = segment("pal").ToString()
+                                End If
+
+                                ' Kleur 1 2 en 3 van wled
+                                Dim colors = TryCast(segment("col"), JArray)
+                                If colors IsNot Nothing Then
+                                    If colors.Count > 0 Then
+                                        currentRow.Cells("colColor1").Value = ColorTranslator.ToOle(Color.FromArgb(colors(0)(0).Value(Of Integer), colors(0)(1).Value(Of Integer), colors(0)(2).Value(Of Integer)))
+                                    End If
+                                    If colors.Count > 1 Then
+                                        currentRow.Cells("colColor2").Value = ColorTranslator.ToOle(Color.FromArgb(colors(1)(0).Value(Of Integer), colors(1)(1).Value(Of Integer), colors(1)(2).Value(Of Integer)))
+                                    End If
+                                    If colors.Count > 2 Then
+                                        currentRow.Cells("colColor3").Value = ColorTranslator.ToOle(Color.FromArgb(colors(2)(0).Value(Of Integer), colors(2)(1).Value(Of Integer), colors(2)(2).Value(Of Integer)))
+                                    End If
+                                End If
+
+                                ' Brightness van wled
+                                If segment("bri") IsNot Nothing Then
+                                    currentRow.Cells("colBrightness").Value = segment("bri").Value(Of Integer)
+                                End If
+
+                                ' Overgang (transition) van wled
+                                If segment("transition") IsNot Nothing Then
+                                    currentRow.Cells("colTransition").Value = segment("transition").Value(Of Integer)
+                                Else
+                                    currentRow.Cells("colTransition").Value = 0 ' or some default value
+                                End If
+
+                                ' Geluid standaard uit
+                                currentRow.Cells("colMicrophone").Value = False
                             End If
-
-                            ' Brightness van wled
-                            currentRow.Cells("colBrightness").Value = segment("bri").Value(Of Integer)
-
-                            ' Overgang (transition) van wled
-                            If segment("transition") IsNot Nothing Then
-                                currentRow.Cells("colTransition").Value = segment("transition").Value(Of Integer)
-                            Else
-                                currentRow.Cells("colTransition").Value = 0 ' or some default value
-                            End If
-
-
-
-                            currentRow.Cells("colBrightness").Value = segment("bri").Value(Of Integer)
-
-                            ' Geluid standaard uit
+                        Catch ex As Exception
+                            ' Foutafhandeling: JSON niet goed of segment ontbreekt
+                            currentRow.Cells("colSpeed").Value = 0
+                            currentRow.Cells("colIntensity").Value = 0
+                            currentRow.Cells("colEffectId").Value = ""
+                            currentRow.Cells("colPaletteId").Value = ""
+                            currentRow.Cells("colColor1").Value = 0
+                            currentRow.Cells("colColor2").Value = 0
+                            currentRow.Cells("colColor3").Value = 0
+                            currentRow.Cells("colBrightness").Value = 0
+                            currentRow.Cells("colTransition").Value = 0
                             currentRow.Cells("colMicrophone").Value = False
-                        End If
+                        End Try
                     End If
                 End If
             End If
         End If
     End Sub
-
 
 
 
@@ -301,9 +326,14 @@ Module DG_Show
             ' Haal waardes op van de geselecteerde rij
             Dim fixtureValue = TryCast(DG_Show.CurrentRow.Cells("colFixture").Value, String)
             If fixtureValue <> "" Then
-                wledName = fixtureValue.Split("/"c)(0)
+                If fixtureValue.Contains("/") Then
+                    wledName = fixtureValue.Split("/"c)(0)
+                    wledSegment = fixtureValue.Split("/"c)(1)
+                Else
+                    wledName = fixtureValue
+                    wledSegment = ""
+                End If
                 wledIP = GetIpFromWLedName(wledName)
-                wledSegment = fixtureValue.Split("/")(1)
             Else
                 wledName = ""
                 wledIP = ""
@@ -366,92 +396,101 @@ Module DG_Show
                 FrmMain.detailWLed_Brightness.Value = CurrentRow.Cells("colBrightness").Value
                 FrmMain.detailWLed_Intensity.Value = CurrentRow.Cells("colIntensity").Value
                 FrmMain.detailWLed_Speed.Value = CurrentRow.Cells("colSpeed").Value
-                FrmMain.detailWLed_Color1.BackColor = ColorTranslator.FromOle(CurrentRow.Cells("colColor1").Value)
-                FrmMain.detailWLed_Color2.BackColor = ColorTranslator.FromOle(CurrentRow.Cells("colColor2").Value)
-                FrmMain.detailWLed_Color3.BackColor = ColorTranslator.FromOle(CurrentRow.Cells("colColor3").Value)
+                If CurrentRow.Cells("colColor1").Value IsNot Nothing Then
+                    FrmMain.detailWLed_Color1.BackColor = ColorTranslator.FromHtml(CurrentRow.Cells("colColor1").Value.ToString())
+                End If
+                If CurrentRow.Cells("colColor2").Value IsNot Nothing Then
+                    FrmMain.detailWLed_Color2.BackColor = ColorTranslator.FromHtml(CurrentRow.Cells("colColor2").Value.ToString())
+                End If
+                If CurrentRow.Cells("colColor3").Value IsNot Nothing Then
+                    FrmMain.detailWLed_Color3.BackColor = ColorTranslator.FromHtml(CurrentRow.Cells("colColor3").Value.ToString())
+                End If
 
                 ' Toon plaatje van palette
-                PaletteName = PaletteName.ToString().Replace(" ", "_") & ".png"
-                PaletteName = PaletteName.ToString().Replace("*_", "")
-                imagePath = Path.Combine(PaletteImagesPath, PaletteName)
+                If PaletteName IsNot Nothing Then
+                    PaletteName = PaletteName.ToString().Replace(" ", "_") & ".png"
+                    PaletteName = PaletteName.ToString().Replace("*_", "")
+                    imagePath = Path.Combine(PaletteImagesPath, PaletteName)
+                End If
 
                 ' Controleer of het bestand bestaat voordat je het laadt.
                 If File.Exists(imagePath) Then
-                    Try
-                        ' Laad de afbeelding en wijs deze toe aan de cel.
-                        Dim image As Image = Image.FromFile(imagePath)
+                        Try
+                            ' Laad de afbeelding en wijs deze toe aan de cel.
+                            Dim image As Image = Image.FromFile(imagePath)
 
-                        FrmMain.detailWLed_Palette.Image = image
-                    Catch ex As Exception
-                        ' Foutafhandeling: Log de fout en toon een bericht.
-                        Console.WriteLine($"Fout bij het laden van afbeelding: {imagePath}. Fout: {ex.Message}")
-                        ' Je kunt er ook voor kiezen om een standaardafbeelding in te stellen of de cel leeg te laten.
+                            FrmMain.detailWLed_Palette.Image = image
+                        Catch ex As Exception
+                            ' Foutafhandeling: Log de fout en toon een bericht.
+                            Console.WriteLine($"Fout bij het laden van afbeelding: {imagePath}. Fout: {ex.Message}")
+                            ' Je kunt er ook voor kiezen om een standaardafbeelding in te stellen of de cel leeg te laten.
 
-                    End Try
-                Else
-                    ' Als het bestand niet bestaat, laat de cel dan leeg en log een waarschuwing.
-                    Console.WriteLine($"Afbeelding niet gevonden: {imagePath}")
-                End If
+                        End Try
+                    Else
+                        ' Als het bestand niet bestaat, laat de cel dan leeg en log een waarschuwing.
+                        Console.WriteLine($"Afbeelding niet gevonden: {imagePath}")
+                    End If
 
 
 
                 ' Toon plaatje van effect
-                EffectName = EffectName.ToString().Replace(" ", "_") & ".gif"
-                EffectName = EffectName.ToString().Replace("*_", "")
-                imagePath = Path.Combine(EffectsImagesPath, EffectName)
+                If EffectName IsNot Nothing Then
+                    EffectName = EffectName.ToString().Replace(" ", "_") & ".gif"
+                    EffectName = EffectName.ToString().Replace("*_", "")
+                    imagePath = Path.Combine(EffectsImagesPath, EffectName)
 
-                ' Controleer of het bestand bestaat voordat je het laadt.
-                If File.Exists(imagePath) Then
-                    Try
-                        ' Laad de afbeelding en wijs deze toe aan de cel.
-                        Dim image As Image = Image.FromFile(imagePath)
-                        gifImage = image
+                    ' Controleer of het bestand bestaat voordat je het laadt.
+                    If File.Exists(imagePath) Then
+                        Try
+                            ' Laad de afbeelding en wijs deze toe aan de cel.
+                            Dim image As Image = Image.FromFile(imagePath)
+                            gifImage = image
 
-                        ' Initialiseert de timer voor de animatie
-                        frameTimer = New Timer()
-                        frameTimer.Interval = 100  ' Standaard interval, wordt later overschreven door de GIF's frame delays.
-                        AddHandler frameTimer.Tick, AddressOf FrameTimer_Tick
-                        frameTimer.Start()
+                            ' Initialiseert de timer voor de animatie
+                            frameTimer = New Timer()
+                            frameTimer.Interval = 100  ' Standaard interval, wordt later overschreven door de GIF's frame delays.
+                            AddHandler frameTimer.Tick, AddressOf FrameTimer_Tick
+                            frameTimer.Start()
 
-                        FrmMain.detailWLed_Effect.Image = image
+                            FrmMain.detailWLed_Effect.Image = image
 
-                        ' Haal de frame delays op en sla ze op in een array
-                        If gifImage IsNot Nothing Then
-                            Dim frameDimension As New FrameDimension(gifImage.FrameDimensionsList(0))
-                            Dim frameCount As Integer = gifImage.GetFrameCount(FrameDimension.Time)
-                            ReDim frameDelayList(frameCount - 1) ' Array initialiseren met de juiste grootte
+                            ' Haal de frame delays op en sla ze op in een array
+                            If gifImage IsNot Nothing Then
+                                Dim frameDimension As New FrameDimension(gifImage.FrameDimensionsList(0))
+                                Dim frameCount As Integer = gifImage.GetFrameCount(FrameDimension.Time)
+                                ReDim frameDelayList(frameCount - 1) ' Array initialiseren met de juiste grootte
 
-                            For i As Integer = 0 To frameCount - 1
-                                gifImage.SelectActiveFrame(frameDimension, i)
-                                Dim frameDelayBytes() As Byte = gifImage.GetPropertyItem(207).Value ' Property ID 207 bevat de frame delays
-                                frameDelayList(i) = BitConverter.ToInt32(frameDelayBytes, i * 4) * 10 ' Omzetten naar milliseconden
-                            Next
+                                For i As Integer = 0 To frameCount - 1
+                                    gifImage.SelectActiveFrame(frameDimension, i)
+                                    Dim frameDelayBytes() As Byte = gifImage.GetPropertyItem(207).Value ' Property ID 207 bevat de frame delays
+                                    frameDelayList(i) = BitConverter.ToInt32(frameDelayBytes, i * 4) * 10 ' Omzetten naar milliseconden
+                                Next
 
-                            ' Start de animatie met de eerste frame delay
-                            If frameDelayList.Length > 0 Then
-                                frameTimer.Interval = frameDelayList(0)
+                                ' Start de animatie met de eerste frame delay
+                                If frameDelayList.Length > 0 Then
+                                    frameTimer.Interval = frameDelayList(0)
+                                End If
                             End If
-                        End If
 
 
-                    Catch ex As Exception
-                        ' Foutafhandeling: Log de fout en toon een bericht.
-                        Console.WriteLine($"Fout bij het laden van afbeelding: {imagePath}. Fout: {ex.Message}")
-                        ' Je kunt er ook voor kiezen om een standaardafbeelding in te stellen of de cel leeg te laten.
+                        Catch ex As Exception
+                            ' Foutafhandeling: Log de fout en toon een bericht.
+                            Console.WriteLine($"Fout bij het laden van afbeelding: {imagePath}. Fout: {ex.Message}")
+                            ' Je kunt er ook voor kiezen om een standaardafbeelding in te stellen of de cel leeg te laten.
 
-                    End Try
-                Else
-                    ' Als het bestand niet bestaat, laat de cel dan leeg en log een waarschuwing.
-                    Console.WriteLine($"Afbeelding niet gevonden: {imagePath}")
+                        End Try
+                    Else
+                        ' Als het bestand niet bestaat, laat de cel dan leeg en log een waarschuwing.
+                        Console.WriteLine($"Afbeelding niet gevonden: {imagePath}")
+                    End If
                 End If
-
 
 
                 FrmMain.detailWLed__EffectName.Text = CurrentRow.Cells("colEffect").Value
 
-            Else
-                ' Meerdere regels geselecteerd
-                FrmMain.gb_DetailWLed.Visible = False
+                Else
+                    ' Meerdere regels geselecterd
+                    FrmMain.gb_DetailWLed.Visible = False
             End If
         End If
     End Sub

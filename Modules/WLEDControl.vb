@@ -145,7 +145,6 @@ Module WLEDControl
         Dim Brightness As String = "255"
         Dim Intensity As String = "127"
 
-
         If DG_Show.RowCount = 0 Then
             Exit Sub
         End If
@@ -155,10 +154,10 @@ Module WLEDControl
             Dim currentRow = DG_Show.Rows(DG_Show.CurrentCell.RowIndex)
 
             Dim selectedFixture = currentRow.Cells("colFixture").Value                      ' De geselecteerde fixture
-            If selectedFixture IsNot Nothing And selectedFixture.substring(0, 2) <> "**" Then      ' Als deze niet een beamer is
-                Dim fixtureParts = selectedFixture.ToString().Split("/").ToArray()          ' De fixture naam en segment
+            If selectedFixture IsNot Nothing And selectedFixture.ToString().Substring(0, 2) <> "**" Then      ' Als deze niet een beamer is
+                Dim fixtureParts = selectedFixture.ToString().Split("/"c)
                 If fixtureParts.Length = 2 Then
-                    wledName = fixtureParts(0)                                              ' De naam van de fixture
+                    wledName = fixtureParts(0)
                     Segment = Integer.Parse(fixtureParts(1))
 
                     For Each row In DG_Devices.Rows
@@ -184,19 +183,39 @@ Module WLEDControl
                         paletteName = currentRow.Cells("colPalette").Value
                         paletteId = GetPaletteIdFromName(paletteName, DG_Paletten)
 
-                        Brightness = currentRow.Cells("colBrightness").Value
+                        ' Gebruik de waarden uit de grid
+                        Brightness = currentRow.Cells("colBrightness").Value.ToString()
+                        Speed = currentRow.Cells("colSpeed").Value.ToString()
+                        Intensity = currentRow.Cells("colIntensity").Value.ToString()
 
+                        '' Kleuren toevoegen
+                        'Dim colorList As New List(Of String)
+                        'For i As Integer = 1 To 3
+                        '    Dim colorKey As DataGridViewColumn = DG_Show.Columns($"colColor{i}")
+                        '    If DG_Show.Columns.IndexOf(colorKey) <> -1 Then
+                        '        Dim c As Color = ColorTranslator.FromHtml(DG_Show.CurrentRow.Cells(colorKey).Value.ToString())
+                        '        colorList.Add($"[{c.R},{c.G},{c.B}]")
+                        '    End If
+                        'Next
+                        'Dim colorArray As String = String.Join(",", colorList)
 
                         Payload = "{" &
                                   """seg"": [" &
                                   "{" &
-                                  """id"": " & Segment.ToString() & "," &   ' Segment id
-                                  """on"": " & stateOnOff.ToLower() & "," & ' Segment On or off
-                                  """fx"": " & effectId & "," &             ' Effect
-                                  """pal"": " & paletteId & "," &           ' Palette
-                                  """sel"": true," &                        ' Selected
-                                  """bri"": " & Brightness &                ' Brighness
-                                  "}" &
+                                  """id"": " & Segment.ToString() & "," &
+                                  """on"": " & stateOnOff.ToLower() & "," &
+                                  """fx"": " & effectId & "," &
+                                  """pal"": " & paletteId & "," &
+                                  """sel"": true," &
+                                  """bri"": " & Brightness & "," &
+                                  """sx"": " & Speed & "," &
+                                  """ix"": " & Intensity
+
+                        'If colorArray <> "" Then
+                        '    Payload &= ",""col"": [" & colorArray & "]"
+                        'End If
+
+                        Payload &= "}" &
                                   "]" &
                                   "}"
                     End If
@@ -205,7 +224,6 @@ Module WLEDControl
 
 
             Dim content As New StringContent(Payload, Encoding.UTF8, "application/json")
-
             Await SendJsonToWLED2(wledIp, content)
 
             If (notify) Then
@@ -231,6 +249,155 @@ Module WLEDControl
 
 
 
+    ' Set segments for each device in DG_Devices based on the colSegments field.
+    Public Sub SetSegmentsFromGrid(ByVal DG_Devices As DataGridView)
+        For Each devRow As DataGridViewRow In DG_Devices.Rows
+            If devRow.IsNewRow Then Continue For
+
+            Dim ip = Convert.ToString(devRow.Cells("colIPAddress").Value)
+            Dim segmentsStr = Convert.ToString(devRow.Cells("colSegments").Value)
+            If String.IsNullOrWhiteSpace(ip) OrElse String.IsNullOrWhiteSpace(segmentsStr) Then Continue For
+
+            Dim segmentsList As New List(Of JObject)
+            Dim matches = System.Text.RegularExpressions.Regex.Matches(segmentsStr, "\((\d+)-(\d+)\)")
+            Dim segId As Integer = 0
+
+            For Each m As System.Text.RegularExpressions.Match In matches
+                Dim startLed = Integer.Parse(m.Groups(1).Value)
+                Dim stopLed = Integer.Parse(m.Groups(2).Value)
+                Dim segObj As New JObject From {
+                    {"id", segId},
+                    {"start", startLed},
+                    {"stop", stopLed}
+                }
+                segmentsList.Add(segObj)
+                segId += 1
+            Next
+
+            If segmentsList.Count > 0 Then
+                Dim payload As New JObject From {
+                    {"seg", JArray.FromObject(segmentsList)}
+                }
+                Try
+                    Using client As New WebClient()
+                        client.Headers(HttpRequestHeader.ContentType) = "application/json"
+                        client.UploadString($"http://{ip}/json/state", "POST", payload.ToString())
+                    End Using
+                Catch ex As Exception
+                    Console.WriteLine($"Fout bij verzenden van segmenten naar {ip}: {ex.Message}")
+                End Try
+            End If
+        Next
+    End Sub
+
+
+    ' Haal de segmentdata op van elke WLED en sla deze op in colSegmentsData van DG_Devices
+    Public Async Sub GetSegmentsDataFromWLED(ByVal DG_Devices As DataGridView)
+        For Each devRow As DataGridViewRow In DG_Devices.Rows
+            If devRow.IsNewRow Then Continue For
+
+            Dim ip = Convert.ToString(devRow.Cells("colIPAddress").Value)
+            If String.IsNullOrWhiteSpace(ip) Then Continue For
+
+            Try
+                Using client As New Net.Http.HttpClient()
+                    Dim response As Net.Http.HttpResponseMessage = Await client.GetAsync($"http://{ip}/json")
+                    If response.IsSuccessStatusCode Then
+                        Dim jsonString As String = Await response.Content.ReadAsStringAsync()
+                        Dim jObj As JObject = JObject.Parse(jsonString)
+                        Dim segArray As JToken = jObj.SelectToken("state.seg")
+                        If segArray IsNot Nothing Then
+                            devRow.Cells("colSegmentsData").Value = segArray.ToString(Newtonsoft.Json.Formatting.None)
+                        Else
+                            devRow.Cells("colSegmentsData").Value = ""
+                        End If
+                    Else
+                        devRow.Cells("colSegmentsData").Value = ""
+                    End If
+                End Using
+            Catch ex As Exception
+                devRow.Cells("colSegmentsData").Value = ""
+                Console.WriteLine($"Fout bij ophalen van segmentdata van {ip}: {ex.Message}")
+            End Try
+        Next
+    End Sub
+
+    ' Send a single row (dictionary) to WLED, using the same logic as Apply_DGShowRow_ToWLED
+    Public Sub Apply_RowData_ToWLED(rowData As Dictionary(Of String, Object), DG_Devices As DataGridView, DG_Effecten As DataGridView, DG_Paletten As DataGridView)
+        Dim Payload As String = ""
+        Dim Segment As String = ""
+        Dim wledIp As String = ""
+        Dim wledName As String = ""
+        Dim stateOnOff As String = "True"
+        Dim effectId As String = ""
+        Dim effectName As String = ""
+        Dim paletteId As String = ""
+        Dim paletteName As String = ""
+        Dim Speed As String = "127"
+        Dim Brightness As String = "255"
+        Dim Intensity As String = "127"
+
+        Dim selectedFixture = rowData("colFixture")
+        If selectedFixture IsNot Nothing AndAlso selectedFixture.ToString().Substring(0, 2) <> "**" Then
+            Dim fixtureParts = selectedFixture.ToString().Split("/"c)
+            If fixtureParts.Length = 2 Then
+                wledName = fixtureParts(0)
+                Segment = fixtureParts(1)
+
+                For Each row As DataGridViewRow In DG_Devices.Rows
+                    If row.Cells("colInstance").Value = wledName Then
+                        wledIp = row.Cells("colIPAddress").Value
+                        Exit For
+                    End If
+                Next
+
+                If wledIp <> "" Then
+                    stateOnOff = If(CBool(rowData("colStateOnOff")), "true", "false")
+                    effectName = rowData("colEffect").ToString()
+                    effectId = GetEffectIdFromName(effectName, DG_Effecten)
+                    paletteName = rowData("colPalette").ToString()
+                    paletteId = GetPaletteIdFromName(paletteName, DG_Paletten)
+                    Brightness = rowData("colBrightness").ToString()
+                    Speed = rowData("colSpeed").ToString()
+                    Intensity = rowData("colIntensity").ToString()
+
+                    ' Convert HTML color to RGB array
+                    Dim colorList As New List(Of String)
+                    For i As Integer = 1 To 3
+                        Dim colorKey = $"colColor{i}"
+                        If rowData.ContainsKey(colorKey) AndAlso rowData(colorKey) IsNot Nothing Then
+                            Dim c As Color = ColorTranslator.FromHtml(rowData(colorKey).ToString())
+                            colorList.Add($"[{c.R},{c.G},{c.B}]")
+                        End If
+                    Next
+                    Dim colorArray As String = String.Join(",", colorList)
+
+                    Payload = "{" &
+                              """seg"": [" &
+                              "{" &
+                              """id"": " & Segment & "," &
+                              """on"": " & stateOnOff.ToLower() & "," &
+                              """fx"": " & effectId & "," &
+                              """pal"": " & paletteId & "," &
+                              """sel"": true," &
+                              """bri"": " & Brightness & "," &
+                              """sx"": " & Speed & "," &
+                              """ix"": " & Intensity
+
+                    If colorArray <> "" Then
+                        Payload &= ",""col"": [" & colorArray & "]"
+                    End If
+
+                    Payload &= "}" &
+                              "]" &
+                              "}"
+                End If
+            End If
+        End If
+
+        If wledIp <> "" AndAlso Payload <> "" Then
+            Dim content As New StringContent(Payload, Encoding.UTF8, "application/json")
+            SendJsonToWLED2(wledIp, content)
+        End If
+    End Sub
 End Module
-
-

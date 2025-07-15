@@ -16,7 +16,6 @@ Module DG_Effecten
         Dim rowIndex = DG_Show.CurrentRow.Index
         Dim currentRow = DG_Show.Rows(rowIndex)
 
-
         Dim effectColumn As DataGridViewComboBoxColumn = TryCast(DG_Show.Columns("colEffect"), DataGridViewComboBoxColumn)
         If effectColumn IsNot Nothing Then
             effectColumn.Items.Clear()
@@ -24,28 +23,23 @@ Module DG_Effecten
 
             Dim selectedFixture = currentRow.Cells("colFixture").Value
             If selectedFixture IsNot Nothing Then
-                Dim fixtureParts = selectedFixture.ToString().Split("/").ToArray()
+                Dim fixtureParts = selectedFixture.ToString().Split("/"c)
                 If fixtureParts.Length = 2 Then
                     Dim wledName = fixtureParts(0)
-                    Dim wledIp As String = ""
-                    For Each kvp In DG_Devices.wledDevices
-                        If kvp.Value.Item1 = wledName Then
-                            wledIp = kvp.Key
+                    ' Zoek de juiste device row in DG_Devices
+                    For Each devRow As DataGridViewRow In FrmMain.DG_Devices.Rows
+                        If devRow.IsNewRow Then Continue For
+                        If Convert.ToString(devRow.Cells("colInstance").Value) = wledName Then
+                            Dim effectsJson = Convert.ToString(devRow.Cells("colEffects").Value)
+                            If Not String.IsNullOrWhiteSpace(effectsJson) Then
+                                Dim effectsList As List(Of String) = Effects_JsonToListOfString(effectsJson)
+                                For Each effect In effectsList
+                                    effectColumn.Items.Add(effect)
+                                Next
+                            End If
                             Exit For
                         End If
                     Next
-
-                    If wledIp <> "" Then
-                        Dim wledData = DG_Devices.wledDevices(wledIp).Item2
-                        If wledData IsNot Nothing AndAlso wledData("effects") IsNot Nothing Then
-                            Dim effectsArray = TryCast(wledData("effects"), JArray)
-                            If effectsArray IsNot Nothing Then
-                                For Each effect In effectsArray
-                                    effectColumn.Items.Add(effect.ToString())
-                                Next
-                            End If
-                        End If
-                    End If
                 End If
             End If
         End If
@@ -174,7 +168,7 @@ Module DG_Effecten
         ' Zoek de effectnaam in de DG_Effects DataGridView.
         For Each effectRow As DataGridViewRow In DG_Effects.Rows
             Dim effectIdCellValue = effectRow.Cells("EffectId").Value
-            Dim effectNameCellValue = effectRow.Cells("Effect").Value
+            Dim effectNameCellValue = effectRow.Cells("EffectName").Value
             If effectIdCellValue IsNot Nothing AndAlso effectIdCellValue.ToString() = effectId Then
                 ' Zorg ervoor dat je de juiste datatype vergelijkt.
                 If effectNameCellValue IsNot Nothing Then
@@ -230,10 +224,10 @@ Module DG_Effecten
         ' Loop door alle rijen in de DataGridView.
         For Each row As DataGridViewRow In DG_Effecten.Rows
             ' Haal de effectnaam op.
-            Dim effectName As String = TryCast(row.Cells("EffectName").Value, String)
-            If Not String.IsNullOrEmpty(effectName) Then
+            Dim effectId As String = TryCast(row.Cells("EffectId").Value, String)
+            If Not String.IsNullOrEmpty(effectId) Then
                 ' Stel het pad naar de image samen.
-                Dim imagePath As String = Path.Combine(effectsImagePath, effectName.Replace(" ", "_") & ".gif")
+                Dim imagePath As String = System.IO.Path.Combine(My.Settings.EffectsImagePath, $"FX_{CInt(effectId):D3}.gif")
 
                 ' Controleer of het bestand bestaat.
                 If File.Exists(imagePath) Then

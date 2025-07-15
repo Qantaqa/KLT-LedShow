@@ -39,7 +39,9 @@ Module SaveLoad
                 For Each cell As DataGridViewCell In row.Cells
                     writer.WriteStartElement(dataGridView.Columns(cell.ColumnIndex).Name.Replace(" ", "_")) ' Vervang spaties door underscores
                     If cell.Value IsNot Nothing Then
-                        If (dataGridView.Columns(cell.ColumnIndex).Name = "colDDPData" Or dataGridView.Columns(cell.ColumnIndex).Name = "colAllFrames") AndAlso TypeOf cell.Value Is Byte() Then
+                        If (dataGridView.Columns(cell.ColumnIndex).Name = "colDDPData" Or
+                            dataGridView.Columns(cell.ColumnIndex).Name = "colAllFrames") AndAlso
+                        TypeOf cell.Value Is Byte() Then
                             writer.WriteString(Convert.ToBase64String(CType(cell.Value, Byte())))
                         Else
                             writer.WriteString(cell.Value.ToString())
@@ -118,10 +120,11 @@ Module SaveLoad
             Dim dataNode As XmlNode = doc.SelectSingleNode("DataGridData/Data")
             If dataNode IsNot Nothing Then
                 For Each rowNode As XmlNode In dataNode.ChildNodes
-                    Dim rowValues As New List(Of Object)()
+                    Dim newRowIdx = dataGridView.Rows.Add()
+                    Dim newRow = dataGridView.Rows(newRowIdx)
                     For Each cellNode As XmlNode In rowNode.ChildNodes
                         Dim columnName As String = cellNode.Name
-                        Dim cellValue As String = cellNode.InnerText ' Translate hex value back to string
+                        Dim cellValue As String = cellNode.InnerText
 
                         If dataGridView.Columns.Contains(columnName) Then
                             If (TypeOf dataGridView.Columns(columnName) Is DataGridViewCheckBoxColumn) Or (cellValue = "True") Or (cellValue = "False") Then
@@ -131,25 +134,20 @@ Module SaveLoad
                                 Else
                                     boolValue = Boolean.Parse(cellValue)
                                 End If
-                                rowValues.Add(boolValue)
-                            Else
-                                If (TypeOf dataGridView.Columns(columnName) Is DataGridViewImageColumn) Then
-                                    ' do nothing
+                                newRow.Cells(columnName).Value = boolValue
+                            ElseIf (TypeOf dataGridView.Columns(columnName) Is DataGridViewImageColumn) Then
+                                ' do nothing
+                            ElseIf (columnName = "colDDPData" Or columnName = "colAllFrames") Then
+                                If Not String.IsNullOrEmpty(cellValue) Then
+                                    newRow.Cells(columnName).Value = Convert.FromBase64String(cellValue)
                                 Else
-                                    If (columnName = "colDDPData" Or columnName = "colAllFrames") Then
-                                        If Not String.IsNullOrEmpty(cellValue) Then
-                                            rowValues.Add(Convert.FromBase64String(cellValue))
-                                        Else
-                                            rowValues.Add(Nothing)
-                                        End If
-                                    Else
-                                        rowValues.Add(cellValue)
-                                    End If
+                                    newRow.Cells(columnName).Value = Nothing
                                 End If
+                            Else
+                                newRow.Cells(columnName).Value = cellValue
                             End If
                         End If
                     Next
-                    dataGridView.Rows.Add(rowValues.ToArray())
                 Next
             End If
 
@@ -163,68 +161,13 @@ Module SaveLoad
 
 
 
-    Public Sub LoadJSonToWLEDDevices(wledDevices As Dictionary(Of String, Tuple(Of String, JObject)), filename As String)
-        Return
-
-        If File.Exists(filename) Then
-            Try
-                Dim jsonString As String = File.ReadAllText(filename)
-                Dim savedDevices As Dictionary(Of String, Dictionary(Of String, Object)) = JsonConvert.DeserializeObject(Of Dictionary(Of String, Dictionary(Of String, Object)))(jsonString)
-
-                wledDevices.Clear() ' Clear de huidige lijst
-
-                ' Converteer de geladen data naar het Tuple-formaat
-                For Each kvp In savedDevices
-                    Dim ipAddress As String = kvp.Key
-                    Dim deviceData As Dictionary(Of String, Object) = kvp.Value
-
-                    ' Haal de naam op, default naar "Unknown" als niet gevonden
-                    Dim name As String = If(deviceData.ContainsKey("name"), deviceData("name").ToString(), "Unknown")
-
-                    ' Zet de rest van de data om naar een JObject
-                    Dim jObjectData As JObject = JObject.FromObject(deviceData)
-
-                    wledDevices.Add(ipAddress, New Tuple(Of String, JObject)(name, jObjectData))
-                Next
-            Catch ex As Exception
-                MessageBox.Show($"Fout bij het laden van opgeslagen WLED-apparaten: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                wledDevices.Clear()
-            End Try
-        End If
-    End Sub
-
-    ''' <summary>
-    ''' Slaat de WLED-apparaten op in een JSON-bestand.
-    ''' </summary>
-    Public Sub SaveWLEDDevicesToJson(wledDevices As Dictionary(Of String, Tuple(Of String, JObject)), filename As String)
-        Try
-            ' Converteer de data naar een serialiseerbaar formaat (Dictionary van Dictionary)
-            Dim serializableDevices As New Dictionary(Of String, Dictionary(Of String, Object))()
-            For Each kvp In wledDevices
-                Dim ipAddress As String = kvp.Key
-                Dim deviceTuple As Tuple(Of String, JObject) = kvp.Value
-                Dim deviceData As New Dictionary(Of String, Object)()
-                deviceData.Add("name", deviceTuple.Item1) ' Sla de naam op
-                ' Zet de JObject om naar een Dictionary
-                For Each prop In deviceTuple.Item2.Properties
-                    deviceData.Add(prop.Name, prop.Value)
-                Next
-                serializableDevices.Add(ipAddress, deviceData)
-            Next
-
-            Dim jsonString As String = JsonConvert.SerializeObject(serializableDevices, Newtonsoft.Json.Formatting.Indented)
-            File.WriteAllText(filename, jsonString)
-        Catch ex As Exception
-            MessageBox.Show($"Fout bij het opslaan van WLED-apparaten: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        End Try
-    End Sub
 
     Public Sub SaveAll()
         Dim Folder As String = My.Settings.DatabaseFolder
 
         SaveDataGridViewToXml(FrmMain.DG_Devices, Folder + "\Devices.xml")
         SaveDataGridViewToXml(FrmMain.DG_Groups, Folder + "\Groups.xml")
-        SaveWLEDDevicesToJson(wledDevices, Folder + "\Devices.json")
+
         SaveDataGridViewToXml(FrmMain.DG_Effecten, Folder + "\Effects.xml")
         SaveDataGridViewToXml(FrmMain.DG_Paletten, Folder + "\Paletten.xml")
         SaveDataGridViewToXml(FrmMain.DG_Show, Folder + "\Show.xml")
@@ -243,8 +186,6 @@ Module SaveLoad
 
         Dim Folder As String = My.Settings.DatabaseFolder
 
-        ' Maak een nieuw formulier voor de voortgang te kunnen tonen
-        LoadJSonToWLEDDevices(wledDevices, Folder + "\Devices.json")
 
         LoadXmlToDataGridView(FrmMain.DG_Devices, Folder + "\Devices.xml", False)
         LoadXmlToDataGridView(FrmMain.DG_Groups, Folder + "\Groups.xml", False)
@@ -252,11 +193,14 @@ Module SaveLoad
         LoadXmlToDataGridView(FrmMain.DG_Paletten, Folder + "\Paletten.xml", True)
         LoadXmlToDataGridView(FrmMain.DG_Show, Folder + "\Show.xml", False)
 
+        SetSegmentsFromGrid(FrmMain.DG_Devices)
+
         LoadXmlToDataGridView(FrmMain.DG_Tracks, Folder + "\Tracks.xml", False)
         LoadXmlToDataGridView(FrmMain.DG_MyEffects, Folder + "\MyEffects.xml", False)
         LoadXmlToDataGridView(FrmMain.DG_MyEffectsFrames, Folder + "\Frames.xml", False)
         LoadXmlToDataGridView(FrmMain.DG_LightSources, Folder + "\Lights.xml", False)
 
+        SetAllDevicesOffline(FrmMain.DG_Devices)
 
         UpdateFixuresPulldown_ForShow(FrmMain.DG_Show)
 
@@ -277,6 +221,8 @@ Module SaveLoad
         TekenPodium(FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
         VulEffectCombo()
         FrmMain.stageTimer.Enabled = True
+
+        ToonFlashBericht("Load complete", 2)
     End Sub
 
 
@@ -287,15 +233,16 @@ Module SaveLoad
         UpdateFixuresPulldown_ForShow(FrmMain.DG_Show)
         UpdateEffectenPulldown_ForCurrentFixure(FrmMain.DG_Show)
         UpdatePalettePulldown_ForCurrentFixure(FrmMain.DG_Show)
+        'SetSegmentsFromGrid(FrmMain.DG_Devices)
     End Sub
 
 
-    Sub LoadEffectPalettes()
-        Dim Folder As String = My.Settings.DatabaseFolder
+    'Sub LoadEffectPalettes()
+    '    Dim Folder As String = My.Settings.DatabaseFolder
 
-        LoadXmlToDataGridView(FrmMain.DG_Effecten, Folder + "\Effects.xml", True)
-        LoadXmlToDataGridView(FrmMain.DG_Paletten, Folder + "\Paletten.xml", True)
-    End Sub
+    '    LoadXmlToDataGridView(FrmMain.DG_Effecten, Folder + "\Effects.xml", True)
+    '    LoadXmlToDataGridView(FrmMain.DG_Paletten, Folder + "\Paletten.xml", True)
+    'End Sub
 
 
 End Module

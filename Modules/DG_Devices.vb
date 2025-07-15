@@ -9,8 +9,23 @@ Imports System.Windows.Forms
 
 
 Module DG_Devices
-    Public wledDevices As New Dictionary(Of String, Tuple(Of String, JObject)) ' Dictionary om WLED-apparaten, namen en alle data op te slaan
 
+    ' Zet alle apparaten in DG_Devices op offline (rode bullet).
+    Public Sub SetAllDevicesOffline(ByVal DG_Devices As DataGridView)
+        If DG_Devices Is Nothing OrElse DG_Devices.Columns.Count = 0 OrElse
+       Not DG_Devices.Columns.Contains("colOnline") Then
+            Exit Sub
+        End If
+
+        For Each row As DataGridViewRow In DG_Devices.Rows
+            If row IsNot Nothing AndAlso Not row.IsNewRow Then
+                Dim onlineCell As DataGridViewImageCell = TryCast(row.Cells("colOnline"), DataGridViewImageCell)
+                If onlineCell IsNot Nothing Then
+                    onlineCell.Value = My.Resources.iconRedBullet1
+                End If
+            End If
+        Next
+    End Sub
 
     ' ****************************************************************************************
     '  Opent de WLED-website in de standaardbrowser.

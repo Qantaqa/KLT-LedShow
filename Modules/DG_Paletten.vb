@@ -11,45 +11,37 @@ Module DG_Paletten
     ' Deze sub werkt de pulldown veld voor palette, in geval de fixure is gewijzigd
     ' *********************************************************************************************
     Public Sub UpdatePalettePulldown_ForCurrentFixure(ByVal DG_Show As DataGridView)
-        If DG_Show.RowCount = 0 Then
-            Exit Sub
-        End If
+        If DG_Show.RowCount = 0 Then Exit Sub
+        Dim rowIndex = DG_Show.CurrentRow.Index
+        Dim currentRow = DG_Show.Rows(rowIndex)
 
-        Dim RowIndex = DG_Show.CurrentRow.Index
-        Dim currentRow = DG_Show.Rows(RowIndex)
         Dim paletteColumn As DataGridViewComboBoxColumn = TryCast(DG_Show.Columns("colPalette"), DataGridViewComboBoxColumn)
         If paletteColumn IsNot Nothing Then
             paletteColumn.Items.Clear()
+            paletteColumn.Items.Add("")
+
             Dim selectedFixture = currentRow.Cells("colFixture").Value
             If selectedFixture IsNot Nothing Then
-                Dim fixtureParts = selectedFixture.ToString().Split("/").ToArray()
+                Dim fixtureParts = selectedFixture.ToString().Split("/"c)
                 If fixtureParts.Length = 2 Then
                     Dim wledName = fixtureParts(0)
-                    Dim wledIp As String = ""
-                    For Each kvp In DG_Devices.wledDevices
-                        If kvp.Value.Item1 = wledName Then
-                            wledIp = kvp.Key
+                    For Each devRow As DataGridViewRow In FrmMain.DG_Devices.Rows
+                        If devRow.IsNewRow Then Continue For
+                        If Convert.ToString(devRow.Cells("colInstance").Value) = wledName Then
+                            Dim palettesJson = Convert.ToString(devRow.Cells("colPalettes").Value)
+                            If Not String.IsNullOrWhiteSpace(palettesJson) Then
+                                Dim palettesList As List(Of String) = Palettes_JsonToListOfString(palettesJson)
+                                For Each palette In palettesList
+                                    paletteColumn.Items.Add(palette)
+                                Next
+                            End If
                             Exit For
                         End If
                     Next
-
-                    If wledIp <> "" Then
-                        Dim wledData = DG_Devices.wledDevices(wledIp).Item2
-                        If wledData IsNot Nothing AndAlso wledData("palettes") IsNot Nothing Then
-                            Dim palettesArray = TryCast(wledData("palettes"), JArray)
-                            If palettesArray IsNot Nothing Then
-                                For i As Integer = 0 To palettesArray.Count - 1
-                                    paletteColumn.Items.Add(palettesArray(i).ToString())
-                                Next
-                            End If
-                        End If
-                    End If
                 End If
             End If
         End If
     End Sub
-
-
 
     ' *********************************************************************************************
     ' behandelt de klik op een cel in de paletten DataGridView.
@@ -170,57 +162,6 @@ Module DG_Paletten
 
 
 
-    'Public Sub Update_DGPaletten_BasedOnTuple()
-    '    If wledDevices.Count = 0 Then Return
-
-    '    Dim paletteLijst As New List(Of Tuple(Of Integer, String))() ' Lijst voor paletten
-
-    '    For Each wledData In wledDevices.Values
-    '        Dim paletteJArray = TryCast(wledData.Item2("palettes"), JArray)
-
-
-    '        If paletteJArray IsNot Nothing Then
-    '            For i As Integer = 0 To paletteJArray.Count - 1
-    '                Dim paletteNaam As String = paletteJArray(i).ToString()
-    '                If Not paletteLijst.Any(Function(x) x.Item2 = paletteNaam) Then
-    '                    paletteLijst.Add(New Tuple(Of Integer, String)(i, paletteNaam))
-    '                End If
-    '            Next
-    '        End If
-    '    Next
-
-    '    FrmMain.DG_Paletten.Columns.Clear()
-    '    FrmMain.DG_Paletten.Columns.Add("PaletteId", "Palette ID") ' Palette kolom
-    '    FrmMain.DG_Paletten.Columns.Add("Palette", "Palette")
-
-    '    For Each ipAddress As String In wledDevices.Keys
-    '        Dim wledName As String = wledDevices(ipAddress).Item1
-
-    '        Dim paletteCheckBoxColumn As New DataGridViewCheckBoxColumn()
-    '        paletteCheckBoxColumn.Name = wledName
-    '        paletteCheckBoxColumn.HeaderText = wledName
-    '        FrmMain.DG_Paletten.Columns.Add(paletteCheckBoxColumn)
-    '    Next
-
-    '    FrmMain.DG_Paletten.Rows.Clear()
-
-    '    ' Voeg Paletten toe
-    '    For Each paletteTuple As Tuple(Of Integer, String) In paletteLijst
-    '        Dim rowIndex As Integer = FrmMain.DG_Paletten.Rows.Add(paletteTuple.Item1, paletteTuple.Item2)
-
-    '        For Each ipAddress As String In wledDevices.Keys
-    '            Dim wledName = wledDevices(ipAddress).Item1
-    '            Dim wledData = wledDevices(ipAddress).Item2
-    '            Dim paletteJArray = TryCast(wledData("palettes"), JArray)
-    '            Dim checkBoxCell As DataGridViewCheckBoxCell = TryCast(FrmMain.DG_Paletten.Rows(rowIndex).Cells(wledName), DataGridViewCheckBoxCell)
-    '            checkBoxCell.Value = True
-
-    '        Next
-    '    Next
-
-    '    FrmMain.DG_Paletten.Sort(FrmMain.DG_Paletten.Columns("Palette"), System.ComponentModel.ListSortDirection.Ascending)
-    'End Sub
-
 
     ' *********************************************************
     ' Deze functie haalt de palettenaam op aan de hand van het palette-ID 
@@ -229,7 +170,7 @@ Module DG_Paletten
         ' Zoek de paletnaam in de DG_Palette DataGridView.
         For Each paletteRow As DataGridViewRow In DG_Palette.Rows
             Dim paletteIdCellValue = paletteRow.Cells("PaletteId").Value
-            Dim paletteNameCellValue = paletteRow.Cells("Palette").Value
+            Dim paletteNameCellValue = paletteRow.Cells("PaletteName").Value
             If paletteIdCellValue IsNot Nothing AndAlso paletteIdCellValue.ToString() = paletteId Then
                 If paletteNameCellValue IsNot Nothing Then
                     Return paletteNameCellValue.ToString()
