@@ -103,6 +103,7 @@ Partial Class FrmMain
         colRepeat = New DataGridViewCheckBoxColumn()
         colMicrophone = New DataGridViewCheckBoxColumn()
         colFilename = New DataGridViewTextBoxColumn()
+        colSend = New DataGridViewCheckBoxColumn()
         TabStage = New TabPage()
         SplitContainerStage = New SplitContainer()
         SplitContainer1 = New SplitContainer()
@@ -962,7 +963,7 @@ Partial Class FrmMain
         DG_Show.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         DG_Show.BackgroundColor = Color.FromArgb(CByte(64), CByte(64), CByte(64))
         DG_Show.ColumnHeadersHeight = 24
-        DG_Show.Columns.AddRange(New DataGridViewColumn() {btnApply, colAct, colSceneId, colEventId, colTimer, colCue, colFixture, colStateOnOff, colEffectId, colEffect, colPaletteId, colPalette, colColor1, colColor2, colColor3, colBrightness, colSpeed, colIntensity, colTransition, colBlend, colRepeat, colMicrophone, colFilename})
+        DG_Show.Columns.AddRange(New DataGridViewColumn() {btnApply, colAct, colSceneId, colEventId, colTimer, colCue, colFixture, colStateOnOff, colEffectId, colEffect, colPaletteId, colPalette, colColor1, colColor2, colColor3, colBrightness, colSpeed, colIntensity, colTransition, colBlend, colRepeat, colMicrophone, colFilename, colSend})
         DG_Show.Location = New Point(0, 26)
         DG_Show.Name = "DG_Show"
         DG_Show.RowHeadersWidth = 25
@@ -1147,6 +1148,12 @@ Partial Class FrmMain
         colFilename.Name = "colFilename"
         colFilename.Visible = False
         colFilename.Width = 200
+        ' 
+        ' colSend
+        ' 
+        colSend.HeaderText = "Send"
+        colSend.Name = "colSend"
+        colSend.Width = 50
         ' 
         ' TabStage
         ' 
@@ -3797,6 +3804,7 @@ Partial Class FrmMain
     Friend WithEvents colDDPOffset As DataGridViewTextBoxColumn
     Friend WithEvents colSegmentsData As DataGridViewTextBoxColumn
     Friend WithEvents colDataProvider As DataGridViewComboBoxColumn
+    Friend WithEvents colProcessed As DataGridViewComboBoxColumn
     Friend WithEvents btnApply As DataGridViewButtonColumn
     Friend WithEvents colAct As DataGridViewComboBoxColumn
     Friend WithEvents colSceneId As DataGridViewTextBoxColumn
@@ -3820,5 +3828,6 @@ Partial Class FrmMain
     Friend WithEvents colRepeat As DataGridViewCheckBoxColumn
     Friend WithEvents colMicrophone As DataGridViewCheckBoxColumn
     Friend WithEvents colFilename As DataGridViewTextBoxColumn
+    Friend WithEvents colSend As DataGridViewCheckBoxColumn
 
 End Class

@@ -24,35 +24,37 @@
         <Column Name="colRepeat" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
         <Column Name="colMicrophone" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
         <Column Name="colFilename" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
+        <Column Name="colSend" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
     </Structure>
     <Data>
         <Row>
-            <btnApply>&gt;</btnApply>
+            <btnApply></btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>1</colSceneId>
             <colEventId>1</colEventId>
             <colTimer></colTimer>
-            <colCue>Start show</colCue>
+            <colCue>Zaal open</colCue>
             <colFixture>BEUK_RE/0</colFixture>
             <colStateOnOff>True</colStateOnOff>
             <colEffectId>38</colEffectId>
             <colEffect>Aurora</colEffect>
             <colPaletteId>22</colPaletteId>
             <colPalette>Beach</colPalette>
-            <colColor1>#80FFFF</colColor1>
-            <colColor2>Transparent</colColor2>
-            <colColor3>Transparent</colColor3>
-            <colBrightness>153</colBrightness>
-            <colSpeed>125</colSpeed>
-            <colIntensity>118</colIntensity>
-            <colTransition>130</colTransition>
+            <colColor1>41215</colColor1>
+            <colColor2>0</colColor2>
+            <colColor3>0</colColor3>
+            <colBrightness>255</colBrightness>
+            <colSpeed>128</colSpeed>
+            <colIntensity>128</colIntensity>
+            <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
             <colMicrophone>False</colMicrophone>
             <colFilename></colFilename>
+            <colSend>False</colSend>
         </Row>
         <Row>
-            <btnApply>&gt;</btnApply>
+            <btnApply></btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>1</colSceneId>
             <colEventId>1</colEventId>
@@ -75,9 +77,10 @@
             <colRepeat>False</colRepeat>
             <colMicrophone>False</colMicrophone>
             <colFilename>1</colFilename>
+            <colSend>False</colSend>
         </Row>
         <Row>
-            <btnApply>&gt;</btnApply>
+            <btnApply></btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>1</colSceneId>
             <colEventId>1</colEventId>
@@ -100,13 +103,14 @@
             <colRepeat>False</colRepeat>
             <colMicrophone>False</colMicrophone>
             <colFilename>1</colFilename>
+            <colSend>False</colSend>
         </Row>
         <Row>
-            <btnApply>&gt;</btnApply>
+            <btnApply></btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>1</colSceneId>
-            <colEventId>1</colEventId>
-            <colTimer></colTimer>
+            <colEventId>2</colEventId>
+            <colTimer>00:10</colTimer>
             <colCue></colCue>
             <colFixture>BEUK_LI/0</colFixture>
             <colStateOnOff>True</colStateOnOff>
@@ -125,13 +129,14 @@
             <colRepeat>False</colRepeat>
             <colMicrophone>False</colMicrophone>
             <colFilename>1</colFilename>
+            <colSend>False</colSend>
         </Row>
         <Row>
-            <btnApply>&gt;</btnApply>
+            <btnApply></btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>1</colSceneId>
-            <colEventId>1</colEventId>
-            <colTimer></colTimer>
+            <colEventId>2</colEventId>
+            <colTimer>00:10</colTimer>
             <colCue></colCue>
             <colFixture>BEUK_LI/1</colFixture>
             <colStateOnOff>True</colStateOnOff>
@@ -150,13 +155,14 @@
             <colRepeat>False</colRepeat>
             <colMicrophone>False</colMicrophone>
             <colFilename>1</colFilename>
+            <colSend>False</colSend>
         </Row>
         <Row>
-            <btnApply>&gt;</btnApply>
+            <btnApply></btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>1</colSceneId>
-            <colEventId>1</colEventId>
-            <colTimer></colTimer>
+            <colEventId>2</colEventId>
+            <colTimer>00:10</colTimer>
             <colCue></colCue>
             <colFixture>BEUK_LI/2</colFixture>
             <colStateOnOff>True</colStateOnOff>
@@ -175,156 +181,163 @@
             <colRepeat>False</colRepeat>
             <colMicrophone>False</colMicrophone>
             <colFilename>1</colFilename>
+            <colSend>False</colSend>
         </Row>
         <Row>
-            <btnApply></btnApply>
+            <btnApply>&gt;</btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>2</colSceneId>
             <colEventId>1</colEventId>
             <colTimer></colTimer>
-            <colCue>Fade to Black - intro </colCue>
+            <colCue>Start show</colCue>
             <colFixture>BEUK_LI/0</colFixture>
             <colStateOnOff>True</colStateOnOff>
-            <colEffectId>0</colEffectId>
-            <colEffect>Solid</colEffect>
-            <colPaletteId>2</colPaletteId>
-            <colPalette>* Color 1</colPalette>
-            <colColor1>White</colColor1>
-            <colColor2>Red</colColor2>
-            <colColor3>#408080</colColor3>
-            <colBrightness>8</colBrightness>
+            <colEffectId>103</colEffectId>
+            <colEffect>Solid Glitter</colEffect>
+            <colPaletteId>40</colPaletteId>
+            <colPalette>Magenta</colPalette>
+            <colColor1>#00A0FF</colColor1>
+            <colColor2>#000000</colColor2>
+            <colColor3>#000000</colColor3>
+            <colBrightness>185</colBrightness>
             <colSpeed>128</colSpeed>
-            <colIntensity>68</colIntensity>
-            <colTransition>40</colTransition>
+            <colIntensity>128</colIntensity>
+            <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
             <colMicrophone>False</colMicrophone>
             <colFilename>1</colFilename>
+            <colSend>True</colSend>
         </Row>
         <Row>
-            <btnApply></btnApply>
+            <btnApply>&gt;</btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>2</colSceneId>
             <colEventId>1</colEventId>
-            <colTimer>1</colTimer>
-            <colCue>Cue</colCue>
+            <colTimer></colTimer>
+            <colCue></colCue>
             <colFixture>BEUK_LI/1</colFixture>
             <colStateOnOff>True</colStateOnOff>
-            <colEffectId>0</colEffectId>
-            <colEffect>Solid</colEffect>
-            <colPaletteId>2</colPaletteId>
-            <colPalette>* Color 1</colPalette>
-            <colColor1>White</colColor1>
-            <colColor2>Red</colColor2>
-            <colColor3>#408080</colColor3>
-            <colBrightness>8</colBrightness>
+            <colEffectId>103</colEffectId>
+            <colEffect>Solid Glitter</colEffect>
+            <colPaletteId>40</colPaletteId>
+            <colPalette>Magenta</colPalette>
+            <colColor1>#00A0FF</colColor1>
+            <colColor2>#000000</colColor2>
+            <colColor3>#000000</colColor3>
+            <colBrightness>185</colBrightness>
             <colSpeed>128</colSpeed>
-            <colIntensity>68</colIntensity>
-            <colTransition>40</colTransition>
+            <colIntensity>128</colIntensity>
+            <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
             <colMicrophone>False</colMicrophone>
             <colFilename>1</colFilename>
+            <colSend>True</colSend>
         </Row>
         <Row>
-            <btnApply></btnApply>
+            <btnApply>&gt;</btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>2</colSceneId>
             <colEventId>1</colEventId>
-            <colTimer>1</colTimer>
+            <colTimer></colTimer>
             <colCue></colCue>
             <colFixture>BEUK_LI/2</colFixture>
             <colStateOnOff>True</colStateOnOff>
-            <colEffectId>0</colEffectId>
-            <colEffect>Solid</colEffect>
-            <colPaletteId>2</colPaletteId>
-            <colPalette>* Color 1</colPalette>
-            <colColor1>White</colColor1>
-            <colColor2>Red</colColor2>
-            <colColor3>#408080</colColor3>
-            <colBrightness>8</colBrightness>
+            <colEffectId>103</colEffectId>
+            <colEffect>Solid Glitter</colEffect>
+            <colPaletteId>40</colPaletteId>
+            <colPalette>Magenta</colPalette>
+            <colColor1>#00A0FF</colColor1>
+            <colColor2>#000000</colColor2>
+            <colColor3>#000000</colColor3>
+            <colBrightness>185</colBrightness>
             <colSpeed>128</colSpeed>
-            <colIntensity>68</colIntensity>
-            <colTransition>40</colTransition>
+            <colIntensity>128</colIntensity>
+            <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
             <colMicrophone>False</colMicrophone>
             <colFilename>1</colFilename>
+            <colSend>True</colSend>
         </Row>
         <Row>
-            <btnApply></btnApply>
+            <btnApply>&gt;</btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>2</colSceneId>
             <colEventId>1</colEventId>
-            <colTimer>1</colTimer>
-            <colCue>Cue</colCue>
+            <colTimer></colTimer>
+            <colCue></colCue>
             <colFixture>BEUK_RE/0</colFixture>
             <colStateOnOff>True</colStateOnOff>
-            <colEffectId>0</colEffectId>
-            <colEffect>Solid</colEffect>
-            <colPaletteId>2</colPaletteId>
-            <colPalette>* Color 1</colPalette>
-            <colColor1>White</colColor1>
-            <colColor2>Red</colColor2>
-            <colColor3>#408080</colColor3>
-            <colBrightness>8</colBrightness>
+            <colEffectId>20</colEffectId>
+            <colEffect>Sparkle</colEffect>
+            <colPaletteId>11</colPaletteId>
+            <colPalette>Rainbow</colPalette>
+            <colColor1>#00A0FF</colColor1>
+            <colColor2>#000000</colColor2>
+            <colColor3>#000000</colColor3>
+            <colBrightness>255</colBrightness>
             <colSpeed>128</colSpeed>
-            <colIntensity>68</colIntensity>
-            <colTransition>40</colTransition>
+            <colIntensity>128</colIntensity>
+            <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
             <colMicrophone>False</colMicrophone>
             <colFilename>1</colFilename>
+            <colSend>True</colSend>
         </Row>
         <Row>
-            <btnApply></btnApply>
+            <btnApply>&gt;</btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>2</colSceneId>
             <colEventId>1</colEventId>
-            <colTimer>1</colTimer>
-            <colCue>Cue</colCue>
+            <colTimer></colTimer>
+            <colCue></colCue>
             <colFixture>BEUK_RE/1</colFixture>
             <colStateOnOff>True</colStateOnOff>
-            <colEffectId>0</colEffectId>
-            <colEffect>Solid</colEffect>
-            <colPaletteId>2</colPaletteId>
-            <colPalette>* Color 1</colPalette>
-            <colColor1>White</colColor1>
-            <colColor2>Red</colColor2>
-            <colColor3>#408080</colColor3>
-            <colBrightness>8</colBrightness>
+            <colEffectId>20</colEffectId>
+            <colEffect>Sparkle</colEffect>
+            <colPaletteId>11</colPaletteId>
+            <colPalette>Rainbow</colPalette>
+            <colColor1>#00A0FF</colColor1>
+            <colColor2>#000000</colColor2>
+            <colColor3>#000000</colColor3>
+            <colBrightness>255</colBrightness>
             <colSpeed>128</colSpeed>
-            <colIntensity>68</colIntensity>
-            <colTransition>40</colTransition>
+            <colIntensity>128</colIntensity>
+            <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
             <colMicrophone>False</colMicrophone>
             <colFilename>1</colFilename>
+            <colSend>True</colSend>
         </Row>
         <Row>
-            <btnApply></btnApply>
+            <btnApply>&gt;</btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>2</colSceneId>
             <colEventId>1</colEventId>
-            <colTimer>1</colTimer>
-            <colCue>Cue</colCue>
-            <colFixture>BEUK_RE/0</colFixture>
+            <colTimer></colTimer>
+            <colCue></colCue>
+            <colFixture>BEUK_RE/2</colFixture>
             <colStateOnOff>True</colStateOnOff>
-            <colEffectId>0</colEffectId>
-            <colEffect>Solid</colEffect>
-            <colPaletteId>2</colPaletteId>
-            <colPalette>* Color 1</colPalette>
-            <colColor1>White</colColor1>
-            <colColor2>Red</colColor2>
-            <colColor3>#408080</colColor3>
-            <colBrightness>8</colBrightness>
+            <colEffectId>20</colEffectId>
+            <colEffect>Sparkle</colEffect>
+            <colPaletteId>11</colPaletteId>
+            <colPalette>Rainbow</colPalette>
+            <colColor1>#00A0FF</colColor1>
+            <colColor2>#000000</colColor2>
+            <colColor3>#000000</colColor3>
+            <colBrightness>255</colBrightness>
             <colSpeed>128</colSpeed>
-            <colIntensity>68</colIntensity>
-            <colTransition>40</colTransition>
+            <colIntensity>128</colIntensity>
+            <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
             <colMicrophone>False</colMicrophone>
             <colFilename>1</colFilename>
+            <colSend>True</colSend>
         </Row>
     </Data>
 </DataGridData>

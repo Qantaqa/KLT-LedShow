@@ -181,7 +181,7 @@ Module SaveLoad
 
     End Sub
 
-    Public Sub LoadAll()
+    Public Async Sub LoadAll()
         FrmMain.stageTimer.Enabled = False
 
         Dim Folder As String = My.Settings.DatabaseFolder
@@ -193,7 +193,8 @@ Module SaveLoad
         LoadXmlToDataGridView(FrmMain.DG_Paletten, Folder + "\Paletten.xml", True)
         LoadXmlToDataGridView(FrmMain.DG_Show, Folder + "\Show.xml", False)
 
-        SetSegmentsFromGrid(FrmMain.DG_Devices)
+        'SetSegmentsFromGrid(FrmMain.DG_Devices)
+        Await SetSegmentsFromGridAsync(FrmMain.DG_Devices)
 
         LoadXmlToDataGridView(FrmMain.DG_Tracks, Folder + "\Tracks.xml", False)
         LoadXmlToDataGridView(FrmMain.DG_MyEffects, Folder + "\MyEffects.xml", False)

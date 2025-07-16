@@ -88,11 +88,14 @@
 
     Public Function TimeStringToMilliseconds(ByVal timeString As String) As Long
         ' Controleer of de string het verwachte formaat heeft (mm:ss)
+        If timeString = "" Then
+            Return 0
+        End If
+
         If Not System.Text.RegularExpressions.Regex.IsMatch(timeString, "^\d{2}:\d{2}$") Then
             ' Gooi een exception of retourneer een foutwaarde als het formaat onjuist is
-            Throw New FormatException("De tijdstring moet het formaat mm:ss hebben.")
-            ' Of je kunt een foutwaarde retourneren, bijvoorbeeld -1:
-            ' Return -1
+            ToonFlashBericht("De tijdstring moet het formaat mm:ss hebben.", 2)
+            Return 0
         End If
 
         ' Splits de string op de dubbele punt
@@ -127,13 +130,14 @@
 
 
     Public Function RemoveSecondFromStringTime(ByVal timeString As String) As String
-        If timeString = "00:00" Then
+        If timeString = "00:00" Or timeString = "" Then
             Return "00:00"
         End If
 
         ' Controleer of de string het verwachte formaat heeft (mm:ss)
         If Not System.Text.RegularExpressions.Regex.IsMatch(timeString, "^\d{2}:\d{2}$") Then
-            Throw New FormatException("De tijdstring moet het formaat mm:ss hebben.")
+            ToonFlashBericht("De tijdstring moet het formaat mm:ss hebben.", 2)
+            Return "00:00"
         End If
 
         ' Splits de string op de dubbele punt

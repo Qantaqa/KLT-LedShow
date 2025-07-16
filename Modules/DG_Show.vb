@@ -223,7 +223,7 @@ Module DG_Show
         If DG_Show.Rows.Count > 0 Then
             currentRowIndex = DG_Show.CurrentCell.RowIndex
         End If
-        DG_Show.Rows.Insert(currentRowIndex, 1) 'Voegt een nieuwe rij in op de gespecificeerde index
+        DG_Show.Rows.Insert(currentRowIndex, 1) 'Voegt een nieuwe rij in op de gespecifieerde index
 
         'Stel de focus op de nieuwe rij
         DG_Show.CurrentCell = DG_Show.Rows(currentRowIndex).Cells(0)
@@ -415,21 +415,21 @@ Module DG_Show
 
                 ' Controleer of het bestand bestaat voordat je het laadt.
                 If File.Exists(imagePath) Then
-                        Try
-                            ' Laad de afbeelding en wijs deze toe aan de cel.
-                            Dim image As Image = Image.FromFile(imagePath)
+                    Try
+                        ' Laad de afbeelding en wijs deze toe aan de cel.
+                        Dim image As Image = Image.FromFile(imagePath)
 
-                            FrmMain.detailWLed_Palette.Image = image
-                        Catch ex As Exception
-                            ' Foutafhandeling: Log de fout en toon een bericht.
-                            Console.WriteLine($"Fout bij het laden van afbeelding: {imagePath}. Fout: {ex.Message}")
-                            ' Je kunt er ook voor kiezen om een standaardafbeelding in te stellen of de cel leeg te laten.
+                        FrmMain.detailWLed_Palette.Image = image
+                    Catch ex As Exception
+                        ' Foutafhandeling: Log de fout en toon een bericht.
+                        Console.WriteLine($"Fout bij het laden van afbeelding: {imagePath}. Fout: {ex.Message}")
+                        ' Je kunt er ook voor kiezen om een standaardafbeelding in te stellen of de cel leeg te laten.
 
-                        End Try
-                    Else
-                        ' Als het bestand niet bestaat, laat de cel dan leeg en log een waarschuwing.
-                        Console.WriteLine($"Afbeelding niet gevonden: {imagePath}")
-                    End If
+                    End Try
+                Else
+                    ' Als het bestand niet bestaat, laat de cel dan leeg en log een waarschuwing.
+                    Console.WriteLine($"Afbeelding niet gevonden: {imagePath}")
+                End If
 
 
 
@@ -488,9 +488,9 @@ Module DG_Show
 
                 FrmMain.detailWLed__EffectName.Text = CurrentRow.Cells("colEffect").Value
 
-                Else
-                    ' Meerdere regels geselecterd
-                    FrmMain.gb_DetailWLed.Visible = False
+            Else
+                ' Meerdere regels geselecterd
+                FrmMain.gb_DetailWLed.Visible = False
             End If
         End If
     End Sub
@@ -500,7 +500,7 @@ Module DG_Show
         Dim frameDimension As New FrameDimension(gifImage.FrameDimensionsList(0))
 
         ' Gaat naar het volgende frame
-        currentFrame = (currentFrame + 1) Mod gifImage.GetFrameCount(frameDimension.Time)
+        currentFrame = (currentFrame + 1) Mod gifImage.GetFrameCount(FrameDimension.Time)
 
         ' Selecteert het actieve frame
         gifImage.SelectActiveFrame(frameDimension, currentFrame)
@@ -593,9 +593,132 @@ Module DG_Show
 
     End Sub
 
+    Sub Next_EventOrScene(DG_Show As DataGridView, NextEventOrScene As Integer)
+        ' NextEventOrScene: 0 = Scene, 1 = Event
+
+        If DG_Show.SelectedRows.Count = 0 Then Exit Sub
+
+        ' 1. Get current act, scene, event from the first selected row
+        Dim currentRow As DataGridViewRow = DG_Show.SelectedRows(0)
+        Dim currentAct As String = Convert.ToString(currentRow.Cells("colAct").Value)
+        Dim currentSceneId As Integer = Convert.ToInt32(currentRow.Cells("colSceneId").Value)
+        Dim currentEventId As Integer = Convert.ToInt32(currentRow.Cells("colEventId").Value)
+        Dim currentRowId As Integer = Convert.ToInt32(currentRow.Index)
+
+        ' 2. Find the next event or scene
+        Dim nextAct As String = ""
+        Dim nextSceneId As Integer = -1
+        Dim nextEventId As Integer = -1
+        Dim found As Boolean = False
+
+        For Each row As DataGridViewRow In DG_Show.Rows
+            ' Skip the first rows 
+            If row.Index <= currentRowId Then Continue For
+
+            ' Abort when we come to the end
+            If row.IsNewRow Or found Then Continue For
+
+            ' Get the values from the row
+            Dim sceneId As Integer = Convert.ToInt32(row.Cells("colSceneId").Value)
+            Dim eventId As Integer = Convert.ToInt32(row.Cells("colEventId").Value)
+            Dim act As String = Convert.ToString(row.Cells("colAct").Value)
+
+
+            If NextEventOrScene = 1 Then
+                ' Next Event
+                If ((act = currentAct) And (sceneId = currentSceneId) And (eventId <> currentEventId)) Then
+                    nextSceneId = sceneId
+                    nextEventId = eventId
+                    nextAct = act
+                    found = True
+                End If
+            Else
+                ' Next Event
+                If ((act = currentAct) And (sceneId <> currentSceneId)) Then
+                    nextSceneId = sceneId
+                    nextEventId = eventId
+                    nextAct = act
+                    found = True
+                End If
+            End If
+        Next
+
+        If Not found Then Exit Sub ' No next event found
+
+        ' 3. Mark btnApply for the *new* group, clear others
+        Dim active As Boolean = False
+        Dim FollowUpRow As DataGridViewRow = Nothing
+        For Each row As DataGridViewRow In DG_Show.Rows
+            If row.IsNewRow Then Continue For
+
+            If Convert.ToString(row.Cells("colAct").Value) = nextAct AndAlso
+           Convert.ToInt32(row.Cells("colSceneId").Value) = nextSceneId AndAlso
+           Convert.ToInt32(row.Cells("colEventId").Value) = nextEventId Then
+                row.Cells("btnApply").Value = ">"
+                row.Cells("colSend").Value = "False"
+                active = True
+            Else
+                If (active And FollowUpRow Is Nothing) Then
+                    FollowUpRow = row
+                End If
+
+                row.Cells("btnApply").Value = ""
+                row.Cells("colSend").Value = "False"
+            End If
+        Next
+
+        ' 5. Send instructions for all rows with btnApply = ">" and set colSend = "True"
+        For Each row As DataGridViewRow In DG_Show.Rows
+            If row.IsNewRow Then Continue For
+            If Convert.ToString(row.Cells("btnApply").Value) = ">" AndAlso Convert.ToString(row.Cells("colSend").Value) = "False" Then
+                SendInstructionSetForDevice(DG_Show, row)
+                row.Cells("colSend").Value = "True"
+            End If
+        Next
+
+        ' 6. Update the next scene/event/act variables based on the followup row
+        booleanBlinkStart = False
+        booleanBlinkTimer = False
+        booleanBlinkNextEvent = False
+        booleanBlinkNextScene = False
+        Dim timerValue As String = ""
+        If FollowUpRow IsNot Nothing Then
+            timerValue = Convert.ToString(FollowUpRow.Cells("colTimer").Value)
+        End If
+
+        FrmMain.lblControl_TimeLeft.Text = timerValue
+
+        If timerValue <> "" Then
+            FrmMain.TimerNextEvent.Interval = TimeStringToMilliseconds(timerValue)
+            FrmMain.TimerNextEvent.Start()
+            FrmMain.lblControl_TimeLeft.Text = timerValue
+            colorBlinkTimer = Color.Green
+            booleanBlinkTimer = True
+        Else
+            ' If no timer, handle blinking logic as before
+            Dim countActive As Integer = 0
+            For Each row As DataGridViewRow In DG_Show.Rows
+                If Convert.ToString(row.Cells("btnApply").Value) = ">" Then countActive += 1
+            Next
+            If countActive = 1 Then
+                booleanBlinkNextScene = True
+            Else
+                If Not booleanBlinkTimer Then
+                    booleanBlinkNextScene = True
+                End If
+            End If
+        End If
+
+        ' 7. Select the previous active rows
+        Reselect_Rows(DG_Show)
+    End Sub
 
     Sub Start_Show(DG_Show As DataGridView)
         Dim FoundRows As Integer = 0
+        Dim LastRow As DataGridViewRow = Nothing
+
+        ' Reset all checkboxes first
+        ResetProcessedCheckboxes(DG_Show)
 
         ' Find number of preshow - scene 1, event 1
         For Each row In DG_Show.Rows
@@ -604,36 +727,55 @@ Module DG_Show
 
                 ' Mark down this cell as active
                 row.cells("btnApply").value = ">"
-
-                If row.cells("colTimer").value <> "" Then
-                    ' A timer value is set
-                    FrmMain.TimerNextEvent.Interval = TimeStringToMilliseconds(row.cells("colTimer").value)
-                    FrmMain.TimerNextEvent.Start()
-                    colorBlinkTimer = Color.Green
-                    booleanBlinkTimer = True
-                    FrmMain.lblControl_TimeLeft.Text = row.cells("colTimer").value
-                End If
             Else
+                If LastRow Is Nothing Then
+                    ' This is the first row after the selected pre-show rows
+                    LastRow = row
+                End If
                 row.cells("btnApply").value = ""
             End If
         Next
 
+        ' Send instructions to WLED
+        For Each row In DG_Show.Rows
+            If row.cells("btnApply").value = ">" And row.cells("colSend").value = "False" Then
+                ' We have a row to send
+                SendInstructionSetForDevice(DG_Show, row)
+            End If
+        Next
+
+
 
         ' Update the blinking of buttons
         booleanBlinkStart = False
+        booleanBlinkTimer = False
         booleanBlinkNextEvent = False
         booleanBlinkNextScene = False
+        FrmMain.lblControl_TimeLeft.Text = ""
 
-        If FoundRows = 1 Then
-            booleanBlinkNextScene = True
+        If (LastRow IsNot Nothing) Then
+            ' Set the buttons based on the last row
+            If (LastRow.Cells("colTimer").Value <> "") Then
+                ' We have a timer set, so blink the timer button
+                booleanBlinkTimer = True
+                colorBlinkTimer = Color.Green
+
+                ' A timer value is set
+                FrmMain.TimerNextEvent.Interval = TimeStringToMilliseconds(LastRow.Cells("colTimer").Value)
+                FrmMain.TimerNextEvent.Start()
+                FrmMain.lblControl_TimeLeft.Text = LastRow.Cells("colTimer").Value
+            End If
         Else
-            If Not booleanBlinkTimer Then
+            If FoundRows = 1 Then
                 booleanBlinkNextScene = True
+            Else
+                If Not booleanBlinkTimer Then
+                    booleanBlinkNextScene = True
+                End If
             End If
         End If
 
-        ' Apply the selected rows
-        Apply_Selected_Rows(DG_Show)
+
         Reselect_Rows(DG_Show)
     End Sub
 
@@ -642,7 +784,10 @@ Module DG_Show
         For Each row In DG_Show.Rows
             If row.cells("btnApply").value = ">" Then
                 row.selected = True
+            Else
+                row.selected = False
             End If
+
         Next
     End Sub
 

@@ -4,7 +4,12 @@ Imports System.Net
 Imports System.Runtime.InteropServices
 Imports Newtonsoft.Json
 
+
+
 Public Class FrmMain
+    Public Const nextScene As Integer = 0
+    Public Const nextEvent As Integer = 1
+
     Private lastDDPTick As DateTime = Now
 
     'Private LedKleuren As New List(Of Color)
@@ -840,5 +845,11 @@ Public Class FrmMain
         End Using
     End Sub
 
+    Private Sub btnControl_NextEvent_Click(sender As Object, e As EventArgs) Handles btnControl_NextEvent.Click
+        Next_EventOrScene(DG_Show, nextEvent)
+    End Sub
 
+    Private Sub btnControl_NextScene_Click(sender As Object, e As EventArgs) Handles btnControl_NextScene.Click
+        Next_EventOrScene(DG_Show, nextScene)
+    End Sub
 End Class
