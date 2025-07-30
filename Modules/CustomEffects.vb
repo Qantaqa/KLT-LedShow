@@ -204,7 +204,7 @@ Partial Public Module CustomEffects
     ''' <summary>
     ''' Zet alle LEDs van de opgegeven groepen direct op zwart.
     ''' </summary>
-    Public Sub ClearGroupsToBlack()
+    Public Sub ClearGroupsToBlack_WithDDP()
         For Each row As DataGridViewRow In FrmMain.DG_Groups.Rows.Cast(Of DataGridViewRow)()
             If row.IsNewRow Then Continue For
             Dim fixture = CStr(row.Cells("colGroupFixture").Value)

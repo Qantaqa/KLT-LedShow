@@ -24,8 +24,8 @@ Partial Class FrmMain
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmMain))
-        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         DG_Devices = New DataGridView()
         colIPAddress = New DataGridViewTextBoxColumn()
         colInstance = New DataGridViewTextBoxColumn()
@@ -44,6 +44,10 @@ Partial Class FrmMain
         TabControl = New TabControl()
         TabShow = New TabPage()
         gb_Controls = New GroupBox()
+        btnStopLoopingAtEndOfVideo = New Button()
+        btn_ReconnectSecondairyBeamer = New Button()
+        btn_ReconnectPrimaryBeamer = New Button()
+        btnControl_StopAll = New Button()
         lblControl_TimeLeft = New Label()
         btnControl_NextScene = New Button()
         btnControl_NextEvent = New Button()
@@ -66,10 +70,10 @@ Partial Class FrmMain
         Label7 = New Label()
         detailWLed_Brightness = New TrackBar()
         detailWLed_Palette = New PictureBox()
-        GroupBox3 = New GroupBox()
-        WMP_Preview_B2 = New AxWMPLib.AxWindowsMediaPlayer()
-        gbMonitor1 = New GroupBox()
-        WMP_Preview_B1 = New AxWMPLib.AxWindowsMediaPlayer()
+        gbSecondairyBeamer = New GroupBox()
+        WMP_SecondairyPlayer_Preview = New AxWMPLib.AxWindowsMediaPlayer()
+        gbPrimaryBeamer = New GroupBox()
+        WMP_PrimaryPlayer_Preview = New AxWMPLib.AxWindowsMediaPlayer()
         ToolStip_Show = New ToolStrip()
         lblFilter = New ToolStripLabel()
         filterAct = New ToolStripComboBox()
@@ -78,7 +82,6 @@ Partial Class FrmMain
         btn_DGGrid_AddNewRowBefore = New ToolStripButton()
         ToolStripSeparator2 = New ToolStripSeparator()
         btnLockUnlocked = New ToolStripButton()
-        ToolStripButton2 = New ToolStripButton()
         DG_Show = New DataGridView()
         btnApply = New DataGridViewButtonColumn()
         colAct = New DataGridViewComboBoxColumn()
@@ -101,7 +104,7 @@ Partial Class FrmMain
         colTransition = New DataGridViewTextBoxColumn()
         colBlend = New DataGridViewCheckBoxColumn()
         colRepeat = New DataGridViewCheckBoxColumn()
-        colMicrophone = New DataGridViewCheckBoxColumn()
+        colSound = New DataGridViewCheckBoxColumn()
         colFilename = New DataGridViewTextBoxColumn()
         colSend = New DataGridViewCheckBoxColumn()
         TabStage = New TabPage()
@@ -302,21 +305,6 @@ Partial Class FrmMain
         btnProjectFolder = New Button()
         settings_ProjectFolder = New TextBox()
         Label5 = New Label()
-        GroupBox5 = New GroupBox()
-        SplitContainerSettingsMediaplayers = New SplitContainer()
-        GroupBox6 = New GroupBox()
-        Label4 = New Label()
-        WMP_Preview_B1_2 = New AxWMPLib.AxWindowsMediaPlayer()
-        WMP_Preview_B1_1 = New AxWMPLib.AxWindowsMediaPlayer()
-        RadioButton1 = New RadioButton()
-        RadioButton3 = New RadioButton()
-        RadioButton2 = New RadioButton()
-        GroupBox7 = New GroupBox()
-        WMP_Preview_B2_2 = New AxWMPLib.AxWindowsMediaPlayer()
-        WMP_Preview_B2_1 = New AxWMPLib.AxWindowsMediaPlayer()
-        RadioButton6 = New RadioButton()
-        RadioButton4 = New RadioButton()
-        RadioButton5 = New RadioButton()
         GroupBox4 = New GroupBox()
         txt_APIResult = New TextBox()
         GroupBox2 = New GroupBox()
@@ -346,6 +334,9 @@ Partial Class FrmMain
         TimerPingDevices = New Timer(components)
         ddpTimer = New Timer(components)
         stageTimer = New Timer(components)
+        Timer_LoadBuffer = New Timer(components)
+        warning_PrimaryBeamerOffline = New Label()
+        warning_SecondairyBeamerOffline = New Label()
         CType(DG_Devices, ComponentModel.ISupportInitialize).BeginInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).BeginInit()
         TabControl.SuspendLayout()
@@ -363,10 +354,10 @@ Partial Class FrmMain
         CType(detailWLed_Intensity, ComponentModel.ISupportInitialize).BeginInit()
         CType(detailWLed_Brightness, ComponentModel.ISupportInitialize).BeginInit()
         CType(detailWLed_Palette, ComponentModel.ISupportInitialize).BeginInit()
-        GroupBox3.SuspendLayout()
-        CType(WMP_Preview_B2, ComponentModel.ISupportInitialize).BeginInit()
-        gbMonitor1.SuspendLayout()
-        CType(WMP_Preview_B1, ComponentModel.ISupportInitialize).BeginInit()
+        gbSecondairyBeamer.SuspendLayout()
+        CType(WMP_SecondairyPlayer_Preview, ComponentModel.ISupportInitialize).BeginInit()
+        gbPrimaryBeamer.SuspendLayout()
+        CType(WMP_PrimaryPlayer_Preview, ComponentModel.ISupportInitialize).BeginInit()
         ToolStip_Show.SuspendLayout()
         CType(DG_Show, ComponentModel.ISupportInitialize).BeginInit()
         TabStage.SuspendLayout()
@@ -421,17 +412,6 @@ Partial Class FrmMain
         CType(DG_Paletten, ComponentModel.ISupportInitialize).BeginInit()
         TabSettings.SuspendLayout()
         GroupBox8.SuspendLayout()
-        GroupBox5.SuspendLayout()
-        CType(SplitContainerSettingsMediaplayers, ComponentModel.ISupportInitialize).BeginInit()
-        SplitContainerSettingsMediaplayers.Panel1.SuspendLayout()
-        SplitContainerSettingsMediaplayers.Panel2.SuspendLayout()
-        SplitContainerSettingsMediaplayers.SuspendLayout()
-        GroupBox6.SuspendLayout()
-        CType(WMP_Preview_B1_2, ComponentModel.ISupportInitialize).BeginInit()
-        CType(WMP_Preview_B1_1, ComponentModel.ISupportInitialize).BeginInit()
-        GroupBox7.SuspendLayout()
-        CType(WMP_Preview_B2_2, ComponentModel.ISupportInitialize).BeginInit()
-        CType(WMP_Preview_B2_1, ComponentModel.ISupportInitialize).BeginInit()
         GroupBox4.SuspendLayout()
         GroupBox2.SuspendLayout()
         CType(pbSecondaryStatus, ComponentModel.ISupportInitialize).BeginInit()
@@ -566,8 +546,8 @@ Partial Class FrmMain
         TabShow.BackColor = Color.DimGray
         TabShow.Controls.Add(gb_Controls)
         TabShow.Controls.Add(gb_DetailWLed)
-        TabShow.Controls.Add(GroupBox3)
-        TabShow.Controls.Add(gbMonitor1)
+        TabShow.Controls.Add(gbSecondairyBeamer)
+        TabShow.Controls.Add(gbPrimaryBeamer)
         TabShow.Controls.Add(ToolStip_Show)
         TabShow.Controls.Add(DG_Show)
         TabShow.Location = New Point(4, 24)
@@ -580,6 +560,10 @@ Partial Class FrmMain
         ' 
         gb_Controls.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         gb_Controls.AutoSize = True
+        gb_Controls.Controls.Add(btnStopLoopingAtEndOfVideo)
+        gb_Controls.Controls.Add(btn_ReconnectSecondairyBeamer)
+        gb_Controls.Controls.Add(btn_ReconnectPrimaryBeamer)
+        gb_Controls.Controls.Add(btnControl_StopAll)
         gb_Controls.Controls.Add(lblControl_TimeLeft)
         gb_Controls.Controls.Add(btnControl_NextScene)
         gb_Controls.Controls.Add(btnControl_NextEvent)
@@ -592,6 +576,58 @@ Partial Class FrmMain
         gb_Controls.TabStop = False
         gb_Controls.Text = "Show controls"
         ' 
+        ' btnStopLoopingAtEndOfVideo
+        ' 
+        btnStopLoopingAtEndOfVideo.BackColor = Color.Black
+        btnStopLoopingAtEndOfVideo.BackgroundImageLayout = ImageLayout.None
+        btnStopLoopingAtEndOfVideo.ForeColor = SystemColors.ActiveCaption
+        btnStopLoopingAtEndOfVideo.Location = New Point(644, 118)
+        btnStopLoopingAtEndOfVideo.Name = "btnStopLoopingAtEndOfVideo"
+        btnStopLoopingAtEndOfVideo.Size = New Size(117, 42)
+        btnStopLoopingAtEndOfVideo.TabIndex = 7
+        btnStopLoopingAtEndOfVideo.Text = "Stop looping at end of video"
+        btnStopLoopingAtEndOfVideo.UseVisualStyleBackColor = False
+        btnStopLoopingAtEndOfVideo.Visible = False
+        ' 
+        ' btn_ReconnectSecondairyBeamer
+        ' 
+        btn_ReconnectSecondairyBeamer.BackColor = Color.Black
+        btn_ReconnectSecondairyBeamer.BackgroundImageLayout = ImageLayout.None
+        btn_ReconnectSecondairyBeamer.ForeColor = SystemColors.ActiveCaption
+        btn_ReconnectSecondairyBeamer.Location = New Point(644, 69)
+        btn_ReconnectSecondairyBeamer.Name = "btn_ReconnectSecondairyBeamer"
+        btn_ReconnectSecondairyBeamer.Size = New Size(117, 42)
+        btn_ReconnectSecondairyBeamer.TabIndex = 6
+        btn_ReconnectSecondairyBeamer.Text = "Reconnect Secondairy Beamer"
+        btn_ReconnectSecondairyBeamer.UseVisualStyleBackColor = False
+        btn_ReconnectSecondairyBeamer.Visible = False
+        ' 
+        ' btn_ReconnectPrimaryBeamer
+        ' 
+        btn_ReconnectPrimaryBeamer.BackColor = Color.Black
+        btn_ReconnectPrimaryBeamer.BackgroundImageLayout = ImageLayout.None
+        btn_ReconnectPrimaryBeamer.ForeColor = SystemColors.ActiveCaption
+        btn_ReconnectPrimaryBeamer.Location = New Point(644, 22)
+        btn_ReconnectPrimaryBeamer.Name = "btn_ReconnectPrimaryBeamer"
+        btn_ReconnectPrimaryBeamer.Size = New Size(117, 41)
+        btn_ReconnectPrimaryBeamer.TabIndex = 5
+        btn_ReconnectPrimaryBeamer.Text = "Reconnect Primary Beamer"
+        btn_ReconnectPrimaryBeamer.UseVisualStyleBackColor = False
+        btn_ReconnectPrimaryBeamer.Visible = False
+        ' 
+        ' btnControl_StopAll
+        ' 
+        btnControl_StopAll.BackColor = Color.Black
+        btnControl_StopAll.ForeColor = Color.White
+        btnControl_StopAll.Image = My.Resources.Resources.iconCancel
+        btnControl_StopAll.ImageAlign = ContentAlignment.MiddleRight
+        btnControl_StopAll.Location = New Point(485, 118)
+        btnControl_StopAll.Name = "btnControl_StopAll"
+        btnControl_StopAll.Size = New Size(153, 41)
+        btnControl_StopAll.TabIndex = 4
+        btnControl_StopAll.Text = "Stop / Blackout"
+        btnControl_StopAll.UseVisualStyleBackColor = False
+        ' 
         ' lblControl_TimeLeft
         ' 
         lblControl_TimeLeft.BackColor = Color.Black
@@ -600,9 +636,9 @@ Partial Class FrmMain
         lblControl_TimeLeft.ForeColor = Color.White
         lblControl_TimeLeft.Image = My.Resources.Resources.iconTime
         lblControl_TimeLeft.ImageAlign = ContentAlignment.MiddleLeft
-        lblControl_TimeLeft.Location = New Point(419, 23)
+        lblControl_TimeLeft.Location = New Point(485, 24)
         lblControl_TimeLeft.Name = "lblControl_TimeLeft"
-        lblControl_TimeLeft.Size = New Size(129, 40)
+        lblControl_TimeLeft.Size = New Size(153, 39)
         lblControl_TimeLeft.TabIndex = 3
         lblControl_TimeLeft.Text = "00:00"
         lblControl_TimeLeft.TextAlign = ContentAlignment.MiddleRight
@@ -615,7 +651,7 @@ Partial Class FrmMain
         btnControl_NextScene.ImageAlign = ContentAlignment.MiddleRight
         btnControl_NextScene.Location = New Point(111, 70)
         btnControl_NextScene.Name = "btnControl_NextScene"
-        btnControl_NextScene.Size = New Size(302, 41)
+        btnControl_NextScene.Size = New Size(368, 41)
         btnControl_NextScene.TabIndex = 2
         btnControl_NextScene.Text = "Volgende scene"
         btnControl_NextScene.UseVisualStyleBackColor = False
@@ -628,7 +664,7 @@ Partial Class FrmMain
         btnControl_NextEvent.ImageAlign = ContentAlignment.MiddleRight
         btnControl_NextEvent.Location = New Point(111, 23)
         btnControl_NextEvent.Name = "btnControl_NextEvent"
-        btnControl_NextEvent.Size = New Size(302, 41)
+        btnControl_NextEvent.Size = New Size(368, 41)
         btnControl_NextEvent.TabIndex = 1
         btnControl_NextEvent.Text = "Volgende event"
         btnControl_NextEvent.UseVisualStyleBackColor = False
@@ -639,9 +675,9 @@ Partial Class FrmMain
         btnControl_Start.ForeColor = Color.White
         btnControl_Start.Image = My.Resources.Resources.iconChecked
         btnControl_Start.ImageAlign = ContentAlignment.MiddleLeft
-        btnControl_Start.Location = New Point(6, 22)
+        btnControl_Start.Location = New Point(6, 23)
         btnControl_Start.Name = "btnControl_Start"
-        btnControl_Start.Size = New Size(99, 41)
+        btnControl_Start.Size = New Size(99, 40)
         btnControl_Start.TabIndex = 0
         btnControl_Start.Text = "Start"
         btnControl_Start.UseVisualStyleBackColor = False
@@ -826,56 +862,58 @@ Partial Class FrmMain
         detailWLed_Palette.TabIndex = 0
         detailWLed_Palette.TabStop = False
         ' 
-        ' GroupBox3
+        ' gbSecondairyBeamer
         ' 
-        GroupBox3.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        GroupBox3.Controls.Add(WMP_Preview_B2)
-        GroupBox3.ForeColor = Color.MidnightBlue
-        GroupBox3.Location = New Point(1560, 661)
-        GroupBox3.Name = "GroupBox3"
-        GroupBox3.Size = New Size(273, 186)
-        GroupBox3.TabIndex = 5
-        GroupBox3.TabStop = False
-        GroupBox3.Text = "Beamer 2"
+        gbSecondairyBeamer.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
+        gbSecondairyBeamer.Controls.Add(warning_SecondairyBeamerOffline)
+        gbSecondairyBeamer.Controls.Add(WMP_SecondairyPlayer_Preview)
+        gbSecondairyBeamer.ForeColor = Color.MidnightBlue
+        gbSecondairyBeamer.Location = New Point(1560, 661)
+        gbSecondairyBeamer.Name = "gbSecondairyBeamer"
+        gbSecondairyBeamer.Size = New Size(273, 186)
+        gbSecondairyBeamer.TabIndex = 5
+        gbSecondairyBeamer.TabStop = False
+        gbSecondairyBeamer.Text = "Secondairy beamer - not playing"
         ' 
-        ' WMP_Preview_B2
+        ' WMP_SecondairyPlayer_Preview
         ' 
-        WMP_Preview_B2.Dock = DockStyle.Fill
-        WMP_Preview_B2.Enabled = True
-        WMP_Preview_B2.Location = New Point(3, 19)
-        WMP_Preview_B2.Name = "WMP_Preview_B2"
-        WMP_Preview_B2.OcxState = CType(resources.GetObject("WMP_Preview_B2.OcxState"), AxHost.State)
-        WMP_Preview_B2.Size = New Size(267, 164)
-        WMP_Preview_B2.TabIndex = 0
+        WMP_SecondairyPlayer_Preview.Dock = DockStyle.Fill
+        WMP_SecondairyPlayer_Preview.Enabled = True
+        WMP_SecondairyPlayer_Preview.Location = New Point(3, 19)
+        WMP_SecondairyPlayer_Preview.Name = "WMP_SecondairyPlayer_Preview"
+        WMP_SecondairyPlayer_Preview.OcxState = CType(resources.GetObject("WMP_SecondairyPlayer_Preview.OcxState"), AxHost.State)
+        WMP_SecondairyPlayer_Preview.Size = New Size(267, 164)
+        WMP_SecondairyPlayer_Preview.TabIndex = 0
         ' 
-        ' gbMonitor1
+        ' gbPrimaryBeamer
         ' 
-        gbMonitor1.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
-        gbMonitor1.BackColor = Color.DimGray
-        gbMonitor1.Controls.Add(WMP_Preview_B1)
-        gbMonitor1.ForeColor = Color.MidnightBlue
-        gbMonitor1.Location = New Point(8, 661)
-        gbMonitor1.Name = "gbMonitor1"
-        gbMonitor1.Size = New Size(268, 188)
-        gbMonitor1.TabIndex = 4
-        gbMonitor1.TabStop = False
-        gbMonitor1.Text = "Beamer 1"
+        gbPrimaryBeamer.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
+        gbPrimaryBeamer.BackColor = Color.DimGray
+        gbPrimaryBeamer.Controls.Add(warning_PrimaryBeamerOffline)
+        gbPrimaryBeamer.Controls.Add(WMP_PrimaryPlayer_Preview)
+        gbPrimaryBeamer.ForeColor = Color.MidnightBlue
+        gbPrimaryBeamer.Location = New Point(8, 661)
+        gbPrimaryBeamer.Name = "gbPrimaryBeamer"
+        gbPrimaryBeamer.Size = New Size(268, 188)
+        gbPrimaryBeamer.TabIndex = 4
+        gbPrimaryBeamer.TabStop = False
+        gbPrimaryBeamer.Text = "Primary beamer - Not playing"
         ' 
-        ' WMP_Preview_B1
+        ' WMP_PrimaryPlayer_Preview
         ' 
-        WMP_Preview_B1.Dock = DockStyle.Fill
-        WMP_Preview_B1.Enabled = True
-        WMP_Preview_B1.Location = New Point(3, 19)
-        WMP_Preview_B1.Name = "WMP_Preview_B1"
-        WMP_Preview_B1.OcxState = CType(resources.GetObject("WMP_Preview_B1.OcxState"), AxHost.State)
-        WMP_Preview_B1.Size = New Size(262, 166)
-        WMP_Preview_B1.TabIndex = 0
+        WMP_PrimaryPlayer_Preview.Dock = DockStyle.Fill
+        WMP_PrimaryPlayer_Preview.Enabled = True
+        WMP_PrimaryPlayer_Preview.Location = New Point(3, 19)
+        WMP_PrimaryPlayer_Preview.Name = "WMP_PrimaryPlayer_Preview"
+        WMP_PrimaryPlayer_Preview.OcxState = CType(resources.GetObject("WMP_PrimaryPlayer_Preview.OcxState"), AxHost.State)
+        WMP_PrimaryPlayer_Preview.Size = New Size(262, 166)
+        WMP_PrimaryPlayer_Preview.TabIndex = 0
         ' 
         ' ToolStip_Show
         ' 
         ToolStip_Show.BackColor = Color.MidnightBlue
         ToolStip_Show.GripStyle = ToolStripGripStyle.Hidden
-        ToolStip_Show.Items.AddRange(New ToolStripItem() {lblFilter, filterAct, btn_DGGrid_RemoveCurrentRow, btn_DGGrid_AddNewRowAfter, btn_DGGrid_AddNewRowBefore, ToolStripSeparator2, btnLockUnlocked, ToolStripButton2})
+        ToolStip_Show.Items.AddRange(New ToolStripItem() {lblFilter, filterAct, btn_DGGrid_RemoveCurrentRow, btn_DGGrid_AddNewRowAfter, btn_DGGrid_AddNewRowBefore, ToolStripSeparator2, btnLockUnlocked})
         ToolStip_Show.Location = New Point(0, 0)
         ToolStip_Show.Name = "ToolStip_Show"
         ToolStip_Show.Size = New Size(1836, 25)
@@ -946,15 +984,6 @@ Partial Class FrmMain
         btnLockUnlocked.Size = New Size(77, 22)
         btnLockUnlocked.Text = "Unlocked"
         ' 
-        ' ToolStripButton2
-        ' 
-        ToolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Image
-        ToolStripButton2.Image = CType(resources.GetObject("ToolStripButton2.Image"), Image)
-        ToolStripButton2.ImageTransparentColor = Color.Magenta
-        ToolStripButton2.Name = "ToolStripButton2"
-        ToolStripButton2.Size = New Size(23, 22)
-        ToolStripButton2.Text = "ToolStripButton2"
-        ' 
         ' DG_Show
         ' 
         DG_Show.AllowUserToAddRows = False
@@ -963,7 +992,7 @@ Partial Class FrmMain
         DG_Show.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         DG_Show.BackgroundColor = Color.FromArgb(CByte(64), CByte(64), CByte(64))
         DG_Show.ColumnHeadersHeight = 24
-        DG_Show.Columns.AddRange(New DataGridViewColumn() {btnApply, colAct, colSceneId, colEventId, colTimer, colCue, colFixture, colStateOnOff, colEffectId, colEffect, colPaletteId, colPalette, colColor1, colColor2, colColor3, colBrightness, colSpeed, colIntensity, colTransition, colBlend, colRepeat, colMicrophone, colFilename, colSend})
+        DG_Show.Columns.AddRange(New DataGridViewColumn() {btnApply, colAct, colSceneId, colEventId, colTimer, colCue, colFixture, colStateOnOff, colEffectId, colEffect, colPaletteId, colPalette, colColor1, colColor2, colColor3, colBrightness, colSpeed, colIntensity, colTransition, colBlend, colRepeat, colSound, colFilename, colSend})
         DG_Show.Location = New Point(0, 26)
         DG_Show.Name = "DG_Show"
         DG_Show.RowHeadersWidth = 25
@@ -990,9 +1019,9 @@ Partial Class FrmMain
         ' 
         ' colSceneId
         ' 
-        DataGridViewCellStyle1.Format = "N0"
-        DataGridViewCellStyle1.NullValue = Nothing
-        colSceneId.DefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle3.Format = "N0"
+        DataGridViewCellStyle3.NullValue = Nothing
+        colSceneId.DefaultCellStyle = DataGridViewCellStyle3
         colSceneId.HeaderText = "Scene"
         colSceneId.Name = "colSceneId"
         colSceneId.ToolTipText = "Scene nummer van de show"
@@ -1000,9 +1029,9 @@ Partial Class FrmMain
         ' 
         ' colEventId
         ' 
-        DataGridViewCellStyle2.Format = "N0"
-        DataGridViewCellStyle2.NullValue = Nothing
-        colEventId.DefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle4.Format = "N0"
+        DataGridViewCellStyle4.NullValue = Nothing
+        colEventId.DefaultCellStyle = DataGridViewCellStyle4
         colEventId.HeaderText = "Event"
         colEventId.Name = "colEventId"
         colEventId.ToolTipText = "Het event nummer binnen een scene."
@@ -1134,13 +1163,13 @@ Partial Class FrmMain
         colRepeat.SortMode = DataGridViewColumnSortMode.Automatic
         colRepeat.Width = 50
         ' 
-        ' colMicrophone
+        ' colSound
         ' 
-        colMicrophone.HeaderText = "Geluid"
-        colMicrophone.Name = "colMicrophone"
-        colMicrophone.Resizable = DataGridViewTriState.True
-        colMicrophone.SortMode = DataGridViewColumnSortMode.Automatic
-        colMicrophone.Width = 50
+        colSound.HeaderText = "Geluid"
+        colSound.Name = "colSound"
+        colSound.Resizable = DataGridViewTriState.True
+        colSound.SortMode = DataGridViewColumnSortMode.Automatic
+        colSound.Width = 50
         ' 
         ' colFilename
         ' 
@@ -2790,7 +2819,6 @@ Partial Class FrmMain
         ' 
         TabSettings.BackColor = Color.DimGray
         TabSettings.Controls.Add(GroupBox8)
-        TabSettings.Controls.Add(GroupBox5)
         TabSettings.Controls.Add(GroupBox4)
         TabSettings.Controls.Add(GroupBox2)
         TabSettings.Controls.Add(GroupBox1)
@@ -2915,183 +2943,6 @@ Partial Class FrmMain
         Label5.Size = New Size(78, 15)
         Label5.TabIndex = 0
         Label5.Text = "Projectfolder:"
-        ' 
-        ' GroupBox5
-        ' 
-        GroupBox5.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
-        GroupBox5.Controls.Add(SplitContainerSettingsMediaplayers)
-        GroupBox5.ForeColor = Color.MidnightBlue
-        GroupBox5.Location = New Point(352, 109)
-        GroupBox5.Name = "GroupBox5"
-        GroupBox5.Size = New Size(1114, 307)
-        GroupBox5.TabIndex = 6
-        GroupBox5.TabStop = False
-        GroupBox5.Text = "Active mediaplayers"
-        ' 
-        ' SplitContainerSettingsMediaplayers
-        ' 
-        SplitContainerSettingsMediaplayers.Dock = DockStyle.Fill
-        SplitContainerSettingsMediaplayers.Location = New Point(3, 19)
-        SplitContainerSettingsMediaplayers.Name = "SplitContainerSettingsMediaplayers"
-        ' 
-        ' SplitContainerSettingsMediaplayers.Panel1
-        ' 
-        SplitContainerSettingsMediaplayers.Panel1.Controls.Add(GroupBox6)
-        ' 
-        ' SplitContainerSettingsMediaplayers.Panel2
-        ' 
-        SplitContainerSettingsMediaplayers.Panel2.Controls.Add(GroupBox7)
-        SplitContainerSettingsMediaplayers.Size = New Size(1108, 285)
-        SplitContainerSettingsMediaplayers.SplitterDistance = 578
-        SplitContainerSettingsMediaplayers.TabIndex = 0
-        ' 
-        ' GroupBox6
-        ' 
-        GroupBox6.Controls.Add(Label4)
-        GroupBox6.Controls.Add(WMP_Preview_B1_2)
-        GroupBox6.Controls.Add(WMP_Preview_B1_1)
-        GroupBox6.Controls.Add(RadioButton1)
-        GroupBox6.Controls.Add(RadioButton3)
-        GroupBox6.Controls.Add(RadioButton2)
-        GroupBox6.Dock = DockStyle.Fill
-        GroupBox6.ForeColor = Color.DarkGray
-        GroupBox6.Location = New Point(0, 0)
-        GroupBox6.Name = "GroupBox6"
-        GroupBox6.Size = New Size(578, 285)
-        GroupBox6.TabIndex = 3
-        GroupBox6.TabStop = False
-        GroupBox6.Text = "Beamer 1"
-        ' 
-        ' Label4
-        ' 
-        Label4.AutoSize = True
-        Label4.ForeColor = Color.Black
-        Label4.Location = New Point(24, 234)
-        Label4.Name = "Label4"
-        Label4.Size = New Size(28, 15)
-        Label4.TabIndex = 5
-        Label4.Text = "File:"
-        ' 
-        ' WMP_Preview_B1_2
-        ' 
-        WMP_Preview_B1_2.Enabled = True
-        WMP_Preview_B1_2.Location = New Point(275, 72)
-        WMP_Preview_B1_2.Name = "WMP_Preview_B1_2"
-        WMP_Preview_B1_2.OcxState = CType(resources.GetObject("WMP_Preview_B1_2.OcxState"), AxHost.State)
-        WMP_Preview_B1_2.Size = New Size(241, 150)
-        WMP_Preview_B1_2.TabIndex = 4
-        ' 
-        ' WMP_Preview_B1_1
-        ' 
-        WMP_Preview_B1_1.Enabled = True
-        WMP_Preview_B1_1.Location = New Point(24, 72)
-        WMP_Preview_B1_1.Name = "WMP_Preview_B1_1"
-        WMP_Preview_B1_1.OcxState = CType(resources.GetObject("WMP_Preview_B1_1.OcxState"), AxHost.State)
-        WMP_Preview_B1_1.Size = New Size(241, 150)
-        WMP_Preview_B1_1.TabIndex = 3
-        ' 
-        ' RadioButton1
-        ' 
-        RadioButton1.AutoSize = True
-        RadioButton1.Checked = True
-        RadioButton1.ForeColor = Color.Black
-        RadioButton1.Location = New Point(24, 22)
-        RadioButton1.Name = "RadioButton1"
-        RadioButton1.Size = New Size(54, 19)
-        RadioButton1.TabIndex = 0
-        RadioButton1.TabStop = True
-        RadioButton1.Text = "Blank"
-        RadioButton1.UseVisualStyleBackColor = True
-        ' 
-        ' RadioButton3
-        ' 
-        RadioButton3.AutoSize = True
-        RadioButton3.ForeColor = Color.Black
-        RadioButton3.Location = New Point(275, 47)
-        RadioButton3.Name = "RadioButton3"
-        RadioButton3.Size = New Size(34, 19)
-        RadioButton3.TabIndex = 2
-        RadioButton3.Text = "2:"
-        RadioButton3.UseVisualStyleBackColor = True
-        ' 
-        ' RadioButton2
-        ' 
-        RadioButton2.AutoSize = True
-        RadioButton2.ForeColor = Color.Black
-        RadioButton2.Location = New Point(24, 47)
-        RadioButton2.Name = "RadioButton2"
-        RadioButton2.Size = New Size(34, 19)
-        RadioButton2.TabIndex = 1
-        RadioButton2.Text = "1:"
-        RadioButton2.UseVisualStyleBackColor = True
-        ' 
-        ' GroupBox7
-        ' 
-        GroupBox7.Controls.Add(WMP_Preview_B2_2)
-        GroupBox7.Controls.Add(WMP_Preview_B2_1)
-        GroupBox7.Controls.Add(RadioButton6)
-        GroupBox7.Controls.Add(RadioButton4)
-        GroupBox7.Controls.Add(RadioButton5)
-        GroupBox7.Dock = DockStyle.Fill
-        GroupBox7.ForeColor = Color.DarkGray
-        GroupBox7.Location = New Point(0, 0)
-        GroupBox7.Name = "GroupBox7"
-        GroupBox7.Size = New Size(526, 285)
-        GroupBox7.TabIndex = 6
-        GroupBox7.TabStop = False
-        GroupBox7.Text = "Beamer 2"
-        ' 
-        ' WMP_Preview_B2_2
-        ' 
-        WMP_Preview_B2_2.Enabled = True
-        WMP_Preview_B2_2.Location = New Point(270, 71)
-        WMP_Preview_B2_2.Name = "WMP_Preview_B2_2"
-        WMP_Preview_B2_2.OcxState = CType(resources.GetObject("WMP_Preview_B2_2.OcxState"), AxHost.State)
-        WMP_Preview_B2_2.Size = New Size(241, 150)
-        WMP_Preview_B2_2.TabIndex = 7
-        ' 
-        ' WMP_Preview_B2_1
-        ' 
-        WMP_Preview_B2_1.Enabled = True
-        WMP_Preview_B2_1.Location = New Point(19, 71)
-        WMP_Preview_B2_1.Name = "WMP_Preview_B2_1"
-        WMP_Preview_B2_1.OcxState = CType(resources.GetObject("WMP_Preview_B2_1.OcxState"), AxHost.State)
-        WMP_Preview_B2_1.Size = New Size(241, 150)
-        WMP_Preview_B2_1.TabIndex = 6
-        ' 
-        ' RadioButton6
-        ' 
-        RadioButton6.AutoSize = True
-        RadioButton6.Checked = True
-        RadioButton6.ForeColor = Color.Black
-        RadioButton6.Location = New Point(19, 22)
-        RadioButton6.Name = "RadioButton6"
-        RadioButton6.Size = New Size(54, 19)
-        RadioButton6.TabIndex = 3
-        RadioButton6.TabStop = True
-        RadioButton6.Text = "Blank"
-        RadioButton6.UseVisualStyleBackColor = True
-        ' 
-        ' RadioButton4
-        ' 
-        RadioButton4.AutoSize = True
-        RadioButton4.Location = New Point(270, 47)
-        RadioButton4.Name = "RadioButton4"
-        RadioButton4.Size = New Size(34, 19)
-        RadioButton4.TabIndex = 5
-        RadioButton4.Text = "2:"
-        RadioButton4.UseVisualStyleBackColor = True
-        ' 
-        ' RadioButton5
-        ' 
-        RadioButton5.AutoSize = True
-        RadioButton5.ForeColor = Color.Black
-        RadioButton5.Location = New Point(19, 47)
-        RadioButton5.Name = "RadioButton5"
-        RadioButton5.Size = New Size(34, 19)
-        RadioButton5.TabIndex = 4
-        RadioButton5.Text = "1:"
-        RadioButton5.UseVisualStyleBackColor = True
         ' 
         ' GroupBox4
         ' 
@@ -3361,6 +3212,30 @@ Partial Class FrmMain
         stageTimer.Enabled = True
         stageTimer.Interval = 500
         ' 
+        ' warning_PrimaryBeamerOffline
+        ' 
+        warning_PrimaryBeamerOffline.AutoSize = True
+        warning_PrimaryBeamerOffline.BackColor = Color.Transparent
+        warning_PrimaryBeamerOffline.FlatStyle = FlatStyle.Flat
+        warning_PrimaryBeamerOffline.ForeColor = Color.Red
+        warning_PrimaryBeamerOffline.Location = New Point(82, 80)
+        warning_PrimaryBeamerOffline.Name = "warning_PrimaryBeamerOffline"
+        warning_PrimaryBeamerOffline.Size = New Size(94, 15)
+        warning_PrimaryBeamerOffline.TabIndex = 1
+        warning_PrimaryBeamerOffline.Text = "DISCONNECTED"
+        ' 
+        ' warning_SecondairyBeamerOffline
+        ' 
+        warning_SecondairyBeamerOffline.AutoSize = True
+        warning_SecondairyBeamerOffline.BackColor = Color.Transparent
+        warning_SecondairyBeamerOffline.FlatStyle = FlatStyle.Flat
+        warning_SecondairyBeamerOffline.ForeColor = Color.Red
+        warning_SecondairyBeamerOffline.Location = New Point(89, 86)
+        warning_SecondairyBeamerOffline.Name = "warning_SecondairyBeamerOffline"
+        warning_SecondairyBeamerOffline.Size = New Size(94, 15)
+        warning_SecondairyBeamerOffline.TabIndex = 2
+        warning_SecondairyBeamerOffline.Text = "DISCONNECTED"
+        ' 
         ' FrmMain
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -3377,7 +3252,7 @@ Partial Class FrmMain
         MaximizeBox = False
         Name = "FrmMain"
         SizeGripStyle = SizeGripStyle.Hide
-        Text = "KLT Show viewer"
+        Text = "KKLT Show viewer"
         CType(DG_Devices, ComponentModel.ISupportInitialize).EndInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).EndInit()
         TabControl.ResumeLayout(False)
@@ -3397,10 +3272,12 @@ Partial Class FrmMain
         CType(detailWLed_Intensity, ComponentModel.ISupportInitialize).EndInit()
         CType(detailWLed_Brightness, ComponentModel.ISupportInitialize).EndInit()
         CType(detailWLed_Palette, ComponentModel.ISupportInitialize).EndInit()
-        GroupBox3.ResumeLayout(False)
-        CType(WMP_Preview_B2, ComponentModel.ISupportInitialize).EndInit()
-        gbMonitor1.ResumeLayout(False)
-        CType(WMP_Preview_B1, ComponentModel.ISupportInitialize).EndInit()
+        gbSecondairyBeamer.ResumeLayout(False)
+        gbSecondairyBeamer.PerformLayout()
+        CType(WMP_SecondairyPlayer_Preview, ComponentModel.ISupportInitialize).EndInit()
+        gbPrimaryBeamer.ResumeLayout(False)
+        gbPrimaryBeamer.PerformLayout()
+        CType(WMP_PrimaryPlayer_Preview, ComponentModel.ISupportInitialize).EndInit()
         ToolStip_Show.ResumeLayout(False)
         ToolStip_Show.PerformLayout()
         CType(DG_Show, ComponentModel.ISupportInitialize).EndInit()
@@ -3472,19 +3349,6 @@ Partial Class FrmMain
         TabSettings.ResumeLayout(False)
         GroupBox8.ResumeLayout(False)
         GroupBox8.PerformLayout()
-        GroupBox5.ResumeLayout(False)
-        SplitContainerSettingsMediaplayers.Panel1.ResumeLayout(False)
-        SplitContainerSettingsMediaplayers.Panel2.ResumeLayout(False)
-        CType(SplitContainerSettingsMediaplayers, ComponentModel.ISupportInitialize).EndInit()
-        SplitContainerSettingsMediaplayers.ResumeLayout(False)
-        GroupBox6.ResumeLayout(False)
-        GroupBox6.PerformLayout()
-        CType(WMP_Preview_B1_2, ComponentModel.ISupportInitialize).EndInit()
-        CType(WMP_Preview_B1_1, ComponentModel.ISupportInitialize).EndInit()
-        GroupBox7.ResumeLayout(False)
-        GroupBox7.PerformLayout()
-        CType(WMP_Preview_B2_2, ComponentModel.ISupportInitialize).EndInit()
-        CType(WMP_Preview_B2_1, ComponentModel.ISupportInitialize).EndInit()
         GroupBox4.ResumeLayout(False)
         GroupBox4.PerformLayout()
         GroupBox2.ResumeLayout(False)
@@ -3533,7 +3397,7 @@ Partial Class FrmMain
     Friend WithEvents Label2 As Label
     Friend WithEvents lblShowMonitor As Label
     Friend WithEvents Label1 As Label
-    Friend WithEvents gbMonitor1 As GroupBox
+    Friend WithEvents gbPrimaryBeamer As GroupBox
     Friend WithEvents pbControlStatus As PictureBox
     Friend WithEvents lblOutput3 As Label
     Friend WithEvents lblOutput2 As Label
@@ -3549,24 +3413,9 @@ Partial Class FrmMain
     Friend WithEvents btnScanNetworkForWLed As ToolStripButton
     Friend WithEvents GroupBox4 As GroupBox
     Friend WithEvents PictureBox1 As PictureBox
-    Friend WithEvents GroupBox3 As GroupBox
-    Friend WithEvents WMP_Preview_B2 As AxWMPLib.AxWindowsMediaPlayer
-    Friend WithEvents WMP_Preview_B1 As AxWMPLib.AxWindowsMediaPlayer
-    Friend WithEvents GroupBox5 As GroupBox
-    Friend WithEvents SplitContainerSettingsMediaplayers As SplitContainer
-    Friend WithEvents GroupBox6 As GroupBox
-    Friend WithEvents RadioButton1 As RadioButton
-    Friend WithEvents RadioButton3 As RadioButton
-    Friend WithEvents RadioButton2 As RadioButton
-    Friend WithEvents GroupBox7 As GroupBox
-    Friend WithEvents RadioButton6 As RadioButton
-    Friend WithEvents RadioButton4 As RadioButton
-    Friend WithEvents RadioButton5 As RadioButton
-    Friend WithEvents Label4 As Label
-    Friend WithEvents WMP_Preview_B1_2 As AxWMPLib.AxWindowsMediaPlayer
-    Friend WithEvents WMP_Preview_B1_1 As AxWMPLib.AxWindowsMediaPlayer
-    Friend WithEvents WMP_Preview_B2_2 As AxWMPLib.AxWindowsMediaPlayer
-    Friend WithEvents WMP_Preview_B2_1 As AxWMPLib.AxWindowsMediaPlayer
+    Friend WithEvents gbSecondairyBeamer As GroupBox
+    Friend WithEvents WMP_SecondairyPlayer_Preview As AxWMPLib.AxWindowsMediaPlayer
+    Friend WithEvents WMP_PrimaryPlayer_Preview As AxWMPLib.AxWindowsMediaPlayer
     Friend WithEvents GroupBox8 As GroupBox
     Friend WithEvents Label5 As Label
     Friend WithEvents OpenFileDialog1 As OpenFileDialog
@@ -3717,7 +3566,6 @@ Partial Class FrmMain
     Friend WithEvents btnZoom30 As ToolStripMenuItem
     Friend WithEvents btnZoom60 As ToolStripMenuItem
     Friend WithEvents btnZoom90 As ToolStripMenuItem
-    Friend WithEvents ToolStripButton2 As ToolStripButton
     Friend WithEvents BtnAddTrack As ToolStripButton
     Friend WithEvents BtnRemoveTrack As ToolStripButton
     Friend WithEvents ToolStripSeparator6 As ToolStripSeparator
@@ -3805,6 +3653,7 @@ Partial Class FrmMain
     Friend WithEvents colSegmentsData As DataGridViewTextBoxColumn
     Friend WithEvents colDataProvider As DataGridViewComboBoxColumn
     Friend WithEvents colProcessed As DataGridViewComboBoxColumn
+    Friend WithEvents Timer_LoadBuffer As Timer
     Friend WithEvents btnApply As DataGridViewButtonColumn
     Friend WithEvents colAct As DataGridViewComboBoxColumn
     Friend WithEvents colSceneId As DataGridViewTextBoxColumn
@@ -3826,8 +3675,14 @@ Partial Class FrmMain
     Friend WithEvents colTransition As DataGridViewTextBoxColumn
     Friend WithEvents colBlend As DataGridViewCheckBoxColumn
     Friend WithEvents colRepeat As DataGridViewCheckBoxColumn
-    Friend WithEvents colMicrophone As DataGridViewCheckBoxColumn
+    Friend WithEvents colSound As DataGridViewCheckBoxColumn
     Friend WithEvents colFilename As DataGridViewTextBoxColumn
     Friend WithEvents colSend As DataGridViewCheckBoxColumn
+    Friend WithEvents btnControl_StopAll As Button
+    Friend WithEvents btnStopLoopingAtEndOfVideo As Button
+    Friend WithEvents btn_ReconnectSecondairyBeamer As Button
+    Friend WithEvents btn_ReconnectPrimaryBeamer As Button
+    Friend WithEvents warning_SecondairyBeamerOffline As Label
+    Friend WithEvents warning_PrimaryBeamerOffline As Label
 
 End Class

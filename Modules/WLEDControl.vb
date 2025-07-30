@@ -290,10 +290,10 @@ Module WLEDControl
                         client.UploadString($"http://{ip}/json/state", "POST", payload.ToString())
                     End Using
                 Catch ex As WebException
-                    ToonFlashBericht($"[WLED] Device offline of netwerkfout bij {ip}: {ex.Message}", 2)
+                    ToonFlashBericht($"[WLED] Device offline of netwerkfout bij {ip}: {ex.Message}", 5, FlashSeverity.IsWarning)
                     devRow.Cells("colOnline").Value = My.Resources.iconRedBullet1
                 Catch ex As Exception
-                    ToonFlashBericht($"[WLED] Onverwachte fout bij {ip}: {ex.Message}", 2)
+                    ToonFlashBericht($"[WLED] Onverwachte fout bij {ip}: {ex.Message}", 5, FlashSeverity.IsError)
                     devRow.Cells("colOnline").Value = My.Resources.iconRedBullet1
                 End Try
             End If
@@ -345,7 +345,7 @@ Module WLEDControl
         Dim paletteName As String = ""
         Dim Speed As String = ""
         Dim Brightness As String = ""
-        Dim Intensity As String = "17"
+        Dim Intensity As String = ""
 
         Dim selectedFixture = rowData("colFixture")
         If selectedFixture IsNot Nothing AndAlso selectedFixture.ToString().Substring(0, 2) <> "**" Then
@@ -446,18 +446,18 @@ Module WLEDControl
                         Dim content As New StringContent(payload.ToString(), Encoding.UTF8, "application/json")
                         Dim response = Await client.PostAsync($"http://{ip}/json/state", content)
                         If Not response.IsSuccessStatusCode Then
-                            ToonFlashBericht($"[WLED] Device gaf een foutmelding bij {ip}: {response.StatusCode}", 2)
+                            ToonFlashBericht($"[WLED] Device gaf een foutmelding bij {ip}: {response.StatusCode}", 5, FlashSeverity.IsError)
                             devRow.Cells("colOnline").Value = My.Resources.iconRedBullet1
                         End If
                     End Using
                 Catch ex As TaskCanceledException
-                    ToonFlashBericht($"[WLED] Timeout bij {ip}.", 2)
+                    ToonFlashBericht($"[WLED] Timeout bij {ip}.", 5, FlashSeverity.IsWarning)
                     devRow.Cells("colOnline").Value = My.Resources.iconRedBullet1
                 Catch ex As HttpRequestException
-                    ToonFlashBericht($"[WLED] Device offline of netwerkfout bij {ip}: {ex.Message}", 2)
+                    ToonFlashBericht($"[WLED] Device offline of netwerkfout bij {ip}: {ex.Message}", 5, FlashSeverity.IsError)
                     devRow.Cells("colOnline").Value = My.Resources.iconRedBullet1
                 Catch ex As Exception
-                    ToonFlashBericht($"[WLED] Onverwachte fout bij {ip}: {ex.Message}", 2)
+                    ToonFlashBericht($"[WLED] Onverwachte fout bij {ip}: {ex.Message}", 5, FlashSeverity.IsError)
                     devRow.Cells("colOnline").Value = My.Resources.iconRedBullet1
                 End Try
             End If
@@ -555,11 +555,11 @@ Module WLEDControl
                 If response.IsSuccessStatusCode Then
                     'ToonFlashBericht($"[WLED] Instructieset verzonden naar {wledName} ({wledIp})", 1)
                 Else
-                    ToonFlashBericht($"[WLED] Fout bij verzenden instructieset naar {wledName}: {response.StatusCode}", 2)
+                    ToonFlashBericht($"[WLED] Fout bij verzenden instructieset naar {wledName}: {response.StatusCode}", 5, FlashSeverity.IsError)
                 End If
             End Using
         Catch ex As Exception
-            ToonFlashBericht($"[WLED] Fout bij verzenden instructieset naar {wledName}: {ex.Message}", 2)
+            ToonFlashBericht($"[WLED] Fout bij verzenden instructieset naar {wledName}: {ex.Message}", 5, FlashSeverity.IsError)
         End Try
     End Sub
 

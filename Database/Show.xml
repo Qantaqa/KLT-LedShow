@@ -22,7 +22,7 @@
         <Column Name="colTransition" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
         <Column Name="colBlend" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
         <Column Name="colRepeat" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
-        <Column Name="colMicrophone" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
+        <Column Name="colSound" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
         <Column Name="colFilename" Type="System.Windows.Forms.DataGridViewTextBoxColumn" MaxLength="32767" AutoSizeMode="NotSet" />
         <Column Name="colSend" Type="System.Windows.Forms.DataGridViewCheckBoxColumn" AutoSizeMode="NotSet" />
     </Structure>
@@ -49,7 +49,7 @@
             <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
-            <colMicrophone>False</colMicrophone>
+            <colSound>False</colSound>
             <colFilename></colFilename>
             <colSend>False</colSend>
         </Row>
@@ -75,7 +75,7 @@
             <colTransition>130</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
-            <colMicrophone>False</colMicrophone>
+            <colSound>False</colSound>
             <colFilename>1</colFilename>
             <colSend>False</colSend>
         </Row>
@@ -101,8 +101,34 @@
             <colTransition>60</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
-            <colMicrophone>False</colMicrophone>
+            <colSound>False</colSound>
             <colFilename>1</colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Pre-Show</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Start sponsor videos</colCue>
+            <colFixture>** Video **/ Output 2</colFixture>
+            <colStateOnOff>True</colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect>Unknown Effect</colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette>Unknown Palette</colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>True</colRepeat>
+            <colSound>True</colSound>
+            <colFilename>C:\KKLT\Anestesia\Promo-2.mp4</colFilename>
             <colSend>False</colSend>
         </Row>
         <Row>
@@ -114,20 +140,20 @@
             <colCue></colCue>
             <colFixture>BEUK_LI/0</colFixture>
             <colStateOnOff>True</colStateOnOff>
-            <colEffectId>17</colEffectId>
-            <colEffect>Twinkle</colEffect>
-            <colPaletteId>7</colPaletteId>
-            <colPalette>Cloud</colPalette>
-            <colColor1>#00A0FF</colColor1>
-            <colColor2>#000000</colColor2>
-            <colColor3>#000000</colColor3>
+            <colEffectId>0</colEffectId>
+            <colEffect>Solid</colEffect>
+            <colPaletteId>0</colPaletteId>
+            <colPalette>Default</colPalette>
+            <colColor1>41215</colColor1>
+            <colColor2>0</colColor2>
+            <colColor3>0</colColor3>
             <colBrightness>255</colBrightness>
-            <colSpeed>118</colSpeed>
+            <colSpeed>128</colSpeed>
             <colIntensity>128</colIntensity>
             <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
-            <colMicrophone>False</colMicrophone>
+            <colSound>False</colSound>
             <colFilename>1</colFilename>
             <colSend>False</colSend>
         </Row>
@@ -153,7 +179,7 @@
             <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
-            <colMicrophone>False</colMicrophone>
+            <colSound>False</colSound>
             <colFilename>1</colFilename>
             <colSend>False</colSend>
         </Row>
@@ -179,7 +205,7 @@
             <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
-            <colMicrophone>False</colMicrophone>
+            <colSound>False</colSound>
             <colFilename>1</colFilename>
             <colSend>False</colSend>
         </Row>
@@ -205,7 +231,7 @@
             <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
-            <colMicrophone>False</colMicrophone>
+            <colSound>False</colSound>
             <colFilename>1</colFilename>
             <colSend>True</colSend>
         </Row>
@@ -231,7 +257,7 @@
             <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
-            <colMicrophone>False</colMicrophone>
+            <colSound>False</colSound>
             <colFilename>1</colFilename>
             <colSend>True</colSend>
         </Row>
@@ -257,7 +283,7 @@
             <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
-            <colMicrophone>False</colMicrophone>
+            <colSound>False</colSound>
             <colFilename>1</colFilename>
             <colSend>True</colSend>
         </Row>
@@ -283,7 +309,7 @@
             <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
-            <colMicrophone>False</colMicrophone>
+            <colSound>False</colSound>
             <colFilename>1</colFilename>
             <colSend>True</colSend>
         </Row>
@@ -309,7 +335,7 @@
             <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
-            <colMicrophone>False</colMicrophone>
+            <colSound>False</colSound>
             <colFilename>1</colFilename>
             <colSend>True</colSend>
         </Row>
@@ -335,7 +361,7 @@
             <colTransition>0</colTransition>
             <colBlend>False</colBlend>
             <colRepeat>False</colRepeat>
-            <colMicrophone>False</colMicrophone>
+            <colSound>False</colSound>
             <colFilename>1</colFilename>
             <colSend>True</colSend>
         </Row>

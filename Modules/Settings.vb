@@ -1,4 +1,18 @@
 ﻿Module Settings
+    Public Function ImagesAreEqual(img1 As Image, img2 As Image) As Boolean
+        If img1 Is Nothing OrElse img2 Is Nothing Then Return False
+        If img1.Size <> img2.Size Then Return False
+        If img1.PixelFormat <> img2.PixelFormat Then Return False
+
+        Using ms1 As New IO.MemoryStream(), ms2 As New IO.MemoryStream()
+            img1.Save(ms1, Imaging.ImageFormat.Png)
+            img2.Save(ms2, Imaging.ImageFormat.Png)
+            Dim bytes1 = ms1.ToArray()
+            Dim bytes2 = ms2.ToArray()
+            Return bytes1.SequenceEqual(bytes2)
+        End Using
+    End Function
+
     Public Sub MoveAndMaximizeForm(outputValue As String)
         Dim screenToUse As Screen = Nothing
 
@@ -94,7 +108,7 @@
 
         If Not System.Text.RegularExpressions.Regex.IsMatch(timeString, "^\d{2}:\d{2}$") Then
             ' Gooi een exception of retourneer een foutwaarde als het formaat onjuist is
-            ToonFlashBericht("De tijdstring moet het formaat mm:ss hebben.", 2)
+            ToonFlashBericht("De tijdstring moet het formaat mm:ss hebben.", 5, FlashSeverity.IsWarning)
             Return 0
         End If
 

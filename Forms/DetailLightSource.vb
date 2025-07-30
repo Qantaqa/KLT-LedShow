@@ -90,4 +90,16 @@
         tvGroupsSelected.ExpandAll()
     End Sub
 
+    Private Sub DetailLightSource_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' Zorg dat het formulier op hetzelfde scherm als FrmMain verschijnt, rechtsonder
+        Dim mainScreen = Screen.FromControl(FrmMain)
+        Dim screenBounds = mainScreen.WorkingArea
+
+        ' Optioneel: rechtsonder, of kies een andere positie
+        Me.StartPosition = FormStartPosition.Manual
+        Me.Location = New Point(
+            screenBounds.Right - Me.Width - 40,
+            screenBounds.Bottom - Me.Height - 40
+        )
+    End Sub
 End Class

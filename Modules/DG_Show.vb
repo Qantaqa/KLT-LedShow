@@ -9,7 +9,8 @@ Imports Newtonsoft.Json.Linq
 Imports System.Drawing
 Imports System.Drawing.Imaging
 Imports System.Runtime.InteropServices
-Imports AxWMPLib ' Nodig voor Import
+Imports AxWMPLib
+Imports WMPLib ' Nodig voor Import
 
 
 
@@ -18,6 +19,9 @@ Module DG_Show
     Dim booleanBlinkNextEvent As Boolean = False
     Dim booleanBlinkNextScene As Boolean = False
     Dim booleanBlinkTimer As Boolean = False
+    Dim booleanBlinkStop As Boolean = False
+    Dim booleanBlinkStopLooping As Boolean = False
+
     Dim colorBlinkTimer As Color = Color.Green
 
     ' Variabelen voor het afspelen van GIF-afbeeldingen
@@ -34,12 +38,10 @@ Module DG_Show
     End Class
 
 
-    ' Deze variabelen zijn nu op moduleniveau gedefinieerd
-    'Public Event AddNewRowBeforeClicked(ByVal sender As System.Object, ByVal e As System.EventArgs)
-    'Public Event AddNewRowAfterClicked(ByVal sender As System.Object, ByVal e As System.EventArgs)
-    'Public Event RemoveCurrentRowClicked(ByVal sender As System.Object, ByVal e As System.EventArgs)
 
-
+    Public Sub TurnOnBlinkOfStopLooping()
+        booleanBlinkStopLooping = True
+    End Sub
 
     ' *********************************************************
     ' Deze sub werkt het fixure pulldown veld bij, met beschikbare fixured
@@ -58,9 +60,9 @@ Module DG_Show
             ' Clear de vorige items
             fixtureColumn.Items.Clear()
 
-            fixtureColumn.Items.Add("** Video **/ Output 1")
-            fixtureColumn.Items.Add("** Video **/ Output 2")
-            fixtureColumn.Items.Add("** Video **/ Output 3")
+            fixtureColumn.Items.Add("** Video **/ Primairy")
+            fixtureColumn.Items.Add("** Video **/ Secondairy")
+
 
             ' Voeg de WLED devices en segmenten toe aan de dropdown list
             For Each devRow As DataGridViewRow In FrmMain.DG_Devices.Rows
@@ -164,7 +166,7 @@ Module DG_Show
                                 End If
 
                                 ' Geluid standaard uit
-                                currentRow.Cells("colMicrophone").Value = False
+                                currentRow.Cells("colSound").Value = False
                             End If
                         Catch ex As Exception
                             ' Foutafhandeling: JSON niet goed of segment ontbreekt
@@ -177,7 +179,7 @@ Module DG_Show
                             currentRow.Cells("colColor3").Value = 0
                             currentRow.Cells("colBrightness").Value = 0
                             currentRow.Cells("colTransition").Value = 0
-                            currentRow.Cells("colMicrophone").Value = False
+                            currentRow.Cells("colSound").Value = False
                         End Try
                     End If
                 End If
@@ -325,6 +327,7 @@ Module DG_Show
 
             ' Haal waardes op van de geselecteerde rij
             Dim fixtureValue = TryCast(DG_Show.CurrentRow.Cells("colFixture").Value, String)
+
             If fixtureValue <> "" Then
                 If fixtureValue.Contains("/") Then
                     wledName = fixtureValue.Split("/"c)(0)
@@ -338,6 +341,11 @@ Module DG_Show
                 wledName = ""
                 wledIP = ""
                 wledSegment = ""
+            End If
+
+            If (wledName = "** Video **") Then
+                ' Doe niets
+                Exit Sub
             End If
 
             ' Wat is bijgewerkt?
@@ -377,6 +385,8 @@ Module DG_Show
 
 
     Sub Update_DGGRid_Details(DG_Show As DataGridView, RowId As Integer)
+
+
         Dim PaletteImagesPath As String = My.Settings.PaletteImagesPath
         Dim EffectsImagesPath As String = My.Settings.EffectsImagePath
 
@@ -387,92 +397,45 @@ Module DG_Show
         If Not IsNothing(CurrentRow) Then
             ' Controleer of er exact één rij geselecteerd is
             If DG_Show.SelectedRows.Count = 1 Then
-                FrmMain.gb_DetailWLed.Visible = True
-
-                Dim PaletteName As String = CurrentRow.Cells("colPalette").Value
-                Dim EffectName As String = CurrentRow.Cells("colEffect").Value
-
-
-                FrmMain.detailWLed_Brightness.Value = CurrentRow.Cells("colBrightness").Value
-                FrmMain.detailWLed_Intensity.Value = CurrentRow.Cells("colIntensity").Value
-                FrmMain.detailWLed_Speed.Value = CurrentRow.Cells("colSpeed").Value
-                If CurrentRow.Cells("colColor1").Value IsNot Nothing Then
-                    FrmMain.detailWLed_Color1.BackColor = ColorTranslator.FromHtml(CurrentRow.Cells("colColor1").Value.ToString())
-                End If
-                If CurrentRow.Cells("colColor2").Value IsNot Nothing Then
-                    FrmMain.detailWLed_Color2.BackColor = ColorTranslator.FromHtml(CurrentRow.Cells("colColor2").Value.ToString())
-                End If
-                If CurrentRow.Cells("colColor3").Value IsNot Nothing Then
-                    FrmMain.detailWLed_Color3.BackColor = ColorTranslator.FromHtml(CurrentRow.Cells("colColor3").Value.ToString())
-                End If
-
-                ' Toon plaatje van palette
-                If PaletteName IsNot Nothing Then
-                    PaletteName = PaletteName.ToString().Replace(" ", "_") & ".png"
-                    PaletteName = PaletteName.ToString().Replace("*_", "")
-                    imagePath = Path.Combine(PaletteImagesPath, PaletteName)
-                End If
-
-                ' Controleer of het bestand bestaat voordat je het laadt.
-                If File.Exists(imagePath) Then
-                    Try
-                        ' Laad de afbeelding en wijs deze toe aan de cel.
-                        Dim image As Image = Image.FromFile(imagePath)
-
-                        FrmMain.detailWLed_Palette.Image = image
-                    Catch ex As Exception
-                        ' Foutafhandeling: Log de fout en toon een bericht.
-                        Console.WriteLine($"Fout bij het laden van afbeelding: {imagePath}. Fout: {ex.Message}")
-                        ' Je kunt er ook voor kiezen om een standaardafbeelding in te stellen of de cel leeg te laten.
-
-                    End Try
+                ' Is het een regel voor video of voor led control?
+                Dim FixtureString As String = CurrentRow.Cells("colFixture").Value
+                If (FixtureString.Substring(0, 2) = "**") Then
+                    ' VIDEO
+                    Exit Sub
                 Else
-                    ' Als het bestand niet bestaat, laat de cel dan leeg en log een waarschuwing.
-                    Console.WriteLine($"Afbeelding niet gevonden: {imagePath}")
-                End If
+                    ' WLED 
+                    FrmMain.gb_DetailWLed.Visible = True
 
+                    Dim PaletteName As String = CurrentRow.Cells("colPalette").Value
+                    Dim EffectName As String = CurrentRow.Cells("colEffect").Value
 
+                    FrmMain.detailWLed_Brightness.Value = CurrentRow.Cells("colBrightness").Value
+                    FrmMain.detailWLed_Intensity.Value = CurrentRow.Cells("colIntensity").Value
+                    FrmMain.detailWLed_Speed.Value = CurrentRow.Cells("colSpeed").Value
+                    If CurrentRow.Cells("colColor1").Value IsNot Nothing Then
+                        FrmMain.detailWLed_Color1.BackColor = ColorTranslator.FromHtml(CurrentRow.Cells("colColor1").Value.ToString())
+                    End If
+                    If CurrentRow.Cells("colColor2").Value IsNot Nothing Then
+                        FrmMain.detailWLed_Color2.BackColor = ColorTranslator.FromHtml(CurrentRow.Cells("colColor2").Value.ToString())
+                    End If
+                    If CurrentRow.Cells("colColor3").Value IsNot Nothing Then
+                        FrmMain.detailWLed_Color3.BackColor = ColorTranslator.FromHtml(CurrentRow.Cells("colColor3").Value.ToString())
+                    End If
 
-                ' Toon plaatje van effect
-                If EffectName IsNot Nothing Then
-                    EffectName = EffectName.ToString().Replace(" ", "_") & ".gif"
-                    EffectName = EffectName.ToString().Replace("*_", "")
-                    imagePath = Path.Combine(EffectsImagesPath, EffectName)
+                    ' Toon plaatje van palette
+                    If PaletteName IsNot Nothing Then
+                        PaletteName = PaletteName.ToString().Replace(" ", "_") & ".png"
+                        PaletteName = PaletteName.ToString().Replace("*_", "")
+                        imagePath = Path.Combine(PaletteImagesPath, PaletteName)
+                    End If
 
                     ' Controleer of het bestand bestaat voordat je het laadt.
                     If File.Exists(imagePath) Then
                         Try
                             ' Laad de afbeelding en wijs deze toe aan de cel.
                             Dim image As Image = Image.FromFile(imagePath)
-                            gifImage = image
 
-                            ' Initialiseert de timer voor de animatie
-                            frameTimer = New Timer()
-                            frameTimer.Interval = 100  ' Standaard interval, wordt later overschreven door de GIF's frame delays.
-                            AddHandler frameTimer.Tick, AddressOf FrameTimer_Tick
-                            frameTimer.Start()
-
-                            FrmMain.detailWLed_Effect.Image = image
-
-                            ' Haal de frame delays op en sla ze op in een array
-                            If gifImage IsNot Nothing Then
-                                Dim frameDimension As New FrameDimension(gifImage.FrameDimensionsList(0))
-                                Dim frameCount As Integer = gifImage.GetFrameCount(FrameDimension.Time)
-                                ReDim frameDelayList(frameCount - 1) ' Array initialiseren met de juiste grootte
-
-                                For i As Integer = 0 To frameCount - 1
-                                    gifImage.SelectActiveFrame(frameDimension, i)
-                                    Dim frameDelayBytes() As Byte = gifImage.GetPropertyItem(207).Value ' Property ID 207 bevat de frame delays
-                                    frameDelayList(i) = BitConverter.ToInt32(frameDelayBytes, i * 4) * 10 ' Omzetten naar milliseconden
-                                Next
-
-                                ' Start de animatie met de eerste frame delay
-                                If frameDelayList.Length > 0 Then
-                                    frameTimer.Interval = frameDelayList(0)
-                                End If
-                            End If
-
-
+                            FrmMain.detailWLed_Palette.Image = image
                         Catch ex As Exception
                             ' Foutafhandeling: Log de fout en toon een bericht.
                             Console.WriteLine($"Fout bij het laden van afbeelding: {imagePath}. Fout: {ex.Message}")
@@ -483,11 +446,64 @@ Module DG_Show
                         ' Als het bestand niet bestaat, laat de cel dan leeg en log een waarschuwing.
                         Console.WriteLine($"Afbeelding niet gevonden: {imagePath}")
                     End If
+
+
+
+                    ' Toon plaatje van effect
+                    If EffectName IsNot Nothing Then
+                        EffectName = EffectName.ToString().Replace(" ", "_") & ".gif"
+                        EffectName = EffectName.ToString().Replace("*_", "")
+                        imagePath = Path.Combine(EffectsImagesPath, EffectName)
+
+                        ' Controleer of het bestand bestaat voordat je het laadt.
+                        If File.Exists(imagePath) Then
+                            Try
+                                ' Laad de afbeelding en wijs deze toe aan de cel.
+                                Dim image As Image = Image.FromFile(imagePath)
+                                gifImage = image
+
+                                ' Initialiseert de timer voor de animatie
+                                frameTimer = New Timer()
+                                frameTimer.Interval = 100  ' Standaard interval, wordt later overschreven door de GIF's frame delays.
+                                AddHandler frameTimer.Tick, AddressOf FrameTimer_Tick
+                                frameTimer.Start()
+
+                                FrmMain.detailWLed_Effect.Image = image
+
+                                ' Haal de frame delays op en sla ze op in een array
+                                If gifImage IsNot Nothing Then
+                                    Dim frameDimension As New FrameDimension(gifImage.FrameDimensionsList(0))
+                                    Dim frameCount As Integer = gifImage.GetFrameCount(FrameDimension.Time)
+                                    ReDim frameDelayList(frameCount - 1) ' Array initialiseren met de juiste grootte
+
+                                    For i As Integer = 0 To frameCount - 1
+                                        gifImage.SelectActiveFrame(frameDimension, i)
+                                        Dim frameDelayBytes() As Byte = gifImage.GetPropertyItem(207).Value ' Property ID 207 bevat de frame delays
+                                        frameDelayList(i) = BitConverter.ToInt32(frameDelayBytes, i * 4) * 10 ' Omzetten naar milliseconden
+                                    Next
+
+                                    ' Start de animatie met de eerste frame delay
+                                    If frameDelayList.Length > 0 Then
+                                        frameTimer.Interval = frameDelayList(0)
+                                    End If
+                                End If
+
+
+                            Catch ex As Exception
+                                ' Foutafhandeling: Log de fout en toon een bericht.
+                                Console.WriteLine($"Fout bij het laden van afbeelding: {imagePath}. Fout: {ex.Message}")
+                                ' Je kunt er ook voor kiezen om een standaardafbeelding in te stellen of de cel leeg te laten.
+
+                            End Try
+                        Else
+                            ' Als het bestand niet bestaat, laat de cel dan leeg en log een waarschuwing.
+                            Console.WriteLine($"Afbeelding niet gevonden: {imagePath}")
+                        End If
+                    End If
+
+
+                    FrmMain.detailWLed__EffectName.Text = CurrentRow.Cells("colEffect").Value
                 End If
-
-
-                FrmMain.detailWLed__EffectName.Text = CurrentRow.Cells("colEffect").Value
-
             Else
                 ' Meerdere regels geselecterd
                 FrmMain.gb_DetailWLed.Visible = False
@@ -564,6 +580,17 @@ Module DG_Show
                 FrmMain.btnControl_NextScene.BackColor = Color.Black
             End If
 
+            If booleanBlinkStop Then
+                If FrmMain.btnControl_StopAll.BackColor = Color.Black Then
+                    FrmMain.btnControl_StopAll.BackColor = Color.Red
+                Else
+                    FrmMain.btnControl_StopAll.BackColor = Color.Black
+                End If
+            Else
+                FrmMain.btnControl_StopAll.BackColor = Color.Black
+            End If
+
+
             ' Timer
             If booleanBlinkTimer Then
                 If FrmMain.lblControl_TimeLeft.BackColor = Color.Black Then
@@ -575,13 +602,27 @@ Module DG_Show
                 FrmMain.lblControl_TimeLeft.BackColor = Color.Black
             End If
 
+            ' Stop looping button
+            If booleanBlinkStopLooping Then
+                If FrmMain.btnStopLoopingAtEndOfVideo.BackColor = Color.Black Then
+                    FrmMain.btnStopLoopingAtEndOfVideo.BackColor = Color.Red
+                Else
+                    FrmMain.btnStopLoopingAtEndOfVideo.BackColor = Color.Black
+                End If
+            Else
+                FrmMain.btnStopLoopingAtEndOfVideo.BackColor = Color.Black
+            End If
         Else
             FrmMain.gb_Controls.Enabled = False
             FrmMain.btnControl_Start.BackColor = Color.DarkRed
             FrmMain.btnControl_NextEvent.BackColor = Color.DarkRed
             FrmMain.btnControl_NextScene.BackColor = Color.DarkRed
             FrmMain.lblControl_TimeLeft.BackColor = Color.Black
+            FrmMain.btnControl_StopAll.BackColor = Color.DarkRed
+            FrmMain.btnStopLoopingAtEndOfVideo.BackColor = Color.Black
+
         End If
+
     End Sub
 
     Sub EndEventTimer()
@@ -595,6 +636,12 @@ Module DG_Show
 
     Sub Next_EventOrScene(DG_Show As DataGridView, NextEventOrScene As Integer)
         ' NextEventOrScene: 0 = Scene, 1 = Event
+
+        ' First stop any playing video's
+        Beamer_Primary.WMP_PrimaryPlayer_Live.Ctlcontrols.stop()
+        Beamer_Secondairy.WMP_SecondairyPlayer_Live.Ctlcontrols.stop()
+        FrmMain.WMP_PrimaryPlayer_Preview.Ctlcontrols.stop()
+        FrmMain.WMP_PrimaryPlayer_Preview.Ctlcontrols.stop()
 
         If DG_Show.SelectedRows.Count = 0 Then Exit Sub
 
@@ -681,6 +728,7 @@ Module DG_Show
         booleanBlinkTimer = False
         booleanBlinkNextEvent = False
         booleanBlinkNextScene = False
+        booleanBlinkStop = False
         Dim timerValue As String = ""
         If FollowUpRow IsNot Nothing Then
             timerValue = Convert.ToString(FollowUpRow.Cells("colTimer").Value)
@@ -713,12 +761,56 @@ Module DG_Show
         Reselect_Rows(DG_Show)
     End Sub
 
+    Public Sub ClearGroupsToBlack_WithBlackSolidEffect()
+        ' Loop through all WLED devices
+        For Each devRow As DataGridViewRow In FrmMain.DG_Devices.Rows
+            If devRow.IsNewRow Then Continue For
+
+            Dim wledIP As String = Convert.ToString(devRow.Cells("colIPAddress").Value)
+            Dim segmentsValue As String = Convert.ToString(devRow.Cells("colSegments").Value)
+
+            If String.IsNullOrWhiteSpace(wledIP) OrElse String.IsNullOrWhiteSpace(segmentsValue) Then Continue For
+
+            ' Find number of segments
+            Dim segmentCount As Integer = 0
+            Dim matches = System.Text.RegularExpressions.Regex.Matches(segmentsValue, "\([^\)]+\)")
+            segmentCount = matches.Count
+
+            For segmentIndex As Integer = 0 To segmentCount - 1
+                ' Build JSON for solid effect, color black
+                Dim json As String = Newtonsoft.Json.JsonConvert.SerializeObject(New With {
+                .seg = New Object() {
+                    New With {
+                        .id = segmentIndex,
+                        .fx = 0, ' Solid effect
+                        .col = New Integer()() {New Integer() {0, 0, 0}},
+                        .bri = 255
+                    }
+                }
+            })
+
+                Try
+                    Using client As New Net.WebClient()
+                        client.Headers(Net.HttpRequestHeader.ContentType) = "application/json"
+                        client.UploadString($"http://{wledIP}/json/state", "POST", json)
+                    End Using
+                Catch ex As Exception
+                    Console.WriteLine($"Error sending black to WLED {wledIP} segment {segmentIndex}: {ex.Message}")
+                End Try
+            Next
+        Next
+    End Sub
+
+
     Sub Start_Show(DG_Show As DataGridView)
         Dim FoundRows As Integer = 0
         Dim LastRow As DataGridViewRow = Nothing
 
         ' Reset all checkboxes first
         ResetProcessedCheckboxes(DG_Show)
+
+        ' Turn all WLED devices to black
+        ClearGroupsToBlack_WithBlackSolidEffect()
 
         ' Find number of preshow - scene 1, event 1
         For Each row In DG_Show.Rows
@@ -740,7 +832,15 @@ Module DG_Show
         For Each row In DG_Show.Rows
             If row.cells("btnApply").value = ">" And row.cells("colSend").value = "False" Then
                 ' We have a row to send
-                SendInstructionSetForDevice(DG_Show, row)
+                If row.Cells("colFixture").Value.ToString().ToLower().Contains("video") Then
+                    ' VIDEO
+                    ApplyRowToBeamer(row)
+                Else
+                    ' WLED
+                    SendInstructionSetForDevice(DG_Show, row)
+                End If
+
+
             End If
         Next
 
@@ -751,7 +851,10 @@ Module DG_Show
         booleanBlinkTimer = False
         booleanBlinkNextEvent = False
         booleanBlinkNextScene = False
+        booleanBlinkStop = False
+        booleanBlinkStopLooping = False
         FrmMain.lblControl_TimeLeft.Text = ""
+
 
         If (LastRow IsNot Nothing) Then
             ' Set the buttons based on the last row
@@ -779,6 +882,38 @@ Module DG_Show
         Reselect_Rows(DG_Show)
     End Sub
 
+    Public Sub StopAll()
+        If Not booleanBlinkStop Then
+            ' First press: start blinking red, stop other blinking
+            booleanBlinkStop = True
+            ToonFlashBericht("Druk nogmaals op show te stoppen!", 1, FlashSeverity.IsWarning)
+        Else
+            ' Second press: stop blinking, clear all WLEDs to black, stop all media players
+            ToonFlashBericht("Show " & My.Settings.ProjectName & " gestopt.", 30, FlashSeverity.IsInfo)
+
+            FrmMain.btnControl_StopAll.BackColor = Color.DarkRed
+            booleanBlinkStop = False
+            booleanBlinkStart = False
+            booleanBlinkNextEvent = False
+            booleanBlinkNextScene = False
+            booleanBlinkTimer = False
+
+            ' Call your sub to clear all WLEDs to black
+            ClearGroupsToBlack_WithBlackSolidEffect()
+
+            ' Stop all playing media players
+            Beamer_Primary.WMP_PrimaryPlayer_Live.Ctlcontrols.stop()
+            FrmMain.WMP_PrimaryPlayer_Preview.Ctlcontrols.stop()
+            Beamer_Secondairy.WMP_SecondairyPlayer_Live.Ctlcontrols.stop()
+            FrmMain.WMP_SecondairyPlayer_Preview.Ctlcontrols.stop()
+
+            ' Reset the grid to deselect all rows
+            DeselectAllRowsOfDGShow()
+        End If
+
+
+    End Sub
+
 
     Public Sub Reselect_Rows(DG_Show As DataGridView)
         For Each row In DG_Show.Rows
@@ -792,6 +927,13 @@ Module DG_Show
     End Sub
 
 
-
+    Public Sub DeselectAllRowsOfDGShow()
+        For Each row As DataGridViewRow In FrmMain.DG_Show.Rows
+            row.Selected = False
+            If row.Cells("btnApply") IsNot Nothing Then
+                row.Cells("btnApply").Value = " "
+            End If
+        Next
+    End Sub
 
 End Module

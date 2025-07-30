@@ -1,4 +1,6 @@
-﻿Public Class DetailShow
+﻿Imports System.Runtime.InteropServices.Marshalling
+
+Public Class DetailShowWLED
     Public Property RowData As Dictionary(Of String, Object)
 
     Public Sub New(rowData As Dictionary(Of String, Object))
@@ -8,15 +10,46 @@
         InitializeFieldsFromRowData()
     End Sub
 
+    Private Sub DetailShowWLED_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' Zorg dat het formulier op hetzelfde scherm als FrmMain verschijnt, rechtsonder
+        Dim mainScreen = Screen.FromControl(FrmMain)
+        Dim screenBounds = mainScreen.WorkingArea
+
+        Me.StartPosition = FormStartPosition.Manual
+        Me.Location = New Point(
+            screenBounds.Right - Me.Width - 40,
+            screenBounds.Bottom - Me.Height - 40
+        )
+    End Sub
+
     Private Sub InitializeFieldsFromRowData()
         On Error Resume Next
+
+
         If RowData.ContainsKey("colAct") Then cbAct.Text = RowData("colAct").ToString()
         If RowData.ContainsKey("colSceneID") Then tbScene.Text = RowData("colSceneID").ToString()
         If RowData.ContainsKey("colEventId") Then tbEvent.Text = RowData("colEventId").ToString()
         If RowData.ContainsKey("colTimer") Then tbTimer.Text = RowData("colTimer").ToString()
         If RowData.ContainsKey("colCue") Then tbCue.Text = RowData("colCue").ToString()
         If RowData.ContainsKey("colFixture") Then cbDevice.Text = RowData("colFixture").ToString()
-        If RowData.ContainsKey("colStateOnOff") Then cbPower.Checked = Convert.ToBoolean(RowData("colStateOnOff"))
+
+        cbPower.Checked = True
+        If RowData.ContainsKey("colStateOnOff") Then
+            If (RowData("colStateOnOff").ToString = "Uit" Or RowData("colStateOnOff").ToString = "Aan") Then
+                Select Case (RowData("colStateOnOff").ToString.ToLower)
+                    Case "uit"
+                        cbPower.Checked = False
+                    Case "aan"
+                        cbPower.Checked = True
+                    Case "true"
+                        cbPower.Checked = True
+                    Case "false"
+                        cbPower.Checked = False
+                    Case Else
+                        cbPower.Checked = True
+                End Select
+            End If
+        End If
         If RowData.ContainsKey("colEffect") Then cbEffect.Text = RowData("colEffect").ToString()
         If RowData.ContainsKey("colPalette") Then cbPalette.Text = RowData("colPalette").ToString()
         If RowData.ContainsKey("colColor1") Then btnColor1.BackColor = ColorTranslator.FromHtml(RowData("colColor1").ToString())
@@ -27,9 +60,7 @@
         If RowData.ContainsKey("colIntensity") Then tbIntensity.Value = Convert.ToInt32(RowData("colIntensity"))
         If RowData.ContainsKey("colTransition") Then tbTransition.Value = Convert.ToInt32(RowData("colTransition"))
         If RowData.ContainsKey("colBlend") Then cbBlend.Checked = Convert.ToBoolean(RowData("colBlend"))
-        If RowData.ContainsKey("colRepeat") Then cbRepeat.Checked = Convert.ToBoolean(RowData("colRepeat"))
-        If RowData.ContainsKey("colMicrophone") Then cbSound.Checked = Convert.ToBoolean(RowData("colMicrophone"))
-        If RowData.ContainsKey("colFilename") Then tbFilename.Text = RowData("colFilename").ToString()
+        If RowData.ContainsKey("colSound") Then cbSound.Checked = Convert.ToBoolean(RowData("colSound"))
     End Sub
 
     Private Sub PopulatePulldownLists()
@@ -60,9 +91,9 @@
         ' --- Devices (Fixtures) from DG_Groups ---
         cbDevice.Items.Clear()
         ' Add fixed video outputs first
-        cbDevice.Items.Add("** Video **/ Output 1")
-        cbDevice.Items.Add("** Video **/ Output 2")
-        cbDevice.Items.Add("** Video **/ Output 3")
+        cbDevice.Items.Add("** Video **/ Primairy")
+        cbDevice.Items.Add("** Video **/ Secondairy")
+
         For Each row As DataGridViewRow In mainForm.DG_Groups.Rows
             If row.IsNewRow Then Continue For
             Dim device = TryCast(row.Cells("colGroupFixture").Value, String)
@@ -103,9 +134,9 @@
         RowData("colIntensity") = tbIntensity.Value
         RowData("colTransition") = tbTransition.Value
         RowData("colBlend") = cbBlend.Checked
-        RowData("colRepeat") = cbRepeat.Checked
-        RowData("colMicrophone") = cbSound.Checked
-        RowData("colFilename") = tbFilename.Text
+
+        RowData("colSound") = cbSound.Checked
+
 
         ' Lookup EffectId from DG_Effecten
         Dim mainForm As FrmMain = CType(Application.OpenForms("FrmMain"), FrmMain)
@@ -175,17 +206,7 @@
         End Using
     End Sub
 
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        Using dlg As New OpenFileDialog()
-            dlg.Title = "Select Movie File"
-            dlg.Filter = "Video Files|*.mp4;*.avi;*.mov;*.mkv|All Files|*.*"
-            dlg.CheckFileExists = True
-            dlg.CheckPathExists = True
-            If dlg.ShowDialog() = DialogResult.OK Then
-                tbFilename.Text = dlg.FileName
-            End If
-        End Using
-    End Sub
+
 
     Private Sub btnPreview_Click(sender As Object, e As EventArgs) Handles btnPreview.Click
         UpdateRowDataFromFields()
@@ -398,7 +419,7 @@
         CopiedRowData("colEffect") = cbEffect.Text
         CopiedRowData("colPalette") = cbPalette.Text
         CopiedRowData("colStateOnOff") = cbPower.Checked
-        CopiedRowData("colMicrophone") = cbSound.Checked
+        CopiedRowData("colSound") = cbSound.Checked
         CopiedRowData("colBlend") = cbBlend.Checked
         CopiedRowData("colBrightness") = tbBrightness.Value
         CopiedRowData("colIntensity") = tbIntensity.Value
@@ -417,7 +438,7 @@
         If CopiedRowData.ContainsKey("colEffect") Then cbEffect.Text = CopiedRowData("colEffect").ToString()
         If CopiedRowData.ContainsKey("colPalette") Then cbPalette.Text = CopiedRowData("colPalette").ToString()
         If CopiedRowData.ContainsKey("colStateOnOff") Then cbPower.Checked = Convert.ToBoolean(CopiedRowData("colStateOnOff"))
-        If CopiedRowData.ContainsKey("colMicrophone") Then cbSound.Checked = Convert.ToBoolean(CopiedRowData("colMicrophone"))
+        If CopiedRowData.ContainsKey("colSound") Then cbSound.Checked = Convert.ToBoolean(CopiedRowData("colSound"))
         If CopiedRowData.ContainsKey("colBlend") Then cbBlend.Checked = Convert.ToBoolean(CopiedRowData("colBlend"))
         If CopiedRowData.ContainsKey("colBrightness") Then tbBrightness.Value = Convert.ToInt32(CopiedRowData("colBrightness"))
         If CopiedRowData.ContainsKey("colIntensity") Then tbIntensity.Value = Convert.ToInt32(CopiedRowData("colIntensity"))

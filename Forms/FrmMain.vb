@@ -108,11 +108,11 @@ Public Class FrmMain
 
 
 
-            UpdateMonitorStatusIndicators(cbMonitorControl, cbMonitorPrime, cbMonitorSecond)
+
             c = CheckWLEDOnlineStatus(DG_Devices)
             If (c > 0) Then
                 ' 1 of meerdere WLED-apparaten offline, geef een melding weer
-                ToonFlashBericht("Er zijn " + c.ToString + " WLED-apparaten offline op het netwerk.", 2)
+                ToonFlashBericht("Er zijn " + c.ToString + " WLED-apparaten offline op het netwerk.", 10, FlashSeverity.IsWarning)
             End If
 
             CurrentGroupId = -1
@@ -128,6 +128,34 @@ Public Class FrmMain
 
 
             SetZoom(ZoomFactor)
+
+
+
+            ' Beamer handlers
+            UpdateMonitorStatusIndicators(cbMonitorControl, cbMonitorPrime, cbMonitorSecond)
+
+
+
+            ' Setup the external beamer
+            If (ImagesAreEqual(pbPrimaryStatus.Image, My.Resources.iconGreenBullet1)) Then
+                SetPrimaryBeamerToCorrectOutput()
+                Beamer_Primary.Show()
+                Beamer_Primary.FormBorderStyle = FormBorderStyle.None
+                Beamer_Primary.BringToFront()
+            Else
+                ToonFlashBericht("Primary beamer is niet verbonden of ingesteld.", 20, FlashSeverity.IsWarning)
+            End If
+
+            If (ImagesAreEqual(pbSecondaryStatus.Image, My.Resources.iconGreenBullet1)) Then
+                SetSecondairyBeamerToCorrectOutput()
+                Beamer_Secondairy.Show()
+                Beamer_Secondairy.FormBorderStyle = FormBorderStyle.None
+                Beamer_Secondairy.BringToFront()
+            Else
+                ToonFlashBericht("Secondary beamer is niet verbonden of ingesteld.", 20, FlashSeverity.IsWarning)
+            End If
+
+
 
 
         Catch ex As Exception
@@ -191,7 +219,7 @@ Public Class FrmMain
 
     Private Sub DG_Show_DataError(sender As Object, e As DataGridViewDataErrorEventArgs) Handles DG_Show.DataError
         On Error Resume Next
-        'MessageBox.Show("DG_Show_DataError: " & e.Exception.Message, "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        'ToonFlashBericht("DG_Show_DataError: " & e.Exception.Message, 10, FlashSeverity.IsError)
     End Sub
 
     Private Sub cbMonitorControl_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbMonitorControl.SelectedIndexChanged
@@ -227,10 +255,10 @@ Public Class FrmMain
         ' Call your post-scan functions in order
         SplitIntoGroups(DG_Devices, DG_Groups)
         PopulateTreeView(DG_Groups, tvGroupsSelected)
-        ClearGroupsToBlack()
+        ClearGroupsToBlack_WithDDP()
         Update_DGEffecten_BasedOnDevices()
         Update_DGPalettes_BasedOnDevices()
-        ToonFlashBericht("Scan complete.", 2)
+        ToonFlashBericht("Scan complete.", 3)
 
     End Sub
 
@@ -244,7 +272,7 @@ Public Class FrmMain
                 Me.settings_ProjectFolder.Text = filePath
                 My.Settings.DatabaseFolder = filePath
             Catch ex As Exception
-                MsgBox("Fout bij het openen van het bestand: " & ex.Message, MsgBoxStyle.Critical, "Fout")
+                ToonFlashBericht("Fout bij het openen van het bestand: " & ex.Message, 10, FlashSeverity.IsError)
             End Try
         End If
         My.Settings.Save()
@@ -260,10 +288,10 @@ Public Class FrmMain
     Private Sub btnLockUnlocked_Click(sender As Object, e As EventArgs) Handles btnLockUnlocked.Click
         If btnLockUnlocked.Text = "Locked" Then
             Update_LockUnlocked("Unlocked")
-            ToonFlashBericht("Project " & lblTitleProject.Text & " is nu unlocked.", 2)
+            ToonFlashBericht("Project " & lblTitleProject.Text & " is nu unlocked.", 5)
         Else
             Update_LockUnlocked("Locked")
-            ToonFlashBericht("Project " & lblTitleProject.Text & " is locked.", 2)
+            ToonFlashBericht("Project " & lblTitleProject.Text & " is locked.", 5)
         End If
 
     End Sub
@@ -276,8 +304,20 @@ Public Class FrmMain
     Private Sub DG_Show_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DG_Show.CellClick
         ' Controleer of de klik op een knopcel in de gewenste kolom was
         Dim RowId = e.RowIndex
+        Dim FixtureValue As String = ""
         If e.ColumnIndex = DG_Show.Columns("btnApply").Index AndAlso e.RowIndex >= 0 Then
-            KLT_LedShow.Apply_DGShowRow_ToWLED(sender, DG_Devices, DG_Effecten, DG_Paletten, True)
+            If DG_Show.CurrentRow.Cells("colFixture").Value IsNot Nothing Then
+                FixtureValue = DG_Show.CurrentRow.Cells("colFixture").Value.ToString()
+            End If
+
+            If (FixtureValue.Substring(0, 2) = "**") Then
+                ' VIDEO
+                ApplyRowToBeamer(DG_Show.CurrentRow)
+            Else
+                ' WLED
+                KLT_LedShow.Apply_DGShowRow_ToWLED(sender, DG_Devices, DG_Effecten, DG_Paletten, True)
+            End If
+
 
         End If
     End Sub
@@ -328,7 +368,7 @@ Public Class FrmMain
 
         If (C <> LastOfflineDevices) Then
             LastOfflineDevices = C
-            ToonFlashBericht("Er zijn " & C.ToString & " WLED-apparaten offline op het netwerk.", 2)
+            ToonFlashBericht("Er zijn " & C.ToString & " WLED-apparaten offline op het netwerk.", 10)
         End If
     End Sub
 
@@ -427,7 +467,7 @@ Public Class FrmMain
     Private Sub btnGenerateSlider_Click(sender As Object, e As EventArgs) Handles btnGenerateSliders.Click
 
         If (DG_Devices.CurrentRow Is Nothing) Then
-            ToonFlashBericht("Selecteer eerst een device in de tabel.", 2)
+            ToonFlashBericht("Selecteer eerst een device in de tabel.", 3)
             Return
         End If
         CurrentDeviceId = DG_Devices.CurrentRow.Index
@@ -503,7 +543,7 @@ Public Class FrmMain
     Private Sub btnGroupsAutoSplit_Click(sender As Object, e As EventArgs) Handles btnGroupsAutoSplit.Click
         SplitIntoGroups(DG_Devices, DG_Groups)
         PopulateTreeView(DG_Groups, tvGroupsSelected)
-        ClearGroupsToBlack()
+        ClearGroupsToBlack_WithDDP()
     End Sub
 
     Private Sub tbEffectSpeed_Scroll(sender As Object, e As EventArgs) Handles tbEffectSpeed.Scroll
@@ -562,7 +602,7 @@ Public Class FrmMain
     Private Sub btnGroupDMXSlider_Click(sender As Object, e As EventArgs) Handles btnGroupDMXSlider.Click
 
         If (DG_Groups.CurrentRow Is Nothing) Then
-            ToonFlashBericht("Selecteer eerst een groep in de tabel.", 2)
+            ToonFlashBericht("Selecteer eerst een groep in de tabel.", 3)
             Return
         End If
 
@@ -607,7 +647,7 @@ Public Class FrmMain
 
     Private Sub btnResetEffect_Click(sender As Object, e As EventArgs) Handles btnResetEffect.Click
         ResetGroupsEffects()
-        ClearGroupsToBlack()
+        ClearGroupsToBlack_WithDDP()
     End Sub
 
     Private Sub btnTablesAddRowBefore_Click(sender As Object, e As EventArgs) Handles btnTablesAddRowBefore.Click
@@ -826,6 +866,7 @@ Public Class FrmMain
 
         If e.RowIndex < 0 Then Exit Sub
 
+
         Dim row = DG_Show.Rows(e.RowIndex)
         Dim rowData As New Dictionary(Of String, Object)
 
@@ -834,15 +875,29 @@ Public Class FrmMain
             rowData(col.Name) = row.Cells(col.Index).Value
         Next
 
-        ' Show the details form
-        Using detailsForm As New DetailShow(rowData)
-            If detailsForm.ShowDialog() = DialogResult.OK Then
-                ' Update the row with any changes
-                For Each col As DataGridViewColumn In DG_Show.Columns
-                    row.Cells(col.Index).Value = rowData(col.Name)
-                Next
-            End If
-        End Using
+        Dim FixtureString As String = rowData("colFixture").ToString().Substring(0, 2)
+        If (FixtureString = "**") Then
+            ' Show the details form FOR VIDEO
+            Using detailsForm As New DetailShowVideo(rowData)
+                If detailsForm.ShowDialog() = DialogResult.OK Then
+                    ' Update the row with any changes
+                    For Each col As DataGridViewColumn In DG_Show.Columns
+                        row.Cells(col.Index).Value = rowData(col.Name)
+                    Next
+                End If
+            End Using
+
+        Else
+            ' Show the details form FOR WLED
+            Using detailsForm As New DetailShowWLED(rowData)
+                If detailsForm.ShowDialog() = DialogResult.OK Then
+                    ' Update the row with any changes
+                    For Each col As DataGridViewColumn In DG_Show.Columns
+                        row.Cells(col.Index).Value = rowData(col.Name)
+                    Next
+                End If
+            End Using
+        End If
     End Sub
 
     Private Sub btnControl_NextEvent_Click(sender As Object, e As EventArgs) Handles btnControl_NextEvent.Click
@@ -851,5 +906,90 @@ Public Class FrmMain
 
     Private Sub btnControl_NextScene_Click(sender As Object, e As EventArgs) Handles btnControl_NextScene.Click
         Next_EventOrScene(DG_Show, nextScene)
+    End Sub
+
+    Private Sub WMP_PrimaryPlayer_Preview_PositionChange(sender As Object, e As AxWMPLib._WMPOCXEvents_PositionChangeEvent) Handles WMP_PrimaryPlayer_Preview.PositionChange
+        ' Synchronize the live player position with the preview player
+        Beamer_Primary.WMP_PrimaryPlayer_Live.Ctlcontrols.currentPosition = WMP_PrimaryPlayer_Preview.Ctlcontrols.currentPosition
+    End Sub
+
+    Private Sub WMP_PrimaryPlayer_Preview_ClickEvent(sender As Object, e As AxWMPLib._WMPOCXEvents_ClickEvent) Handles WMP_PrimaryPlayer_Preview.ClickEvent
+        ' Synchronize play, pause, and stop states to the live player
+        Dim previewState As Integer = WMP_PrimaryPlayer_Preview.playState
+
+        Select Case previewState
+            Case WMPLib.WMPPlayState.wmppsPlaying
+                Beamer_Primary.WMP_PrimaryPlayer_Live.Ctlcontrols.play()
+            Case WMPLib.WMPPlayState.wmppsPaused
+                Beamer_Primary.WMP_PrimaryPlayer_Live.Ctlcontrols.pause()
+            Case WMPLib.WMPPlayState.wmppsStopped
+                Beamer_Primary.WMP_PrimaryPlayer_Live.Ctlcontrols.stop()
+                btnStopLoopingAtEndOfVideo.Visible = False
+        End Select
+
+        ' Synchronize volume to the live player
+        Beamer_Primary.WMP_PrimaryPlayer_Live.settings.volume = WMP_PrimaryPlayer_Preview.settings.volume
+    End Sub
+
+    Private Sub WMP_PrimaryPlayer_Preview_PlayStateChange(sender As Object, e As AxWMPLib._WMPOCXEvents_PlayStateChangeEvent) Handles WMP_PrimaryPlayer_Preview.PlayStateChange
+        ' Synchronize play, pause, and stop states to the live player
+        Select Case WMP_PrimaryPlayer_Preview.playState
+            Case WMPLib.WMPPlayState.wmppsPlaying
+                Beamer_Primary.WMP_PrimaryPlayer_Live.Ctlcontrols.play()
+            Case WMPLib.WMPPlayState.wmppsPaused
+                Beamer_Primary.WMP_PrimaryPlayer_Live.Ctlcontrols.pause()
+            Case WMPLib.WMPPlayState.wmppsStopped
+                Beamer_Primary.WMP_PrimaryPlayer_Live.Ctlcontrols.stop()
+                btnStopLoopingAtEndOfVideo.Visible = False
+        End Select
+    End Sub
+
+    Private Sub WMP_SecondairyPlayer_Preview_PositionChange(sender As Object, e As AxWMPLib._WMPOCXEvents_PositionChangeEvent) Handles WMP_SecondairyPlayer_Preview.PositionChange
+        ' Synchronize the live player position with the preview player
+        Beamer_Secondairy.WMP_SecondairyPlayer_Live.Ctlcontrols.currentPosition = WMP_SecondairyPlayer_Preview.Ctlcontrols.currentPosition
+    End Sub
+
+    Private Sub WMP_SecondairyPlayer_Preview_ClickEvent(sender As Object, e As AxWMPLib._WMPOCXEvents_ClickEvent) Handles WMP_SecondairyPlayer_Preview.ClickEvent
+        ' Synchronize play, pause, and stop states to the live player
+        Dim previewState As Integer = WMP_SecondairyPlayer_Preview.playState
+
+        Select Case previewState
+            Case WMPLib.WMPPlayState.wmppsPlaying
+                Beamer_Secondairy.WMP_SecondairyPlayer_Live.Ctlcontrols.play()
+            Case WMPLib.WMPPlayState.wmppsPaused
+                Beamer_Secondairy.WMP_SecondairyPlayer_Live.Ctlcontrols.pause()
+            Case WMPLib.WMPPlayState.wmppsStopped
+                Beamer_Secondairy.WMP_SecondairyPlayer_Live.Ctlcontrols.stop()
+        End Select
+
+        ' Synchronize volume to the live player
+        Beamer_Secondairy.WMP_SecondairyPlayer_Live.settings.volume = WMP_SecondairyPlayer_Preview.settings.volume
+    End Sub
+
+    Private Sub WMP_SecondairyPlayer_Preview_PlayStateChange(sender As Object, e As AxWMPLib._WMPOCXEvents_PlayStateChangeEvent) Handles WMP_SecondairyPlayer_Preview.PlayStateChange
+        ' Synchronize play, pause, and stop states to the live player
+        Select Case WMP_SecondairyPlayer_Preview.playState
+            Case WMPLib.WMPPlayState.wmppsPlaying
+                Beamer_Secondairy.WMP_SecondairyPlayer_Live.Ctlcontrols.play()
+            Case WMPLib.WMPPlayState.wmppsPaused
+                Beamer_Secondairy.WMP_SecondairyPlayer_Live.Ctlcontrols.pause()
+            Case WMPLib.WMPPlayState.wmppsStopped
+                Beamer_Secondairy.WMP_SecondairyPlayer_Live.Ctlcontrols.stop()
+        End Select
+    End Sub
+
+    Private Sub btnControl_StopAll_Click(sender As Object, e As EventArgs) Handles btnControl_StopAll.Click
+        StopAll()
+
+    End Sub
+
+    Private Sub btnStopLoopingAtEndOfVideo_Click(sender As Object, e As EventArgs) Handles btnStopLoopingAtEndOfVideo.Click
+        Beamer_Primary.WMP_PrimaryPlayer_Live.settings.setMode("loop", False)
+        Beamer_Secondairy.WMP_SecondairyPlayer_Live.settings.setMode("loop", False)
+        WMP_PrimaryPlayer_Preview.settings.setMode("loop", False)
+        WMP_SecondairyPlayer_Preview.settings.setMode("loop", False)
+
+        ToonFlashBericht("Video stopt na deze cyclus.", 5)
+        TurnOnBlinkOfStopLooping()
     End Sub
 End Class

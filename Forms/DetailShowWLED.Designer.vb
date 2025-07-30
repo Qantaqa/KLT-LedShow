@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class DetailShow
+Partial Class DetailShowWLED
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -61,19 +61,13 @@ Partial Class DetailShow
         tbBrightness = New TrackBar()
         Label9 = New Label()
         cbPower = New CheckBox()
-        tbFilename = New TextBox()
-        TabControl1 = New TabControl()
-        TabPage1 = New TabPage()
         btnCopy = New Button()
         btnPaste = New Button()
         pbPreviewPalette = New PictureBox()
         pbPreviewEffect = New PictureBox()
-        TabPage2 = New TabPage()
-        Button1 = New Button()
-        Label8 = New Label()
-        cbRepeat = New CheckBox()
         btnPreview = New Button()
         cbAutoPreview = New CheckBox()
+        GroupBox4 = New GroupBox()
         GroupBox1.SuspendLayout()
         GroupBox2.SuspendLayout()
         GroupBox3.SuspendLayout()
@@ -81,11 +75,9 @@ Partial Class DetailShow
         CType(tbSpeed, ComponentModel.ISupportInitialize).BeginInit()
         CType(tbIntensity, ComponentModel.ISupportInitialize).BeginInit()
         CType(tbBrightness, ComponentModel.ISupportInitialize).BeginInit()
-        TabControl1.SuspendLayout()
-        TabPage1.SuspendLayout()
         CType(pbPreviewPalette, ComponentModel.ISupportInitialize).BeginInit()
         CType(pbPreviewEffect, ComponentModel.ISupportInitialize).BeginInit()
-        TabPage2.SuspendLayout()
+        GroupBox4.SuspendLayout()
         SuspendLayout()
         ' 
         ' btnOK
@@ -243,7 +235,7 @@ Partial Class DetailShow
         ' cbPalette
         ' 
         cbPalette.FormattingEnabled = True
-        cbPalette.Location = New Point(99, 81)
+        cbPalette.Location = New Point(104, 99)
         cbPalette.Name = "cbPalette"
         cbPalette.Size = New Size(203, 23)
         cbPalette.TabIndex = 3
@@ -251,7 +243,7 @@ Partial Class DetailShow
         ' Label6
         ' 
         Label6.AutoSize = True
-        Label6.Location = New Point(10, 84)
+        Label6.Location = New Point(15, 102)
         Label6.Name = "Label6"
         Label6.Size = New Size(43, 15)
         Label6.TabIndex = 2
@@ -260,7 +252,7 @@ Partial Class DetailShow
         ' cbEffect
         ' 
         cbEffect.FormattingEnabled = True
-        cbEffect.Location = New Point(99, 53)
+        cbEffect.Location = New Point(104, 71)
         cbEffect.Name = "cbEffect"
         cbEffect.Size = New Size(203, 23)
         cbEffect.TabIndex = 1
@@ -268,7 +260,7 @@ Partial Class DetailShow
         ' Label5
         ' 
         Label5.AutoSize = True
-        Label5.Location = New Point(10, 56)
+        Label5.Location = New Point(15, 74)
         Label5.Name = "Label5"
         Label5.Size = New Size(37, 15)
         Label5.TabIndex = 0
@@ -295,7 +287,7 @@ Partial Class DetailShow
         GroupBox3.Controls.Add(Label9)
         GroupBox3.Controls.Add(cbPower)
         GroupBox3.ForeColor = SystemColors.ControlLightLight
-        GroupBox3.Location = New Point(10, 110)
+        GroupBox3.Location = New Point(15, 128)
         GroupBox3.Name = "GroupBox3"
         GroupBox3.Size = New Size(438, 233)
         GroupBox3.TabIndex = 4
@@ -463,47 +455,10 @@ Partial Class DetailShow
         cbPower.Text = "Power"
         cbPower.UseVisualStyleBackColor = True
         ' 
-        ' tbFilename
-        ' 
-        tbFilename.Location = New Point(101, 6)
-        tbFilename.Name = "tbFilename"
-        tbFilename.Size = New Size(318, 23)
-        tbFilename.TabIndex = 10
-        tbFilename.Text = "1"
-        ' 
-        ' TabControl1
-        ' 
-        TabControl1.Controls.Add(TabPage1)
-        TabControl1.Controls.Add(TabPage2)
-        TabControl1.Location = New Point(12, 188)
-        TabControl1.Name = "TabControl1"
-        TabControl1.SelectedIndex = 0
-        TabControl1.Size = New Size(462, 384)
-        TabControl1.TabIndex = 11
-        ' 
-        ' TabPage1
-        ' 
-        TabPage1.BackColor = Color.Black
-        TabPage1.Controls.Add(btnCopy)
-        TabPage1.Controls.Add(btnPaste)
-        TabPage1.Controls.Add(pbPreviewPalette)
-        TabPage1.Controls.Add(pbPreviewEffect)
-        TabPage1.Controls.Add(cbEffect)
-        TabPage1.Controls.Add(Label5)
-        TabPage1.Controls.Add(cbPalette)
-        TabPage1.Controls.Add(GroupBox3)
-        TabPage1.Controls.Add(Label6)
-        TabPage1.Location = New Point(4, 24)
-        TabPage1.Name = "TabPage1"
-        TabPage1.Padding = New Padding(3)
-        TabPage1.Size = New Size(454, 356)
-        TabPage1.TabIndex = 0
-        TabPage1.Text = "Lighteffect"
-        ' 
         ' btnCopy
         ' 
         btnCopy.ForeColor = SystemColors.Highlight
-        btnCopy.Location = New Point(292, 6)
+        btnCopy.Location = New Point(297, 24)
         btnCopy.Name = "btnCopy"
         btnCopy.Size = New Size(75, 23)
         btnCopy.TabIndex = 21
@@ -513,7 +468,7 @@ Partial Class DetailShow
         ' btnPaste
         ' 
         btnPaste.ForeColor = SystemColors.Highlight
-        btnPaste.Location = New Point(373, 6)
+        btnPaste.Location = New Point(378, 24)
         btnPaste.Name = "btnPaste"
         btnPaste.Size = New Size(75, 23)
         btnPaste.TabIndex = 20
@@ -522,7 +477,7 @@ Partial Class DetailShow
         ' 
         ' pbPreviewPalette
         ' 
-        pbPreviewPalette.Location = New Point(308, 81)
+        pbPreviewPalette.Location = New Point(313, 99)
         pbPreviewPalette.Name = "pbPreviewPalette"
         pbPreviewPalette.Size = New Size(140, 23)
         pbPreviewPalette.SizeMode = PictureBoxSizeMode.StretchImage
@@ -531,55 +486,12 @@ Partial Class DetailShow
         ' 
         ' pbPreviewEffect
         ' 
-        pbPreviewEffect.Location = New Point(308, 52)
+        pbPreviewEffect.Location = New Point(313, 70)
         pbPreviewEffect.Name = "pbPreviewEffect"
         pbPreviewEffect.Size = New Size(140, 23)
         pbPreviewEffect.SizeMode = PictureBoxSizeMode.StretchImage
         pbPreviewEffect.TabIndex = 5
         pbPreviewEffect.TabStop = False
-        ' 
-        ' TabPage2
-        ' 
-        TabPage2.BackColor = Color.Black
-        TabPage2.Controls.Add(Button1)
-        TabPage2.Controls.Add(Label8)
-        TabPage2.Controls.Add(cbRepeat)
-        TabPage2.Controls.Add(tbFilename)
-        TabPage2.Location = New Point(4, 24)
-        TabPage2.Name = "TabPage2"
-        TabPage2.Padding = New Padding(3)
-        TabPage2.Size = New Size(454, 356)
-        TabPage2.TabIndex = 1
-        TabPage2.Text = "VideoEffect"
-        ' 
-        ' Button1
-        ' 
-        Button1.ForeColor = SystemColors.ActiveCaption
-        Button1.Location = New Point(425, 6)
-        Button1.Name = "Button1"
-        Button1.Size = New Size(26, 23)
-        Button1.TabIndex = 13
-        Button1.Text = "..."
-        Button1.UseVisualStyleBackColor = True
-        ' 
-        ' Label8
-        ' 
-        Label8.AutoSize = True
-        Label8.Location = New Point(11, 9)
-        Label8.Name = "Label8"
-        Label8.Size = New Size(55, 15)
-        Label8.TabIndex = 12
-        Label8.Text = "Filename"
-        ' 
-        ' cbRepeat
-        ' 
-        cbRepeat.AutoSize = True
-        cbRepeat.Location = New Point(98, 35)
-        cbRepeat.Name = "cbRepeat"
-        cbRepeat.Size = New Size(62, 19)
-        cbRepeat.TabIndex = 11
-        cbRepeat.Text = "Repeat"
-        cbRepeat.UseVisualStyleBackColor = True
         ' 
         ' btnPreview
         ' 
@@ -601,18 +513,37 @@ Partial Class DetailShow
         cbAutoPreview.Text = "Auto Preview"
         cbAutoPreview.UseVisualStyleBackColor = True
         ' 
-        ' DetailShow
+        ' GroupBox4
+        ' 
+        GroupBox4.Controls.Add(btnCopy)
+        GroupBox4.Controls.Add(cbEffect)
+        GroupBox4.Controls.Add(btnPaste)
+        GroupBox4.Controls.Add(Label6)
+        GroupBox4.Controls.Add(pbPreviewPalette)
+        GroupBox4.Controls.Add(GroupBox3)
+        GroupBox4.Controls.Add(pbPreviewEffect)
+        GroupBox4.Controls.Add(cbPalette)
+        GroupBox4.Controls.Add(Label5)
+        GroupBox4.ForeColor = SystemColors.ControlLight
+        GroupBox4.Location = New Point(12, 188)
+        GroupBox4.Name = "GroupBox4"
+        GroupBox4.Size = New Size(462, 373)
+        GroupBox4.TabIndex = 14
+        GroupBox4.TabStop = False
+        GroupBox4.Text = "WLED"
+        ' 
+        ' DetailShowWLED
         ' 
         AcceptButton = btnOK
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.Black
         CancelButton = btnCancel
-        ClientSize = New Size(491, 612)
+        ClientSize = New Size(487, 612)
         ControlBox = False
+        Controls.Add(GroupBox4)
         Controls.Add(cbAutoPreview)
         Controls.Add(btnPreview)
-        Controls.Add(TabControl1)
         Controls.Add(GroupBox2)
         Controls.Add(GroupBox1)
         Controls.Add(btnCancel)
@@ -620,8 +551,8 @@ Partial Class DetailShow
         ForeColor = SystemColors.ControlLightLight
         MaximizeBox = False
         MinimizeBox = False
-        Name = "DetailShow"
-        Text = "DetailShow"
+        Name = "DetailShowWLED"
+        Text = "Edit details (WLED)"
         GroupBox1.ResumeLayout(False)
         GroupBox1.PerformLayout()
         GroupBox2.ResumeLayout(False)
@@ -632,13 +563,10 @@ Partial Class DetailShow
         CType(tbSpeed, ComponentModel.ISupportInitialize).EndInit()
         CType(tbIntensity, ComponentModel.ISupportInitialize).EndInit()
         CType(tbBrightness, ComponentModel.ISupportInitialize).EndInit()
-        TabControl1.ResumeLayout(False)
-        TabPage1.ResumeLayout(False)
-        TabPage1.PerformLayout()
         CType(pbPreviewPalette, ComponentModel.ISupportInitialize).EndInit()
         CType(pbPreviewEffect, ComponentModel.ISupportInitialize).EndInit()
-        TabPage2.ResumeLayout(False)
-        TabPage2.PerformLayout()
+        GroupBox4.ResumeLayout(False)
+        GroupBox4.PerformLayout()
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -677,14 +605,7 @@ Partial Class DetailShow
     Friend WithEvents Label12 As Label
     Friend WithEvents cbAct As ComboBox
     Friend WithEvents tbTimer As TextBox
-    Friend WithEvents tbFilename As TextBox
-    Friend WithEvents TabControl1 As TabControl
-    Friend WithEvents TabPage1 As TabPage
-    Friend WithEvents TabPage2 As TabPage
     Friend WithEvents Label13 As Label
-    Friend WithEvents Button1 As Button
-    Friend WithEvents Label8 As Label
-    Friend WithEvents cbRepeat As CheckBox
     Friend WithEvents btnPreview As Button
     Friend WithEvents pbPreviewEffect As PictureBox
     Friend WithEvents pbPreviewPalette As PictureBox
@@ -695,4 +616,5 @@ Partial Class DetailShow
     Friend WithEvents btnCopy As Button
     Friend WithEvents btnPaste As Button
     Friend WithEvents cbAutoPreview As CheckBox
+    Friend WithEvents GroupBox4 As GroupBox
 End Class
