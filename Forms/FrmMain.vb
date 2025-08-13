@@ -112,7 +112,14 @@ Public Class FrmMain
             c = CheckWLEDOnlineStatus(DG_Devices)
             If (c > 0) Then
                 ' 1 of meerdere WLED-apparaten offline, geef een melding weer
-                ToonFlashBericht("Er zijn " + c.ToString + " WLED-apparaten offline op het netwerk.", 10, FlashSeverity.IsWarning)
+                Select Case c
+                    Case 0
+                        ToonFlashBericht("Alle WLED-apparaten online.", 3, FlashSeverity.IsInfo)
+                    Case 1
+                        ToonFlashBericht("Er is 1 WLED-apparaat offline op het netwerk.", 10, FlashSeverity.IsWarning)
+                    Case Else
+                        ToonFlashBericht("Er zijn " + c.ToString + " WLED-apparaten offline op het netwerk.", 10, FlashSeverity.IsWarning)
+                End Select
             End If
 
             CurrentGroupId = -1
@@ -368,7 +375,15 @@ Public Class FrmMain
 
         If (C <> LastOfflineDevices) Then
             LastOfflineDevices = C
-            ToonFlashBericht("Er zijn " & C.ToString & " WLED-apparaten offline op het netwerk.", 10)
+
+            Select Case C
+                Case 0
+                    ToonFlashBericht("Er zijn geen WLED-apparaten offline.", 5, FlashSeverity.IsInfo)
+                Case 1
+                    ToonFlashBericht("Er is 1 WLED-apparaat offline op het netwerk.", 5, FlashSeverity.IsWarning)
+                Case Else
+                    ToonFlashBericht("Er zijn " + C.ToString + " WLED-apparaten offline op het netwerk.", 10, FlashSeverity.IsWarning)
+            End Select
         End If
     End Sub
 
@@ -991,5 +1006,9 @@ Public Class FrmMain
 
         ToonFlashBericht("Video stopt na deze cyclus.", 5)
         TurnOnBlinkOfStopLooping()
+    End Sub
+
+    Private Sub btnControl_NextAct_Click(sender As Object, e As EventArgs) Handles btnControl_NextAct.Click
+        Next_Act(DG_Show, filterAct)
     End Sub
 End Class

@@ -413,6 +413,7 @@ Module WLEDControl
 
 
     Public Async Function SetSegmentsFromGridAsync(ByVal DG_Devices As DataGridView) As Task
+
         For Each devRow As DataGridViewRow In DG_Devices.Rows
             If devRow.IsNewRow Then Continue For
 
@@ -452,13 +453,15 @@ Module WLEDControl
                     End Using
                 Catch ex As TaskCanceledException
                     ToonFlashBericht($"[WLED] Timeout bij {ip}.", 5, FlashSeverity.IsWarning)
-                    devRow.Cells("colOnline").Value = My.Resources.iconRedBullet1
+                    'devRow.Cells("colOnline").Value = My.Resources.iconRedBullet1
                 Catch ex As HttpRequestException
                     ToonFlashBericht($"[WLED] Device offline of netwerkfout bij {ip}: {ex.Message}", 5, FlashSeverity.IsError)
-                    devRow.Cells("colOnline").Value = My.Resources.iconRedBullet1
+                    'devRow.Cells("colOnline").Value = My.Resources.iconRedBullet1
+
+
                 Catch ex As Exception
                     ToonFlashBericht($"[WLED] Onverwachte fout bij {ip}: {ex.Message}", 5, FlashSeverity.IsError)
-                    devRow.Cells("colOnline").Value = My.Resources.iconRedBullet1
+                    'devRow.Cells("colOnline").Value = My.Resources.iconRedBullet1
                 End Try
             End If
         Next

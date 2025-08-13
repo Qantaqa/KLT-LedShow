@@ -28,7 +28,7 @@
     </Structure>
     <Data>
         <Row>
-            <btnApply></btnApply>
+            <btnApply>&gt;</btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>1</colSceneId>
             <colEventId>1</colEventId>
@@ -51,10 +51,10 @@
             <colRepeat>False</colRepeat>
             <colSound>False</colSound>
             <colFilename></colFilename>
-            <colSend>False</colSend>
+            <colSend>True</colSend>
         </Row>
         <Row>
-            <btnApply></btnApply>
+            <btnApply>&gt;</btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>1</colSceneId>
             <colEventId>1</colEventId>
@@ -77,10 +77,10 @@
             <colRepeat>False</colRepeat>
             <colSound>False</colSound>
             <colFilename>1</colFilename>
-            <colSend>False</colSend>
+            <colSend>True</colSend>
         </Row>
         <Row>
-            <btnApply></btnApply>
+            <btnApply>&gt;</btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>1</colSceneId>
             <colEventId>1</colEventId>
@@ -103,10 +103,10 @@
             <colRepeat>False</colRepeat>
             <colSound>False</colSound>
             <colFilename>1</colFilename>
-            <colSend>False</colSend>
+            <colSend>True</colSend>
         </Row>
         <Row>
-            <btnApply></btnApply>
+            <btnApply>&gt;</btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>1</colSceneId>
             <colEventId>1</colEventId>
@@ -127,8 +127,8 @@
             <colTransition></colTransition>
             <colBlend>False</colBlend>
             <colRepeat>True</colRepeat>
-            <colSound>True</colSound>
-            <colFilename>C:\KKLT\Anestesia\Promo-2.mp4</colFilename>
+            <colSound>False</colSound>
+            <colFilename>C:\KKLT\2025. Titanic\Beamers\Preshow\Promo - Anastasia.mp4</colFilename>
             <colSend>False</colSend>
         </Row>
         <Row>
@@ -210,7 +210,7 @@
             <colSend>False</colSend>
         </Row>
         <Row>
-            <btnApply>&gt;</btnApply>
+            <btnApply></btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>2</colSceneId>
             <colEventId>1</colEventId>
@@ -233,10 +233,10 @@
             <colRepeat>False</colRepeat>
             <colSound>False</colSound>
             <colFilename>1</colFilename>
-            <colSend>True</colSend>
+            <colSend>False</colSend>
         </Row>
         <Row>
-            <btnApply>&gt;</btnApply>
+            <btnApply></btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>2</colSceneId>
             <colEventId>1</colEventId>
@@ -259,10 +259,10 @@
             <colRepeat>False</colRepeat>
             <colSound>False</colSound>
             <colFilename>1</colFilename>
-            <colSend>True</colSend>
+            <colSend>False</colSend>
         </Row>
         <Row>
-            <btnApply>&gt;</btnApply>
+            <btnApply></btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>2</colSceneId>
             <colEventId>1</colEventId>
@@ -285,10 +285,10 @@
             <colRepeat>False</colRepeat>
             <colSound>False</colSound>
             <colFilename>1</colFilename>
-            <colSend>True</colSend>
+            <colSend>False</colSend>
         </Row>
         <Row>
-            <btnApply>&gt;</btnApply>
+            <btnApply></btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>2</colSceneId>
             <colEventId>1</colEventId>
@@ -311,10 +311,10 @@
             <colRepeat>False</colRepeat>
             <colSound>False</colSound>
             <colFilename>1</colFilename>
-            <colSend>True</colSend>
+            <colSend>False</colSend>
         </Row>
         <Row>
-            <btnApply>&gt;</btnApply>
+            <btnApply></btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>2</colSceneId>
             <colEventId>1</colEventId>
@@ -337,10 +337,10 @@
             <colRepeat>False</colRepeat>
             <colSound>False</colSound>
             <colFilename>1</colFilename>
-            <colSend>True</colSend>
+            <colSend>False</colSend>
         </Row>
         <Row>
-            <btnApply>&gt;</btnApply>
+            <btnApply></btnApply>
             <colAct>Pre-Show</colAct>
             <colSceneId>2</colSceneId>
             <colEventId>1</colEventId>
@@ -363,7 +363,1281 @@
             <colRepeat>False</colRepeat>
             <colSound>False</colSound>
             <colFilename>1</colFilename>
-            <colSend>True</colSend>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>0</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>1A "In elke tijd" [pag 5]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>2A "Wat een gigant" [pag 7]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>2</colEventId>
+            <colTimer></colTimer>
+            <colCue>2B "Kijk haar daar" [pag 8]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>3</colEventId>
+            <colTimer></colTimer>
+            <colCue>2C "Vrachtinventaris" [pag 9]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>4</colEventId>
+            <colTimer></colTimer>
+            <colCue>2D "Het grootste bewegend voorwerp" [pag 11]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>5</colEventId>
+            <colTimer></colTimer>
+            <colCue>2E "Pitmans instructies #1" [pag 12]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>6</colEventId>
+            <colTimer></colTimer>
+            <colCue>2F "Laat me nu aan boord #1" [pag 13]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>7</colEventId>
+            <colTimer></colTimer>
+            <colCue>2G "Pitmans instructies #2" [pag 13]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>8</colEventId>
+            <colTimer></colTimer>
+            <colCue>2H "Laat me nu aan boord #2" [pag 14]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>9</colEventId>
+            <colTimer></colTimer>
+            <colCue>2I "Mevrouw Baene"  [pag 15]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>10</colEventId>
+            <colTimer></colTimer>
+            <colCue>2J "Finale Vaar Door Titanic" [pag 17]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>11</colEventId>
+            <colTimer></colTimer>
+            <colCue>Carlson mist boot [pag 19]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>2</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 2: Brug en Ketelruimte [pag 20] &gt;Projectie: Donderdag 11 april</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>3</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 3: 2e klas promonade kijkt naar 1e klas [pag 25]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>3</colSceneId>
+            <colEventId>2</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 3b: 3e klas promonade kijkt naar 2e klas [pag 26] </colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>4</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Nr 8: Wat een bijzondere eeuw &gt; 1e klas eetsalon [pag 27]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>4</colSceneId>
+            <colEventId>2</colEventId>
+            <colTimer></colTimer>
+            <colCue>Diner: donderdag 11 april [pag 31]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>4</colSceneId>
+            <colEventId>3</colEventId>
+            <colTimer></colTimer>
+            <colCue>Diner: vrijdag 12 april [pag 32]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>4</colSceneId>
+            <colEventId>4</colEventId>
+            <colTimer></colTimer>
+            <colCue>Diner: zaterdag 13 april [pag 34]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>5</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Brug: zaterdag 13 april [pag 37] </colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>6</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 5: Middendek, 3e klas [pag 40]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>7</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 6: Brug [pag 45]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>8</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 7: Telegraagkamer, zaterdag 13 april [pag 47]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>9</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 8: Bovenste promenadedek &gt;Sloependek [pag 52]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>10</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 9: Brug [pag 59]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>10</colSceneId>
+            <colEventId>2</colEventId>
+            <colTimer></colTimer>
+            <colCue>Rookkamer [pag 69]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>10</colSceneId>
+            <colEventId>3</colEventId>
+            <colTimer></colTimer>
+            <colCue>Kraaiennest [pag 74]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 1</colAct>
+            <colSceneId>10</colSceneId>
+            <colEventId>4</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 10: Aanvaring [pag 76]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Pauze</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Aankondiging pauze</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Pauze</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>2</colEventId>
+            <colTimer></colTimer>
+            <colCue>Sponsoren</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Pauze</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>3</colEventId>
+            <colTimer></colTimer>
+            <colCue>Voorbereiding act 2 - beamers uit</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 11: Brug [pag 77]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>2</colEventId>
+            <colTimer></colTimer>
+            <colCue>1e klas deuren [pag 79]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>3</colEventId>
+            <colTimer></colTimer>
+            <colCue>Brug [pag 81]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>4</colEventId>
+            <colTimer></colTimer>
+            <colCue>2e klas deuren [pag 81]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>5</colEventId>
+            <colTimer></colTimer>
+            <colCue>Brug [pag 84]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>6</colEventId>
+            <colTimer></colTimer>
+            <colCue>3e klas deuren [pag 85]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>7</colEventId>
+            <colTimer></colTimer>
+            <colCue>Brug [pag 87]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>2</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 12: grand salon [pag 88]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>3</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 13: 3e klasse trappenhuis 12u10 [pag 93]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>4</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 14: Sloependek &amp; Radiokamer [pag 96]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>4</colSceneId>
+            <colEventId>2</colEventId>
+            <colTimer></colTimer>
+            <colCue>Radiokamer C Q D [pag 100]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>5</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 15: Sloependek [pag 108]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>6</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 16: zijkant scipt [pag 114]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>7</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 17: promenade desk tijd 2u14 [pag 119] - champagne</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>8</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 18: Adrews vision [pag 122]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>9</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Scene 19: Aan boord van Carpathia [paga 125]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Act 2</colAct>
+            <colSceneId>10</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Finale #1 [pag 128]</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
+        </Row>
+        <Row>
+            <btnApply></btnApply>
+            <colAct>Post-Show</colAct>
+            <colSceneId>1</colSceneId>
+            <colEventId>1</colEventId>
+            <colTimer></colTimer>
+            <colCue>Dank</colCue>
+            <colFixture></colFixture>
+            <colStateOnOff></colStateOnOff>
+            <colEffectId></colEffectId>
+            <colEffect></colEffect>
+            <colPaletteId></colPaletteId>
+            <colPalette></colPalette>
+            <colColor1></colColor1>
+            <colColor2></colColor2>
+            <colColor3></colColor3>
+            <colBrightness></colBrightness>
+            <colSpeed></colSpeed>
+            <colIntensity></colIntensity>
+            <colTransition></colTransition>
+            <colBlend>False</colBlend>
+            <colRepeat>False</colRepeat>
+            <colSound>False</colSound>
+            <colFilename></colFilename>
+            <colSend>False</colSend>
         </Row>
     </Data>
 </DataGridData>

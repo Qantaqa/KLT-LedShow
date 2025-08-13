@@ -24,8 +24,8 @@ Partial Class FrmMain
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmMain))
-        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         DG_Devices = New DataGridView()
         colIPAddress = New DataGridViewTextBoxColumn()
         colInstance = New DataGridViewTextBoxColumn()
@@ -44,6 +44,7 @@ Partial Class FrmMain
         TabControl = New TabControl()
         TabShow = New TabPage()
         gb_Controls = New GroupBox()
+        btnControl_NextAct = New Button()
         btnStopLoopingAtEndOfVideo = New Button()
         btn_ReconnectSecondairyBeamer = New Button()
         btn_ReconnectPrimaryBeamer = New Button()
@@ -71,8 +72,10 @@ Partial Class FrmMain
         detailWLed_Brightness = New TrackBar()
         detailWLed_Palette = New PictureBox()
         gbSecondairyBeamer = New GroupBox()
+        warning_SecondairyBeamerOffline = New Label()
         WMP_SecondairyPlayer_Preview = New AxWMPLib.AxWindowsMediaPlayer()
         gbPrimaryBeamer = New GroupBox()
+        warning_PrimaryBeamerOffline = New Label()
         WMP_PrimaryPlayer_Preview = New AxWMPLib.AxWindowsMediaPlayer()
         ToolStip_Show = New ToolStrip()
         lblFilter = New ToolStripLabel()
@@ -335,8 +338,6 @@ Partial Class FrmMain
         ddpTimer = New Timer(components)
         stageTimer = New Timer(components)
         Timer_LoadBuffer = New Timer(components)
-        warning_PrimaryBeamerOffline = New Label()
-        warning_SecondairyBeamerOffline = New Label()
         CType(DG_Devices, ComponentModel.ISupportInitialize).BeginInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).BeginInit()
         TabControl.SuspendLayout()
@@ -560,6 +561,7 @@ Partial Class FrmMain
         ' 
         gb_Controls.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         gb_Controls.AutoSize = True
+        gb_Controls.Controls.Add(btnControl_NextAct)
         gb_Controls.Controls.Add(btnStopLoopingAtEndOfVideo)
         gb_Controls.Controls.Add(btn_ReconnectSecondairyBeamer)
         gb_Controls.Controls.Add(btn_ReconnectPrimaryBeamer)
@@ -575,6 +577,19 @@ Partial Class FrmMain
         gb_Controls.TabIndex = 7
         gb_Controls.TabStop = False
         gb_Controls.Text = "Show controls"
+        ' 
+        ' btnControl_NextAct
+        ' 
+        btnControl_NextAct.BackColor = Color.Black
+        btnControl_NextAct.ForeColor = Color.White
+        btnControl_NextAct.Image = CType(resources.GetObject("btnControl_NextAct.Image"), Image)
+        btnControl_NextAct.ImageAlign = ContentAlignment.MiddleRight
+        btnControl_NextAct.Location = New Point(111, 119)
+        btnControl_NextAct.Name = "btnControl_NextAct"
+        btnControl_NextAct.Size = New Size(368, 41)
+        btnControl_NextAct.TabIndex = 8
+        btnControl_NextAct.Text = "Volgende act"
+        btnControl_NextAct.UseVisualStyleBackColor = False
         ' 
         ' btnStopLoopingAtEndOfVideo
         ' 
@@ -875,6 +890,18 @@ Partial Class FrmMain
         gbSecondairyBeamer.TabStop = False
         gbSecondairyBeamer.Text = "Secondairy beamer - not playing"
         ' 
+        ' warning_SecondairyBeamerOffline
+        ' 
+        warning_SecondairyBeamerOffline.AutoSize = True
+        warning_SecondairyBeamerOffline.BackColor = Color.Transparent
+        warning_SecondairyBeamerOffline.FlatStyle = FlatStyle.Flat
+        warning_SecondairyBeamerOffline.ForeColor = Color.Red
+        warning_SecondairyBeamerOffline.Location = New Point(89, 86)
+        warning_SecondairyBeamerOffline.Name = "warning_SecondairyBeamerOffline"
+        warning_SecondairyBeamerOffline.Size = New Size(94, 15)
+        warning_SecondairyBeamerOffline.TabIndex = 2
+        warning_SecondairyBeamerOffline.Text = "DISCONNECTED"
+        ' 
         ' WMP_SecondairyPlayer_Preview
         ' 
         WMP_SecondairyPlayer_Preview.Dock = DockStyle.Fill
@@ -898,6 +925,18 @@ Partial Class FrmMain
         gbPrimaryBeamer.TabIndex = 4
         gbPrimaryBeamer.TabStop = False
         gbPrimaryBeamer.Text = "Primary beamer - Not playing"
+        ' 
+        ' warning_PrimaryBeamerOffline
+        ' 
+        warning_PrimaryBeamerOffline.AutoSize = True
+        warning_PrimaryBeamerOffline.BackColor = Color.Transparent
+        warning_PrimaryBeamerOffline.FlatStyle = FlatStyle.Flat
+        warning_PrimaryBeamerOffline.ForeColor = Color.Red
+        warning_PrimaryBeamerOffline.Location = New Point(82, 80)
+        warning_PrimaryBeamerOffline.Name = "warning_PrimaryBeamerOffline"
+        warning_PrimaryBeamerOffline.Size = New Size(94, 15)
+        warning_PrimaryBeamerOffline.TabIndex = 1
+        warning_PrimaryBeamerOffline.Text = "DISCONNECTED"
         ' 
         ' WMP_PrimaryPlayer_Preview
         ' 
@@ -1019,9 +1058,9 @@ Partial Class FrmMain
         ' 
         ' colSceneId
         ' 
-        DataGridViewCellStyle3.Format = "N0"
-        DataGridViewCellStyle3.NullValue = Nothing
-        colSceneId.DefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle1.Format = "N0"
+        DataGridViewCellStyle1.NullValue = Nothing
+        colSceneId.DefaultCellStyle = DataGridViewCellStyle1
         colSceneId.HeaderText = "Scene"
         colSceneId.Name = "colSceneId"
         colSceneId.ToolTipText = "Scene nummer van de show"
@@ -1029,9 +1068,9 @@ Partial Class FrmMain
         ' 
         ' colEventId
         ' 
-        DataGridViewCellStyle4.Format = "N0"
-        DataGridViewCellStyle4.NullValue = Nothing
-        colEventId.DefaultCellStyle = DataGridViewCellStyle4
+        DataGridViewCellStyle2.Format = "N0"
+        DataGridViewCellStyle2.NullValue = Nothing
+        colEventId.DefaultCellStyle = DataGridViewCellStyle2
         colEventId.HeaderText = "Event"
         colEventId.Name = "colEventId"
         colEventId.ToolTipText = "Het event nummer binnen een scene."
@@ -3212,30 +3251,6 @@ Partial Class FrmMain
         stageTimer.Enabled = True
         stageTimer.Interval = 500
         ' 
-        ' warning_PrimaryBeamerOffline
-        ' 
-        warning_PrimaryBeamerOffline.AutoSize = True
-        warning_PrimaryBeamerOffline.BackColor = Color.Transparent
-        warning_PrimaryBeamerOffline.FlatStyle = FlatStyle.Flat
-        warning_PrimaryBeamerOffline.ForeColor = Color.Red
-        warning_PrimaryBeamerOffline.Location = New Point(82, 80)
-        warning_PrimaryBeamerOffline.Name = "warning_PrimaryBeamerOffline"
-        warning_PrimaryBeamerOffline.Size = New Size(94, 15)
-        warning_PrimaryBeamerOffline.TabIndex = 1
-        warning_PrimaryBeamerOffline.Text = "DISCONNECTED"
-        ' 
-        ' warning_SecondairyBeamerOffline
-        ' 
-        warning_SecondairyBeamerOffline.AutoSize = True
-        warning_SecondairyBeamerOffline.BackColor = Color.Transparent
-        warning_SecondairyBeamerOffline.FlatStyle = FlatStyle.Flat
-        warning_SecondairyBeamerOffline.ForeColor = Color.Red
-        warning_SecondairyBeamerOffline.Location = New Point(89, 86)
-        warning_SecondairyBeamerOffline.Name = "warning_SecondairyBeamerOffline"
-        warning_SecondairyBeamerOffline.Size = New Size(94, 15)
-        warning_SecondairyBeamerOffline.TabIndex = 2
-        warning_SecondairyBeamerOffline.Text = "DISCONNECTED"
-        ' 
         ' FrmMain
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -3684,5 +3699,6 @@ Partial Class FrmMain
     Friend WithEvents btn_ReconnectPrimaryBeamer As Button
     Friend WithEvents warning_SecondairyBeamerOffline As Label
     Friend WithEvents warning_PrimaryBeamerOffline As Label
+    Friend WithEvents btnControl_NextAct As Button
 
 End Class
