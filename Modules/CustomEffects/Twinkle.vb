@@ -93,25 +93,50 @@ Module CustomEffects_Twinkle
         Return result
     End Function
 
-    ' Simpele sinusvorm fade-in/fade-out (0.0–1.0)
+    ' Simpele sinusvorm fade-in/fade-out (0.0–1.0) met guards
     Private Function GetFadeBrightness(framePos As Integer, duration As Integer) As Single
-        Dim phase = Math.PI * framePos / duration
-        Return CSng(Math.Sin(phase)) ' 0–1–0 curve
+        If duration <= 0 Then Return 0.0F
+        ' Keep framePos within [0, duration] to avoid numeric drift
+        Dim fp = Math.Max(0, Math.Min(duration, framePos))
+        Dim phase As Double = Math.PI * fp / duration
+        Dim s As Double = Math.Sin(phase) ' expected 0..1..0
+        Dim f As Single = CSng(s)
+        If Single.IsNaN(f) OrElse Single.IsInfinity(f) Then Return 0.0F
+        ' Clamp to [0,1] to avoid tiny negatives due to FP error
+        Return Math.Max(0.0F, Math.Min(1.0F, f))
     End Function
 
-    ' Lineaire interpolatie tussen twee kleuren
+    Private Function ClampByte(v As Single) As Byte
+        If Single.IsNaN(v) OrElse Single.IsInfinity(v) Then v = 0.0F
+        v = Math.Max(0.0F, Math.Min(255.0F, v))
+        Return CByte(Math.Round(v))
+    End Function
+
+    ' Lineaire interpolatie tussen twee kleuren (safe)
     Private Sub InterpolateColor(startColor As Color, endColor As Color, t As Single, ByRef r As Byte, ByRef g As Byte, ByRef b As Byte)
-        r = CByte(startColor.R + t * (endColor.R - startColor.R))
-        g = CByte(startColor.G + t * (endColor.G - startColor.G))
-        b = CByte(startColor.B + t * (endColor.B - startColor.B))
+        ' Ensure t is in [0,1]
+        If Single.IsNaN(t) OrElse Single.IsInfinity(t) Then t = 0.0F
+        t = Math.Max(0.0F, Math.Min(1.0F, t))
+
+        Dim rr As Single = CSng(startColor.R) + t * (CSng(endColor.R) - CSng(startColor.R))
+        Dim gg As Single = CSng(startColor.G) + t * (CSng(endColor.G) - CSng(startColor.G))
+        Dim bb As Single = CSng(startColor.B) + t * (CSng(endColor.B) - CSng(startColor.B))
+
+        r = ClampByte(rr)
+        g = ClampByte(gg)
+        b = ClampByte(bb)
     End Sub
 
-    ' Past helderheid toe op RGB waarden, respecteert BrightnessBaseline en BrightnessEffect
+    ' Past helderheid toe op RGB waarden met guards
     Private Sub ApplyBrightness(ByRef r As Byte, ByRef g As Byte, ByRef b As Byte, brightnessFactor As Single, parameters As EffectParams)
-        Dim effectBri = parameters.Brightness_Effect / 100.0F
-        r = CByte(Math.Min(255, r * brightnessFactor * effectBri))
-        g = CByte(Math.Min(255, g * brightnessFactor * effectBri))
-        b = CByte(Math.Min(255, b * brightnessFactor * effectBri))
+        Dim effectBri As Single = Math.Max(0.0F, Math.Min(1.0F, parameters.Brightness_Effect / 100.0F))
+        Dim scale As Single = brightnessFactor * effectBri
+        If Single.IsNaN(scale) OrElse Single.IsInfinity(scale) Then scale = 0.0F
+        scale = Math.Max(0.0F, Math.Min(1.0F, scale))
+
+        r = ClampByte(CSng(r) * scale)
+        g = ClampByte(CSng(g) * scale)
+        b = ClampByte(CSng(b) * scale)
     End Sub
 
 End Module

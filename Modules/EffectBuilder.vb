@@ -1,5 +1,6 @@
 ﻿Imports System.Drawing
 Imports System.Drawing.Drawing2D
+Imports System.Drawing.Imaging
 Imports System.Runtime.Intrinsics.Arm
 Imports System.Windows.Forms
 
@@ -76,6 +77,7 @@ Module EffectBuilder
         RemoveHandler _panel.MouseMove, AddressOf OnPanelMouseMove
         RemoveHandler _panel.MouseUp, AddressOf OnPanelMouseUp
         RemoveHandler _panel.Scroll, AddressOf OnPanelScroll
+        RemoveHandler _panel.MouseDoubleClick, AddressOf OnPanelDoubleClick   ' added
 
         ' Voeg de nieuwe handlers toe
         AddHandler _panel.Paint, AddressOf OnPanelPaint
@@ -86,7 +88,6 @@ Module EffectBuilder
         AddHandler _panel.Scroll, AddressOf OnPanelScroll
         AddHandler _panel.MouseDoubleClick, AddressOf OnPanelDoubleClick
 
-
         panel.Cursor = Cursors.Default
         panel.Invalidate()
     End Sub
@@ -96,7 +97,9 @@ Module EffectBuilder
     Public Sub OnLightSourceClicked(trackId As Integer, lsRowIndex As Integer)
         On Error Resume Next
 
-        ' 1) Selecteer de juiste track in DG_Tracks
+        Dim ValueString As String = ""
+
+        ' 1) Select correct track in DG_Tracks
         For Each row As DataGridViewRow In _dgTracks.Rows
             If Not row.IsNewRow AndAlso CInt(row.Cells("colTrackId").Value) = trackId Then
                 _dgTracks.ClearSelection()
@@ -105,22 +108,22 @@ Module EffectBuilder
             End If
         Next
 
-        ' 2) Selecteer de LightSource-rij in DG_LightSources
+        ' 2) Select LS row
         _dgLightSources.ClearSelection()
         If lsRowIndex >= 0 AndAlso lsRowIndex < _dgLightSources.Rows.Count Then
             _dgLightSources.Rows(lsRowIndex).Selected = True
         End If
 
-        ' 3) Toon marker op het podium
+        ' 3) Stage marker
         Stage.SelectedLSIndex = lsRowIndex
         Stage.DrawSelectedMarker = True
         FrmMain.pb_Stage.Invalidate()
 
-        ' 4) Haal de DataGridViewRow op en maak detailForm
+        ' 4) Open detail form
         Dim lsRow = _dgLightSources.Rows(lsRowIndex)
         Dim detailForm As New DetailLightSource()
 
-        ' 5) Vul alle velden in detailForm
+        ' 5) Fill fields
         With detailForm
             .txtStartMoment.Text = lsRow.Cells("colLSStartMoment").Value.ToString()
             .txtDuration.Text = lsRow.Cells("colLSDuration").Value.ToString()
@@ -130,32 +133,27 @@ Module EffectBuilder
             .cmbShape.SelectedItem = lsRow.Cells("colLSShape").Value
             .cmbDirection.SelectedItem = lsRow.Cells("colLSDirection").Value
             .chkBlend.Checked = CBool(lsRow.Cells("colLSBlend").Value)
-            .tbEffectSpeed.Value = CInt(lsRow.Cells("colLSEffectSpeed").Value)
-            .TBEffectIntensity.Value = CInt(lsRow.Cells("colLSEffectIntensity").Value)
-            .TBEffectDispersion.Value = CInt(lsRow.Cells("colLSEffectDispersion").Value)
 
+            ValueString = lsRow.Cells("colLSEffectSpeed").Value
+            If ValueString <> "" Then .tbEffectSpeed.Value = CInt(ValueString) Else .tbEffectSpeed.Value = 0
+
+            ValueString = lsRow.Cells("colLSEffectIntensity").Value
+            If ValueString <> "" Then .TBEffectIntensity.Value = CInt(ValueString) Else .TBEffectIntensity.Value = 0
+
+            ValueString = lsRow.Cells("colLSEffectDispersion").Value
+            If ValueString <> "" Then .TBEffectDispersion.Value = CInt(ValueString) Else .TBEffectDispersion.Value = 0
 
             Select Case lsRow.Cells("colLSEffectDirection").Value.ToString().ToUpper()
-                Case "UPLEFT"
-                    .EffectDirectionUpLeft.Checked = True
-                Case "UP"
-                    .EffectDirectionUp.Checked = True
-                Case "UPRIGHT"
-                    .EffectDirectionUpRight.Checked = True
-                Case "RIGHT"
-                    .EffectDirectionRight.Checked = True
-                Case "DOWNRIGHT"
-                    .EffectDirectionDownRight.Checked = True
-                Case "DOWN"
-                    .EffectDirectionDown.Checked = True
-                Case "DOWNLEFT"
-                    .EffectDirectionDownLeft.Checked = True
-                Case "LEFT"
-                    .EffectDirectionLeft.Checked = True
+                Case "UPLEFT" : .EffectDirectionUpLeft.Checked = True
+                Case "UP" : .EffectDirectionUp.Checked = True
+                Case "UPRIGHT" : .EffectDirectionUpRight.Checked = True
+                Case "RIGHT" : .EffectDirectionRight.Checked = True
+                Case "DOWNRIGHT" : .EffectDirectionDownRight.Checked = True
+                Case "DOWN" : .EffectDirectionDown.Checked = True
+                Case "DOWNLEFT" : .EffectDirectionDownLeft.Checked = True
+                Case "LEFT" : .EffectDirectionLeft.Checked = True
             End Select
 
-
-            ' Kleuren
             .btnC1.BackColor = Color.FromArgb(CInt(lsRow.Cells("colLSColor1").Value))
             .btnC2.BackColor = Color.FromArgb(CInt(lsRow.Cells("colLSColor2").Value))
             .btnC3.BackColor = Color.FromArgb(CInt(lsRow.Cells("colLSColor3").Value))
@@ -166,42 +164,26 @@ Module EffectBuilder
             .tbBrightnessBaseline.Value = CInt(lsRow.Cells("colLSBrightnessBaseline").Value)
             .tbBrightnessEffect.Value = CInt(lsRow.Cells("colLSBrightnessEffect").Value)
 
+            ' Populate groups TreeView from DG_Groups
+            Groups.PopulateTreeView(.tvGroupsSelected, FrmMain.DG_Groups)
 
-            ' a) Clone de hoofd-TreeView inclusief Tag
-            .tvGroupsSelected.BeginUpdate()
-            .tvGroupsSelected.Nodes.Clear()
-            For Each rootNode As TreeNode In FrmMain.tvGroupsSelected.Nodes
-                Dim clone As TreeNode = DirectCast(rootNode.Clone(), TreeNode)
-                clone.Tag = rootNode.Tag   ' **zorg dat Tag wordt meegekopieerd**
-                ' voor alle child-nodes geldt hetzelfde, maar Clone() kopieert Children+Tags
-                .tvGroupsSelected.Nodes.Add(clone)
-            Next
-            .tvGroupsSelected.ExpandAll()
-            .tvGroupsSelected.EndUpdate()
-
-            ' b) Lees opgeslagen groep-IDs (CSV in colLSGroups)
+            ' b) Read stored selection (CSV in colLSGroups) and mark in TreeView
             Dim selGroupIds As New List(Of String)
-            If (Not IsDBNull(lsRow.Cells("colLSGroups").Value) And Not IsNothing(lsRow.Cells("colLSGroups").Value)) Then
-                selGroupIds = CStr(lsRow.Cells("colLSGroups").Value) _
-                .Split(","c) _
-                .Select(Function(s) s.Trim()) _
-                .Where(Function(s) s <> "") _
-                .ToList()
+            If (Not IsDBNull(lsRow.Cells("colLSGroups").Value) AndAlso Not IsNothing(lsRow.Cells("colLSGroups").Value)) Then
+                selGroupIds = CStr(lsRow.Cells("colLSGroups").Value).
+                    Split(","c).
+                    Select(Function(s) s.Trim()).
+                    Where(Function(s) s <> "").
+                    ToList()
             End If
 
-            ' c) Recursief alle nodes controleren
             .tvGroupsSelected.BeginUpdate()
             DetailLightSource.CheckAndMarkNodes(.tvGroupsSelected.Nodes, selGroupIds)
             .tvGroupsSelected.ExpandAll()
             .tvGroupsSelected.EndUpdate()
-
-
-
         End With
 
-        ' 7) Toon dialog en sla wijzigingen op bij OK
         If detailForm.ShowDialog() = DialogResult.OK Then
-            ' a) Update alle LightSource velden
             lsRow.Cells("colLSStartMoment").Value = CDec(detailForm.txtStartMoment.Text)
             lsRow.Cells("colLSDuration").Value = CDec(detailForm.txtDuration.Text)
             lsRow.Cells("colLSPositionX").Value = CDec(detailForm.txtPositionX.Text)
@@ -225,11 +207,12 @@ Module EffectBuilder
             lsRow.Cells("colLSBrightnessBaseline").Value = detailForm.tbBrightnessBaseline.Value
             lsRow.Cells("colLSBrightnessEffect").Value = detailForm.tbBrightnessEffect.Value
 
+            ' Persist group selections
             lsRow.Cells("colLSGroups").Value = String.Join(",", detailForm.SelectedGroupIds)
         End If
+
         RefreshTimeline()
     End Sub
-
     ''' <summary>
     ''' Helper om alle child-nodes (recursief) dezelfde Checked-status te geven.
     ''' </summary>
@@ -265,41 +248,39 @@ Module EffectBuilder
 
 
 
-
-
     Public Sub Compile_EffectDesigner()
 
 
         ' Controleer eerst of er een effect geselecteerd in de DG_MyEffects table, zo niet skippen met een melding
-        If FrmMain.DG_MyEffects.CurrentRow Is Nothing Then
+        If FrmMain.DG_Templates.CurrentRow Is Nothing Then
             Dim selectedName As String = FrmMain.cbSelectedEffect.Text
             If String.IsNullOrWhiteSpace(selectedName) Then Exit Sub
 
             ' Zoek de bijbehorende rij in DG_MyEffects en selecteer deze
-            For Each MErow As DataGridViewRow In FrmMain.DG_MyEffects.Rows
+            For Each MErow As DataGridViewRow In FrmMain.DG_Templates.Rows
                 If MErow.IsNewRow Then Continue For
-                If CStr(MErow.Cells("colMEName").Value) = selectedName Then
+                If CStr(MErow.Cells("colTemplateName").Value) = selectedName Then
                     MErow.Selected = True
-                    FrmMain.DG_MyEffects.CurrentCell = MErow.Cells("colMEName")
+                    FrmMain.DG_Templates.CurrentCell = MErow.Cells("colTemplateName")
                     Exit For
                 End If
             Next
 
             ' Als er nog steeds geen rij is geselecteerd, geef een melding
-            If FrmMain.DG_MyEffects.CurrentRow Is Nothing Then
+            If FrmMain.DG_Templates.CurrentRow Is Nothing Then
                 ToonFlashBericht("Selecteer eerst een effect.", 2)
                 Return
             End If
         End If
 
         ' Sla het effectid op
-        Dim effectId = CInt(FrmMain.DG_MyEffects.CurrentRow.Cells("colMEID").Value)
+        Dim effectId = CInt(FrmMain.DG_Templates.CurrentRow.Cells("colTemplateId").Value)
 
 
         ' Verwijder oude frames van vorige compile op dit effect.
-        For i As Integer = FrmMain.DG_MyEffectsFrames.Rows.Count - 1 To 0 Step -1
-            If CInt(FrmMain.DG_MyEffectsFrames.Rows(i).Cells("colMF_MEID").Value) = effectId Then
-                FrmMain.DG_MyEffectsFrames.Rows.RemoveAt(i)
+        For i As Integer = FrmMain.DG_Frames.Rows.Count - 1 To 0 Step -1
+            If CInt(FrmMain.DG_Frames.Rows(i).Cells("colFrame_Id").Value) = effectId Then
+                FrmMain.DG_Frames.Rows.RemoveAt(i)
             End If
         Next
 
@@ -337,7 +318,8 @@ Module EffectBuilder
         ' de frames worden opgeslagen. 
         Dim deviceCounts = New Dictionary(Of String, Integer)
         For Each led In LedLijst
-            deviceCounts(led.DeviceNaam) = Math.Max(deviceCounts.GetValueOrDefault(led.DeviceNaam, 0), led.IndexInDevice + 1)
+            Dim current As Integer = If(deviceCounts.ContainsKey(led.DeviceNaam), deviceCounts(led.DeviceNaam), 0)
+            deviceCounts(led.DeviceNaam) = Math.Max(current, led.IndexInDevice + 1)
         Next
 
         ' En maak een lijstje aan, waar we het resultaat in op gaan slaan
@@ -411,15 +393,26 @@ Module EffectBuilder
                 Dim shapeType = shapeLightsource.Cells("colLSShape").Value.ToString()
                 Dim sizeMm = (CDbl(shapeLightsource.Cells("colLSSize").Value) * 10) / 2
 
+
+                Dim strSpeed As String = shapeLightsource.Cells("colLSEffectSpeed").Value
+                If strSpeed = "" Then strSpeed = "0"
+
+                Dim strIntensity As String = shapeLightsource.Cells("colLSEffectIntensity").Value
+                If strIntensity = "" Then strIntensity = "0"
+
+                Dim strDispersion As String = shapeLightsource.Cells("colLSEffectDispersion").Value
+                If strDispersion = "" Then strDispersion = "0"
+
+
                 Dim parameters As New EffectParams With {
                     .EffectName = shapeEffect,
                     .FPS = fps,
                     .Duration = CInt(durSec * 1000),
                     .Brightness_Baseline = CInt(shapeLightsource.Cells("colLSBrightnessBaseline").Value),
                     .Brightness_Effect = CInt(shapeLightsource.Cells("colLSBrightnessEffect").Value),
-                    .Speed = CInt(shapeLightsource.Cells("colLSEffectSpeed").Value),
-                    .Intensity = CInt(shapeLightsource.Cells("colLSEffectIntensity").Value),
-                    .Dispersion = CInt(shapeLightsource.Cells("colLSEffectDispersion").Value),
+                    .Speed = CInt(strSpeed),
+                    .Intensity = CInt(strIntensity),
+                    .Dispersion = CInt(strDispersion),
                     .Kleuren = {c1, c2, c3, c4, c5}
                 }
 
@@ -544,11 +537,11 @@ Module EffectBuilder
         For Each thisResult In resultList
             Dim fixureId = thisResult.Key
             Dim framesList = thisResult.Value
-            Dim rowIdx = FrmMain.DG_MyEffectsFrames.Rows.Add()
-            With FrmMain.DG_MyEffectsFrames.Rows(rowIdx)
-                .Cells("colMF_MEID").Value = effectId
-                .Cells("colMF_FixtureID").Value = fixureId
-                .Cells("colMF_Frames").Value = framesList
+            Dim rowIdx = FrmMain.DG_Frames.Rows.Add()
+            With FrmMain.DG_Frames.Rows(rowIdx)
+                .Cells("colFrame_Id").Value = effectId
+                .Cells("colFrame_FixtureID").Value = fixureId
+                .Cells("colFrame_Frames").Value = framesList
             End With
         Next
 
@@ -709,9 +702,9 @@ Module EffectBuilder
     '        Dim framesList = thisResult.Value
     '        Dim rowIdx = FrmMain.DG_MyEffectsFrames.Rows.Add()
     '        With FrmMain.DG_MyEffectsFrames.Rows(rowIdx)
-    '            .Cells("colMF_MEID").Value = effectId
-    '            .Cells("colMF_FixtureID").Value = fixureId
-    '            .Cells("colMF_Frames").Value = framesList
+    '            .Cells("colFrames_Id").Value = effectId
+    '            .Cells("colFrame_FixtureID").Value = fixureId
+    '            .Cells("colFrame_Frames").Value = framesList
     '        End With
     '    Next
 
@@ -752,11 +745,11 @@ Module EffectBuilder
         DrawTimelineAxis(g, xOffset, yOffset)
         DrawZoomButtons(g, xOffset, yOffset)
 
-        Dim selectedEffectId As Integer = -1
+        Dim selectedTemplateId As Integer = -1
         If FrmMain.cbSelectedEffect.SelectedItem IsNot Nothing Then
-            For Each row As DataGridViewRow In FrmMain.DG_MyEffects.Rows
-                If Not row.IsNewRow AndAlso CStr(row.Cells("colMEName").Value) = FrmMain.cbSelectedEffect.SelectedItem.ToString() Then
-                    selectedEffectId = CInt(row.Cells("colMEID").Value)
+            For Each row As DataGridViewRow In FrmMain.DG_Templates.Rows
+                If Not row.IsNewRow AndAlso CStr(row.Cells("colTemplateName").Value) = FrmMain.cbSelectedEffect.SelectedItem.ToString() Then
+                    selectedTemplateId = CInt(row.Cells("colTemplateId").Value)
                     Exit For
                 End If
             Next
@@ -771,23 +764,21 @@ Module EffectBuilder
 
             Dim trackId = CInt(rowT.Cells("colTrackId").Value)
             Dim trackName = CStr(rowT.Cells("colTrackName").Value)
-            Dim trackActive = rowT.Cells("colTrackActive").Value = "True"
+
+            ' Robust boolean parsing for Active
+            Dim trackActive As Boolean
+            Dim v = rowT.Cells("colTrackActive").Value
+            If TypeOf v Is Boolean Then
+                trackActive = CBool(v)
+            Else
+                trackActive = String.Equals(Convert.ToString(v), "True", StringComparison.OrdinalIgnoreCase)
+            End If
+
             Dim isSelected = (_dgTracks.CurrentRow IsNot Nothing AndAlso _dgTracks.CurrentRow.Index = i)
 
             Dim yTop = yOffset + TimelineHeight + TrackMargin + i * (RowHeight + TrackMargin)
             Dim trackRect = New Rectangle(0, yTop, _panel.ClientSize.Width, RowHeight)
-            Dim bgColor As Color
-
-            If (trackActive) Then
-                bgColor = Color.Black
-            Else
-                If (isSelected) Then
-                    bgColor = Color.Blue
-                Else
-                    bgColor = Color.FromArgb(30, 30, 30)
-                End If
-            End If
-
+            Dim bgColor As Color = If(trackActive, Color.Black, If(isSelected, Color.Blue, Color.FromArgb(30, 30, 30)))
 
             Using bg As New SolidBrush(bgColor)
                 g.FillRectangle(bg, trackRect)
@@ -806,16 +797,12 @@ Module EffectBuilder
                 Dim rowLS = _dgLightSources.Rows(j)
                 If rowLS.IsNewRow Then Continue For
                 If CInt(rowLS.Cells("colLSTrackId").Value) <> trackId Then Continue For
-                If selectedEffectId >= 0 AndAlso CInt(rowLS.Cells("colLSMyEffectId").Value) <> selectedEffectId Then Continue For
+                If selectedTemplateId >= 0 AndAlso CInt(rowLS.Cells("colLSTemplateId").Value) <> selectedTemplateId Then Continue For
 
                 Dim startSec = CSng(rowLS.Cells("colLSStartMoment").Value)
                 If Math.Abs(startSec) < 0.01 Then hasStartZero = True
 
                 Dim durSec = CSng(rowLS.Cells("colLSDuration").Value)
-                Dim col1 = CType(rowLS.Cells("colLSColor1").Tag, Color)
-                Dim col2 = CType(rowLS.Cells("colLSColor2").Tag, Color)
-                Dim shape = CStr(rowLS.Cells("colLSShape").Value)
-
                 Dim xPx = xOffset + LeftMargin + CInt(startSec * _zoomScale)
                 Dim wPx = Math.Max(HandleWidth, CInt(durSec * _zoomScale))
                 Dim lsRect = New Rectangle(xPx, yTop + 4, wPx, RowHeight - 8)
@@ -831,11 +818,12 @@ Module EffectBuilder
                     g.FillRectangle(gripR, New Rectangle(lsRect.Right - HandleWidth, lsRect.Top, HandleWidth, lsRect.Height))
                 End Using
 
+                Dim shape = CStr(rowLS.Cells("colLSShape").Value)
                 DrawShapeIcon(g, shape, lsRect)
             Next
 
             ' Als geen shape op start=0 → teken rode marker
-            If Not trackActive Then
+            If Not hasStartZero Then
                 Dim markerX = xOffset + LeftMargin
                 Dim markerY1 = yTop + 2
                 Dim markerY2 = yTop + RowHeight - 4
@@ -1096,7 +1084,7 @@ Module EffectBuilder
 
 
 
-    ' Bij scroll (vertical of horizontal) de timeline verversen
+    ' Bij scroll (vertical of horizontale) de timeline verversen
     Private Sub OnPanelScroll(sender As Object, e As ScrollEventArgs)
         RefreshTimeline()
     End Sub
@@ -1205,13 +1193,13 @@ Module EffectBuilder
         Dim axisY2 = yOffset + TimelineHeight + trackCount * (RowHeight + TrackMargin)
 
         ' START marker (groen)
-        Dim xS = xOffset + LeftMargin + CInt(CInt(FrmMain.lblPreviewFromPosition.Text) * _zoomScale)
+        Dim xS = xOffset + LeftMargin + CInt(Convert.ToDouble(FrmMain.lblPreviewFromPosition.Text) * _zoomScale)
         Using pen As New Pen(Color.Lime, 2)
             g.DrawLine(pen, xS, axisY1, xS, axisY2)
         End Using
 
         ' END marker (rood)
-        Dim xE = xOffset + LeftMargin + CInt(FrmMain.lblPreviewToPosition.Text * _zoomScale)
+        Dim xE = xOffset + LeftMargin + CInt(Convert.ToDouble(FrmMain.lblPreviewToPosition.Text) * _zoomScale)
         Using pen As New Pen(Color.Red, 2)
             g.DrawLine(pen, xE, axisY1, xE, axisY2)
         End Using
@@ -1219,15 +1207,13 @@ Module EffectBuilder
         ' CURRENT marker (lichtblauwe pijl, wat dikker)
         Dim xC = xOffset + LeftMargin + CInt(PreviewMarkerCurrent * _zoomScale)
         Using pen As New Pen(Color.LightSkyBlue, 3)
-            ' pijl omhoog
             Dim topY = axisY1 + 1
             Dim botY = axisY1 + 15
-            g.DrawLine(pen, xC, botY, xC, topY)               ' steel
-            g.DrawLine(pen, xC, botY, xC - 6, botY - 6)       ' vleugel links
-            g.DrawLine(pen, xC, botY, xC + 6, botY - 6)       ' vleugel rechts
+            g.DrawLine(pen, xC, botY, xC, topY)
+            g.DrawLine(pen, xC, botY, xC - 6, botY - 6)
+            g.DrawLine(pen, xC, botY, xC + 6, botY - 6)
         End Using
     End Sub
-
     ''' <summary>
     ''' Afhandelen van klik/drag events voor LightSources en voor TrackClick-events.
     ''' </summary>
@@ -1274,10 +1260,14 @@ Module EffectBuilder
             End If
         Next
 
-        ' Als we hier zijn en het was een click in de lege track-zone:
-        If isClick Then RaiseEvent TrackClicked(trackId)
+        ' Alleen klikken in de linkse "header" zone (tot aan de tijdlijn-LeftMargin) openen Track-editor
+        If isClick Then
+            Dim headerRightX = xOffset + LeftMargin
+            If x <= headerRightX Then
+                RaiseEvent TrackClicked(trackId)
+            End If
+        End If
     End Sub
-
     Public Sub SetZoom(zoomSeconds As Integer)
         _zoomSeconds = zoomSeconds
         RecalcScale()
@@ -1287,21 +1277,21 @@ Module EffectBuilder
 
     Public Sub SendPreviewFrame()
         ' 1) Bepaal welke effect-id actief is
-        Dim meGrid = FrmMain.DG_MyEffects
+        Dim meGrid = FrmMain.DG_Templates
         If meGrid.CurrentRow Is Nothing Then Return
-        Dim effectId = CInt(meGrid.CurrentRow.Cells("colMEID").Value)
+        Dim effectId = CInt(meGrid.CurrentRow.Cells("colTemplateId").Value)
 
         ' 2) Bepaal het frame-index op basis van PreviewMarkerCurrent en fps
         Const fps As Integer = 5
         Dim frameIdx = CInt(Math.Floor(PreviewMarkerCurrent * fps))
 
         ' 3) Loop alle voor dit effect gegenereerde rijen in DG_MyEffectsFrames
-        For Each row As DataGridViewRow In FrmMain.DG_MyEffectsFrames.Rows
+        For Each row As DataGridViewRow In FrmMain.DG_Frames.Rows
             If row.IsNewRow Then Continue For
-            If CInt(row.Cells("colMF_MEID").Value) <> effectId Then Continue For
+            If CInt(row.Cells("colFrame_Id").Value) <> effectId Then Continue For
 
-            Dim fixture = CStr(row.Cells("colMF_FixtureID").Value)
-            Dim frames = TryCast(row.Cells("colMF_Frames").Value, List(Of Byte()))
+            Dim fixture = CStr(row.Cells("colFrame_FixtureID").Value)
+            Dim frames = TryCast(row.Cells("colFrame_Frames").Value, List(Of Byte()))
             If frames Is Nothing OrElse frameIdx < 0 OrElse frameIdx >= frames.Count Then Continue For
 
             ' 4) Haal het juiste frame-buffer
@@ -1322,14 +1312,16 @@ Module EffectBuilder
                 Exit For
             Next
         Next
-    End Sub
 
+        ' Refresh Stage to visualize the buffer immediately
+        Stage.TekenPodium(FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
+    End Sub
 
     Public Sub VulEffectCombo()
         FrmMain.cbSelectedEffect.Items.Clear()
-        For Each row As DataGridViewRow In FrmMain.DG_MyEffects.Rows
+        For Each row As DataGridViewRow In FrmMain.DG_Templates.Rows
             If row.IsNewRow Then Continue For
-            Dim effectName As String = CStr(row.Cells("colMEName").Value)
+            Dim effectName As String = CStr(row.Cells("colTemplateName").Value)
             FrmMain.cbSelectedEffect.Items.Add(effectName)
         Next
 
@@ -1343,9 +1335,9 @@ Module EffectBuilder
         Dim selectedEffect = FrmMain.cbSelectedEffect.Text
         Dim effectId As Integer = -1
 
-        For Each row As DataGridViewRow In FrmMain.DG_MyEffects.Rows
-            If Not row.IsNewRow AndAlso CStr(row.Cells("colMEName").Value) = selectedEffect Then
-                effectId = CInt(row.Cells("colMEID").Value)
+        For Each row As DataGridViewRow In FrmMain.DG_Templates.Rows
+            If Not row.IsNewRow AndAlso CStr(row.Cells("colTemplateName").Value) = selectedEffect Then
+                effectId = CInt(row.Cells("colTemplateId").Value)
                 Exit For
             End If
         Next
@@ -1362,7 +1354,7 @@ Module EffectBuilder
         Dim nextId = 1
         For Each row As DataGridViewRow In FrmMain.DG_Tracks.Rows
             If Not row.IsNewRow Then
-                Dim id = CInt(row.Cells("colTrackID").Value)
+                Dim id = CInt(row.Cells("colTrackId").Value)
                 If id >= nextId Then nextId = id + 1
             End If
         Next
@@ -1403,9 +1395,9 @@ Module EffectBuilder
         ' 2) Zoek huidig geselecteerde MyEffect ID uit combobox
         Dim myEffectId As Integer = -1
         Dim selectedEffect = FrmMain.cbSelectedEffect.Text
-        For Each row As DataGridViewRow In FrmMain.DG_MyEffects.Rows
-            If Not row.IsNewRow AndAlso CStr(row.Cells("colMEName").Value) = selectedEffect Then
-                myEffectId = CInt(row.Cells("colMEID").Value)
+        For Each row As DataGridViewRow In FrmMain.DG_Templates.Rows
+            If Not row.IsNewRow AndAlso CStr(row.Cells("colTemplateName").Value) = selectedEffect Then
+                myEffectId = CInt(row.Cells("colTemplateId").Value)
                 Exit For
             End If
         Next
@@ -1498,33 +1490,33 @@ Module EffectBuilder
         RefreshTimeline()
     End Sub
 
-    Public Sub AddEffect()
-        Dim effectName = InputBox("Geef een naam voor het nieuwe effect:", "Nieuw Effect")
-        If String.IsNullOrWhiteSpace(effectName) Then Exit Sub
-        Dim effectDesc = InputBox("Geef een beschrijving voor het effect:", "Beschrijving Effect")
+    Public Sub AddTemplate()
+        Dim TemplateName = InputBox("Geef een naam voor het nieuwe template:", "Nieuw Template")
+        If String.IsNullOrWhiteSpace(TemplateName) Then Exit Sub
+        Dim effectDesc = InputBox("Geef een beschrijving voor het effect:", "Beschrijving")
 
         Dim nextId = 1
-        For Each row As DataGridViewRow In FrmMain.DG_MyEffects.Rows
+        For Each row As DataGridViewRow In FrmMain.DG_Templates.Rows
             If Not row.IsNewRow Then
-                Dim id = CInt(row.Cells("colMEID").Value)
+                Dim id = CInt(row.Cells("colTemplateId").Value)
                 If id >= nextId Then nextId = id + 1
             End If
         Next
 
-        FrmMain.DG_MyEffects.Rows.Add(nextId, effectName, effectDesc)
+        FrmMain.DG_Templates.Rows.Add(nextId, TemplateName, effectDesc)
         VulEffectCombo()
         TekenPodium(FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
         RefreshTimeline()
     End Sub
 
-    Public Sub RemoveEffect()
+    Public Sub RemoveTemplate()
         Dim selectedName As String = FrmMain.cbSelectedEffect.Text
         If String.IsNullOrWhiteSpace(selectedName) Then Exit Sub
 
-        For Each row As DataGridViewRow In FrmMain.DG_MyEffects.Rows
-            If Not row.IsNewRow AndAlso CStr(row.Cells("colMEName").Value) = selectedName Then
-                If MessageBox.Show($"Effect '{selectedName}' verwijderen?", "Bevestigen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
-                    FrmMain.DG_MyEffects.Rows.Remove(row)
+        For Each row As DataGridViewRow In FrmMain.DG_Templates.Rows
+            If Not row.IsNewRow AndAlso CStr(row.Cells("colTemplateName").Value) = selectedName Then
+                If MessageBox.Show($"Template '{selectedName}' verwijderen?", "Bevestigen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
+                    FrmMain.DG_Templates.Rows.Remove(row)
                     Exit For
                 End If
             End If

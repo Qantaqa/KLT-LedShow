@@ -173,8 +173,8 @@ Module SaveLoad
         SaveDataGridViewToXml(FrmMain.DG_Show, Folder + "\Show.xml")
 
         SaveDataGridViewToXml(FrmMain.DG_LightSources, Folder + "\Lights.xml")
-        SaveDataGridViewToXml(FrmMain.DG_MyEffects, Folder + "\MyEffects.xml")
-        SaveDataGridViewToXml(FrmMain.DG_MyEffectsFrames, Folder + "\Frames.xml")
+        SaveDataGridViewToXml(FrmMain.DG_Templates, Folder + "\MyEffects.xml")
+        SaveDataGridViewToXml(FrmMain.DG_Frames, Folder + "\Frames.xml")
         SaveDataGridViewToXml(FrmMain.DG_Tracks, Folder + "\Tracks.xml")
 
         ToonFlashBericht("All data has been saved.", 1)
@@ -197,8 +197,8 @@ Module SaveLoad
         Await SetSegmentsFromGridAsync(FrmMain.DG_Devices)
 
         LoadXmlToDataGridView(FrmMain.DG_Tracks, Folder + "\Tracks.xml", False)
-        LoadXmlToDataGridView(FrmMain.DG_MyEffects, Folder + "\MyEffects.xml", False)
-        LoadXmlToDataGridView(FrmMain.DG_MyEffectsFrames, Folder + "\Frames.xml", False)
+        LoadXmlToDataGridView(FrmMain.DG_Templates, Folder + "\MyEffects.xml", False)
+        LoadXmlToDataGridView(FrmMain.DG_Frames, Folder + "\Frames.xml", False)
         LoadXmlToDataGridView(FrmMain.DG_LightSources, Folder + "\Lights.xml", False)
 
         SetAllDevicesOffline(FrmMain.DG_Devices)
@@ -217,7 +217,7 @@ Module SaveLoad
 
         CheckWLEDOnlineStatus(FrmMain.DG_Devices)
         PopulateFixtureDropdown_InGroups(FrmMain.DG_Devices, FrmMain.DG_Groups)
-        PopulateTreeView(FrmMain.DG_Groups, FrmMain.tvGroupsSelected)
+        'PopulateTreeView(FrmMain.DG_Groups, FrmMain.tvGroupsSelected)
         GenereerLedLijst(FrmMain.DG_Devices, FrmMain.DG_Groups, FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
         TekenPodium(FrmMain.pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
         VulEffectCombo()

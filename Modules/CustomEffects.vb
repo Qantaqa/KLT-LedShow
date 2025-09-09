@@ -334,62 +334,62 @@ Partial Public Module CustomEffects
         Return CSng((dx * dir.X + dy * dir.Y) / mag)
     End Function
 
-    ' ***************************************************************************************
-    ' BUTTON CLICK HANDLER
-    '***************************************************************************************
-    Public Sub HandleApplyCustomEffectClick()
-        Dim tv = FrmMain.tvGroupsSelected
-        Dim kleuren = {
-            FrmMain.EffectColor1.BackColor,
-            FrmMain.EffectColor2.BackColor,
-            FrmMain.EffectColor3.BackColor,
-            FrmMain.EffectColor4.BackColor,
-            FrmMain.EffectColor5.BackColor
-        }
-        Dim direction = GetSelectedEffectDirection(FrmMain.gbEffectDirection)
-        Dim position = GetSelectedEffectStartPosition(FrmMain.gbEffectsStartPosition)
+    '' ***************************************************************************************
+    '' BUTTON CLICK HANDLER
+    ''***************************************************************************************
+    'Public Sub HandleApplyCustomEffectClick()
+    '    Dim tv = FrmMain.tvGroupsSelected
+    '    Dim kleuren = {
+    '        FrmMain.EffectColor1.BackColor,
+    '        FrmMain.EffectColor2.BackColor,
+    '        FrmMain.EffectColor3.BackColor,
+    '        FrmMain.EffectColor4.BackColor,
+    '        FrmMain.EffectColor5.BackColor
+    '    }
+    '    Dim direction = GetSelectedEffectDirection(FrmMain.gbEffectDirection)
+    '    Dim position = GetSelectedEffectStartPosition(FrmMain.gbEffectsStartPosition)
 
-        Dim groupIds As New List(Of Integer)
-        For Each node As TreeNode In tv.Nodes
-            CollectCheckedNodes(node, groupIds)
-        Next
-        If groupIds.Count = 0 Then
-            ToonFlashBericht("Selecteer minstens één groep.", 2)
-            Return
-        End If
+    '    Dim groupIds As New List(Of Integer)
+    '    For Each node As TreeNode In tv.Nodes
+    '        CollectCheckedNodes(node, groupIds)
+    '    Next
+    '    If groupIds.Count = 0 Then
+    '        ToonFlashBericht("Selecteer minstens één groep.", 2)
+    '        Return
+    '    End If
 
-        ' Haal volledige tekst en split op '-' voor effectnaam
-        Dim fullText = FrmMain.cbListCustomEffects.Text
-        Dim effectName = fullText.Split("-"c)(0).Trim()
+    '    ' Haal volledige tekst en split op '-' voor effectnaam
+    '    Dim fullText = FrmMain.cbListCustomEffects.Text
+    '    Dim effectName = fullText.Split("-"c)(0).Trim()
 
-        Dim Params As New EffectParams With {
-            .EffectName = effectName,
-            .Duration = FrmMain.tbEffectDuration.Value,
-            .FPS = FrmMain.tbEffectFPS.Value,
-            .Intensity = FrmMain.tbEffectIntensity.Value / 100.0F,
-            .Brightness_Baseline = FrmMain.tbEffectBrightnessBaseline.Value / 100.0F,
-            .Brightness_Effect = FrmMain.tbEffectBrightnessEffect.Value / 100.0F,
-            .Speed = FrmMain.tbEffectSpeed.Value / 100.0F,
-            .Dispersion = FrmMain.tbEffectDispersion.Value / 100.0F,
-            .Kleuren = kleuren,
-            .Direction = direction,
-            .StartPostion = position,
-            .Repeat = FrmMain.cbEffectRepeat.Checked
-        }
+    '    Dim Params As New EffectParams With {
+    '        .EffectName = effectName,
+    '        .Duration = FrmMain.tbEffectDuration.Value,
+    '        .FPS = FrmMain.tbEffectFPS.Value,
+    '        .Intensity = FrmMain.tbEffectIntensity.Value / 100.0F,
+    '        .Brightness_Baseline = FrmMain.tbEffectBrightnessBaseline.Value / 100.0F,
+    '        .Brightness_Effect = FrmMain.tbEffectBrightnessEffect.Value / 100.0F,
+    '        .Speed = FrmMain.tbEffectSpeed.Value / 100.0F,
+    '        .Dispersion = FrmMain.tbEffectDispersion.Value / 100.0F,
+    '        .Kleuren = kleuren,
+    '        .Direction = direction,
+    '        .StartPostion = position,
+    '        .Repeat = FrmMain.cbEffectRepeat.Checked
+    '    }
 
-        Select Case Params.EffectName
-            Case "DawnHarbor"
-                CompileCustomEffect_DawnHarbor(groupIds, Params)
-            Case "FixedTwinkle"
-                CompileCustomEffect_FixedTwinkle(groupIds, Params)
-            Case "CalmOcean"
-                CompileCustomEffect_CalmOcean(groupIds, Params)
-            Case "Iceberg"
-                CompileCustomEffect_Iceberg(groupIds, Params)
-            Case "IcebergHit"
-                CompileCustomEffect_IcebergHit(groupIds, Params)
+    '    Select Case Params.EffectName
+    '        Case "DawnHarbor"
+    '            CompileCustomEffect_DawnHarbor(groupIds, Params)
+    '        Case "FixedTwinkle"
+    '            CompileCustomEffect_FixedTwinkle(groupIds, Params)
+    '        Case "CalmOcean"
+    '            CompileCustomEffect_CalmOcean(groupIds, Params)
+    '        Case "Iceberg"
+    '            CompileCustomEffect_Iceberg(groupIds, Params)
+    '        Case "IcebergHit"
+    '            CompileCustomEffect_IcebergHit(groupIds, Params)
 
-        End Select
-    End Sub
+    '    End Select
+    'End Sub
 
 End Module

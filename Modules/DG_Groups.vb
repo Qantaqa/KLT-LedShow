@@ -76,7 +76,7 @@ Module DG_Groups
 
             ' Voeg parentgroep toe
             Dim parentId = globalId
-            dgGroups.Rows.Add(parentId, 0, fixtureName, fixtureName, Nothing, 1, totalLeds, 0, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, rawLayout)
+            dgGroups.Rows.Add(parentId, 0, fixtureName, fixtureName, Nothing, 1, totalLeds, 0, Nothing, Nothing, FrmMain.btnRepeat.Checked, rawLayout)
             globalId += 1
 
             ' Herhalingsblokken eerst uitpakken zodat we juiste groepen maken
@@ -124,7 +124,7 @@ Module DG_Groups
 
                         Dim grpName = $"{fixtureName}-Group{orderInFixture}"
 
-                        dgGroups.Rows.Add(globalId, parentId, grpName, fixtureName, orderInFixture - 1, groupStart, currentStart - 1, orderInFixture, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, String.Join(",", finalLayout))
+                        dgGroups.Rows.Add(globalId, parentId, grpName, fixtureName, orderInFixture - 1, groupStart, currentStart - 1, orderInFixture, Nothing, Nothing, FrmMain.btnRepeat.Checked, String.Join(",", finalLayout))
                         globalId += 1
                         orderInFixture += 1
 
@@ -151,7 +151,7 @@ Module DG_Groups
                 End If
 
                 Dim grpName = $"{fixtureName}-Group{orderInFixture}"
-                dgGroups.Rows.Add(globalId, parentId, grpName, fixtureName, orderInFixture - 1, groupStart, currentStart - 1, orderInFixture, Nothing, Nothing, FrmMain.cbEffectRepeat.Checked, String.Join(",", finalLayout))
+                dgGroups.Rows.Add(globalId, parentId, grpName, fixtureName, orderInFixture - 1, groupStart, currentStart - 1, orderInFixture, Nothing, Nothing, FrmMain.btnRepeat.Checked, String.Join(",", finalLayout))
                 globalId += 1
             End If
         Next

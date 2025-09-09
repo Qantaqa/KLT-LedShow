@@ -552,7 +552,10 @@ Module DG_Show
         If My.Settings.Locked Then
             FrmMain.gb_Controls.Enabled = True
 
-            ' Start button
+            ' Anchor location for the "single" next button (use Next Event's position)
+            Dim primaryLoc As Point = FrmMain.btnControl_NextEvent.Location
+
+            ' Start button (unchanged, still blinks)
             If booleanBlinkStart Then
                 If FrmMain.btnControl_Start.BackColor = Color.Black Then
                     FrmMain.btnControl_Start.BackColor = Color.Green
@@ -563,8 +566,27 @@ Module DG_Show
                 FrmMain.btnControl_Start.BackColor = Color.Black
             End If
 
-            ' Next event button
-            If booleanBlinkNextEvent Then
+            ' Decide which of the Next buttons is the active one
+            Dim showEvent As Boolean = booleanBlinkNextEvent
+            Dim showScene As Boolean = booleanBlinkNextScene
+            Dim showAct As Boolean = booleanBlinkNextAct
+
+            ' If none are active, default to showing Next Event (non-blinking)
+            If Not showEvent AndAlso Not showScene AndAlso Not showAct Then
+                showEvent = True
+            End If
+
+            ' Show only the active Next button and move it to the primary location
+            FrmMain.btnControl_NextEvent.Visible = showEvent
+            FrmMain.btnControl_NextScene.Visible = showScene
+            FrmMain.btnControl_NextAct.Visible = showAct
+
+            If showEvent Then FrmMain.btnControl_NextEvent.Location = primaryLoc
+            If showScene Then FrmMain.btnControl_NextScene.Location = primaryLoc
+            If showAct Then FrmMain.btnControl_NextAct.Location = primaryLoc
+
+            ' Blink the active Next button only
+            If booleanBlinkNextEvent AndAlso FrmMain.btnControl_NextEvent.Visible Then
                 If FrmMain.btnControl_NextEvent.BackColor = Color.Black Then
                     FrmMain.btnControl_NextEvent.BackColor = Color.Green
                 Else
@@ -574,8 +596,7 @@ Module DG_Show
                 FrmMain.btnControl_NextEvent.BackColor = Color.Black
             End If
 
-            ' Next scene button
-            If booleanBlinkNextScene Then
+            If booleanBlinkNextScene AndAlso FrmMain.btnControl_NextScene.Visible Then
                 If FrmMain.btnControl_NextScene.BackColor = Color.Black Then
                     FrmMain.btnControl_NextScene.BackColor = Color.Green
                 Else
@@ -585,8 +606,7 @@ Module DG_Show
                 FrmMain.btnControl_NextScene.BackColor = Color.Black
             End If
 
-            ' Next act button
-            If booleanBlinkNextAct Then
+            If booleanBlinkNextAct AndAlso FrmMain.btnControl_NextAct.Visible Then
                 If FrmMain.btnControl_NextAct.BackColor = Color.Black Then
                     FrmMain.btnControl_NextAct.BackColor = Color.Green
                 Else
@@ -596,6 +616,7 @@ Module DG_Show
                 FrmMain.btnControl_NextAct.BackColor = Color.Black
             End If
 
+            ' Stop button (unchanged)
             If booleanBlinkStop Then
                 If FrmMain.btnControl_StopAll.BackColor = Color.Black Then
                     FrmMain.btnControl_StopAll.BackColor = Color.Red
@@ -606,7 +627,8 @@ Module DG_Show
                 FrmMain.btnControl_StopAll.BackColor = Color.Black
             End If
 
-            ' Timer
+            ' Timer: blink when active, otherwise hide entirely
+            FrmMain.lblControl_TimeLeft.Visible = booleanBlinkTimer
             If booleanBlinkTimer Then
                 If FrmMain.lblControl_TimeLeft.BackColor = Color.Black Then
                     FrmMain.lblControl_TimeLeft.BackColor = colorBlinkTimer
@@ -617,7 +639,7 @@ Module DG_Show
                 FrmMain.lblControl_TimeLeft.BackColor = Color.Black
             End If
 
-            ' Stop looping button
+            ' Stop looping (unchanged)
             If booleanBlinkStopLooping Then
                 If FrmMain.btnStopLoopingAtEndOfVideo.BackColor = Color.Black Then
                     FrmMain.btnStopLoopingAtEndOfVideo.BackColor = Color.Red
@@ -627,15 +649,24 @@ Module DG_Show
             Else
                 FrmMain.btnStopLoopingAtEndOfVideo.BackColor = Color.Black
             End If
+
         Else
+            ' Unlocked (edit) mode: disable controls and present a single Next button view
             FrmMain.gb_Controls.Enabled = False
             FrmMain.btnControl_Start.BackColor = Color.DarkRed
             FrmMain.btnControl_NextEvent.BackColor = Color.DarkRed
             FrmMain.btnControl_NextScene.BackColor = Color.DarkRed
             FrmMain.btnControl_NextAct.BackColor = Color.DarkRed
-            FrmMain.lblControl_TimeLeft.BackColor = Color.Black
             FrmMain.btnControl_StopAll.BackColor = Color.DarkRed
             FrmMain.btnStopLoopingAtEndOfVideo.BackColor = Color.Black
+
+            ' Show one next button at the primary location, hide others, hide timer
+            Dim primaryLoc As Point = FrmMain.btnControl_NextEvent.Location
+            FrmMain.btnControl_NextEvent.Visible = True : FrmMain.btnControl_NextEvent.Location = primaryLoc
+            FrmMain.btnControl_NextScene.Visible = False
+            FrmMain.btnControl_NextAct.Visible = False
+            FrmMain.lblControl_TimeLeft.BackColor = Color.Black
+            FrmMain.lblControl_TimeLeft.Visible = False
         End If
 
     End Sub

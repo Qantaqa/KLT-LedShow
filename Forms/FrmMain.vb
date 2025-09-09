@@ -3,8 +3,7 @@ Imports System.IO
 Imports System.Net
 Imports System.Runtime.InteropServices
 Imports Newtonsoft.Json
-
-
+Imports PdfiumViewer
 
 Public Class FrmMain
     Public Const nextScene As Integer = 0
@@ -19,20 +18,37 @@ Public Class FrmMain
     Private laatsteDDPHash As Integer = 0
     Public ZoomFactor As Integer = 60
 
+    ' PDF state
+    Friend pdfFilePath As String = Nothing
+    Private pdfDoc As PdfDocument
+    Friend currentPage As Integer = 0
+
+    ' Optional timers you might use later
+    Friend pdfAutoScrollTimer As Timer
+    Friend pdfAutoScrollIntervalMs As Integer = 15000 ' 15 sec per page
+    Friend pdfPageUpdateTimer As Timer
+
 
     ' Importeer de functie voor het ophalen van Frame delays
     <DllImport("gdi32.dll", SetLastError:=True, ExactSpelling:=True)>
     Private Shared Function GetEnhMetaFilePixelFormat(ByVal hEmf As IntPtr) As UInteger
     End Function
 
+    ' PictureBox to render PDF pages using PdfiumViewer rendering (not used; using pbPDFViewer from designer)
+    'Private viewerPicture As New PictureBox() With {
+    '    .Dock = DockStyle.Fill,
+    '    .SizeMode = PictureBoxSizeMode.Zoom,
+    '    .BackColor = Color.Black
+    '}
 
     ' **************************************************************************************************************************
     ' MAIN FORM LOAD
     ' **************************************************************************************************************************
     Private Sub FrmMain_Load_1(sender As Object, e As EventArgs) Handles MyBase.Load
         Try
-            Dim c As Integer = 0
+            Me.KeyPreview = True ' keyboard shortcuts for PDF auto scroll
 
+            Dim c As Integer = 0
             ' Configureer de DataGridView voor de Devices tab
             'DG_Devices.Dock = DockStyle.Fill
             DG_Devices.AutoGenerateColumns = False
@@ -74,44 +90,22 @@ Public Class FrmMain
             cbMonitorPrime.Text = My.Settings.MonitorPrimary
             cbMonitorSecond.Text = My.Settings.MonitorSecond
             settings_DDPPort.Text = My.Settings.DDPPort
-            EffectColor1.BackColor = Color.FromArgb(My.Settings.CustomEffectC1)
-            EffectColor2.BackColor = Color.FromArgb(My.Settings.CustomEffectC2)
-            EffectColor3.BackColor = Color.FromArgb(My.Settings.CustomEffectC3)
-            EffectColor4.BackColor = Color.FromArgb(My.Settings.CustomEffectC4)
-            EffectColor5.BackColor = Color.FromArgb(My.Settings.CustomEffectC5)
-            tbEffectIntensity.Value = My.Settings.CustomEffectIntensity
-            tbEffectSpeed.Value = My.Settings.CustomEffectSpeed
-            tbEffectBrightnessBaseline.Value = My.Settings.CustomEffectBrightness
-            tbEffectBrightnessEffect.Value = My.Settings.CustomEffectBrightnessEffect
-            tbEffectDispersion.Value = My.Settings.CustomEffectDispersion
+            settings_ScriptPDF.Text = My.Settings.ScriptPDF
 
             lblPreviewFromPosition.Text = 0
             lblPreviewToPosition.Text = 90
 
             Dim tip As New ToolTip()
-            tip.SetToolTip(tbEffectSpeed, "Snelheid van het effect. Hoe hoger, hoe sneller de animatie verloopt (range 1-100%).")
-            tip.SetToolTip(tbEffectIntensity, "Hoe intens is de beweging of kleurenwissel. Bepaalt het bereik van de helderheid. (range 1-100%)")
-            tip.SetToolTip(tbEffectBrightnessBaseline, "Maximale helderheid van het effect (globale limiet). (1-100%)")
-            tip.SetToolTip(tbEffectFPS, "Aantal frames per seconde. Hoger = vloeiender, maar ook meer belasting. (15-60 fps, advies 15")
-            tip.SetToolTip(tbEffectDuration, "Duur van het effect in seconden. (5-90 sec)")
-
-
 
             If My.Settings.Locked Then
                 Update_LockUnlocked("Locked")
                 LoadAll()
             Else
-
                 Update_LockUnlocked("Unlocked")
             End If
 
-
-
-
-
             c = CheckWLEDOnlineStatus(DG_Devices)
             If (c > 0) Then
-                ' 1 of meerdere WLED-apparaten offline, geef een melding weer
                 Select Case c
                     Case 0
                         ToonFlashBericht("Alle WLED-apparaten online.", 3, FlashSeverity.IsInfo)
@@ -125,23 +119,48 @@ Public Class FrmMain
             CurrentGroupId = -1
             CurrentDeviceId = -1
 
-
             Dim ZoomFactor As Double = 60
 
             EffectBuilder.Initialize(PanelTracks, DG_Tracks, DG_LightSources, ZoomFactor)
+            Tracks.Initialize()
             AddHandler EffectBuilder.TrackClicked, AddressOf EffectBuilder.OnTrackClicked
             AddHandler EffectBuilder.LightSourceClicked, AddressOf EffectBuilder.OnLightSourceClicked
             AddHandler pb_Stage.MouseClick, AddressOf Stage.OnStageClick
 
-
             SetZoom(ZoomFactor)
 
+            ' Zorg dat kolom ScriptPg bestaat in DG_Show
+            If DG_Show IsNot Nothing AndAlso Not DG_Show.Columns.Contains("ScriptPg") Then
+                Dim col As New DataGridViewTextBoxColumn()
+                col.Name = "ScriptPg"
+                col.HeaderText = "ScriptPg"
+                col.Width = 60
+                DG_Show.Columns.Add(col)
+            End If
 
+            ' Herstel splitter positie indien opgeslagen (>0)
+            Try
+                Dim saved = My.Settings.SplitPosition
+                If saved > 0 Then
+                    ' Clamp binnen grenzen (laat minimaal 50px per paneel over)
+                    Dim minDist = 50
+                    Dim maxDist = Math.Max(minDist, SplitContainer2.Width - 50)
+                    SplitContainer2.SplitterDistance = Math.Max(minDist, Math.Min(saved, maxDist))
+                End If
+            Catch
+            End Try
+
+            ' Load and render PDF from settings into pbPDFViewer
+            LoadPdfFromSettings()
+            If pbPDFViewer IsNot Nothing Then
+                AddHandler pbPDFViewer.Resize, Sub() RenderCurrentPdfPage()
+                ' Ensure we can capture mouse wheel for page navigation
+                AddHandler pbPDFViewer.MouseWheel, AddressOf pbPDFViewer_MouseWheel
+                AddHandler pbPDFViewer.MouseEnter, Sub() pbPDFViewer.Focus()
+            End If
 
             ' Beamer handlers
             UpdateMonitorStatusIndicators(cbMonitorControl, cbMonitorPrime, cbMonitorSecond)
-
-
 
             ' Setup the external beamer
             If (ImagesAreEqual(pbPrimaryStatus.Image, My.Resources.iconGreenBullet1)) Then
@@ -162,14 +181,12 @@ Public Class FrmMain
                 ToonFlashBericht("Secondary beamer is niet verbonden of ingesteld.", 20, FlashSeverity.IsWarning)
             End If
 
-
-
-
         Catch ex As Exception
             MessageBox.Show($"Fout tijdens laden van form: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            ' Log de fout eventueel naar een bestand of de Event Viewer
         End Try
     End Sub
+
+
 
     ' **************************************************************************************************************************
     ' EVENT HANDLERS - Klik op DG Devices en open de bijbehorende webste
@@ -261,7 +278,7 @@ Public Class FrmMain
 
         ' Call your post-scan functions in order
         SplitIntoGroups(DG_Devices, DG_Groups)
-        PopulateTreeView(DG_Groups, tvGroupsSelected)
+        'PopulateTreeView(DG_Groups, tvGroupsSelected)
         ClearGroupsToBlack_WithDDP()
         Update_DGEffecten_BasedOnDevices()
         Update_DGPalettes_BasedOnDevices()
@@ -510,46 +527,45 @@ Public Class FrmMain
     End Sub
 
     Private Sub btnApplyCustomEffect_Click(sender As Object, e As EventArgs) Handles btnApplyCustomEffect.Click
-        If TabStageControl.SelectedTab.TabIndex = 1 Then
-            ' Effect builder
-            Compile_EffectDesigner()
-        Else
-            ' Custom effects.
-            HandleApplyCustomEffectClick()
-        End If
+        ' Effect builder
+        Compile_EffectDesigner()
+        'Else
+        '    ' Custom effects.
+        '    HandleApplyCustomEffectClick()
+        'End If
 
     End Sub
 
 
-    Private Sub EffectColor1_Click(sender As Object, e As EventArgs) Handles EffectColor1.Click
-        EffectColor1.BackColor = GetColorByColorWheel()
-        My.Settings.CustomEffectC1 = EffectColor1.BackColor.ToArgb()
-        My.Settings.Save()
-    End Sub
+    'Private Sub EffectColor1_Click(sender As Object, e As EventArgs)
+    '    EffectColor1.BackColor = GetColorByColorWheel()
+    '    My.Settings.CustomEffectC1 = EffectColor1.BackColor.ToArgb
+    '    My.Settings.Save()
+    'End Sub
 
-    Private Sub EffectColor2_Click(sender As Object, e As EventArgs) Handles EffectColor2.Click
-        EffectColor2.BackColor = GetColorByColorWheel()
-        My.Settings.CustomEffectC2 = EffectColor2.BackColor.ToArgb()
-        My.Settings.Save()
-    End Sub
+    'Private Sub EffectColor2_Click(sender As Object, e As EventArgs)
+    '    EffectColor2.BackColor = GetColorByColorWheel()
+    '    My.Settings.CustomEffectC2 = EffectColor2.BackColor.ToArgb
+    '    My.Settings.Save()
+    'End Sub
 
-    Private Sub EffectColor3_Click(sender As Object, e As EventArgs) Handles EffectColor3.Click
-        EffectColor3.BackColor = GetColorByColorWheel()
-        My.Settings.CustomEffectC3 = EffectColor3.BackColor.ToArgb()
-        My.Settings.Save()
-    End Sub
+    'Private Sub EffectColor3_Click(sender As Object, e As EventArgs)
+    '    EffectColor3.BackColor = GetColorByColorWheel()
+    '    My.Settings.CustomEffectC3 = EffectColor3.BackColor.ToArgb
+    '    My.Settings.Save()
+    'End Sub
 
-    Private Sub EffectColor4_Click(sender As Object, e As EventArgs) Handles EffectColor4.Click
-        EffectColor4.BackColor = GetColorByColorWheel()
-        My.Settings.CustomEffectC4 = EffectColor4.BackColor.ToArgb()
-        My.Settings.Save()
-    End Sub
+    'Private Sub EffectColor4_Click(sender As Object, e As EventArgs)
+    '    EffectColor4.BackColor = GetColorByColorWheel()
+    '    My.Settings.CustomEffectC4 = EffectColor4.BackColor.ToArgb
+    '    My.Settings.Save()
+    'End Sub
 
-    Private Sub EffectColor5_Click(sender As Object, e As EventArgs) Handles EffectColor5.Click
-        EffectColor5.BackColor = GetColorByColorWheel()
-        My.Settings.CustomEffectC5 = EffectColor5.BackColor.ToArgb()
-        My.Settings.Save()
-    End Sub
+    'Private Sub EffectColor5_Click(sender As Object, e As EventArgs)
+    '    EffectColor5.BackColor = GetColorByColorWheel()
+    '    My.Settings.CustomEffectC5 = EffectColor5.BackColor.ToArgb
+    '    My.Settings.Save()
+    'End Sub
 
     Private Sub btnDevicesRefreshIPs_Click(sender As Object, e As EventArgs) Handles btnDevicesRefreshIPs.Click
         RefreshIPAddresses(DG_Devices)
@@ -557,24 +573,24 @@ Public Class FrmMain
 
     Private Sub btnGroupsAutoSplit_Click(sender As Object, e As EventArgs) Handles btnGroupsAutoSplit.Click
         SplitIntoGroups(DG_Devices, DG_Groups)
-        PopulateTreeView(DG_Groups, tvGroupsSelected)
+        'PopulateTreeView(DG_Groups, tvGroupsSelected)
         ClearGroupsToBlack_WithDDP()
     End Sub
 
-    Private Sub tbEffectSpeed_Scroll(sender As Object, e As EventArgs) Handles tbEffectSpeed.Scroll
-        My.Settings.CustomEffectSpeed = tbEffectSpeed.Value
-        My.Settings.Save()
-    End Sub
+    'Private Sub tbEffectSpeed_Scroll(sender As Object, e As EventArgs)
+    '    My.Settings.CustomEffectSpeed = tbEffectSpeed.Value
+    '    My.Settings.Save()
+    'End Sub
 
-    Private Sub tbEffectIntensity_Scroll(sender As Object, e As EventArgs) Handles tbEffectIntensity.Scroll
-        My.Settings.CustomEffectIntensity = tbEffectIntensity.Value
-        My.Settings.Save()
-    End Sub
+    'Private Sub tbEffectIntensity_Scroll(sender As Object, e As EventArgs)
+    '    My.Settings.CustomEffectIntensity = tbEffectIntensity.Value
+    '    My.Settings.Save()
+    'End Sub
 
-    Private Sub tbEffectBrightness_Scroll(sender As Object, e As EventArgs) Handles tbEffectBrightnessBaseline.Scroll
-        My.Settings.CustomEffectBrightness = tbEffectBrightnessBaseline.Value
-        My.Settings.Save()
-    End Sub
+    'Private Sub tbEffectBrightness_Scroll(sender As Object, e As EventArgs)
+    '    My.Settings.CustomEffectBrightness = tbEffectBrightnessBaseline.Value
+    '    My.Settings.Save()
+    'End Sub
 
     Private Sub ddpTimer_Tick_1(sender As Object, e As EventArgs) Handles ddpTimer.Tick
         lastDDPTick = DateTime.Now
@@ -609,10 +625,10 @@ Public Class FrmMain
         Next
     End Sub
 
-    Private Sub tbEffectDuration_Scroll(sender As Object, e As EventArgs) Handles tbEffectDuration.Scroll
-        My.Settings.CustomEffectDuration = tbEffectDuration.Value
-        My.Settings.Save()
-    End Sub
+    'Private Sub tbEffectDuration_Scroll(sender As Object, e As EventArgs)
+    '    My.Settings.CustomEffectDuration = tbEffectDuration.Value
+    '    My.Settings.Save()
+    'End Sub
 
     Private Sub btnGroupDMXSlider_Click(sender As Object, e As EventArgs) Handles btnGroupDMXSlider.Click
 
@@ -633,7 +649,7 @@ Public Class FrmMain
 
             ' Als DDP langer dan 1800ms geleden is, sla stage update over
             If sinceDDP.TotalMilliseconds > 1800 Then
-                Debug.WriteLine("⚠️ stageTimer tick geskipt: DDP loopt achter")
+                Debug.WriteLine("?? stageTimer tick geskipt: DDP loopt achter")
                 Return
             End If
 
@@ -649,16 +665,16 @@ Public Class FrmMain
         GenereerLedLijst(DG_Devices, DG_Groups, pb_Stage, My.Settings.PodiumBreedte, My.Settings.PodiumHoogte)
     End Sub
 
-    Private Sub tbEffectBrightnessBaselineEffect_Scroll(sender As Object, e As EventArgs) Handles tbEffectBrightnessEffect.Scroll
-        My.Settings.CustomEffectBrightnessEffect = tbEffectBrightnessEffect.Value
-        My.Settings.Save()
-    End Sub
+    'Private Sub tbEffectBrightnessBaselineEffect_Scroll(sender As Object, e As EventArgs)
+    '    My.Settings.CustomEffectBrightnessEffect = tbEffectBrightnessEffect.Value
+    '    My.Settings.Save()
+    'End Sub
 
-    Private Sub tbEffectDispersion_Scroll(sender As Object, e As EventArgs) Handles tbEffectDispersion.Scroll
-        My.Settings.CustomEffectDispersion = tbEffectDispersion.Value
-        My.Settings.Save()
+    'Private Sub tbEffectDispersion_Scroll(sender As Object, e As EventArgs)
+    '    My.Settings.CustomEffectDispersion = tbEffectDispersion.Value
+    '    My.Settings.Save()
 
-    End Sub
+    'End Sub
 
     Private Sub btnResetEffect_Click(sender As Object, e As EventArgs) Handles btnResetEffect.Click
         ResetGroupsEffects()
@@ -673,11 +689,11 @@ Public Class FrmMain
             Case 0
                 ThisDGV = DG_Tracks
             Case 1
-                ThisDGV = DG_MyEffects
+                ThisDGV = DG_Templates
             Case 2
                 ThisDGV = DG_LightSources
             Case 3
-                ThisDGV = DG_MyEffectsFrames
+                ThisDGV = DG_Frames
             Case Else
                 Return
         End Select
@@ -699,11 +715,11 @@ Public Class FrmMain
             Case 0
                 ThisDGV = DG_Tracks
             Case 1
-                ThisDGV = DG_MyEffects
+                ThisDGV = DG_Templates
             Case 2
                 ThisDGV = DG_LightSources
             Case 3
-                ThisDGV = DG_MyEffectsFrames
+                ThisDGV = DG_Frames
             Case Else
                 Return
         End Select
@@ -728,11 +744,11 @@ Public Class FrmMain
             Case 0
                 ThisDGV = DG_Tracks
             Case 1
-                ThisDGV = DG_MyEffects
+                ThisDGV = DG_Templates
             Case 2
                 ThisDGV = DG_LightSources
             Case 3
-                ThisDGV = DG_MyEffectsFrames
+                ThisDGV = DG_Frames
             Case Else
                 Return
         End Select
@@ -805,11 +821,11 @@ Public Class FrmMain
         Dim selectedName As String = cbSelectedEffect.Text
         If String.IsNullOrWhiteSpace(selectedName) Then Exit Sub
 
-        For Each row As DataGridViewRow In DG_MyEffects.Rows
+        For Each row As DataGridViewRow In DG_Templates.Rows
             If row.IsNewRow Then Continue For
-            If CStr(row.Cells("colMEName").Value) = selectedName Then
+            If CStr(row.Cells("colTemplateName").Value) = selectedName Then
                 row.Selected = True
-                DG_MyEffects.CurrentCell = row.Cells("colMEName")
+                DG_Templates.CurrentCell = row.Cells("colTemplateName")
                 Exit For
             End If
         Next
@@ -834,11 +850,11 @@ Public Class FrmMain
     End Sub
 
     Private Sub btnEffectAdd_Click(sender As Object, e As EventArgs) Handles btnEffectAdd.Click
-        AddEffect()
+        AddTemplate()
     End Sub
 
     Private Sub btnEffectDelete_Click(sender As Object, e As EventArgs) Handles btnEffectDelete.Click
-        RemoveEffect()
+        RemoveTemplate()
     End Sub
 
     Private Sub btnRepeat_Click(sender As Object, e As EventArgs) Handles btnRepeat.Click
@@ -1010,5 +1026,166 @@ Public Class FrmMain
 
     Private Sub btnControl_NextAct_Click(sender As Object, e As EventArgs) Handles btnControl_NextAct.Click
         Next_Act(DG_Show, filterAct)
+    End Sub
+
+    Private Sub btnEditTemplate_Click(sender As Object, e As EventArgs) Handles btnEditTemplate.Click
+        Template.EditSelectedTemplate()
+    End Sub
+
+    Private Sub LoadPdfFromSettings()
+        Try
+            Dim configuredPath As String = My.Settings.ScriptPDF
+            If String.IsNullOrWhiteSpace(configuredPath) OrElse Not File.Exists(configuredPath) Then
+                lblPDFPage.Text = "Pg -"
+                pbPDFViewer.Image = Nothing
+                Return
+            End If
+
+            ' Sluit vorige document
+            If pdfDoc IsNot Nothing Then
+                pdfDoc.Dispose()
+                pdfDoc = Nothing
+            End If
+
+            pdfFilePath = configuredPath
+            pdfDoc = PdfDocument.Load(pdfFilePath)
+
+            currentPage = 0
+            RenderCurrentPdfPage()
+            UpdatePdfPageLabel()
+
+        Catch ex As Exception
+            lblPDFPage.Text = "Pg -"
+            pbPDFViewer.Image = Nothing
+            ToonFlashBericht("Kon PDF niet laden: " & ex.Message, 8, FlashSeverity.IsError)
+        End Try
+    End Sub
+
+    Private Sub RenderCurrentPdfPage()
+        Try
+            If pdfDoc Is Nothing Then Return
+            If pbPDFViewer Is Nothing OrElse pbPDFViewer.ClientSize.Width <= 0 OrElse pbPDFViewer.ClientSize.Height <= 0 Then Return
+
+            Dim pageIndex = Math.Max(1, Math.Min(currentPage, pdfDoc.PageCount)) - 1
+
+            ' Render naar bitmap ter grootte van de viewer
+            Dim w = Math.Max(1, pbPDFViewer.ClientSize.Width)
+            Dim h = Math.Max(1, pbPDFViewer.ClientSize.Height)
+            Using img = pdfDoc.Render(pageIndex, w, h, 96, 96, PdfRenderFlags.Annotations)
+                ' Dispose oude image om leaks te voorkomen
+                Dim old = pbPDFViewer.Image
+                pbPDFViewer.Image = CType(img.Clone(), Image)
+                If old IsNot Nothing Then old.Dispose()
+            End Using
+
+            UpdatePdfPageLabel()
+        Catch ex As Exception
+            ' Stil falen om UI niet te storen
+        End Try
+    End Sub
+
+    Private Sub UpdatePdfPageLabel()
+        Try
+            If pdfDoc Is Nothing Then
+                lblPDFPage.Text = "Pg -"
+            Else
+                lblPDFPage.Text = $"Pg {currentPage}/{pdfDoc.PageCount}"
+            End If
+        Catch
+        End Try
+    End Sub
+
+    Private Sub SetPdfPage(newPage As Integer)
+        If pdfDoc Is Nothing Then Return
+        currentPage = Math.Max(1, Math.Min(newPage, pdfDoc.PageCount))
+        RenderCurrentPdfPage()
+    End Sub
+
+    ' Optional keyboard navigation (PgUp/PgDn) + custom shortcuts
+    Private Sub FrmMain_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+        If pdfDoc Is Nothing Then Return
+
+        ' Page navigation
+        If e.KeyCode = Keys.PageDown Then
+            SetPdfPage(currentPage + 1)
+            e.Handled = True
+        ElseIf e.KeyCode = Keys.PageUp Then
+            SetPdfPage(currentPage - 1)
+            e.Handled = True
+        End If
+
+        ' CTRL+L -> sla huidige PDF pagina op in actief DG_Show record (veld ScriptPg)
+        If e.Control AndAlso e.KeyCode = Keys.L Then
+            Try
+                If DG_Show IsNot Nothing AndAlso DG_Show.CurrentRow IsNot Nothing Then
+                    ' Bewaar pagina (gebruik currentPage zoals gevolgd in UI)
+                    DG_Show.CurrentRow.Cells("ScriptPg").Value = currentPage
+                    ToonFlashBericht($"Pagina {currentPage} gekoppeld aan regel.", 3, FlashSeverity.IsInfo)
+                End If
+            Catch ex As Exception
+                ToonFlashBericht("Kon pagina niet koppelen: " & ex.Message, 5, FlashSeverity.IsError)
+            End Try
+            e.Handled = True
+        End If
+
+        ' CTRL+G -> ga naar opgeslagen pagina van actieve regel
+        If e.Control AndAlso e.KeyCode = Keys.G Then
+            Try
+                If DG_Show IsNot Nothing AndAlso DG_Show.CurrentRow IsNot Nothing Then
+                    Dim val = DG_Show.CurrentRow.Cells("ScriptPg").Value
+                    If val IsNot Nothing AndAlso Integer.TryParse(val.ToString(), Nothing) Then
+                        Dim target As Integer = CInt(val)
+                        If target >= 1 AndAlso pdfDoc IsNot Nothing AndAlso target <= pdfDoc.PageCount Then
+                            SetPdfPage(target)
+                            ToonFlashBericht($"Gesprongen naar pagina {target}.", 3, FlashSeverity.IsInfo)
+                        Else
+                            ToonFlashBericht("Opgeslagen pagina is ongeldig.", 4, FlashSeverity.IsWarning)
+                        End If
+                    Else
+                        ToonFlashBericht("Geen pagina opgeslagen voor deze regel.", 3, FlashSeverity.IsWarning)
+                    End If
+                End If
+            Catch ex As Exception
+                ToonFlashBericht("Kon niet naar pagina springen: " & ex.Message, 5, FlashSeverity.IsError)
+            End Try
+            e.Handled = True
+        End If
+    End Sub
+
+    ' Dispose PDF bij sluiten
+    Protected Overrides Sub OnFormClosed(e As FormClosedEventArgs)
+        Try
+            If pdfDoc IsNot Nothing Then
+                pdfDoc.Dispose()
+                pdfDoc = Nothing
+            End If
+            If pbPDFViewer IsNot Nothing AndAlso pbPDFViewer.Image IsNot Nothing Then
+                pbPDFViewer.Image.Dispose()
+                pbPDFViewer.Image = Nothing
+            End If
+        Catch
+        End Try
+        MyBase.OnFormClosed(e)
+    End Sub
+
+    ' Handle mouse wheel scrolling on the PDF viewer to change pages
+    Private Sub pbPDFViewer_MouseWheel(sender As Object, e As MouseEventArgs)
+        If pdfDoc Is Nothing Then Return
+        If e.Delta > 0 Then
+            SetPdfPage(currentPage - 1) ' Scroll up -> previous page
+        ElseIf e.Delta < 0 Then
+            SetPdfPage(currentPage + 1) ' Scroll down -> next page
+        End If
+    End Sub
+
+    ' Sla splitter positie op wanneer verplaatst
+    Private Sub SplitContainer2_SplitterMoved(sender As Object, e As SplitterEventArgs) Handles SplitContainer2.SplitterMoved
+        Try
+            If SplitContainer2.SplitterDistance > 0 Then
+                My.Settings.SplitPosition = SplitContainer2.SplitterDistance
+                My.Settings.Save()
+            End If
+        Catch
+        End Try
     End Sub
 End Class
