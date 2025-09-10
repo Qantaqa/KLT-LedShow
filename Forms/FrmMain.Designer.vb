@@ -23,9 +23,9 @@ Partial Class FrmMain
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
+        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmMain))
-        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         DG_Devices = New DataGridView()
         colIPAddress = New DataGridViewTextBoxColumn()
         colInstance = New DataGridViewTextBoxColumn()
@@ -45,6 +45,31 @@ Partial Class FrmMain
         TabShow = New TabPage()
         SplitContainer2 = New SplitContainer()
         DG_Show = New DataGridView()
+        btnApply = New DataGridViewButtonColumn()
+        colAct = New DataGridViewComboBoxColumn()
+        colSceneId = New DataGridViewTextBoxColumn()
+        colEventId = New DataGridViewTextBoxColumn()
+        colTimer = New DataGridViewTextBoxColumn()
+        colCue = New DataGridViewTextBoxColumn()
+        colFixture = New DataGridViewComboBoxColumn()
+        colStateOnOff = New DataGridViewComboBoxColumn()
+        colEffectId = New DataGridViewTextBoxColumn()
+        colEffect = New DataGridViewComboBoxColumn()
+        colPaletteId = New DataGridViewTextBoxColumn()
+        colPalette = New DataGridViewComboBoxColumn()
+        colColor1 = New DataGridViewTextBoxColumn()
+        colColor2 = New DataGridViewTextBoxColumn()
+        colColor3 = New DataGridViewTextBoxColumn()
+        colBrightness = New DataGridViewTextBoxColumn()
+        colSpeed = New DataGridViewTextBoxColumn()
+        colIntensity = New DataGridViewTextBoxColumn()
+        colTransition = New DataGridViewTextBoxColumn()
+        colBlend = New DataGridViewCheckBoxColumn()
+        colRepeat = New DataGridViewCheckBoxColumn()
+        colSound = New DataGridViewCheckBoxColumn()
+        colFilename = New DataGridViewTextBoxColumn()
+        colSend = New DataGridViewCheckBoxColumn()
+        ScriptPg = New DataGridViewTextBoxColumn()
         pbPDFViewer = New PictureBox()
         gb_Controls = New GroupBox()
         btnControl_NextAct = New Button()
@@ -276,31 +301,9 @@ Partial Class FrmMain
         ddpTimer = New Timer(components)
         stageTimer = New Timer(components)
         Timer_LoadBuffer = New Timer(components)
-        btnApply = New DataGridViewButtonColumn()
-        colAct = New DataGridViewComboBoxColumn()
-        colSceneId = New DataGridViewTextBoxColumn()
-        colEventId = New DataGridViewTextBoxColumn()
-        colTimer = New DataGridViewTextBoxColumn()
-        colCue = New DataGridViewTextBoxColumn()
-        colFixture = New DataGridViewComboBoxColumn()
-        colStateOnOff = New DataGridViewComboBoxColumn()
-        colEffectId = New DataGridViewTextBoxColumn()
-        colEffect = New DataGridViewComboBoxColumn()
-        colPaletteId = New DataGridViewTextBoxColumn()
-        colPalette = New DataGridViewComboBoxColumn()
-        colColor1 = New DataGridViewTextBoxColumn()
-        colColor2 = New DataGridViewTextBoxColumn()
-        colColor3 = New DataGridViewTextBoxColumn()
-        colBrightness = New DataGridViewTextBoxColumn()
-        colSpeed = New DataGridViewTextBoxColumn()
-        colIntensity = New DataGridViewTextBoxColumn()
-        colTransition = New DataGridViewTextBoxColumn()
-        colBlend = New DataGridViewCheckBoxColumn()
-        colRepeat = New DataGridViewCheckBoxColumn()
-        colSound = New DataGridViewCheckBoxColumn()
-        colFilename = New DataGridViewTextBoxColumn()
-        colSend = New DataGridViewCheckBoxColumn()
-        ScriptPg = New DataGridViewTextBoxColumn()
+        btnAutoGotoPDFPage = New ToolStripButton()
+        ToolStripSeparator10 = New ToolStripSeparator()
+        ToolStripSeparator11 = New ToolStripSeparator()
         CType(DG_Devices, ComponentModel.ISupportInitialize).BeginInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).BeginInit()
         TabControl.SuspendLayout()
@@ -542,12 +545,201 @@ Partial Class FrmMain
         DG_Show.Size = New Size(1161, 627)
         DG_Show.TabIndex = 0
         ' 
+        ' btnApply
+        ' 
+        btnApply.HeaderText = "Apply"
+        btnApply.Name = "btnApply"
+        btnApply.Resizable = DataGridViewTriState.False
+        btnApply.Text = ">>>"
+        btnApply.Width = 25
+        ' 
+        ' colAct
+        ' 
+        colAct.HeaderText = "Act"
+        colAct.Items.AddRange(New Object() {"Pre-Show", "Act 1", "Pauze", "Act 2", "Act 3", "Post-Show"})
+        colAct.Name = "colAct"
+        colAct.Resizable = DataGridViewTriState.True
+        colAct.SortMode = DataGridViewColumnSortMode.Automatic
+        colAct.ToolTipText = "De hoofdindeling van de show. "
+        colAct.Width = 50
+        ' 
+        ' colSceneId
+        ' 
+        DataGridViewCellStyle3.Format = "N0"
+        DataGridViewCellStyle3.NullValue = Nothing
+        colSceneId.DefaultCellStyle = DataGridViewCellStyle3
+        colSceneId.HeaderText = "Scene"
+        colSceneId.Name = "colSceneId"
+        colSceneId.ToolTipText = "Scene nummer van de show"
+        colSceneId.Width = 50
+        ' 
+        ' colEventId
+        ' 
+        DataGridViewCellStyle4.Format = "N0"
+        DataGridViewCellStyle4.NullValue = Nothing
+        colEventId.DefaultCellStyle = DataGridViewCellStyle4
+        colEventId.HeaderText = "Event"
+        colEventId.Name = "colEventId"
+        colEventId.ToolTipText = "Het event nummer binnen een scene."
+        colEventId.Width = 50
+        ' 
+        ' colTimer
+        ' 
+        colTimer.HeaderText = "Timer"
+        colTimer.Name = "colTimer"
+        colTimer.ToolTipText = "Aantal msec voordat we naar volgende event gaan."
+        colTimer.Width = 50
+        ' 
+        ' colCue
+        ' 
+        colCue.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colCue.HeaderText = "Cue"
+        colCue.Name = "colCue"
+        colCue.ToolTipText = "Wanneer is de overgang?"
+        ' 
+        ' colFixture
+        ' 
+        colFixture.HeaderText = "Device/Segment"
+        colFixture.Name = "colFixture"
+        colFixture.Resizable = DataGridViewTriState.True
+        colFixture.SortMode = DataGridViewColumnSortMode.Automatic
+        ' 
+        ' colStateOnOff
+        ' 
+        colStateOnOff.HeaderText = "Aan/Uit"
+        colStateOnOff.Items.AddRange(New Object() {"Aan", "Uit"})
+        colStateOnOff.Name = "colStateOnOff"
+        colStateOnOff.Width = 50
+        ' 
+        ' colEffectId
+        ' 
+        colEffectId.FillWeight = 25F
+        colEffectId.HeaderText = "ID"
+        colEffectId.Name = "colEffectId"
+        colEffectId.Visible = False
+        colEffectId.Width = 25
+        ' 
+        ' colEffect
+        ' 
+        colEffect.HeaderText = "Effect"
+        colEffect.Name = "colEffect"
+        colEffect.Resizable = DataGridViewTriState.True
+        colEffect.SortMode = DataGridViewColumnSortMode.Automatic
+        ' 
+        ' colPaletteId
+        ' 
+        colPaletteId.FillWeight = 25F
+        colPaletteId.HeaderText = "ID"
+        colPaletteId.Name = "colPaletteId"
+        colPaletteId.Visible = False
+        colPaletteId.Width = 25
+        ' 
+        ' colPalette
+        ' 
+        colPalette.HeaderText = "Palette"
+        colPalette.Name = "colPalette"
+        colPalette.Resizable = DataGridViewTriState.True
+        colPalette.SortMode = DataGridViewColumnSortMode.Automatic
+        ' 
+        ' colColor1
+        ' 
+        colColor1.HeaderText = "Kleur 1"
+        colColor1.Name = "colColor1"
+        colColor1.Visible = False
+        colColor1.Width = 50
+        ' 
+        ' colColor2
+        ' 
+        colColor2.HeaderText = "Kleur 2"
+        colColor2.Name = "colColor2"
+        colColor2.Visible = False
+        colColor2.Width = 50
+        ' 
+        ' colColor3
+        ' 
+        colColor3.HeaderText = "Kleur 3"
+        colColor3.Name = "colColor3"
+        colColor3.Visible = False
+        colColor3.Width = 50
+        ' 
+        ' colBrightness
+        ' 
+        colBrightness.HeaderText = "Brightness"
+        colBrightness.Name = "colBrightness"
+        colBrightness.Visible = False
+        colBrightness.Width = 50
+        ' 
+        ' colSpeed
+        ' 
+        colSpeed.HeaderText = "Snelheid"
+        colSpeed.Name = "colSpeed"
+        colSpeed.Visible = False
+        colSpeed.Width = 50
+        ' 
+        ' colIntensity
+        ' 
+        colIntensity.HeaderText = "Intensiteit"
+        colIntensity.Name = "colIntensity"
+        colIntensity.Visible = False
+        colIntensity.Width = 50
+        ' 
+        ' colTransition
+        ' 
+        colTransition.HeaderText = "Transition"
+        colTransition.Name = "colTransition"
+        colTransition.Visible = False
+        colTransition.Width = 50
+        ' 
+        ' colBlend
+        ' 
+        colBlend.HeaderText = "Blend"
+        colBlend.Name = "colBlend"
+        colBlend.Resizable = DataGridViewTriState.True
+        colBlend.SortMode = DataGridViewColumnSortMode.Automatic
+        colBlend.Visible = False
+        colBlend.Width = 50
+        ' 
+        ' colRepeat
+        ' 
+        colRepeat.HeaderText = "Repeat"
+        colRepeat.Name = "colRepeat"
+        colRepeat.Resizable = DataGridViewTriState.True
+        colRepeat.SortMode = DataGridViewColumnSortMode.Automatic
+        colRepeat.Width = 50
+        ' 
+        ' colSound
+        ' 
+        colSound.HeaderText = "Geluid"
+        colSound.Name = "colSound"
+        colSound.Resizable = DataGridViewTriState.True
+        colSound.SortMode = DataGridViewColumnSortMode.Automatic
+        colSound.Width = 50
+        ' 
+        ' colFilename
+        ' 
+        colFilename.HeaderText = "MP4"
+        colFilename.Name = "colFilename"
+        colFilename.Visible = False
+        colFilename.Width = 200
+        ' 
+        ' colSend
+        ' 
+        colSend.HeaderText = "Send"
+        colSend.Name = "colSend"
+        colSend.Width = 50
+        ' 
+        ' ScriptPg
+        ' 
+        ScriptPg.HeaderText = "Paginanr"
+        ScriptPg.Name = "ScriptPg"
+        ScriptPg.Width = 50
+        ' 
         ' pbPDFViewer
         ' 
-        pbPDFViewer.Dock = DockStyle.Fill
+        pbPDFViewer.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         pbPDFViewer.Location = New Point(0, 0)
         pbPDFViewer.Name = "pbPDFViewer"
-        pbPDFViewer.Size = New Size(668, 627)
+        pbPDFViewer.Size = New Size(647, 627)
         pbPDFViewer.TabIndex = 0
         pbPDFViewer.TabStop = False
         ' 
@@ -946,7 +1138,7 @@ Partial Class FrmMain
         ' 
         ToolStip_Show.BackColor = Color.MidnightBlue
         ToolStip_Show.GripStyle = ToolStripGripStyle.Hidden
-        ToolStip_Show.Items.AddRange(New ToolStripItem() {lblFilter, filterAct, btn_DGGrid_RemoveCurrentRow, btn_DGGrid_AddNewRowAfter, btn_DGGrid_AddNewRowBefore, ToolStripSeparator2, btnLockUnlocked, ToolStripLabel7, lblPDFPage})
+        ToolStip_Show.Items.AddRange(New ToolStripItem() {lblFilter, filterAct, btn_DGGrid_RemoveCurrentRow, btn_DGGrid_AddNewRowAfter, btn_DGGrid_AddNewRowBefore, ToolStripSeparator2, btnLockUnlocked, ToolStripSeparator10, ToolStripLabel7, lblPDFPage, btnAutoGotoPDFPage, ToolStripSeparator11})
         ToolStip_Show.Location = New Point(0, 0)
         ToolStip_Show.Name = "ToolStip_Show"
         ToolStip_Show.Size = New Size(1836, 25)
@@ -2599,194 +2791,24 @@ Partial Class FrmMain
         stageTimer.Enabled = True
         stageTimer.Interval = 500
         ' 
-        ' btnApply
+        ' btnAutoGotoPDFPage
         ' 
-        btnApply.HeaderText = "Apply"
-        btnApply.Name = "btnApply"
-        btnApply.Resizable = DataGridViewTriState.False
-        btnApply.Text = ">>>"
-        btnApply.Width = 25
+        btnAutoGotoPDFPage.ForeColor = SystemColors.ButtonFace
+        btnAutoGotoPDFPage.Image = My.Resources.Resources.icon_toggle_off
+        btnAutoGotoPDFPage.ImageTransparentColor = Color.Magenta
+        btnAutoGotoPDFPage.Name = "btnAutoGotoPDFPage"
+        btnAutoGotoPDFPage.Size = New Size(42, 22)
+        btnAutoGotoPDFPage.Text = "off"
         ' 
-        ' colAct
+        ' ToolStripSeparator10
         ' 
-        colAct.HeaderText = "Act"
-        colAct.Items.AddRange(New Object() {"Pre-Show", "Act 1", "Pauze", "Act 2", "Act 3", "Post-Show"})
-        colAct.Name = "colAct"
-        colAct.Resizable = DataGridViewTriState.True
-        colAct.SortMode = DataGridViewColumnSortMode.Automatic
-        colAct.ToolTipText = "De hoofdindeling van de show. "
-        colAct.Width = 50
+        ToolStripSeparator10.Name = "ToolStripSeparator10"
+        ToolStripSeparator10.Size = New Size(6, 25)
         ' 
-        ' colSceneId
+        ' ToolStripSeparator11
         ' 
-        DataGridViewCellStyle1.Format = "N0"
-        DataGridViewCellStyle1.NullValue = Nothing
-        colSceneId.DefaultCellStyle = DataGridViewCellStyle1
-        colSceneId.HeaderText = "Scene"
-        colSceneId.Name = "colSceneId"
-        colSceneId.ToolTipText = "Scene nummer van de show"
-        colSceneId.Width = 50
-        ' 
-        ' colEventId
-        ' 
-        DataGridViewCellStyle2.Format = "N0"
-        DataGridViewCellStyle2.NullValue = Nothing
-        colEventId.DefaultCellStyle = DataGridViewCellStyle2
-        colEventId.HeaderText = "Event"
-        colEventId.Name = "colEventId"
-        colEventId.ToolTipText = "Het event nummer binnen een scene."
-        colEventId.Width = 50
-        ' 
-        ' colTimer
-        ' 
-        colTimer.HeaderText = "Timer"
-        colTimer.Name = "colTimer"
-        colTimer.ToolTipText = "Aantal msec voordat we naar volgende event gaan."
-        colTimer.Width = 50
-        ' 
-        ' colCue
-        ' 
-        colCue.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-        colCue.HeaderText = "Cue"
-        colCue.Name = "colCue"
-        colCue.ToolTipText = "Wanneer is de overgang?"
-        ' 
-        ' colFixture
-        ' 
-        colFixture.HeaderText = "Device/Segment"
-        colFixture.Name = "colFixture"
-        colFixture.Resizable = DataGridViewTriState.True
-        colFixture.SortMode = DataGridViewColumnSortMode.Automatic
-        ' 
-        ' colStateOnOff
-        ' 
-        colStateOnOff.HeaderText = "Aan/Uit"
-        colStateOnOff.Items.AddRange(New Object() {"Aan", "Uit"})
-        colStateOnOff.Name = "colStateOnOff"
-        colStateOnOff.Width = 50
-        ' 
-        ' colEffectId
-        ' 
-        colEffectId.FillWeight = 25F
-        colEffectId.HeaderText = "ID"
-        colEffectId.Name = "colEffectId"
-        colEffectId.Visible = False
-        colEffectId.Width = 25
-        ' 
-        ' colEffect
-        ' 
-        colEffect.HeaderText = "Effect"
-        colEffect.Name = "colEffect"
-        colEffect.Resizable = DataGridViewTriState.True
-        colEffect.SortMode = DataGridViewColumnSortMode.Automatic
-        ' 
-        ' colPaletteId
-        ' 
-        colPaletteId.FillWeight = 25F
-        colPaletteId.HeaderText = "ID"
-        colPaletteId.Name = "colPaletteId"
-        colPaletteId.Visible = False
-        colPaletteId.Width = 25
-        ' 
-        ' colPalette
-        ' 
-        colPalette.HeaderText = "Palette"
-        colPalette.Name = "colPalette"
-        colPalette.Resizable = DataGridViewTriState.True
-        colPalette.SortMode = DataGridViewColumnSortMode.Automatic
-        ' 
-        ' colColor1
-        ' 
-        colColor1.HeaderText = "Kleur 1"
-        colColor1.Name = "colColor1"
-        colColor1.Visible = False
-        colColor1.Width = 50
-        ' 
-        ' colColor2
-        ' 
-        colColor2.HeaderText = "Kleur 2"
-        colColor2.Name = "colColor2"
-        colColor2.Visible = False
-        colColor2.Width = 50
-        ' 
-        ' colColor3
-        ' 
-        colColor3.HeaderText = "Kleur 3"
-        colColor3.Name = "colColor3"
-        colColor3.Visible = False
-        colColor3.Width = 50
-        ' 
-        ' colBrightness
-        ' 
-        colBrightness.HeaderText = "Brightness"
-        colBrightness.Name = "colBrightness"
-        colBrightness.Visible = False
-        colBrightness.Width = 50
-        ' 
-        ' colSpeed
-        ' 
-        colSpeed.HeaderText = "Snelheid"
-        colSpeed.Name = "colSpeed"
-        colSpeed.Visible = False
-        colSpeed.Width = 50
-        ' 
-        ' colIntensity
-        ' 
-        colIntensity.HeaderText = "Intensiteit"
-        colIntensity.Name = "colIntensity"
-        colIntensity.Visible = False
-        colIntensity.Width = 50
-        ' 
-        ' colTransition
-        ' 
-        colTransition.HeaderText = "Transition"
-        colTransition.Name = "colTransition"
-        colTransition.Visible = False
-        colTransition.Width = 50
-        ' 
-        ' colBlend
-        ' 
-        colBlend.HeaderText = "Blend"
-        colBlend.Name = "colBlend"
-        colBlend.Resizable = DataGridViewTriState.True
-        colBlend.SortMode = DataGridViewColumnSortMode.Automatic
-        colBlend.Visible = False
-        colBlend.Width = 50
-        ' 
-        ' colRepeat
-        ' 
-        colRepeat.HeaderText = "Repeat"
-        colRepeat.Name = "colRepeat"
-        colRepeat.Resizable = DataGridViewTriState.True
-        colRepeat.SortMode = DataGridViewColumnSortMode.Automatic
-        colRepeat.Width = 50
-        ' 
-        ' colSound
-        ' 
-        colSound.HeaderText = "Geluid"
-        colSound.Name = "colSound"
-        colSound.Resizable = DataGridViewTriState.True
-        colSound.SortMode = DataGridViewColumnSortMode.Automatic
-        colSound.Width = 50
-        ' 
-        ' colFilename
-        ' 
-        colFilename.HeaderText = "MP4"
-        colFilename.Name = "colFilename"
-        colFilename.Visible = False
-        colFilename.Width = 200
-        ' 
-        ' colSend
-        ' 
-        colSend.HeaderText = "Send"
-        colSend.Name = "colSend"
-        colSend.Width = 50
-        ' 
-        ' ScriptPg
-        ' 
-        ScriptPg.HeaderText = "Paginanr"
-        ScriptPg.Name = "ScriptPg"
-        ScriptPg.Width = 50
+        ToolStripSeparator11.Name = "ToolStripSeparator11"
+        ToolStripSeparator11.Size = New Size(6, 25)
         ' 
         ' FrmMain
         ' 
@@ -3188,5 +3210,8 @@ Partial Class FrmMain
     Friend WithEvents colFilename As DataGridViewTextBoxColumn
     Friend WithEvents colSend As DataGridViewCheckBoxColumn
     Friend WithEvents ScriptPg As DataGridViewTextBoxColumn
+    Friend WithEvents ToolStripSeparator10 As ToolStripSeparator
+    Friend WithEvents btnAutoGotoPDFPage As ToolStripButton
+    Friend WithEvents ToolStripSeparator11 As ToolStripSeparator
 
 End Class

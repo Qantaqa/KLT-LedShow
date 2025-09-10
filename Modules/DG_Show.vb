@@ -804,6 +804,9 @@ Module DG_Show
 
         If Not found Then Exit Sub ' No next step found
 
+        ' Find first row of the target (will be used later for auto-goto)
+        Dim firstTargetRow As DataGridViewRow = Nothing
+
         ' 3. Mark btnApply for the *new* group, clear others, remember activeIndex
         Dim active As Boolean = False
         Dim FollowUpRow As DataGridViewRow = Nothing
@@ -819,6 +822,7 @@ Module DG_Show
                 row.Cells("colSend").Value = "False"
                 active = True
                 activeIndex = row.Index
+                If firstTargetRow Is Nothing Then firstTargetRow = row
             Else
                 If (active AndAlso FollowUpRow Is Nothing) Then
                     FollowUpRow = row
@@ -828,6 +832,9 @@ Module DG_Show
                 row.Cells("colSend").Value = "False"
             End If
         Next
+
+        ' Auto goto PDF page if available and enabled
+        AutoGotoPdfIfEnabled(firstTargetRow)
 
         ' 5. Send instructions for all rows with btnApply = ">" and set colSend = "True"
         For Each row As DataGridViewRow In DG_Show.Rows
@@ -1071,6 +1078,7 @@ Module DG_Show
 
         ' Mark all rows that belong to nextAct + firstScene + firstEvent
         Dim activeIndex As Integer = -1
+        Dim firstTargetRow As DataGridViewRow = Nothing
         For Each row As DataGridViewRow In DG_Show.Rows
             If row.IsNewRow Then Continue For
             Dim act = Convert.ToString(row.Cells("colAct").Value)
@@ -1081,11 +1089,15 @@ Module DG_Show
                 row.Cells("btnApply").Value = ">"
                 row.Cells("colSend").Value = "False"
                 activeIndex = Math.Max(activeIndex, row.Index)
+                If firstTargetRow Is Nothing Then firstTargetRow = row
             Else
                 row.Cells("btnApply").Value = ""
                 row.Cells("colSend").Value = "False"
             End If
         Next
+
+        ' Auto goto PDF page if available and enabled
+        AutoGotoPdfIfEnabled(firstTargetRow)
 
         ' Send instructions
         For Each row As DataGridViewRow In DG_Show.Rows
@@ -1146,5 +1158,20 @@ Module DG_Show
         End If
 
         Reselect_Rows(DG_Show)
+    End Sub
+
+    ' Hulpfunctie: ga naar PDF-pagina als auto-goto aan staat en waarde geldig is
+    Private Sub AutoGotoPdfIfEnabled(targetRow As DataGridViewRow)
+        On Error Resume Next
+        If targetRow Is Nothing Then Exit Sub
+        If FrmMain Is Nothing Then Exit Sub
+        ' check toggle button
+        If Not (FrmMain.btnAutoGotoPDFPage IsNot Nothing AndAlso FrmMain.btnAutoGotoPDFPage.Text = "on") Then Exit Sub
+        ' lees ScriptPg
+        Dim val = targetRow.Cells("ScriptPg").Value
+        Dim page As Integer
+        If val IsNot Nothing AndAlso Integer.TryParse(val.ToString(), page) AndAlso page >= 1 Then
+            FrmMain.NavigatePdfToPage(page)
+        End If
     End Sub
 End Module

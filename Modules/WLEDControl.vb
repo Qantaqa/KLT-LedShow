@@ -8,9 +8,48 @@ Imports System.Threading.Tasks.Dataflow
 Imports System.Windows.Forms.AxHost
 Imports Newtonsoft.Json.Linq
 
-
 Module WLEDControl
 
+    ' ================== OFFLINE DETECTIE & MARKERING ==================
+    Private Function IsDeviceOffline(wledName As String) As Boolean
+        If String.IsNullOrWhiteSpace(wledName) Then Return True
+        For Each devRow As DataGridViewRow In FrmMain.DG_Devices.Rows
+            If devRow.IsNewRow Then Continue For
+            If String.Equals(Convert.ToString(devRow.Cells("colInstance").Value), wledName, StringComparison.OrdinalIgnoreCase) Then
+                ' Enabled kolom (optioneel) en online icoon controleren
+                Dim enabledOk As Boolean = True
+                If devRow.Cells("colEnabled").Value IsNot Nothing Then
+                    Boolean.TryParse(devRow.Cells("colEnabled").Value.ToString(), enabledOk)
+                End If
+                Dim img = TryCast(devRow.Cells("colOnline").Value, Image)
+                Dim green As Boolean = (img Is My.Resources.iconGreenBullet1)
+                Return (Not enabledOk) OrElse (Not green)
+            End If
+        Next
+        Return True ' Niet gevonden => behandel als offline
+    End Function
+
+    Private Sub MarkShowRowsForDevice(DG_Show As DataGridView, wledName As String, act As String, scene As String, evt As String, offline As Boolean)
+        For Each row As DataGridViewRow In DG_Show.Rows
+            If row.IsNewRow Then Continue For
+            Dim fixture = TryCast(row.Cells("colFixture").Value, String)
+            If String.IsNullOrEmpty(fixture) OrElse fixture.StartsWith("**") Then Continue For
+            Dim parts = fixture.Split("/"c)
+            If parts.Length <> 2 Then Continue For
+            If String.Equals(parts(0), wledName, StringComparison.OrdinalIgnoreCase) AndAlso
+               Convert.ToString(row.Cells("colAct").Value) = act AndAlso
+               Convert.ToString(row.Cells("colSceneId").Value) = scene AndAlso
+               Convert.ToString(row.Cells("colEventId").Value) = evt Then
+                If offline Then
+                    row.DefaultCellStyle.BackColor = Color.DarkRed
+                    row.DefaultCellStyle.ForeColor = Color.White
+                Else
+                    row.DefaultCellStyle.BackColor = SystemColors.Window
+                    row.DefaultCellStyle.ForeColor = SystemColors.ControlText
+                End If
+            End If
+        Next
+    End Sub
 
     ' ****************************************************************************************
     '  Stuur een effect naar de WLED-instantie.
@@ -18,21 +57,13 @@ Module WLEDControl
     Public Async Function SendEffectToWLed(IPAddress As String, Segment As String, effectId As Integer) As Task
         Using client As New HttpClient()
             Try
-                ' Bouw de JSON-payload voor het POST-verzoek
-                Dim payload As String = "{""seg"":[{""fx"":" & effectId & ",""id"":""" & Segment & """}]}"
+                Dim payload As String = "{""seg"": [{""fx"":" & effectId & ",""id"": """ & Segment & """}]}"
+
 
                 Dim content As New StringContent(payload, Encoding.UTF8, "application/json")
-
-                ' Stuur het POST-verzoek naar de WLED API
-                Dim postResponse As HttpResponseMessage = Await client.PostAsync("http://" + IPAddress + "/json/state", content)
-
-                ' Lees de volledige responsinhoud
+                Dim postResponse As HttpResponseMessage = Await client.PostAsync("http://" & IPAddress & "/json/state", content)
                 Dim responseContent As String = Await postResponse.Content.ReadAsStringAsync()
-
-                ' Plaats de respons in het tekstveld
                 FrmMain.txt_APIResult.Text = responseContent
-
-                ' Controleer de statuscode van het antwoord
                 If postResponse.IsSuccessStatusCode Then
                     FrmMain.txt_APIResult.Text = $"Effect met ID '{effectId}' toegepast op '{IPAddress }'."
                 Else
@@ -51,28 +82,19 @@ Module WLEDControl
         End Using
     End Function
 
-
     ' *********************************************************
     ' Deze functie stuurt een POST-verzoek naar de WLED API om het effect toe te passen
     ' *********************************************************
     Public Async Function SendPaletteToWLed(ipAddress As String, paletteId As Integer) As Task
-        ' Bouw de JSON-payload voor het POST-verzoek
-        Dim payload As String = "{""seg"":[{""pal"":" & paletteId & "}]}"
+        Dim payload As String = "{""seg"": [{""pal"":" & paletteId & "}]}"
 
         Dim content As New StringContent(payload, Encoding.UTF8, "application/json")
-
         Using client As New HttpClient()
             Try
-
                 ' Stuur het POST-verzoek naar de WLED API
-                Dim postResponse As HttpResponseMessage = Await client.PostAsync("http://" + ipAddress + "/json/state", content)
-
-                ' Lees de volledige responsinhoud
+                Dim postResponse As HttpResponseMessage = Await client.PostAsync("http://" & ipAddress & "/json/state", content)
                 Dim responseContent As String = Await postResponse.Content.ReadAsStringAsync()
-
-                ' Plaats de respons in het tekstveld
                 FrmMain.txt_APIResult.Text = responseContent
-
                 ' Controleer de statuscode van het antwoord
                 If postResponse.IsSuccessStatusCode Then
                     FrmMain.txt_APIResult.Text = $"Palette met ID '{paletteId}' toegepast op '{ipAddress}'."
@@ -98,21 +120,12 @@ Module WLEDControl
     Private Async Function SendJsonToWLED2(ipAddress As String, content As StringContent) As Task
         Using client As New HttpClient()
             Try
-                ' Stuur het POST-verzoek naar de WLED API
-                Dim postResponse As HttpResponseMessage = Await client.PostAsync("http://" + ipAddress + "/json/state", content)
-                postResponse.EnsureSuccessStatusCode()                                                                               ' Throw on error status
-
-                ' Lees de volledige responsinhoud
+                Dim postResponse As HttpResponseMessage = Await client.PostAsync("http://" & ipAddress & "/json/state", content)
+                postResponse.EnsureSuccessStatusCode()
                 Dim responseContent As String = Await postResponse.Content.ReadAsStringAsync()
-
-                ' Plaats de respons in het tekstveld
                 FrmMain.txt_APIResult.Text = responseContent
-
-
-
-                ' Controleer de statuscode van het antwoord
                 If postResponse.IsSuccessStatusCode Then
-                    FrmMain.txt_APIResult.Text = $"Succes"
+                    FrmMain.txt_APIResult.Text = "Succes"
                 Else
                     MessageBox.Show($"Fout bij het verzenden van commando naar WLED {ipAddress}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 End If
@@ -155,88 +168,90 @@ Module WLEDControl
             Exit Sub
         End If
 
-        ' Controleer of er een rij is geselecteerd
-        If DG_Show.CurrentCell IsNot Nothing And Not DG_Show.CurrentRow.IsNewRow Then
-            Dim currentRow = DG_Show.Rows(DG_Show.CurrentCell.RowIndex)
+        Dim currentRow As DataGridViewRow = DG_Show.CurrentRow
 
-            Dim selectedFixture = currentRow.Cells("colFixture").Value                      ' De geselecteerde fixture
-            If selectedFixture IsNot Nothing And selectedFixture.ToString().Substring(0, 2) <> "**" Then      ' Als deze niet een beamer is
-                Dim fixtureParts = selectedFixture.ToString().Split("/"c)
-                If fixtureParts.Length = 2 Then
-                    wledName = fixtureParts(0)
-                    Segment = Integer.Parse(fixtureParts(1))
+        Dim act = Convert.ToString(currentRow.Cells("colAct").Value)
+        Dim scene = Convert.ToString(currentRow.Cells("colSceneId").Value)
+        Dim evt = Convert.ToString(currentRow.Cells("colEventId").Value)
 
-                    For Each row In DG_Devices.Rows
-                        If row.cells("colInstance").value = wledName Then
-                            wledIp = row.cells("colIPAddress").value
-                            Exit For
-                        End If
-                    Next
+        Dim selectedFixture = currentRow.Cells("colFixture").Value                      ' De geselecteerde fixture
+        If selectedFixture IsNot Nothing And selectedFixture.ToString().Substring(0, 2) <> "**" Then      ' Als deze niet een beamer is
+            Dim fixtureParts = selectedFixture.ToString().Split("/"c)
+            If fixtureParts.Length = 2 Then
+                wledName = fixtureParts(0)
+                Segment = Integer.Parse(fixtureParts(1))
 
-                    If wledIp <> "" Then
-                        ' Er is een IP adres aanwezig. Bouw de JSON payload
-
-                        ' Segment aan of uit
-                        stateOnOff = currentRow.Cells("colStateOnOff").Value
-                        If stateOnOff = "Uit" Then
-                            stateOnOff = "false"
-                        Else
-                            stateOnOff = "true"
-                        End If
-
-                        effectName = currentRow.Cells("colEffect").Value
-                        effectId = GetEffectIdFromName(effectName, DG_Effecten)
-                        paletteName = currentRow.Cells("colPalette").Value
-                        paletteId = GetPaletteIdFromName(paletteName, DG_Paletten)
-
-                        ' Gebruik de waarden uit de grid
-                        Brightness = currentRow.Cells("colBrightness").Value.ToString()
-                        Speed = currentRow.Cells("colSpeed").Value.ToString()
-                        Intensity = currentRow.Cells("colIntensity").Value.ToString()
-
-                        '' Kleuren toevoegen
-                        'Dim colorList As New List(Of String)
-                        'For i As Integer = 1 To 3
-                        '    Dim colorKey As DataGridViewColumn = DG_Show.Columns($"colColor{i}")
-                        '    If DG_Show.Columns.IndexOf(colorKey) <> -1 Then
-                        '        Dim c As Color = ColorTranslator.FromHtml(DG_Show.CurrentRow.Cells(colorKey).Value.ToString())
-                        '        colorList.Add($"[{c.R},{c.G},{c.B}]")
-                        '    End If
-                        'Next
-                        'Dim colorArray As String = String.Join(",", colorList)
-
-                        Payload = "{" &
-                                  """seg"": [" &
-                                  "{" &
-                                  """id"": " & Segment.ToString() & "," &
-                                  """on"": " & stateOnOff.ToLower() & "," &
-                                  """fx"": " & effectId & "," &
-                                  """pal"": " & paletteId & "," &
-                                  """sel"": true," &
-                                  """bri"": " & Brightness & "," &
-                                  """sx"": " & Speed & "," &
-                                  """ix"": " & Intensity
-
-                        'If colorArray <> "" Then
-                        '    Payload &= ",""col"": [" & colorArray & "]"
-                        'End If
-
-                        Payload &= "}" &
-                                  "]" &
-                                  "}"
+                For Each row In DG_Devices.Rows
+                    If row.cells("colInstance").value = wledName Then
+                        wledIp = row.cells("colIPAddress").value
+                        Exit For
                     End If
+                Next
+
+                If wledIp <> "" Then
+                    ' Er is een IP adres aanwezig. Bouw de JSON payload
+
+                    ' Segment aan of uit
+                    stateOnOff = currentRow.Cells("colStateOnOff").Value
+                    If stateOnOff = "Uit" Then
+                        stateOnOff = "false"
+                    Else
+                        stateOnOff = "true"
+                    End If
+
+                    effectName = currentRow.Cells("colEffect").Value
+                    effectId = GetEffectIdFromName(effectName, DG_Effecten)
+                    paletteName = currentRow.Cells("colPalette").Value
+                    paletteId = GetPaletteIdFromName(paletteName, DG_Paletten)
+
+                    ' Gebruik de waarden uit de grid
+                    Brightness = currentRow.Cells("colBrightness").Value.ToString()
+                    Speed = currentRow.Cells("colSpeed").Value.ToString()
+                    Intensity = currentRow.Cells("colIntensity").Value.ToString()
+
+                    '' Kleuren toevoegen
+                    'Dim colorList As New List(Of String)
+                    'For i As Integer = 1 To 3
+                    '    Dim colorKey As DataGridViewColumn = DG_Show.Columns($"colColor{i}")
+                    '    If DG_Show.Columns.IndexOf(colorKey) <> -1 Then
+                    '        Dim c As Color = ColorTranslator.FromHtml(DG_Show.CurrentRow.Cells(colorKey).Value.ToString())
+                    '        colorList.Add($"[{c.R},{c.G},{c.B}]")
+                    '    End If
+                    'Next
+                    'Dim colorArray As String = String.Join(",", colorList)
+
+                    Payload = "{" &
+                              """seg"": [" &
+                              "{" &
+                              """id"": " & Segment.ToString() & "," &
+                              """on"": " & stateOnOff.ToLower() & "," &
+                              """fx"": " & effectId & "," &
+                              """pal"": " & paletteId & "," &
+                              """sel"": true," &
+                              """bri"": " & Brightness & "," &
+                              """sx"": " & Speed & "," &
+                              """ix"": " & Intensity
+
+                    'If colorArray <> "" Then
+                    '    Payload &= ",""col"": [" & colorArray & "]"
+                    'End If
+
+                    Payload &= "}" &
+                              "]" &
+                              "}"
                 End If
             End If
-
-
-            Dim content As New StringContent(Payload, Encoding.UTF8, "application/json")
-            Await SendJsonToWLED2(wledIp, content)
-
-            If (notify) Then
-                ' Toon een melding dat het effect is toegepast
-                ToonFlashBericht("Segment " & Segment & " van " & wledName & " is ingesteld op " & effectName & " met palette " & paletteName, 2)
-            End If
         End If
+
+
+        Dim content As New StringContent(Payload, Encoding.UTF8, "application/json")
+        Await SendJsonToWLED2(wledIp, content)
+
+        If (notify) Then
+            ' Toon een melding dat het effect is toegepast
+            ToonFlashBericht("Segment " & Segment & " van " & wledName & " is ingesteld op " & effectName & " met palette " & paletteName, 2)
+        End If
+
     End Sub
 
     'Public Sub Apply_Selected_Rows(DG_Show As DataGridView)

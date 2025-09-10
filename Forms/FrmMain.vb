@@ -19,27 +19,22 @@ Public Class FrmMain
     Public ZoomFactor As Integer = 60
 
     ' PDF state
-    Friend pdfFilePath As String = Nothing
-    Private pdfDoc As PdfDocument
+    Friend pdfFilePath As String = ""
     Friend currentPage As Integer = 0
+    Private pdfDoc As PdfDocument
+    Private pdfScroll As VScrollBar ' dynamische scrollbar voor PDF
+    Private updatingScroll As Boolean = False
 
     ' Optional timers you might use later
-    Friend pdfAutoScrollTimer As Timer
-    Friend pdfAutoScrollIntervalMs As Integer = 15000 ' 15 sec per page
+    'Friend pdfAutoScrollTimer As Timer
+    'Friend pdfAutoScrollIntervalMs As Integer = 15000 ' 15 sec per page
     Friend pdfPageUpdateTimer As Timer
-
 
     ' Importeer de functie voor het ophalen van Frame delays
     <DllImport("gdi32.dll", SetLastError:=True, ExactSpelling:=True)>
     Private Shared Function GetEnhMetaFilePixelFormat(ByVal hEmf As IntPtr) As UInteger
     End Function
 
-    ' PictureBox to render PDF pages using PdfiumViewer rendering (not used; using pbPDFViewer from designer)
-    'Private viewerPicture As New PictureBox() With {
-    '    .Dock = DockStyle.Fill,
-    '    .SizeMode = PictureBoxSizeMode.Zoom,
-    '    .BackColor = Color.Black
-    '}
 
     ' **************************************************************************************************************************
     ' MAIN FORM LOAD
@@ -50,7 +45,6 @@ Public Class FrmMain
 
             Dim c As Integer = 0
             ' Configureer de DataGridView voor de Devices tab
-            'DG_Devices.Dock = DockStyle.Fill
             DG_Devices.AutoGenerateColumns = False
             DG_Devices.AllowUserToAddRows = False
             DG_Devices.AllowUserToDeleteRows = False
@@ -150,7 +144,7 @@ Public Class FrmMain
             Catch
             End Try
 
-            ' Load and render PDF from settings into pbPDFViewer
+            ' PDF laden
             LoadPdfFromSettings()
             If pbPDFViewer IsNot Nothing Then
                 AddHandler pbPDFViewer.Resize, Sub() RenderCurrentPdfPage()
@@ -159,10 +153,8 @@ Public Class FrmMain
                 AddHandler pbPDFViewer.MouseEnter, Sub() pbPDFViewer.Focus()
             End If
 
-            ' Beamer handlers
             UpdateMonitorStatusIndicators(cbMonitorControl, cbMonitorPrime, cbMonitorSecond)
 
-            ' Setup the external beamer
             If (ImagesAreEqual(pbPrimaryStatus.Image, My.Resources.iconGreenBullet1)) Then
                 SetPrimaryBeamerToCorrectOutput()
                 Beamer_Primary.Show()
@@ -1032,66 +1024,80 @@ Public Class FrmMain
         Template.EditSelectedTemplate()
     End Sub
 
+    Private Sub EnsurePdfScrollBar()
+        If pdfScroll Is Nothing Then
+            pdfScroll = New VScrollBar() With {
+                .Name = "vScrollPDF",
+                .Dock = DockStyle.Right,
+                .SmallChange = 1,
+                .LargeChange = 1
+            }
+            AddHandler pdfScroll.Scroll, AddressOf pdfScroll_Scroll
+            ' Vind panel2 van SplitContainer2 (bevat pbPDFViewer)
+            Try
+                If SplitContainer2 IsNot Nothing AndAlso SplitContainer2.Panel2 IsNot Nothing Then
+                    SplitContainer2.Panel2.Controls.Add(pdfScroll)
+                    pdfScroll.BringToFront()
+                End If
+            Catch
+            End Try
+        End If
+        If pdfDoc Is Nothing Then
+            pdfScroll.Enabled = False
+        Else
+            updatingScroll = True
+            pdfScroll.Enabled = True
+            pdfScroll.Minimum = 1
+            pdfScroll.Maximum = pdfDoc.PageCount
+            pdfScroll.Value = Math.Max(1, Math.Min(currentPage, pdfScroll.Maximum))
+            updatingScroll = False
+        End If
+    End Sub
+
+    Private Sub pdfScroll_Scroll(sender As Object, e As ScrollEventArgs)
+        If updatingScroll Then Return
+        If pdfDoc Is Nothing Then Return
+        If pdfScroll Is Nothing Then Return
+        If pdfScroll.Value <> currentPage Then
+            SetPdfPage(pdfScroll.Value)
+        End If
+    End Sub
+
+    Private Sub SyncScrollBar()
+        If pdfScroll Is Nothing OrElse pdfDoc Is Nothing Then Return
+        updatingScroll = True
+        Dim target = Math.Max(pdfScroll.Minimum, Math.Min(pdfScroll.Maximum, currentPage))
+        If pdfScroll.Value <> target Then
+            pdfScroll.Value = target
+        End If
+        updatingScroll = False
+    End Sub
+
     Private Sub LoadPdfFromSettings()
         Try
             Dim configuredPath As String = My.Settings.ScriptPDF
             If String.IsNullOrWhiteSpace(configuredPath) OrElse Not File.Exists(configuredPath) Then
                 lblPDFPage.Text = "Pg -"
-                pbPDFViewer.Image = Nothing
+                If pbPDFViewer IsNot Nothing Then pbPDFViewer.Image = Nothing
+                If pdfScroll IsNot Nothing Then pdfScroll.Enabled = False
                 Return
             End If
-
-            ' Sluit vorige document
             If pdfDoc IsNot Nothing Then
                 pdfDoc.Dispose()
                 pdfDoc = Nothing
             End If
-
             pdfFilePath = configuredPath
             pdfDoc = PdfDocument.Load(pdfFilePath)
-
-            currentPage = 0
+            currentPage = 1 ' start op pagina 1
+            EnsurePdfScrollBar()
             RenderCurrentPdfPage()
             UpdatePdfPageLabel()
-
+            SyncScrollBar()
         Catch ex As Exception
             lblPDFPage.Text = "Pg -"
-            pbPDFViewer.Image = Nothing
+            If pbPDFViewer IsNot Nothing Then pbPDFViewer.Image = Nothing
+            If pdfScroll IsNot Nothing Then pdfScroll.Enabled = False
             ToonFlashBericht("Kon PDF niet laden: " & ex.Message, 8, FlashSeverity.IsError)
-        End Try
-    End Sub
-
-    Private Sub RenderCurrentPdfPage()
-        Try
-            If pdfDoc Is Nothing Then Return
-            If pbPDFViewer Is Nothing OrElse pbPDFViewer.ClientSize.Width <= 0 OrElse pbPDFViewer.ClientSize.Height <= 0 Then Return
-
-            Dim pageIndex = Math.Max(1, Math.Min(currentPage, pdfDoc.PageCount)) - 1
-
-            ' Render naar bitmap ter grootte van de viewer
-            Dim w = Math.Max(1, pbPDFViewer.ClientSize.Width)
-            Dim h = Math.Max(1, pbPDFViewer.ClientSize.Height)
-            Using img = pdfDoc.Render(pageIndex, w, h, 96, 96, PdfRenderFlags.Annotations)
-                ' Dispose oude image om leaks te voorkomen
-                Dim old = pbPDFViewer.Image
-                pbPDFViewer.Image = CType(img.Clone(), Image)
-                If old IsNot Nothing Then old.Dispose()
-            End Using
-
-            UpdatePdfPageLabel()
-        Catch ex As Exception
-            ' Stil falen om UI niet te storen
-        End Try
-    End Sub
-
-    Private Sub UpdatePdfPageLabel()
-        Try
-            If pdfDoc Is Nothing Then
-                lblPDFPage.Text = "Pg -"
-            Else
-                lblPDFPage.Text = $"Pg {currentPage}/{pdfDoc.PageCount}"
-            End If
-        Catch
         End Try
     End Sub
 
@@ -1099,26 +1105,69 @@ Public Class FrmMain
         If pdfDoc Is Nothing Then Return
         currentPage = Math.Max(1, Math.Min(newPage, pdfDoc.PageCount))
         RenderCurrentPdfPage()
+        SyncScrollBar()
     End Sub
 
-    ' Optional keyboard navigation (PgUp/PgDn) + custom shortcuts
+    Private Sub pbPDFViewer_MouseWheel(sender As Object, e As MouseEventArgs)
+        If pdfDoc Is Nothing Then Return
+        If e.Delta > 0 Then
+            SetPdfPage(currentPage - 1)
+        ElseIf e.Delta < 0 Then
+            SetPdfPage(currentPage + 1)
+        End If
+    End Sub
+
+    Private Sub RenderCurrentPdfPage()
+        If pdfDoc Is Nothing OrElse pbPDFViewer Is Nothing Then Return
+        If currentPage < 1 OrElse currentPage > pdfDoc.PageCount Then Return
+        Try
+            Using img = pdfDoc.Render(currentPage - 1, pbPDFViewer.Width, pbPDFViewer.Height, 150, 150, True)
+                Dim old = pbPDFViewer.Image
+                pbPDFViewer.Image = CType(img.Clone(), Image)
+                If old IsNot Nothing Then old.Dispose()
+            End Using
+        Catch
+        End Try
+        UpdatePdfPageLabel()
+    End Sub
+
+    Private Sub UpdatePdfPageLabel()
+        If lblPDFPage Is Nothing Then Return
+        If pdfDoc Is Nothing Then
+            lblPDFPage.Text = "-"
+        Else
+            lblPDFPage.Text = currentPage & "/" & pdfDoc.PageCount
+        End If
+    End Sub
+
+    ' ================== KEYBOARD SHORTCUTS VOOR PDF & SCRIPT ==================
     Private Sub FrmMain_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
         If pdfDoc Is Nothing Then Return
 
-        ' Page navigation
-        If e.KeyCode = Keys.PageDown Then
-            SetPdfPage(currentPage + 1)
-            e.Handled = True
-        ElseIf e.KeyCode = Keys.PageUp Then
-            SetPdfPage(currentPage - 1)
-            e.Handled = True
-        End If
+        ' Navigatie toetsen
+        Select Case e.KeyCode
+            Case Keys.PageUp
+                SetPdfPage(currentPage - 1)
+                e.Handled = True
+            Case Keys.PageDown
+                SetPdfPage(currentPage + 1)
+                e.Handled = True
+            Case Keys.Home
+                SetPdfPage(1)
+                e.Handled = True
+            Case Keys.End
+                SetPdfPage(pdfDoc.PageCount)
+                e.Handled = True
+        End Select
 
-        ' CTRL+L -> sla huidige PDF pagina op in actief DG_Show record (veld ScriptPg)
+        ' Ctrl+L: koppel huidige PDF pagina aan actieve DG_Show regel (ScriptPg)
         If e.Control AndAlso e.KeyCode = Keys.L Then
             Try
-                If DG_Show IsNot Nothing AndAlso DG_Show.CurrentRow IsNot Nothing Then
-                    ' Bewaar pagina (gebruik currentPage zoals gevolgd in UI)
+                If DG_Show IsNot Nothing AndAlso DG_Show.CurrentRow IsNot Nothing AndAlso Not DG_Show.CurrentRow.IsNewRow Then
+                    If Not DG_Show.Columns.Contains("ScriptPg") Then
+                        Dim col As New DataGridViewTextBoxColumn With {.Name = "ScriptPg", .HeaderText = "ScriptPg", .Width = 60}
+                        DG_Show.Columns.Add(col)
+                    End If
                     DG_Show.CurrentRow.Cells("ScriptPg").Value = currentPage
                     ToonFlashBericht($"Pagina {currentPage} gekoppeld aan regel.", 3, FlashSeverity.IsInfo)
                 End If
@@ -1128,14 +1177,14 @@ Public Class FrmMain
             e.Handled = True
         End If
 
-        ' CTRL+G -> ga naar opgeslagen pagina van actieve regel
+        ' Ctrl+G: ga naar pagina uit ScriptPg van huidige DG_Show regel
         If e.Control AndAlso e.KeyCode = Keys.G Then
             Try
                 If DG_Show IsNot Nothing AndAlso DG_Show.CurrentRow IsNot Nothing Then
-                    Dim val = DG_Show.CurrentRow.Cells("ScriptPg").Value
-                    If val IsNot Nothing AndAlso Integer.TryParse(val.ToString(), Nothing) Then
-                        Dim target As Integer = CInt(val)
-                        If target >= 1 AndAlso pdfDoc IsNot Nothing AndAlso target <= pdfDoc.PageCount Then
+                    Dim cellVal = DG_Show.CurrentRow.Cells("ScriptPg").Value
+                    Dim target As Integer
+                    If cellVal IsNot Nothing AndAlso Integer.TryParse(cellVal.ToString(), target) Then
+                        If target >= 1 AndAlso target <= pdfDoc.PageCount Then
                             SetPdfPage(target)
                             ToonFlashBericht($"Gesprongen naar pagina {target}.", 3, FlashSeverity.IsInfo)
                         Else
@@ -1152,40 +1201,26 @@ Public Class FrmMain
         End If
     End Sub
 
-    ' Dispose PDF bij sluiten
-    Protected Overrides Sub OnFormClosed(e As FormClosedEventArgs)
-        Try
-            If pdfDoc IsNot Nothing Then
-                pdfDoc.Dispose()
-                pdfDoc = Nothing
-            End If
-            If pbPDFViewer IsNot Nothing AndAlso pbPDFViewer.Image IsNot Nothing Then
-                pbPDFViewer.Image.Dispose()
-                pbPDFViewer.Image = Nothing
-            End If
-        Catch
-        End Try
-        MyBase.OnFormClosed(e)
-    End Sub
+    Private Sub btnAutoGotoPDFPage_Click(sender As Object, e As EventArgs) Handles btnAutoGotoPDFPage.Click
+        If (btnAutoGotoPDFPage.Text = "on") Then
+            btnAutoGotoPDFPage.Text = "off"
+            btnAutoGotoPDFPage.Checked = False
+            btnAutoGotoPDFPage.Image = My.Resources.icon_toggle_off
+        Else
+            btnAutoGotoPDFPage.Text = "on"
+            btnAutoGotoPDFPage.Checked = True
+            btnAutoGotoPDFPage.Image = My.Resources.icon_toggle_on
 
-    ' Handle mouse wheel scrolling on the PDF viewer to change pages
-    Private Sub pbPDFViewer_MouseWheel(sender As Object, e As MouseEventArgs)
-        If pdfDoc Is Nothing Then Return
-        If e.Delta > 0 Then
-            SetPdfPage(currentPage - 1) ' Scroll up -> previous page
-        ElseIf e.Delta < 0 Then
-            SetPdfPage(currentPage + 1) ' Scroll down -> next page
         End If
     End Sub
 
-    ' Sla splitter positie op wanneer verplaatst
-    Private Sub SplitContainer2_SplitterMoved(sender As Object, e As SplitterEventArgs) Handles SplitContainer2.SplitterMoved
+    ' Externe toegang om naar een PDF-pagina te navigeren
+    Public Sub NavigatePdfToPage(targetPage As Integer)
         Try
-            If SplitContainer2.SplitterDistance > 0 Then
-                My.Settings.SplitPosition = SplitContainer2.SplitterDistance
-                My.Settings.Save()
-            End If
+            If pdfDoc Is Nothing Then Return
+            SetPdfPage(targetPage)
         Catch
+            ' negeren bij ongeldige waarden
         End Try
     End Sub
 End Class

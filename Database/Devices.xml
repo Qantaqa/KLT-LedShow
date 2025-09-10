@@ -17,7 +17,7 @@
     </Structure>
     <Data>
         <Row>
-            <colIPAddress>192.168.0.100</colIPAddress>
+            <colIPAddress>192.168.86.58</colIPAddress>
             <colInstance>BEUK_RE</colInstance>
             <colLayout>Y10,X990,3(U34,L16,D34,R16,Y+100)</colLayout>
             <colLedCount>300</colLedCount>
@@ -32,7 +32,7 @@
             <colDataProvider>Effects</colDataProvider>
         </Row>
         <Row>
-            <colIPAddress>192.168.86.79</colIPAddress>
+            <colIPAddress>192.168.86.30</colIPAddress>
             <colInstance>BEUK_LI</colInstance>
             <colLayout>Y10,X10,3(U34,R16,D34,L16,Y+100)</colLayout>
             <colLedCount>300</colLedCount>
