@@ -98,6 +98,12 @@ Public Class FrmMain
                 SplitContainer2.Panel2.BackColor = Color.Black
             End If
 
+            ' Init sound buttons hover bar on right side of SplitContainer2.Panel2
+            Try
+                SoundButtons.Initialize(SplitContainer2, Me)
+            Catch
+            End Try
+
             ' Definieer de kolommen voor de DataGridView
             Dim ipColumn As New DataGridViewTextBoxColumn
             ipColumn.Name = "colIPAddress"
@@ -180,7 +186,7 @@ Public Class FrmMain
                 DG_Show.Columns.Add(col)
             End If
 
-            ' Herstel splitter positie indien opgeslagen (>0)
+            ' Herstel splitterpositie indien opgeslagen (>0)
             Try
                 Dim saved = My.Settings.SplitPosition
                 If saved > 0 Then
@@ -776,6 +782,10 @@ Public Class FrmMain
                 ThisDGV = DG_LightSources
             Case 3
                 ThisDGV = DG_Frames
+            Case 5
+                ' Start wizard voor SoundButtons (TabIndex 5)
+                SoundButtons.StartAddWizard(Me, insertBefore:=True)
+                Return
             Case Else
                 Return
         End Select
@@ -802,6 +812,10 @@ Public Class FrmMain
                 ThisDGV = DG_LightSources
             Case 3
                 ThisDGV = DG_Frames
+            Case 5
+                ' Start wizard voor SoundButtons (TabIndex 5)
+                SoundButtons.StartAddWizard(Me, insertBefore:=False)
+                Return
             Case Else
                 Return
         End Select
@@ -831,6 +845,10 @@ Public Class FrmMain
                 ThisDGV = DG_LightSources
             Case 3
                 ThisDGV = DG_Frames
+            Case 5
+                ' Verwijder via SoundButtons module (TabIndex 5)
+                SoundButtons.StartDelete(Me)
+                Return
             Case Else
                 Return
         End Select

@@ -23,8 +23,8 @@ Partial Class FrmMain
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmMain))
         DG_Devices = New DataGridView()
         colIPAddress = New DataGridViewTextBoxColumn()
@@ -227,6 +227,13 @@ Partial Class FrmMain
         colActionRowOrder = New DataGridViewTextBoxColumn()
         colActionRowDescr = New DataGridViewTextBoxColumn()
         colActionRowActor = New DataGridViewTextBoxColumn()
+        TabButtons = New TabPage()
+        DG_SoundButtons = New DataGridView()
+        colButtonsId = New DataGridViewTextBoxColumn()
+        colButtonsSoundFile = New DataGridViewTextBoxColumn()
+        colButtonsName = New DataGridViewTextBoxColumn()
+        colButtonsIcon = New DataGridViewTextBoxColumn()
+        colButtonsRepeat = New DataGridViewTextBoxColumn()
         TabDevices = New TabPage()
         SplitContainer_Devices = New SplitContainer()
         RichTextBox1 = New RichTextBox()
@@ -379,6 +386,8 @@ Partial Class FrmMain
         SplitContainer3.SuspendLayout()
         CType(DG_Actions, ComponentModel.ISupportInitialize).BeginInit()
         CType(DG_ActionsDetail, ComponentModel.ISupportInitialize).BeginInit()
+        TabButtons.SuspendLayout()
+        CType(DG_SoundButtons, ComponentModel.ISupportInitialize).BeginInit()
         TabDevices.SuspendLayout()
         CType(SplitContainer_Devices, ComponentModel.ISupportInitialize).BeginInit()
         SplitContainer_Devices.Panel1.SuspendLayout()
@@ -590,9 +599,9 @@ Partial Class FrmMain
         ' 
         ' colSceneId
         ' 
-        DataGridViewCellStyle3.Format = "N0"
-        DataGridViewCellStyle3.NullValue = Nothing
-        colSceneId.DefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle1.Format = "N0"
+        DataGridViewCellStyle1.NullValue = Nothing
+        colSceneId.DefaultCellStyle = DataGridViewCellStyle1
         colSceneId.HeaderText = "Scene"
         colSceneId.Name = "colSceneId"
         colSceneId.ToolTipText = "Scene nummer van de show"
@@ -600,9 +609,9 @@ Partial Class FrmMain
         ' 
         ' colEventId
         ' 
-        DataGridViewCellStyle4.Format = "N0"
-        DataGridViewCellStyle4.NullValue = Nothing
-        colEventId.DefaultCellStyle = DataGridViewCellStyle4
+        DataGridViewCellStyle2.Format = "N0"
+        DataGridViewCellStyle2.NullValue = Nothing
+        colEventId.DefaultCellStyle = DataGridViewCellStyle2
         colEventId.HeaderText = "Event"
         colEventId.Name = "colEventId"
         colEventId.ToolTipText = "Het event nummer binnen een scene."
@@ -1706,6 +1715,7 @@ Partial Class FrmMain
         TabControlTables.Controls.Add(TabLightSources)
         TabControlTables.Controls.Add(TabFrames)
         TabControlTables.Controls.Add(TabStageActions)
+        TabControlTables.Controls.Add(TabButtons)
         TabControlTables.Dock = DockStyle.Bottom
         TabControlTables.Location = New Point(0, 32)
         TabControlTables.Name = "TabControlTables"
@@ -2096,6 +2106,54 @@ Partial Class FrmMain
         colActionRowActor.HeaderText = "Wie"
         colActionRowActor.Name = "colActionRowActor"
         colActionRowActor.Width = 400
+        ' 
+        ' TabButtons
+        ' 
+        TabButtons.Controls.Add(DG_SoundButtons)
+        TabButtons.Location = New Point(4, 24)
+        TabButtons.Name = "TabButtons"
+        TabButtons.Padding = New Padding(3)
+        TabButtons.Size = New Size(1828, 789)
+        TabButtons.TabIndex = 5
+        TabButtons.Text = "Sound Buttons"
+        TabButtons.UseVisualStyleBackColor = True
+        ' 
+        ' DG_SoundButtons
+        ' 
+        DG_SoundButtons.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DG_SoundButtons.Columns.AddRange(New DataGridViewColumn() {colButtonsId, colButtonsSoundFile, colButtonsName, colButtonsIcon, colButtonsRepeat})
+        DG_SoundButtons.Dock = DockStyle.Fill
+        DG_SoundButtons.Location = New Point(3, 3)
+        DG_SoundButtons.Name = "DG_SoundButtons"
+        DG_SoundButtons.Size = New Size(1822, 783)
+        DG_SoundButtons.TabIndex = 0
+        ' 
+        ' colButtonsId
+        ' 
+        colButtonsId.HeaderText = "ID"
+        colButtonsId.Name = "colButtonsId"
+        ' 
+        ' colButtonsSoundFile
+        ' 
+        colButtonsSoundFile.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colButtonsSoundFile.HeaderText = "File"
+        colButtonsSoundFile.Name = "colButtonsSoundFile"
+        ' 
+        ' colButtonsName
+        ' 
+        colButtonsName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colButtonsName.HeaderText = "Name"
+        colButtonsName.Name = "colButtonsName"
+        ' 
+        ' colButtonsIcon
+        ' 
+        colButtonsIcon.HeaderText = "Icon"
+        colButtonsIcon.Name = "colButtonsIcon"
+        ' 
+        ' colButtonsRepeat
+        ' 
+        colButtonsRepeat.HeaderText = "Repeat"
+        colButtonsRepeat.Name = "colButtonsRepeat"
         ' 
         ' TabDevices
         ' 
@@ -3053,6 +3111,8 @@ Partial Class FrmMain
         SplitContainer3.ResumeLayout(False)
         CType(DG_Actions, ComponentModel.ISupportInitialize).EndInit()
         CType(DG_ActionsDetail, ComponentModel.ISupportInitialize).EndInit()
+        TabButtons.ResumeLayout(False)
+        CType(DG_SoundButtons, ComponentModel.ISupportInitialize).EndInit()
         TabDevices.ResumeLayout(False)
         TabDevices.PerformLayout()
         SplitContainer_Devices.Panel1.ResumeLayout(False)
@@ -3398,5 +3458,13 @@ Partial Class FrmMain
     Friend WithEvents colActionImage As DataGridViewTextBoxColumn
     Friend WithEvents ToolStripLabel9 As ToolStripLabel
     Friend WithEvents btnRemoteControl As ToolStripButton
+    Friend WithEvents TabButtons As TabPage
+    Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents colButtonsId As DataGridViewTextBoxColumn
+    Friend WithEvents colButtonsSoundFile As DataGridViewTextBoxColumn
+    Friend WithEvents colButtonsName As DataGridViewTextBoxColumn
+    Friend WithEvents colButtonsIcon As DataGridViewTextBoxColumn
+    Friend WithEvents colButtonsRepeat As DataGridViewTextBoxColumn
+    Friend WithEvents DG_SoundButtons As DataGridView
 
 End Class
