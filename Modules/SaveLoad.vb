@@ -177,6 +177,9 @@ Module SaveLoad
         SaveDataGridViewToXml(FrmMain.DG_Frames, Folder + "\Frames.xml")
         SaveDataGridViewToXml(FrmMain.DG_Tracks, Folder + "\Tracks.xml")
 
+        SaveDataGridViewToXml(FrmMain.DG_Actions, Folder + "\Actions.xml")
+        SaveDataGridViewToXml(FrmMain.DG_ActionsDetail, Folder + "\ActionsDetail.xml")
+
         ToonFlashBericht("All data has been saved.", 1)
 
     End Sub
@@ -200,6 +203,9 @@ Module SaveLoad
         LoadXmlToDataGridView(FrmMain.DG_Templates, Folder + "\MyEffects.xml", False)
         LoadXmlToDataGridView(FrmMain.DG_Frames, Folder + "\Frames.xml", False)
         LoadXmlToDataGridView(FrmMain.DG_LightSources, Folder + "\Lights.xml", False)
+
+        LoadXmlToDataGridView(FrmMain.DG_Actions, Folder + "\Actions.xml", False)
+        LoadXmlToDataGridView(FrmMain.DG_ActionsDetail, Folder + "\ActionsDetail.xml", False)
 
         SetAllDevicesOffline(FrmMain.DG_Devices)
 

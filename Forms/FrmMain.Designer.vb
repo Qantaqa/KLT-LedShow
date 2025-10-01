@@ -113,8 +113,13 @@ Partial Class FrmMain
         btn_DGGrid_AddNewRowBefore = New ToolStripButton()
         ToolStripSeparator2 = New ToolStripSeparator()
         btnLockUnlocked = New ToolStripButton()
+        ToolStripSeparator10 = New ToolStripSeparator()
         ToolStripLabel7 = New ToolStripLabel()
         lblPDFPage = New ToolStripLabel()
+        btnAutoGotoPDFPage = New ToolStripButton()
+        ToolStripSeparator11 = New ToolStripSeparator()
+        ToolStripLabel9 = New ToolStripLabel()
+        btnRemoteControl = New ToolStripButton()
         TabStage = New TabPage()
         SplitContainerStage = New SplitContainer()
         SplitContainer1 = New SplitContainer()
@@ -209,6 +214,19 @@ Partial Class FrmMain
         colFrame_Id = New DataGridViewTextBoxColumn()
         colFrame_FixtureID = New DataGridViewTextBoxColumn()
         colFrame_Frames = New DataGridViewTextBoxColumn()
+        TabStageActions = New TabPage()
+        SplitContainer3 = New SplitContainer()
+        DG_Actions = New DataGridView()
+        colActionId = New DataGridViewTextBoxColumn()
+        colActionPage = New DataGridViewTextBoxColumn()
+        colActionPosX = New DataGridViewTextBoxColumn()
+        colActionPosY = New DataGridViewTextBoxColumn()
+        colActionImage = New DataGridViewTextBoxColumn()
+        DG_ActionsDetail = New DataGridView()
+        colActionRowID = New DataGridViewTextBoxColumn()
+        colActionRowOrder = New DataGridViewTextBoxColumn()
+        colActionRowDescr = New DataGridViewTextBoxColumn()
+        colActionRowActor = New DataGridViewTextBoxColumn()
         TabDevices = New TabPage()
         SplitContainer_Devices = New SplitContainer()
         RichTextBox1 = New RichTextBox()
@@ -223,6 +241,9 @@ Partial Class FrmMain
         ToolStripSeparator4 = New ToolStripSeparator()
         btnGenerateStage = New ToolStripButton()
         btnGenerateSliders = New ToolStripButton()
+        ToolStripSeparator12 = New ToolStripSeparator()
+        ToolStripLabel8 = New ToolStripLabel()
+        btnAutoPing = New ToolStripButton()
         TabGroups = New TabPage()
         RichTextBox4 = New RichTextBox()
         ToolStripGroups = New ToolStrip()
@@ -301,9 +322,6 @@ Partial Class FrmMain
         ddpTimer = New Timer(components)
         stageTimer = New Timer(components)
         Timer_LoadBuffer = New Timer(components)
-        btnAutoGotoPDFPage = New ToolStripButton()
-        ToolStripSeparator10 = New ToolStripSeparator()
-        ToolStripSeparator11 = New ToolStripSeparator()
         CType(DG_Devices, ComponentModel.ISupportInitialize).BeginInit()
         CType(DG_Effecten, ComponentModel.ISupportInitialize).BeginInit()
         TabControl.SuspendLayout()
@@ -354,6 +372,13 @@ Partial Class FrmMain
         CType(DG_LightSources, ComponentModel.ISupportInitialize).BeginInit()
         TabFrames.SuspendLayout()
         CType(DG_Frames, ComponentModel.ISupportInitialize).BeginInit()
+        TabStageActions.SuspendLayout()
+        CType(SplitContainer3, ComponentModel.ISupportInitialize).BeginInit()
+        SplitContainer3.Panel1.SuspendLayout()
+        SplitContainer3.Panel2.SuspendLayout()
+        SplitContainer3.SuspendLayout()
+        CType(DG_Actions, ComponentModel.ISupportInitialize).BeginInit()
+        CType(DG_ActionsDetail, ComponentModel.ISupportInitialize).BeginInit()
         TabDevices.SuspendLayout()
         CType(SplitContainer_Devices, ComponentModel.ISupportInitialize).BeginInit()
         SplitContainer_Devices.Panel1.SuspendLayout()
@@ -1138,7 +1163,7 @@ Partial Class FrmMain
         ' 
         ToolStip_Show.BackColor = Color.MidnightBlue
         ToolStip_Show.GripStyle = ToolStripGripStyle.Hidden
-        ToolStip_Show.Items.AddRange(New ToolStripItem() {lblFilter, filterAct, btn_DGGrid_RemoveCurrentRow, btn_DGGrid_AddNewRowAfter, btn_DGGrid_AddNewRowBefore, ToolStripSeparator2, btnLockUnlocked, ToolStripSeparator10, ToolStripLabel7, lblPDFPage, btnAutoGotoPDFPage, ToolStripSeparator11})
+        ToolStip_Show.Items.AddRange(New ToolStripItem() {lblFilter, filterAct, btn_DGGrid_RemoveCurrentRow, btn_DGGrid_AddNewRowAfter, btn_DGGrid_AddNewRowBefore, ToolStripSeparator2, btnLockUnlocked, ToolStripSeparator10, ToolStripLabel7, lblPDFPage, btnAutoGotoPDFPage, ToolStripSeparator11, ToolStripLabel9, btnRemoteControl})
         ToolStip_Show.Location = New Point(0, 0)
         ToolStip_Show.Name = "ToolStip_Show"
         ToolStip_Show.Size = New Size(1836, 25)
@@ -1209,6 +1234,11 @@ Partial Class FrmMain
         btnLockUnlocked.Size = New Size(77, 22)
         btnLockUnlocked.Text = "Unlocked"
         ' 
+        ' ToolStripSeparator10
+        ' 
+        ToolStripSeparator10.Name = "ToolStripSeparator10"
+        ToolStripSeparator10.Size = New Size(6, 25)
+        ' 
         ' ToolStripLabel7
         ' 
         ToolStripLabel7.ForeColor = SystemColors.ActiveCaption
@@ -1222,6 +1252,38 @@ Partial Class FrmMain
         lblPDFPage.Name = "lblPDFPage"
         lblPDFPage.Size = New Size(23, 22)
         lblPDFPage.Text = "n.a"
+        ' 
+        ' btnAutoGotoPDFPage
+        ' 
+        btnAutoGotoPDFPage.Checked = True
+        btnAutoGotoPDFPage.CheckState = CheckState.Checked
+        btnAutoGotoPDFPage.ForeColor = SystemColors.ButtonFace
+        btnAutoGotoPDFPage.Image = My.Resources.Resources.icon_toggle_on
+        btnAutoGotoPDFPage.ImageTransparentColor = Color.Magenta
+        btnAutoGotoPDFPage.Name = "btnAutoGotoPDFPage"
+        btnAutoGotoPDFPage.Size = New Size(41, 22)
+        btnAutoGotoPDFPage.Text = "on"
+        ' 
+        ' ToolStripSeparator11
+        ' 
+        ToolStripSeparator11.Name = "ToolStripSeparator11"
+        ToolStripSeparator11.Size = New Size(6, 25)
+        ' 
+        ' ToolStripLabel9
+        ' 
+        ToolStripLabel9.ForeColor = SystemColors.ActiveCaption
+        ToolStripLabel9.Name = "ToolStripLabel9"
+        ToolStripLabel9.Size = New Size(49, 22)
+        ToolStripLabel9.Text = "Website"
+        ' 
+        ' btnRemoteControl
+        ' 
+        btnRemoteControl.ForeColor = SystemColors.ButtonFace
+        btnRemoteControl.Image = My.Resources.Resources.icon_toggle_off
+        btnRemoteControl.ImageTransparentColor = Color.Magenta
+        btnRemoteControl.Name = "btnRemoteControl"
+        btnRemoteControl.Size = New Size(42, 22)
+        btnRemoteControl.Text = "off"
         ' 
         ' TabStage
         ' 
@@ -1643,6 +1705,7 @@ Partial Class FrmMain
         TabControlTables.Controls.Add(TabTracks)
         TabControlTables.Controls.Add(TabLightSources)
         TabControlTables.Controls.Add(TabFrames)
+        TabControlTables.Controls.Add(TabStageActions)
         TabControlTables.Dock = DockStyle.Bottom
         TabControlTables.Location = New Point(0, 32)
         TabControlTables.Name = "TabControlTables"
@@ -1939,6 +2002,101 @@ Partial Class FrmMain
         colFrame_Frames.HeaderText = "Frames"
         colFrame_Frames.Name = "colFrame_Frames"
         ' 
+        ' TabStageActions
+        ' 
+        TabStageActions.Controls.Add(SplitContainer3)
+        TabStageActions.Location = New Point(4, 24)
+        TabStageActions.Name = "TabStageActions"
+        TabStageActions.Size = New Size(1828, 789)
+        TabStageActions.TabIndex = 4
+        TabStageActions.Text = "Stage Actions"
+        TabStageActions.UseVisualStyleBackColor = True
+        ' 
+        ' SplitContainer3
+        ' 
+        SplitContainer3.Dock = DockStyle.Fill
+        SplitContainer3.Location = New Point(0, 0)
+        SplitContainer3.Name = "SplitContainer3"
+        ' 
+        ' SplitContainer3.Panel1
+        ' 
+        SplitContainer3.Panel1.Controls.Add(DG_Actions)
+        ' 
+        ' SplitContainer3.Panel2
+        ' 
+        SplitContainer3.Panel2.Controls.Add(DG_ActionsDetail)
+        SplitContainer3.Size = New Size(1828, 789)
+        SplitContainer3.SplitterDistance = 453
+        SplitContainer3.TabIndex = 1
+        ' 
+        ' DG_Actions
+        ' 
+        DG_Actions.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DG_Actions.Columns.AddRange(New DataGridViewColumn() {colActionId, colActionPage, colActionPosX, colActionPosY, colActionImage})
+        DG_Actions.Dock = DockStyle.Fill
+        DG_Actions.Location = New Point(0, 0)
+        DG_Actions.Name = "DG_Actions"
+        DG_Actions.Size = New Size(453, 789)
+        DG_Actions.TabIndex = 0
+        ' 
+        ' colActionId
+        ' 
+        colActionId.HeaderText = "ID"
+        colActionId.Name = "colActionId"
+        ' 
+        ' colActionPage
+        ' 
+        colActionPage.HeaderText = "Page"
+        colActionPage.Name = "colActionPage"
+        ' 
+        ' colActionPosX
+        ' 
+        colActionPosX.HeaderText = "PosX"
+        colActionPosX.Name = "colActionPosX"
+        ' 
+        ' colActionPosY
+        ' 
+        colActionPosY.HeaderText = "PosY"
+        colActionPosY.Name = "colActionPosY"
+        ' 
+        ' colActionImage
+        ' 
+        colActionImage.HeaderText = "Preview"
+        colActionImage.Name = "colActionImage"
+        ' 
+        ' DG_ActionsDetail
+        ' 
+        DG_ActionsDetail.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DG_ActionsDetail.Columns.AddRange(New DataGridViewColumn() {colActionRowID, colActionRowOrder, colActionRowDescr, colActionRowActor})
+        DG_ActionsDetail.Dock = DockStyle.Fill
+        DG_ActionsDetail.Location = New Point(0, 0)
+        DG_ActionsDetail.Name = "DG_ActionsDetail"
+        DG_ActionsDetail.Size = New Size(1371, 789)
+        DG_ActionsDetail.TabIndex = 0
+        ' 
+        ' colActionRowID
+        ' 
+        colActionRowID.HeaderText = "ID"
+        colActionRowID.Name = "colActionRowID"
+        colActionRowID.Visible = False
+        ' 
+        ' colActionRowOrder
+        ' 
+        colActionRowOrder.HeaderText = "VolgNr"
+        colActionRowOrder.Name = "colActionRowOrder"
+        ' 
+        ' colActionRowDescr
+        ' 
+        colActionRowDescr.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+        colActionRowDescr.HeaderText = "Omschrijving"
+        colActionRowDescr.Name = "colActionRowDescr"
+        ' 
+        ' colActionRowActor
+        ' 
+        colActionRowActor.HeaderText = "Wie"
+        colActionRowActor.Name = "colActionRowActor"
+        colActionRowActor.Width = 400
+        ' 
         ' TabDevices
         ' 
         TabDevices.BackColor = Color.DimGray
@@ -1987,7 +2145,7 @@ Partial Class FrmMain
         ToolStrip_Devices.BackColor = Color.MidnightBlue
         ToolStrip_Devices.Font = New Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         ToolStrip_Devices.GripStyle = ToolStripGripStyle.Hidden
-        ToolStrip_Devices.Items.AddRange(New ToolStripItem() {LblDeviceStatus, btnScanNetworkForWLed, btnDevicesRefreshIPs, btnSendUpdatedSegmentsToWLED, btnPingDevice, btnDeleteDevice, btnAddDevice, ToolStripSeparator4, btnGenerateStage, btnGenerateSliders})
+        ToolStrip_Devices.Items.AddRange(New ToolStripItem() {LblDeviceStatus, btnScanNetworkForWLed, btnDevicesRefreshIPs, btnSendUpdatedSegmentsToWLED, btnPingDevice, btnDeleteDevice, btnAddDevice, ToolStripSeparator4, btnGenerateStage, btnGenerateSliders, ToolStripSeparator12, ToolStripLabel8, btnAutoPing})
         ToolStrip_Devices.Location = New Point(3, 3)
         ToolStrip_Devices.Name = "ToolStrip_Devices"
         ToolStrip_Devices.Size = New Size(1830, 25)
@@ -2080,6 +2238,27 @@ Partial Class FrmMain
         btnGenerateSliders.Name = "btnGenerateSliders"
         btnGenerateSliders.Size = New Size(89, 22)
         btnGenerateSliders.Text = "DMX sliders"
+        ' 
+        ' ToolStripSeparator12
+        ' 
+        ToolStripSeparator12.Name = "ToolStripSeparator12"
+        ToolStripSeparator12.Size = New Size(6, 25)
+        ' 
+        ' ToolStripLabel8
+        ' 
+        ToolStripLabel8.ForeColor = SystemColors.ActiveCaption
+        ToolStripLabel8.Name = "ToolStripLabel8"
+        ToolStripLabel8.Size = New Size(83, 22)
+        ToolStripLabel8.Text = "Continue ping"
+        ' 
+        ' btnAutoPing
+        ' 
+        btnAutoPing.ForeColor = SystemColors.ButtonHighlight
+        btnAutoPing.Image = My.Resources.Resources.icon_toggle_off
+        btnAutoPing.ImageTransparentColor = Color.Magenta
+        btnAutoPing.Name = "btnAutoPing"
+        btnAutoPing.Size = New Size(42, 22)
+        btnAutoPing.Text = "off"
         ' 
         ' TabGroups
         ' 
@@ -2791,25 +2970,6 @@ Partial Class FrmMain
         stageTimer.Enabled = True
         stageTimer.Interval = 500
         ' 
-        ' btnAutoGotoPDFPage
-        ' 
-        btnAutoGotoPDFPage.ForeColor = SystemColors.ButtonFace
-        btnAutoGotoPDFPage.Image = My.Resources.Resources.icon_toggle_off
-        btnAutoGotoPDFPage.ImageTransparentColor = Color.Magenta
-        btnAutoGotoPDFPage.Name = "btnAutoGotoPDFPage"
-        btnAutoGotoPDFPage.Size = New Size(42, 22)
-        btnAutoGotoPDFPage.Text = "off"
-        ' 
-        ' ToolStripSeparator10
-        ' 
-        ToolStripSeparator10.Name = "ToolStripSeparator10"
-        ToolStripSeparator10.Size = New Size(6, 25)
-        ' 
-        ' ToolStripSeparator11
-        ' 
-        ToolStripSeparator11.Name = "ToolStripSeparator11"
-        ToolStripSeparator11.Size = New Size(6, 25)
-        ' 
         ' FrmMain
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -2886,6 +3046,13 @@ Partial Class FrmMain
         CType(DG_LightSources, ComponentModel.ISupportInitialize).EndInit()
         TabFrames.ResumeLayout(False)
         CType(DG_Frames, ComponentModel.ISupportInitialize).EndInit()
+        TabStageActions.ResumeLayout(False)
+        SplitContainer3.Panel1.ResumeLayout(False)
+        SplitContainer3.Panel2.ResumeLayout(False)
+        CType(SplitContainer3, ComponentModel.ISupportInitialize).EndInit()
+        SplitContainer3.ResumeLayout(False)
+        CType(DG_Actions, ComponentModel.ISupportInitialize).EndInit()
+        CType(DG_ActionsDetail, ComponentModel.ISupportInitialize).EndInit()
         TabDevices.ResumeLayout(False)
         TabDevices.PerformLayout()
         SplitContainer_Devices.Panel1.ResumeLayout(False)
@@ -3213,5 +3380,23 @@ Partial Class FrmMain
     Friend WithEvents ToolStripSeparator10 As ToolStripSeparator
     Friend WithEvents btnAutoGotoPDFPage As ToolStripButton
     Friend WithEvents ToolStripSeparator11 As ToolStripSeparator
+    Friend WithEvents TabStageActions As TabPage
+    Friend WithEvents SplitContainer3 As SplitContainer
+    Friend WithEvents DG_Actions As DataGridView
+    Friend WithEvents DG_ActionsDetail As DataGridView
+    Friend WithEvents colActionRowID As DataGridViewTextBoxColumn
+    Friend WithEvents colActionRowOrder As DataGridViewTextBoxColumn
+    Friend WithEvents colActionRowDescr As DataGridViewTextBoxColumn
+    Friend WithEvents colActionRowActor As DataGridViewTextBoxColumn
+    Friend WithEvents ToolStripSeparator12 As ToolStripSeparator
+    Friend WithEvents ToolStripLabel8 As ToolStripLabel
+    Friend WithEvents btnAutoPing As ToolStripButton
+    Friend WithEvents colActionId As DataGridViewTextBoxColumn
+    Friend WithEvents colActionPage As DataGridViewTextBoxColumn
+    Friend WithEvents colActionPosX As DataGridViewTextBoxColumn
+    Friend WithEvents colActionPosY As DataGridViewTextBoxColumn
+    Friend WithEvents colActionImage As DataGridViewTextBoxColumn
+    Friend WithEvents ToolStripLabel9 As ToolStripLabel
+    Friend WithEvents btnRemoteControl As ToolStripButton
 
 End Class

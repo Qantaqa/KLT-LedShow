@@ -50,6 +50,54 @@ Public Class FrmMain
             DG_Devices.AllowUserToDeleteRows = False
             DG_Devices.ReadOnly = False
 
+            ' Donkere stijl voor DG_Show: zwarte achtergrond, witte tekst
+            If DG_Show IsNot Nothing Then
+                With DG_Show
+                    .EnableHeadersVisualStyles = False
+                    .BackgroundColor = Color.Black
+                    .GridColor = Color.FromArgb(60, 60, 60)
+
+                    ' Headers
+                    .ColumnHeadersDefaultCellStyle.BackColor = Color.Black
+                    .ColumnHeadersDefaultCellStyle.ForeColor = Color.White
+                    .RowHeadersDefaultCellStyle.BackColor = Color.Black
+                    .RowHeadersDefaultCellStyle.ForeColor = Color.White
+
+                    ' Rijen
+                    .RowsDefaultCellStyle.BackColor = Color.Black
+                    .RowsDefaultCellStyle.ForeColor = Color.White
+                    .AlternatingRowsDefaultCellStyle.BackColor = Color.Black
+                    .AlternatingRowsDefaultCellStyle.ForeColor = Color.White
+
+                    ' Selectie
+                    .DefaultCellStyle.BackColor = Color.Black
+                    .DefaultCellStyle.ForeColor = Color.White
+                    .DefaultCellStyle.SelectionBackColor = Color.FromArgb(64, 64, 64)
+                    .DefaultCellStyle.SelectionForeColor = Color.White
+                End With
+
+                ' Forceer ook zwarte stijl op alle combobox-kolommen (pulldowns)
+                For Each col As DataGridViewColumn In DG_Show.Columns
+                    If TypeOf col Is DataGridViewComboBoxColumn Then
+                        Dim ccol = DirectCast(col, DataGridViewComboBoxColumn)
+                        ccol.FlatStyle = FlatStyle.Flat
+                        ccol.DisplayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton
+                        ccol.DefaultCellStyle.BackColor = Color.Black
+                        ccol.DefaultCellStyle.ForeColor = Color.White
+                        ccol.DefaultCellStyle.SelectionBackColor = Color.FromArgb(64, 64, 64)
+                        ccol.DefaultCellStyle.SelectionForeColor = Color.White
+                    End If
+                Next
+            End If
+
+            ' PDF viewer achtergrond donker zetten
+            If pbPDFViewer IsNot Nothing Then
+                pbPDFViewer.BackColor = Color.Black
+            End If
+            If SplitContainer2 IsNot Nothing AndAlso SplitContainer2.Panel2 IsNot Nothing Then
+                SplitContainer2.Panel2.BackColor = Color.Black
+            End If
+
             ' Definieer de kolommen voor de DataGridView
             Dim ipColumn As New DataGridViewTextBoxColumn
             ipColumn.Name = "colIPAddress"
@@ -153,6 +201,9 @@ Public Class FrmMain
                 AddHandler pbPDFViewer.MouseEnter, Sub() pbPDFViewer.Focus()
             End If
 
+            ' Enable PDF annotations
+            ScriptEditor.Initialize()
+
             UpdateMonitorStatusIndicators(cbMonitorControl, cbMonitorPrime, cbMonitorSecond)
 
             If (ImagesAreEqual(pbPrimaryStatus.Image, My.Resources.iconGreenBullet1)) Then
@@ -173,11 +224,46 @@ Public Class FrmMain
                 ToonFlashBericht("Secondary beamer is niet verbonden of ingesteld.", 20, FlashSeverity.IsWarning)
             End If
 
+
+
         Catch ex As Exception
             MessageBox.Show($"Fout tijdens laden van form: {ex.Message}", "Fout", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
 
+    ' Zorg dat combobox editing control ook donker is met witte tekst
+    Private Sub DG_Show_EditingControlShowing(sender As Object, e As DataGridViewEditingControlShowingEventArgs) Handles DG_Show.EditingControlShowing
+        Dim cmb = TryCast(e.Control, ComboBox)
+        If cmb IsNot Nothing Then
+            cmb.FlatStyle = FlatStyle.Flat
+            cmb.BackColor = Color.Black
+            cmb.ForeColor = Color.White
+            cmb.DrawMode = DrawMode.OwnerDrawFixed
+            RemoveHandler cmb.DrawItem, AddressOf ComboBox_DrawItem_Dark
+            AddHandler cmb.DrawItem, AddressOf ComboBox_DrawItem_Dark
+        End If
+    End Sub
+
+    Private Sub ComboBox_DrawItem_Dark(sender As Object, e As DrawItemEventArgs)
+        Try
+            e.DrawBackground()
+            Dim back As Color = Color.Black
+            If (e.State And DrawItemState.Selected) = DrawItemState.Selected Then
+                back = Color.FromArgb(64, 64, 64)
+            End If
+            Using bg As New SolidBrush(back)
+                e.Graphics.FillRectangle(bg, e.Bounds)
+            End Using
+            If e.Index >= 0 Then
+                Dim cmb = DirectCast(sender, ComboBox)
+                Dim text = cmb.GetItemText(cmb.Items(e.Index))
+                TextRenderer.DrawText(e.Graphics, text, cmb.Font, e.Bounds, Color.White, TextFormatFlags.Left)
+            End If
+            e.DrawFocusRectangle()
+        Catch
+            ' ignore draw issues
+        End Try
+    End Sub
 
 
     ' **************************************************************************************************************************
@@ -379,6 +465,10 @@ Public Class FrmMain
     End Sub
 
     Private Sub TimerPingDevices_Tick(sender As Object, e As EventArgs) Handles TimerPingDevices.Tick
+        If btnAutoPing.Checked = False Then
+            Return
+        End If
+
         Dim C As Integer = 0
         C = CheckWLEDOnlineStatus(DG_Devices)
 
@@ -571,7 +661,7 @@ Public Class FrmMain
 
     'Private Sub tbEffectSpeed_Scroll(sender As Object, e As EventArgs)
     '    My.Settings.CustomEffectSpeed = tbEffectSpeed.Value
-    '    My.Settings.Save()
+    '    My Settings.Save()
     'End Sub
 
     'Private Sub tbEffectIntensity_Scroll(sender As Object, e As EventArgs)
@@ -1027,11 +1117,11 @@ Public Class FrmMain
     Private Sub EnsurePdfScrollBar()
         If pdfScroll Is Nothing Then
             pdfScroll = New VScrollBar() With {
-                .Name = "vScrollPDF",
-                .Dock = DockStyle.Right,
-                .SmallChange = 1,
-                .LargeChange = 1
-            }
+            .Name = "vScrollPDF",
+            .Dock = DockStyle.Right,
+            .SmallChange = 1,
+            .LargeChange = 1
+        }
             AddHandler pdfScroll.Scroll, AddressOf pdfScroll_Scroll
             ' Vind panel2 van SplitContainer2 (bevat pbPDFViewer)
             Try
@@ -1222,5 +1312,34 @@ Public Class FrmMain
         Catch
             ' negeren bij ongeldige waarden
         End Try
+    End Sub
+
+    Private Sub btnAutoPing_Click(sender As Object, e As EventArgs) Handles btnAutoPing.Click
+        If (btnAutoPing.Text = "on") Then
+            btnAutoPing.Text = "off"
+            btnAutoPing.Checked = False
+            btnAutoPing.Image = My.Resources.icon_toggle_off
+        Else
+            btnAutoPing.Text = "on"
+            btnAutoPing.Checked = True
+            btnAutoPing.Image = My.Resources.icon_toggle_on
+
+        End If
+
+    End Sub
+
+    Private Sub btnRemoteControl_Click(sender As Object, e As EventArgs) Handles btnRemoteControl.Click
+        If (btnRemoteControl.Text = "on") Then
+            btnRemoteControl.Text = "off"
+            btnRemoteControl.Checked = False
+            btnRemoteControl.Image = My.Resources.icon_toggle_off
+            Mobile.Stop()
+        Else
+            btnRemoteControl.Text = "on"
+            btnRemoteControl.Checked = True
+            btnRemoteControl.Image = My.Resources.icon_toggle_on
+            Mobile.Start()
+
+        End If
     End Sub
 End Class
